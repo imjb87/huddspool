@@ -16,11 +16,16 @@
         
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])        
+        @livewireStyles
     </head>
-    <body class="antialiased bg-gray-100 min-h-screen">
+    <body class="antialiased bg-gray-100 min-h-screen [&_[x-cloak]]:hidden">
         @include('layouts.navigation')
         <main>
             <x-hero />
+            <livewire:news-listing />
+            <x-logo-clouds />
         </main>
+        @include('layouts.footer')
+        @livewireScripts
     </body>
 </html>

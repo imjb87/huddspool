@@ -36,13 +36,13 @@ class OneCaptainPerTeam implements Rule
 
         if ($this->user_id) {
             if ($this->role === 'captain') {
-                if ($team->captain && $team->captain->id !== $this->user_id) {
+                if ($team->captain() && $team->captain()->id !== $this->user_id) {
                     return false;
                 }
             }
         } else {
             if ($this->role === 'captain') {
-                if ($team->captain) {
+                if ($team->captain()) {
                     return false;
                 }
             }

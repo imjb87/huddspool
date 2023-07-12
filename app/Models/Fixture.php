@@ -20,13 +20,20 @@ class Fixture extends Model
         'fixture_date',
         'home_team_id',
         'away_team_id',
+        'season_id',
         'section_id',
         'venue_id',
+        'ruleset_id'
     ];
 
     protected $casts = [
         'fixture_date' => 'datetime',
     ];
+
+    public function season()
+    {
+        return $this->belongsTo(Season::class);
+    }
 
     public function section()
     {
@@ -46,6 +53,11 @@ class Fixture extends Model
     public function venue()
     {
         return $this->belongsTo(Venue::class);
+    }
+
+    public function ruleset()
+    {
+        return $this->belongsTo(Ruleset::class);
     }
 
     public function result()

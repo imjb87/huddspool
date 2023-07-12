@@ -22,6 +22,8 @@ class Result extends Model
         'away_team_id',
         'away_team_name',
         'away_score',
+        'is_confirmed',
+        'is_overridden',
     ];
 
     /**

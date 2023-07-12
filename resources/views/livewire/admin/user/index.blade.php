@@ -1,8 +1,8 @@
 <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-base font-semibold leading-6 text-gray-900">Users</h1>
-            <p class="mt-2 text-sm text-gray-700">A list of all the users including admins, captains and players.</p>
+            <h1 class="text-base font-semibold leading-6 text-gray-900">Players</h1>
+            <p class="mt-2 text-sm text-gray-700">A list of all the players including admins and captains.</p>
         </div>
         <!-- Search bar -->
         <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">

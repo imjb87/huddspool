@@ -15,7 +15,6 @@ class Create extends Component
         return [
             'season.name' => 'required|string',
             'season.dates' => ['required', 'array', 'size:18', new DatesAreOrdered],
-            'season.is_open' => ['required', 'boolean', new OneSeasonOpen($this->season['is_open'] ?? false)],
         ];
     }
 
@@ -31,7 +30,8 @@ class Create extends Component
 
         $season = Season::create([
             'name' => $this->season['name'],
-            'dates' => $this->season['dates']
+            'dates' => $this->season['dates'],
+            'is_open' => 0,
         ]);
 
         return redirect()->route('admin.seasons.show', $season);

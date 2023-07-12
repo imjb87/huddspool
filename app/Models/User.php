@@ -23,7 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'team_id',
-        'is_admin',
+        'telephone',
+        'is_admin'
     ];
 
     /**
@@ -68,6 +69,29 @@ class User extends Authenticatable
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function framesWon()
+    {
+        return $this->hasMany(Frame::class, 'home_player_id');
+    }
+
+    public function framesLost()
+    {
+        return $this->hasMany(Frame::class, 'home_player_id')
+            ->where(function ($query) {
+                $query->whereColumn('home_score', '<', 'away_score');
+            })
+            ->orWhere(function ($query) {
+                $query->whereColumn('away_score', '<', 'home_score')
+                    ->where('away_player_id', $this->id);
+            });
+    }
+
+    public function framesPlayed()
+    {
+        return $this->hasMany(Frame::class, 'home_player_id')
+            ->orWhere('away_player_id', $this->id);
     }
 
 }

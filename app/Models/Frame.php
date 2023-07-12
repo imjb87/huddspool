@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Frame extends Model
 {
-    use HasFactory;
+    use HasFactory, \Awobaz\Compoships\Compoships;
 
     /**
      * The attributes that are mass assignable.

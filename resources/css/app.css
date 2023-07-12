@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ProseMirror {
+  height: 100%;
+}
+
+.ProseMirror:focus-visible {
+  outline: none;
+}

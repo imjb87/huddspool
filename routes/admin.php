@@ -17,9 +17,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin','auth']], functio
     Route::get('/venues/{venue}', \App\Http\Livewire\Admin\Venue\Show::class)->name('admin.venues.show');
 
     Route::get('/teams', \App\Http\Livewire\Admin\Team\Index::class)->name('admin.teams.index');
-    Route::get('/team/create', \App\Http\Livewire\Admin\Team\Create::class)->name('admin.teams.create');
-    Route::get('/team/edit/{team}', \App\Http\Livewire\Admin\Team\Edit::class)->name('admin.teams.edit');
-    Route::get('/team/{team}', \App\Http\Livewire\Admin\Team\Show::class)->name('admin.teams.show');
+    Route::get('/teams/create', \App\Http\Livewire\Admin\Team\Create::class)->name('admin.teams.create');
+    Route::get('/teams/edit/{team}', \App\Http\Livewire\Admin\Team\Edit::class)->name('admin.teams.edit');
+    Route::get('/teams/{team}', \App\Http\Livewire\Admin\Team\Show::class)->name('admin.teams.show');
 
     Route::get('/rulesets', \App\Http\Livewire\Admin\Ruleset\Index::class)->name('admin.rulesets.index');
     Route::get('/rulesets/create', \App\Http\Livewire\Admin\Ruleset\Create::class)->name('admin.rulesets.create');
@@ -39,5 +39,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin','auth']], functio
     Route::get('/fixtures/show/{fixture}', \App\Http\Livewire\Admin\Fixture\Show::class)->name('admin.fixtures.show');
 
     Route::get('/results/create/{fixture}', \App\Http\Livewire\Admin\Result\Create::class)->name('admin.results.create');
+
+    Route::get('/news', \App\Http\Livewire\Admin\News\Index::class)->name('admin.news.index');
+    Route::get('/news/create', \App\Http\Livewire\Admin\News\Create::class)->name('admin.news.create');
+    Route::get('/news/edit/{news}', \App\Http\Livewire\Admin\News\Edit::class)->name('admin.news.edit');
+    Route::get('/news/{news}', \App\Http\Livewire\Admin\News\Show::class)->name('admin.news.show');
 
 });

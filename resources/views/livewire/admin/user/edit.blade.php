@@ -1,6 +1,6 @@
 <div class="flex-1 xl:overflow-y-auto">
     <div class="mx-auto max-w-3xl py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Edit User</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Edit Player</h1>
         @if ($errors->any())
             <x-errors />
         @endif
@@ -39,16 +39,6 @@
                                 {{ $team->name }}
                             </option>
                         @endforeach
-                    </select>
-                </div>
-
-                <div class="sm:col-span-3">
-                    <label for="role" class="block text-sm font-medium leading-6 text-slate-900">Role</label>
-                    <select id="role" name="user.role"
-                        class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
-                        wire:model="user.role">
-                        <option value="player">Player</option>
-                        <option value="captain">Captain</option>
                     </select>
                 </div>
 

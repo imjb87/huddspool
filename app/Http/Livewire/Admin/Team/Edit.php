@@ -13,12 +13,14 @@ class Edit extends Component
 
     protected $rules = [
         'team.name' => 'required|string',
-        'team.venue_id' => 'required|string',
+        'team.venue_id' => 'required|integer',
+        'team.captain_id' => 'nullable|integer',
     ];
 
     protected $messages = [
         'team.name.required' => 'The team name is required',
         'team.venue_id.required' => 'The venue is required',
+        'team.captain_id.integer' => 'A captain must be selected',
     ];
 
     public function mount(Team $team)

@@ -36,7 +36,7 @@
                                                     </div>
                                                     <div class="hidden md:block">
                                                         <div>
-                                                            <p class="text-sm text-gray-900">
+                                                            <p class="text-sm text-gray-500 truncate">
                                                                 {{ $venue->address }}
                                                             </p>
                                                         </div>

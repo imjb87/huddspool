@@ -11,10 +11,12 @@ class Edit extends Component
 
     protected $rules = [
         'ruleset.name' => 'required|string',
+        'ruleset.content' => 'required|string',
     ];
 
     protected $messages = [
         'ruleset.name.required' => 'The ruleset name is required',
+        'ruleset.content.required' => 'The ruleset content is required',
     ];
 
     public function save()

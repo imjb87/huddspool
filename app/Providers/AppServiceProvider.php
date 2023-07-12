@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Ruleset;
+use Illuminate\Support\Facades\Vite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $rulesets = Ruleset::all();
+        view()->share('rulesets', $rulesets);
+
+        Vite::useScriptTagAttributes([
+            'defer' => true, // Specify an attribute without a value...
+        ]);        
     }
 }

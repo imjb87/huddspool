@@ -1,6 +1,6 @@
 <div>
     <div
-        class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+        class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
         <div class="flex items-center space-x-5">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
@@ -41,16 +41,12 @@
             <section>
                 <div class="bg-white shadow sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
-                        <h2 class="text-lg font-medium leading-6 text-gray-900">User
+                        <h2 class="text-lg font-medium leading-6 text-gray-900">Player
                             Information</h2>
                         <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and team status.</p>
                     </div>
                     <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
                         <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                            <div class="sm:col-span-1">
-                                <dt class="text-sm font-medium text-gray-500">Role</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ ucfirst($user->role) }}</dd>
-                            </div>
                             <div class="sm:col-span-1">
                                 <dt class="text-sm font-medium text-gray-500">Email address</dt>
                                 <dd class="mt-1 text-sm text-gray-900">{{ $user->email }}</dd>

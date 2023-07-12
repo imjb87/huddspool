@@ -1,6 +1,6 @@
 <div>
     <div
-        class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+        class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
         <div class="flex items-center space-x-5">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
@@ -66,14 +66,7 @@
                                                         <div>
                                                             <p class="truncate text-sm font-medium text-gray-600">
                                                                 {{ $player->name }}</p>
-                                                        </div>
-                                                        <div class="hidden md:block">
-                                                            <div>
-                                                                <p class="text-sm text-gray-900">
-                                                                    {{ ucfirst($player->role) }}
-                                                                </p>
-                                                            </div>
-                                                        </div>                                                
+                                                        </div>                              
                                                     </div>
                                                 </div>
                                                 <div>

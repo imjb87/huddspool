@@ -14,11 +14,21 @@
                 </div>
 
                 <div class="sm:col-span-6">
-                    <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Venue</label>
+                    <label for="venue_id" class="block text-sm font-medium leading-6 text-slate-900">Venue</label>
                     <select name="venue_id" id="venue_id" wire:model="team.venue_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
                         <option value="">Select a venue</option>
                         @foreach ($venues as $venue)
                             <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="sm:col-span-6">
+                    <label for="captain_id" class="block text-sm font-medium leading-6 text-slate-900">Captain</label>
+                    <select name="captain_id" id="captain_id" wire:model="team.captain_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
+                        <option value="">Select a captain</option>
+                        @foreach ($team->players as $player)
+                            <option value="{{ $player->id }}">{{ $player->name }}</option>
                         @endforeach
                     </select>
                 </div>

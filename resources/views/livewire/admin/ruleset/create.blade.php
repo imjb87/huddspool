@@ -13,6 +13,11 @@
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                 </div>
 
+                <div class="sm:col-span-6">
+                    <label for="content" class="block text-sm font-medium leading-6 text-slate-900">Content</label>
+                    <x-editor id="content" name="content" wire:model="ruleset.content" />
+                </div>
+
             </div>
 
             <div class="flex gap-x-3 pt-8 justify-end">

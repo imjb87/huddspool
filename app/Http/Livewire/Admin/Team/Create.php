@@ -13,12 +13,11 @@ class Create extends Component
 
     protected $rules = [
         'team.name' => 'required|string',
-        'team.venue_id' => 'required|string',
+        'team.venue_id' => 'integer',
     ];
 
     protected $messages = [
         'team.name.required' => 'The team name is required',
-        'team.venue_id.required' => 'The venue is required',
     ];
 
     public function mount()
@@ -32,7 +31,7 @@ class Create extends Component
 
         $team = Team::create([
             'name' => $this->team['name'],
-            'venue_id' => $this->team['venue_id']
+            'venue_id' => $this->team['venue_id'] ?? null,
         ]);
 
         return redirect()->route('admin.teams.show', $team);

@@ -16,5 +16,11 @@ class Ruleset extends Model
      */
     protected $fillable = [
         'name',
+        'content',
     ];
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class);
+    }
 }

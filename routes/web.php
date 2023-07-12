@@ -14,9 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', \App\Http\Controllers\HomeController::class);
+
+Route::get('/tables/{ruleset}', \App\Http\Livewire\Table\Index::class)->name('table.index');
+Route::get('/teams/{team}', \App\Http\Livewire\Team\Show::class)->name('team.show');
+Route::get('/players/averages/{ruleset}', \App\Http\Livewire\Player\Index::class)->name('player.index');
+Route::get('/players/{player}', \App\Http\Livewire\Player\Show::class)->name('player.show');
+Route::get('/venues', \App\Http\Livewire\Venue\Index::class)->name('venue.index');
+Route::get('/venues/{venue}', \App\Http\Livewire\Venue\Show::class)->name('venue.show');
+Route::get('/fixtures-and-results/{ruleset}', \App\Http\Livewire\Fixture\Index::class)->name('fixture.index');
+Route::get('/fixtures/{fixture}', \App\Http\Livewire\Fixture\Show::class)->name('fixture.show');
+Route::get('/results/create/{fixture}', \App\Http\Livewire\Result\Create::class)->name('result.create');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

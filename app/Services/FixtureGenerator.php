@@ -38,9 +38,11 @@ class FixtureGenerator
                     'home_team_name' => $home->name,
                     'away_team_id' => $away->id,
                     'away_team_name' => $away->name,
+                    'season_id' => $season->id,
                     'section_id' => $section->id,
-                    'venue_id' => $home->venue_id,
-                    'venue_name' => $home->venue->name,
+                    'venue_id' => $home->venue_id ?? null,
+                    'venue_name' => $home->venue->name ?? null,
+                    'ruleset_id' => $section->ruleset_id,
                 ];
             }
         }

@@ -11,15 +11,19 @@
         <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>
 
         <!-- Scripts -->
+        @livewireStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <body class="font-sans antialiased [&_[x-cloak]]:hidden">
+        <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
             <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
+            @include('layouts.footer')
         </div>
+        @livewireScripts
     </body>
 </html>

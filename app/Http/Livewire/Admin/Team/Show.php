@@ -16,6 +16,8 @@ class Show extends Component
 
     public function delete()
     {
+        $this->team->players()->update(['team_id' => null]);
+
         $this->team->delete();
 
         return redirect()->route('admin.teams.index');

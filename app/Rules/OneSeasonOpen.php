@@ -28,7 +28,7 @@ class OneSeasonOpen implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->season->is_open) {
+        if ($this->season['is_open']) {
             $seasons = Season::where('is_open', true)->where('id', '!=', $this->season['id'])->get();
             if ($seasons->count() > 0) {
                 return false;

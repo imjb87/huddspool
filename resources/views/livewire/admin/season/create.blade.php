@@ -13,34 +13,6 @@
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                 </div>
 
-                <div class="sm:col-span-6">
-                    <label for="is_open" class="block text-sm font-medium leading-6 text-slate-900">Status</label>
-                    <select id="is_open" name="is_open" wire:model="season.is_open"
-                        class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
-                        <option value="1">Open</option>
-                        <option value="0">Closed</option>
-                    </select>
-                </div>
-
-                <div class="flex items-center justify-between sm:col-span-6">
-                    <span class="flex flex-grow flex-col">
-                        <span class="text-sm font-medium leading-6 text-gray-900" id="status-label">Status</span>
-                        <span class="text-sm text-gray-500" id="availability-description">This season is currently
-                            {{ $season->is_active ? 'active' : 'inactive' }}.</span>
-                    </span>
-                    <button type="button"
-                        class="bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
-                        role="switch"
-                        wire:model="season.is_active"
-                        wire:class="{ 'bg-indigo-600': {{ $season->is_active }}, 'bg-gray-200': !{{ $season->is_active }} }"
-                        >
-                        <span aria-hidden="true"
-                            wire:class="{ 'translate-x-5': {{ $season->is_active }}, 'translate-x-0': !{{ $season->is_active }} }"
-                            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                    </button>
-                </div>
-
-
                 @for ($i = 1; $i <= 18; $i++)
                     <div class="sm:col-span-3">
                         <label for="dates{{ $i }}"
