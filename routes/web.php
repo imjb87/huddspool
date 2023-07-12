@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';
+
 Route::get('/', \App\Http\Controllers\HomeController::class);
 
 Route::get('/tables/{ruleset}', \App\Http\Livewire\Table\Index::class)->name('table.index');
@@ -25,16 +28,3 @@ Route::get('/venues/{venue}', \App\Http\Livewire\Venue\Show::class)->name('venue
 Route::get('/fixtures-and-results/{ruleset}', \App\Http\Livewire\Fixture\Index::class)->name('fixture.index');
 Route::get('/fixtures/{fixture}', \App\Http\Livewire\Fixture\Show::class)->name('fixture.show');
 Route::get('/results/create/{fixture}', \App\Http\Livewire\Result\Create::class)->name('result.create');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class IsAdmin
@@ -21,7 +20,7 @@ class IsAdmin
                 return $next($request);
          }
     
-        return route('login');
+        return redirect('/');
     }
     
 }
