@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Ruleset;
-use Doctrine\DBAL\Schema\Schema;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if( Schema::hasTable('rulesets') ) {
+        if(Schema::hasTable('rulesets')) {
             $rulesets = Ruleset::all();
             view()->share('rulesets', $rulesets);
         } else {
