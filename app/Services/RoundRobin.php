@@ -365,14 +365,14 @@ class RoundRobin {
     private function venue_clash_fix($array)
     {
         $homeVenues = array();
-
+    
         // Find home teams with the same venue ID
         foreach ($array as &$subarray) {
             $teamId = $subarray[0];
-
+    
             // Retrieve the venue ID for the team (assuming Laravel relationship)
             $venueId = Team::find($teamId)->venue_id;
-
+    
             if (isset($homeVenues[$venueId])) {
                 // Teams with the same venue ID found, swap key 0 and key 1
                 $subarray = array($subarray[1], $subarray[0]);
@@ -380,22 +380,36 @@ class RoundRobin {
                 $homeVenues[$venueId] = true;
             }
         }
-
+    
         $awayVenues = array();
-
+    
         // Find away teams with the same venue ID
         foreach ($array as &$subarray) {
             $teamId = $subarray[1];
-
+    
             // Retrieve the venue ID for the team (assuming Laravel relationship)
             $venueId = Team::find($teamId)->venue_id;
-
+    
             if (isset($awayVenues[$venueId])) {
                 // Teams with the same venue ID found, swap key 0 and key 1
                 $subarray = array($subarray[1], $subarray[0]);
             } else {
                 $awayVenues[$venueId] = true;
             }
+        }
+    
+        // Check if all home venues are unique
+        $homeVenueUnique = (count($homeVenues) === count($array));
+
+        if (!$homeVenueUnique) {
+            return $this->venue_clash_fix($array);
+        }
+
+        // Check if all away venues are unique
+        $awayVenueUnique = (count($awayVenues) === count($array));
+
+        if (!$awayVenueUnique) {
+            return $this->venue_clash_fix($array);
         }
 
         return $array;
