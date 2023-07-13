@@ -28,7 +28,12 @@ class FixtureGenerator
                 $away_key = $num_rounds - $index - $round +
                     (($index != 0) && ($num_rounds - $index - $round <= 0)) * $num_rounds;
 
-                $rounds[$round][] = array($teams[$local_key], $teams[$away_key]);
+                // If round is even swap places
+                if ($round % 2 == 0) {
+                    $rounds[$round][] = array($teams[$local_key], $teams[$away_key]);
+                } else {
+                    $rounds[$round][] = array($teams[$away_key], $teams[$local_key]);
+                }
             }
         }
 
