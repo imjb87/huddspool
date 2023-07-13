@@ -35,6 +35,16 @@ class FixtureGenerator
                     $rounds[$round][] = array($teams[$away_key], $teams[$local_key]);
                 }
             }
+
+            $venues = [];
+            foreach ($rounds[$round] as $fixture) {
+                if (in_array($fixture[0]['venue'], $venues)) {
+                    $key = array_search($fixture[0]['venue'], $venues);
+                    $rounds[$round][$key] = array_reverse($rounds[$round][$key]);
+                } else {
+                    $venues[] = $fixture[0]['venue'];
+                }
+            }
         }
 
         // Now double the rounds for return leg
@@ -57,7 +67,13 @@ class FixtureGenerator
     {
         $section = $this->section;
         $season = $section->season;
-        $teams = $section->teams->pluck('id')->toArray();
+        // get team id and venue id as an array for each team
+        $teams = $section->teams->map(function ($team) {
+            return [
+                'id' => $team->id,
+                'venue' => $team->venue_id,
+            ];
+        })->toArray();
         $fullSchedule = [];
 
         $schedule = $this->round_robin($teams);
@@ -65,8 +81,8 @@ class FixtureGenerator
         foreach ($schedule as $week => $fixtures) {
             foreach ($fixtures as $fixture) {
 
-                $home = $section->teams->find($fixture[0]);
-                $away = $section->teams->find($fixture[1]);
+                $home = $section->teams->find($fixture[0]['id']);
+                $away = $section->teams->find($fixture[1]['id']);
 
                 $fullSchedule[$week + 1][] = [
                     'week' => $week + 1,
