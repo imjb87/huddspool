@@ -353,32 +353,35 @@ class RoundRobin {
      */
     private function save_matchday($is_odd) {
         for ($i = 0; $i < count($this->teams_1); $i++) {
-            $team1 = Team::find($this->teams_1[$i]);
-            $team2 = Team::find($this->teams_2[$i]);
-
-            $venues_tmp = array();
-
-            if ($is_odd) {
-                if (!in_array($team1->venue_id, $venues_tmp)) {
-                    $matches_tmp[] = array($this->teams_1[$i], $this->teams_2[$i]);
-                    $venues_tmp[] = $team1->venue_id;
-                } else {
-                    $matches_tmp[] = array($this->teams_2[$i], $this->teams_1[$i]);
-                    $venues_tmp[] = $team2->venue_id;
-                }
-            } else {
-                if (!in_array($team2->venue_id, $venues_tmp)) {
-                    $matches_tmp[] = array($this->teams_2[$i], $this->teams_1[$i]);
-                    $venues_tmp[] = $team2->venue_id;
-                } else {
-                    $matches_tmp[] = array($this->teams_1[$i], $this->teams_2[$i]);
-                    $venues_tmp[] = $team1->venue_id;
-                }
-            }
+            $matches_tmp[] = $is_odd ? array($this->teams_1[$i], $this->teams_2[$i]) : array($this->teams_2[$i], $this->teams_1[$i]);            
         }
+
+        $matches_tmp = $this->venue_clash_fix($matches_tmp);
 
         $this->matches[] = $matches_tmp;
         return true;
+    }
+
+    private function venue_clash_fix($array)
+    {
+        $venues = array();
+
+        // Find teams with the same venue ID
+        foreach ($array as &$subarray) {
+            $teamId = $subarray[0];
+
+            // Retrieve the venue ID for the team (assuming Laravel relationship)
+            $venueId = Team::find($teamId)->venue_id;
+
+            if (isset($venues[$venueId])) {
+                // Teams with the same venue ID found, swap key 0 and key 1
+                $subarray = array($subarray[1], $subarray[0]);
+            } else {
+                $venues[$venueId] = true;
+            }
+        }
+
+        return $array;
     }
 
     /**
