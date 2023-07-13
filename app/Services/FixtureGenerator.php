@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Section;
+use App\Services\RoundRobin;
 
 class FixtureGenerator
 {
@@ -13,76 +14,23 @@ class FixtureGenerator
         $this->section = $section;
     }
 
-    function round_robin($teams)
-    {
-        $num_teams = count($teams);
-        $num_rounds = $num_teams - 1;
-
-        $rounds = array();
-
-        for ($round = 0; $round < $num_rounds; $round++) {
-            for ($index = 0; $index < $num_teams / 2; $index++) {
-                $local_key = ($index != 0) * ($index - $round) +
-                    (($index != 0) && (($index != 0) * ($index - $round) <= 0)) * $num_rounds;
-
-                $away_key = $num_rounds - $index - $round +
-                    (($index != 0) && ($num_rounds - $index - $round <= 0)) * $num_rounds;
-
-                // If round is even swap places
-                if ($round % 2 == 0) {
-                    $rounds[$round][] = array($teams[$local_key], $teams[$away_key]);
-                } else {
-                    $rounds[$round][] = array($teams[$away_key], $teams[$local_key]);
-                }
-            }
-
-            $venues = [];
-            foreach ($rounds[$round] as $fixture) {
-                if (in_array($fixture[0]['venue'], $venues)) {
-                    $key = array_search($fixture[0]['venue'], $venues);
-                    $rounds[$round][$key] = array_reverse($rounds[$round][$key]);
-                } else {
-                    $venues[] = $fixture[0]['venue'];
-                }
-            }
-        }
-
-        // Now double the rounds for return leg
-        for ($round = 0; $round < $num_rounds; $round++) {
-            for ($index = 0; $index < $num_teams / 2; $index++) {
-                $local_key = ($index != 0) * ($index - $round) +
-                    (($index != 0) && (($index != 0) * ($index - $round) <= 0)) * $num_rounds;
-
-                $away_key = $num_rounds - $index - $round +
-                    (($index != 0) && ($num_rounds - $index - $round <= 0)) * $num_rounds;
-
-                $rounds[$round + $num_rounds][] = array($teams[$away_key], $teams[$local_key]);
-            }
-        }
-
-        return $rounds;
-    }
-
     public function generate()
     {
         $section = $this->section;
         $season = $section->season;
         // get team id and venue id as an array for each team
-        $teams = $section->teams->map(function ($team) {
-            return [
-                'id' => $team->id,
-                'venue' => $team->venue_id,
-            ];
-        })->toArray();
+        $teams = $section->teams->pluck('id')->toArray();
         $fullSchedule = [];
 
-        $schedule = $this->round_robin($teams);
+        $roundrobin = new RoundRobin($teams);
+        $roundrobin->create_matches();
+        $schedule = $roundrobin->return_matches();
 
         foreach ($schedule as $week => $fixtures) {
             foreach ($fixtures as $fixture) {
 
-                $home = $section->teams->find($fixture[0]['id']);
-                $away = $section->teams->find($fixture[1]['id']);
+                $home = $section->teams->find($fixture[0]);
+                $away = $section->teams->find($fixture[1]);
 
                 $fullSchedule[$week + 1][] = [
                     'week' => $week + 1,
