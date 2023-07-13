@@ -280,10 +280,10 @@ class RoundRobin {
         if (!$this->matchday_count) {
             //no specific matchday count
             for ($i = 2; $i < (count($this->teams_1) * 2); $i++){
-                $this->save_matchday();
+                $this->save_matchday($i % 2);
                 $this->rotate();
             }
-            $this->save_matchday();
+            $this->save_matchday($i % 2);
         }
         else {
             if ($this->matchday_count < 0) {
@@ -337,7 +337,7 @@ class RoundRobin {
             }
         }
         
-        $this->matches = array_map(null, $this->matches, $return_matches);
+        $this->matches = array_merge($this->matches, $return_matches);
 
         return $this->matches;
     }
@@ -350,9 +350,9 @@ class RoundRobin {
      * @access private
      * @return true;
      */
-    private function save_matchday() {
+    private function save_matchday($is_odd) {
         for ($i = 0; $i < count($this->teams_1); $i++) {
-            $matches_tmp[] = array($this->teams_1[$i], $this->teams_2[$i]);
+            $matches_tmp[] = $is_odd ? array($this->teams_1[$i], $this->teams_2[$i]) : array($this->teams_2[$i], $this->teams_1[$i]);
         }
         $this->matches[] = $matches_tmp;
         return true;
