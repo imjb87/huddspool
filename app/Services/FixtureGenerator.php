@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Section;
-use App\Services\Fixture;
+use Laravel\RoundRobin\RoundRobin;
 
 class FixtureGenerator
 {
@@ -21,9 +21,10 @@ class FixtureGenerator
         $teams = $section->teams->pluck('id')->toArray();
         $fullSchedule = [];
 
-        $fix = new Fixture($teams);
-
-        $schedule = $fix->getSchedule();
+        $roundrobin = new RoundRobin($teams);
+        $roundrobin->doNotShuffle();
+        $roundrobin->doubleRoundRobin();
+        $schedule = $roundrobin->build();
 
         foreach ($schedule as $week => $fixtures) {
             foreach ($fixtures as $fixture) {
@@ -31,9 +32,9 @@ class FixtureGenerator
                 $home = $section->teams->find($fixture[0]);
                 $away = $section->teams->find($fixture[1]);
 
-                $fullSchedule[$week + 1][] = [
-                    'week' => $week + 1,
-                    'fixture_date' => $season->dates[$week],
+                $fullSchedule[$week][] = [
+                    'week' => $week,
+                    'fixture_date' => $season->dates[$week-1],
                     'home_team_id' => $home->id,
                     'home_team_name' => $home->name,
                     'away_team_id' => $away->id,
