@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Section;
-use Laravel\RoundRobin\RoundRobin;
 
 class FixtureGenerator
 {
@@ -14,6 +13,41 @@ class FixtureGenerator
         $this->section = $section;
     }
 
+    function round_robin($teams)
+    {
+        $num_teams = count($teams);
+        $num_rounds = $num_teams - 1;
+
+        $rounds = array();
+
+        for ($round = 0; $round < $num_rounds; $round++) {
+            for ($index = 0; $index < $num_teams / 2; $index++) {
+                $local_key = ($index != 0) * ($index - $round) +
+                    (($index != 0) && (($index != 0) * ($index - $round) <= 0)) * $num_rounds;
+
+                $away_key = $num_rounds - $index - $round +
+                    (($index != 0) && ($num_rounds - $index - $round <= 0)) * $num_rounds;
+
+                $rounds[$round][] = array($teams[$local_key], $teams[$away_key]);
+            }
+        }
+
+        // Now double the rounds for return leg
+        for ($round = 0; $round < $num_rounds; $round++) {
+            for ($index = 0; $index < $num_teams / 2; $index++) {
+                $local_key = ($index != 0) * ($index - $round) +
+                    (($index != 0) && (($index != 0) * ($index - $round) <= 0)) * $num_rounds;
+
+                $away_key = $num_rounds - $index - $round +
+                    (($index != 0) && ($num_rounds - $index - $round <= 0)) * $num_rounds;
+
+                $rounds[$round + $num_rounds][] = array($teams[$away_key], $teams[$local_key]);
+            }
+        }
+
+        return $rounds;
+    }
+
     public function generate()
     {
         $section = $this->section;
@@ -21,10 +55,7 @@ class FixtureGenerator
         $teams = $section->teams->pluck('id')->toArray();
         $fullSchedule = [];
 
-        $roundrobin = new RoundRobin($teams);
-        $roundrobin->doNotShuffle();
-        $roundrobin->doubleRoundRobin();
-        $schedule = $roundrobin->build();
+        $schedule = $this->round_robin($teams);
 
         foreach ($schedule as $week => $fixtures) {
             foreach ($fixtures as $fixture) {
@@ -32,9 +63,9 @@ class FixtureGenerator
                 $home = $section->teams->find($fixture[0]);
                 $away = $section->teams->find($fixture[1]);
 
-                $fullSchedule[$week][] = [
-                    'week' => $week,
-                    'fixture_date' => $season->dates[$week-1],
+                $fullSchedule[$week + 1][] = [
+                    'week' => $week + 1,
+                    'fixture_date' => $season->dates[$week],
                     'home_team_id' => $home->id,
                     'home_team_name' => $home->name,
                     'away_team_id' => $away->id,
@@ -50,5 +81,4 @@ class FixtureGenerator
 
         return $fullSchedule;
     }
-       
 }
