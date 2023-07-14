@@ -10,22 +10,7 @@
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 flex gap-x-3">
             <a href="{{ route('admin.sections.show', $section) }}"
-                class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
-            <button type="button"
-                class="rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 inline-flex items-center gap-x-2"
-                wire:click="save"
-                wire:loading.attr="disabled"
-                wire:target="save"
-                >
-                <span wire:loading wire:target="save" class="animate-spin">
-                    <svg class="h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M12 6v6l4 2"></path>
-                    </svg>
-                </span>
-                Save
-            </button>
+                class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Finish</a>
         </div>
     </div>
     <div class="mt-8 flow-root">
@@ -44,7 +29,7 @@
                             <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Venue
                             </th>
                             <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            </th>                            
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white">
@@ -73,7 +58,7 @@
                                             wire:click="swapFixture({{ $week }}, {{ $id }})"
                                             >
                                             Swap
-                                    </td>                                            
+                                    </td>    
                                 </tr>
                             @endforeach
                         @endforeach

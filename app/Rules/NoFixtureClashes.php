@@ -9,15 +9,17 @@ class NoFixtureClashes implements Rule
 {
     public $clashes;
     public $schedule;
+    public $season_id;
 
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($schedule)
+    public function __construct($schedule, $season_id)
     {
         $this->schedule = $schedule;
+        $this->season_id = $season_id;
     }
 
     /**
@@ -29,7 +31,7 @@ class NoFixtureClashes implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->clashes = Fixture::where('section_id', $value)
+        $this->clashes = Fixture::where('season_id', $this->season_id)
             ->where(function ($query) {
                 foreach ($this->schedule as $week => $fixtures) {
                     foreach ($fixtures as $fixture) {

@@ -37,6 +37,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin']], function () {
 
     Route::get('/fixtures/create/{section}', \App\Http\Livewire\Admin\Fixture\Create::class)->name('admin.fixtures.create');
     Route::get('/fixtures/show/{fixture}', \App\Http\Livewire\Admin\Fixture\Show::class)->name('admin.fixtures.show');
+    Route::get('/fixtures/edit/{section}', \App\Http\Livewire\Admin\Fixture\Edit::class)->name('admin.fixtures.edit');
 
     Route::get('/results/create/{fixture}', \App\Http\Livewire\Admin\Result\Create::class)->name('admin.results.create');
 
