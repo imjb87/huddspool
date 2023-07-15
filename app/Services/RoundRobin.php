@@ -356,7 +356,7 @@ class RoundRobin {
             $matches_tmp[] = $is_odd ? array($this->teams_1[$i], $this->teams_2[$i]) : array($this->teams_2[$i], $this->teams_1[$i]);            
         }
 
-        $matches_tmp = $this->venue_clash_fix($matches_tmp);
+        //$matches_tmp = $this->venue_clash_fix($matches_tmp);
 
         $this->matches[] = $matches_tmp;
         return true;
