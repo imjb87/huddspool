@@ -63,8 +63,8 @@
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                     <a class="hover:underline"
-                                                        href="{{ route('player.show', $team->captain->id) }}">
-                                                        {{ $team->captain->name }}
+                                                        href="{{ route('player.show', $team->captain->id ?? 0) }}">
+                                                        {{ $team->captain?->name }}
                                                     </a>
                                                 </td>
                                             </tr>

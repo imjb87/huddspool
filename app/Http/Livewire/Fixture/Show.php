@@ -20,7 +20,7 @@ class Show extends Component
 
         if( auth()->check() ) {
             $user_id = auth()->user()->id;
-            $this->isCaptain = $this->fixture->homeTeam->captain->id == $user_id || $this->fixture->awayTeam->captain->id == $user_id;
+            $this->isCaptain = $this->fixture->homeTeam->captain?->id == $user_id || $this->fixture->awayTeam->captain?->id == $user_id;
         }
     }
 

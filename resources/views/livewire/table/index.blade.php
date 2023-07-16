@@ -12,8 +12,8 @@
                 @foreach ($sections as $section)
                     <section>
                         <div class="bg-white shadow-md rounded-md sm:rounded-lg overflow-hidden">
-                            <div class="px-4 py-5 bg-white">
-                                <h2 class="text-lg font-medium leading-6 text-gray-900">{{ $section->name }}</h2>
+                            <div class="px-4 py-4 bg-green-700">
+                                <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
                             </div>
                             <div class="border-t border-gray-200">
                                 <table class="w-full max-w-full overflow-hidden">
@@ -27,15 +27,15 @@
                                                 class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900">
                                                 Team</th>
                                             <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">P
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">Pl
                                             </th>
                                             <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">W
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">W
                                             </th>
                                             <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">D</th>
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">D</th>
                                             <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">L</th>
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">L</th>
                                             <th scope="col"
                                                 class="px-2 py-2 text-center text-sm font-semibold text-gray-900">Pts</th>
                                         </tr>
@@ -49,19 +49,22 @@
                                                 </td>
                                                 <td
                                                     class="px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate max-w-[12ch] sm:max-w-[16ch] md:max-w-auto">
-                                                    <a class="hover:underline" href="{{ route('team.show', $team->id) }}">{{ $team->name }}</a>
+                                                    <a class="hover:underline {{ $team->shortname ? "hidden md:inline" : "" }}" href="{{ route('team.show', $team->id) }}">{{ $team->name }}</a>
+                                                    @if ($team->shortname)
+                                                        <a class="md:hidden">{{ $team->shortname }}</span>
+                                                    @endif
                                                 </td>
                                                 <td
                                                     class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
                                                     {{ $team->played }}</td>
                                                 <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
                                                     {{ $team->wins }}</td>
                                                 <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
                                                     {{ $team->draws }}</td>
                                                 <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
                                                     {{ $team->losses }}</td>
                                                 <td
                                                     class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">

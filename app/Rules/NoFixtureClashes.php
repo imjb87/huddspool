@@ -16,10 +16,11 @@ class NoFixtureClashes implements Rule
      *
      * @return void
      */
-    public function __construct($schedule, $season_id)
+    public function __construct($schedule, $season_id, $section_id)
     {
         $this->schedule = $schedule;
         $this->season_id = $season_id;
+        $this->section_id = $section_id;
     }
 
     /**
@@ -32,6 +33,7 @@ class NoFixtureClashes implements Rule
     public function passes($attribute, $value)
     {
         $this->clashes = Fixture::where('season_id', $this->season_id)
+            ->where('section_id', '!=', $this->section_id)
             ->where(function ($query) {
                 foreach ($this->schedule as $week => $fixtures) {
                     foreach ($fixtures as $fixture) {
@@ -58,7 +60,7 @@ class NoFixtureClashes implements Rule
     {
         // List dates, venues and home team name for each clash
         return 'The following existing fixtures clash with this proposed schedule, you may ignore them if you wish:<ul class="list-disc space-y-1 pl-5 mt-2">' . $this->clashes->map(function ($clash) {
-            return '<li>Week ' . $clash->week . ': ' . $clash->homeTeam->name . ' v ' . $clash->awayTeam->name . ' at ' . $clash->venue->name . '</li>';
+            return '<li>Week ' . $clash->week . ': ' . $clash->homeTeam->name . ' v ' . $clash->awayTeam->name . ' at ' . $clash->venue->name . ' in ' . $clash->section->name . '</li>';
         })->implode('') . '</ul>';
     }
 }

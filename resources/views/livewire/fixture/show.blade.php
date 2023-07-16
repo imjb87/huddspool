@@ -10,7 +10,7 @@
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3 self-start flex flex-col gap-y-6">
-                    @if ($isCaptain && !$fixture->result && $fixture->fixture_date->lte('2023-08-08'))
+                    @if ($isCaptain && !$fixture->result && $fixture->fixture_date->lte(now()))
                     <a href="{{ route('result.create', $fixture->id)}}" class="block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
                         Submit Result
                     </a>

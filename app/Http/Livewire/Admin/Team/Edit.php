@@ -13,6 +13,7 @@ class Edit extends Component
 
     protected $rules = [
         'team.name' => 'required|string',
+        'team.shortname' => 'nullable|string',
         'team.venue_id' => 'required|integer',
         'team.captain_id' => 'nullable|integer',
     ];

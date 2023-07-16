@@ -36,7 +36,7 @@ class SectionShow extends Component
         $this->totalPages = ceil($totalPlayers->total_players / $perPage);
 
         $this->players = DB::select(
-            'SELECT users.*
+            'SELECT users.id, users.name
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.home_score ELSE frames.away_score END) AS total_score
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.away_score ELSE frames.home_score END) AS total_against
             , COUNT(frames.id) AS total_frames
@@ -46,7 +46,7 @@ class SectionShow extends Component
             JOIN fixtures ON results.fixture_id = fixtures.id
             JOIN sections ON fixtures.section_id = sections.id
             WHERE sections.id = ?
-            GROUP BY users.id
+            GROUP BY users.id, users.name
             ORDER BY total_score DESC, total_frames DESC, users.name ASC
             LIMIT ?
             OFFSET ?',

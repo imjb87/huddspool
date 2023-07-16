@@ -13,6 +13,7 @@ class Create extends Component
 
     protected $rules = [
         'team.name' => 'required|string',
+        'team.shortname' => 'nullable|string',
         'team.venue_id' => 'integer',
     ];
 
@@ -22,7 +23,7 @@ class Create extends Component
 
     public function mount()
     {
-        $this->venues = Venue::all();
+        $this->venues = Venue::orderByRaw('REPLACE(name, "The ", "")')->get();
     }
 
     public function save()
@@ -31,6 +32,7 @@ class Create extends Component
 
         $team = Team::create([
             'name' => $this->team['name'],
+            'shortname' => $this->team['shortname'] ?? null,
             'venue_id' => $this->team['venue_id'] ?? null,
         ]);
 

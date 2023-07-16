@@ -170,6 +170,9 @@
           </div>
           <div class="py-6">
             @if (@auth()->user())
+            @if (auth()->user()->team)
+              <a href="{{ route('team.show', auth()->user()->team->id) }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your team</a>
+            @endif
             <form method="POST" action="{{ route('logout') }}">
               @csrf
               <a href="route('logout')" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"

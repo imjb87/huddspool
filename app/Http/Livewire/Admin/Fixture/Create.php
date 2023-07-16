@@ -17,7 +17,7 @@ class Create extends Component
 
     protected function rules()
     {
-        return ['schedule' => [new NoFixtureClashes($this->schedule, $this->section->season_id)]];
+        return ['schedule' => [new NoFixtureClashes($this->schedule, $this->section->season_id, $this->section->id)]];
     }
 
     public function mount(Section $section)
