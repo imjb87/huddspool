@@ -11,7 +11,7 @@
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3 self-start flex flex-col gap-y-6">
                     @if ($isCaptain && !$fixture->result && $fixture->fixture_date->lte(now()))
-                    <a href="{{ route('result.create', $fixture->id)}}" class="block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
+                    <a href="{{ route('result.create', $fixture->id)}}" class="block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
                         Submit Result
                     </a>
                     @endif
@@ -124,8 +124,8 @@
                     </div>
                     @else                    
                     <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">{{ $fixture->homeTeam->name }} Players</h2>
+                        <div class="px-4 py-4 sm:px-6 bg-green-700">
+                            <h2 class="text-sm font-medium leading-6 text-white">{{ $fixture->homeTeam->name }} Players</h2>
                         </div>
                         <div class="border-t border-gray-200">
                             <div class="overflow-hidden">
@@ -155,8 +155,8 @@
                         </div>
                     </div>         
                     <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">{{ $fixture->awayTeam->name }} Players</h2>
+                        <div class="px-4 py-4 sm:px-6 bg-green-700">
+                            <h2 class="text-sm font-medium leading-6 text-white">{{ $fixture->awayTeam->name }} Players</h2>
                         </div>
                         <div class="border-t border-gray-200">
                             <div class="overflow-hidden">

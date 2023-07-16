@@ -35,8 +35,8 @@
                         </dl>
                     </div>
                     <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">Teams</h2>
+                        <div class="px-4 py-4 lg:px-6 bg-green-700">
+                            <h2 class="text-sm font-medium leading-6 text-white">Teams</h2>
                         </div>
                         <div class="border-t border-gray-200">
                             <div class="overflow-hidden">
