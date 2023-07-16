@@ -51,7 +51,7 @@
                                                     class="px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate max-w-[12ch] sm:max-w-[16ch] md:max-w-auto">
                                                     <a class="hover:underline {{ $team->shortname ? "hidden md:inline" : "" }}" href="{{ route('team.show', $team->id) }}">{{ $team->name }}</a>
                                                     @if ($team->shortname)
-                                                        <a class="md:hidden">{{ $team->shortname }}</span>
+                                                        <a class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
                                                     @endif
                                                 </td>
                                                 <td

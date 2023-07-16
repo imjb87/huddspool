@@ -4,7 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Huddersfield &amp; District Tuesday Night Pool League</title>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+      
+            gtag('config', 'G-620MNWY15S');
+        </script>    
 
         <!-- Fonts -->
         <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>

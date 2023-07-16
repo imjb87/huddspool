@@ -85,9 +85,9 @@
                             </dd>
                         </div>
                     </dl>
-                    <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">Players</h2>
+                    <div class="bg-green-700 shadow rounded-md sm:rounded-lg overflow-hidden">
+                        <div class="px-4 py-4">
+                            <h2 class="text-sm font-medium leading-6 text-white">Players</h2>
                         </div>
                         <div class="border-t border-gray-200">
                             <div class="overflow-hidden">
@@ -113,8 +113,8 @@
                 </div>
                 <section class="w-full lg:w-2/3">
                     <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">Fixtures &amp; Results</h2>
+                        <div class="px-4 py-4 sm:px-6 bg-green-700">
+                            <h2 class="text-sm font-medium leading-6 text-white">Fixtures &amp; Results</h2>
                         </div>
                         <div class="border-t border-gray-200 h-full flex flex-col">
                             <div class="min-w-full overflow-hidden">
@@ -130,8 +130,12 @@
                                 <div class="bg-white">
                                     @foreach ($team->fixtures as $fixture)
                                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('fixture.show', $fixture) }}">
-                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12">
+                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? "hidden md:block" : "" }}">
                                                 {{ $fixture->homeTeam->name }}</div>
+                                            @if ($fixture->homeTeam->shortname)
+                                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
+                                                    {{ $fixture->homeTeam->shortname }}</div>
+                                            @endif
                                             @if ($fixture->result)
                                                 <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 text-right font-semibold w-1/12">
                                                     <span
@@ -147,8 +151,12 @@
                                                     {{ $fixture->fixture_date->format('d/m') }}
                                                 </div>
                                             @endif
-                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12">
+                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? "hidden md:block" : "" }}">
                                                 {{ $fixture->awayTeam->name }}</div>
+                                            @if ($fixture->awayTeam->shortname)
+                                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
+                                                    {{ $fixture->awayTeam->shortname }}</div>
+                                            @endif
                                         </a>
                                     @endforeach
                                 </div>

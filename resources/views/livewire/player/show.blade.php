@@ -70,9 +70,9 @@
                             </dd>
                         </div>
                     </dl>
-                    <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
-                        <div class="px-4 py-5 sm:px-6">
-                            <h2 class="text-lg font-medium leading-6 text-gray-900">Frames</h2>
+                    <div class="bg-green-700 shadow rounded-lg flex flex-col overflow-hidden">
+                        <div class="px-4 py-4">
+                            <h2 class="text-sm font-medium leading-6 text-white">Frames</h2>
                         </div>
                         <div class="border-gray-200 h-full flex flex-col">
                             <div class="min-w-full overflow-hidden">
