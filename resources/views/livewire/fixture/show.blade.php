@@ -190,4 +190,5 @@
             </div>
         </div>
     </div>
+    <x-logo-clouds />
 </div>

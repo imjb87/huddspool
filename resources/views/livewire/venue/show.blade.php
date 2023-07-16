@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-4">
                 <div class="w-full lg:w-1/3 flex flex-col gap-4">
                     <div class="rounded-lg bg-white shadow-sm ring-1 ring-gray-900/5">
