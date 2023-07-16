@@ -8,6 +8,13 @@
     </div>
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
+            <div class="my-4 sm:flex-none w-full lg:max-w-sm lg:ml-auto">
+                <div class="relative">
+                    <input type="text" name="search" id="search" wire:model="search"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        placeholder="Start typing to search..." />
+                </div>
+            </div>            
             <div class="overflow-hidden bg-white shadow rounded-md lg:rounded-lg">
                 <ul role="list" class="divide-y divide-gray-200">
                     @foreach ($venues as $venue)
@@ -42,9 +49,11 @@
                         </li>
                     @endforeach
                 </ul>
+                @if (count($venues) > 9)
                 <div class="p-4 lg:px-8">
                     {{ $venues->links() }}
                 </div>
+                @endif
             </div>
         </div>
     </div>
