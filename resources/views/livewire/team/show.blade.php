@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3 self-start flex flex-col gap-y-6">
                     <dl class="bg-white flex flex-wrap rounded-lg shadow-sm ring-1 ring-gray-900/5">
