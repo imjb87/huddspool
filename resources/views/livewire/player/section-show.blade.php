@@ -18,20 +18,28 @@
                     </div>
                 </div>
                 <div class="bg-white">
-                    @foreach ($players as $player)
-                        <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('player.show', $player->id) }}">
-                            <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-1/12 font-semibold">
-                                {{ $loop->iteration + ( ($page - 1) * 10 ) }}.</div>
-                            <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-5/12 font-semibold">
-                                {{ $player->name }}</div>
-                            <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                {{ $player->total_frames }}</div>
-                            <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                {{ $player->total_score }}</div>
-                            <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                {{ $player->total_against }}</div>
-                        </a>
-                    @endforeach
+                    <!-- if there are players, otherwise show empty state -->
+                    @if (count($players) == 0 )
+                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
+                            <h3 class="mt-2 text-sm font-semibold text-gray-900">No frames</h3>
+                            <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">There have been no frames played in this section yet. Please check back here again soon.</p>
+                        </div>
+                    @else 
+                        @foreach ($players as $player)
+                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('player.show', $player->id) }}">
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-1/12 font-semibold">
+                                    {{ $loop->iteration + ( ($page - 1) * 10 ) }}.</div>
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-5/12 font-semibold">
+                                    {{ $player->name }}</div>
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
+                                    {{ $player->total_frames }}</div>
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
+                                    {{ $player->total_score }}</div>
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
+                                    {{ $player->total_against }}</div>
+                            </a>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
