@@ -78,6 +78,11 @@
               <a href="{{ route('team.show', auth()->user()->team->id) }}" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your team</a>
           </div>
           @endif
+          @if (auth()->user()->is_admin)
+          <div class="py-1">
+              <a href="{{ route('admin.dashboard') }}" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Admin</a>
+          </div>
+          @endif
           <div class="py-1">
             <form method="POST" action="{{ route('logout') }}">
               @csrf            
