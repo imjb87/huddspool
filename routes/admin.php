@@ -8,6 +8,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin']], function () {
 
     Route::get('/users', \App\Http\Livewire\Admin\User\Index::class)->name('admin.users.index');
     Route::get('/users/create', \App\Http\Livewire\Admin\User\Create::class)->name('admin.users.create');
+    Route::get('/users/create/{team_id}', \App\Http\Livewire\Admin\User\Create::class)->name('admin.users.team.create');
     Route::get('/users/edit/{user}', \App\Http\Livewire\Admin\User\Edit::class)->name('admin.users.edit');
     Route::get('/users/{user}', \App\Http\Livewire\Admin\User\Show::class)->name('admin.users.show');
 

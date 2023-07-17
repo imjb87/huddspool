@@ -27,9 +27,11 @@ class Create extends Component
         'user.name.required' => 'The user name is required',
     ];
 
-    public function mount()
+    public function mount($team_id = null)
     {
         $this->teams = Team::orderBy('name')->get();
+
+        $this->user['team_id'] = $team_id;
     }
 
     public function save()
@@ -38,7 +40,11 @@ class Create extends Component
 
         $user = User::create($this->user);
 
-        return redirect()->route('admin.users.show', $user);
+        if ($user->team_id) {
+            return redirect()->route('admin.teams.show', $user->team_id);
+        } else {
+            return redirect()->route('admin.users.show', $user);
+        }
     }
 
     public function render()

@@ -49,10 +49,15 @@
             </section>
             <section>
                 <div class="bg-white shadow sm:rounded-lg">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h2 class="text-lg font-medium leading-6 text-gray-900">Players</h2>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Players in this
-                            team.</p>
+                    <div class="px-4 py-5 sm:px-6 flex">
+                        <div>
+                            <h2 class="text-lg font-medium leading-6 text-gray-900">Players</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">Players in this
+                                team.</p>
+                        </div>
+                        <a href="{{ route('admin.users.team.create', $team) }}"
+                            class="ml-auto inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 self-end">Add
+                            Player</a>
                     </div>
                     <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
                         <div class="overflow-hidden bg-white shadow sm:rounded-md">
