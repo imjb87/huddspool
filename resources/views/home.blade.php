@@ -3,6 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta property="og:title" content="Huddersfield & District Tuesday Night Pool League" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.huddspool.co.uk" />
+        <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
 
         <title>Huddersfield &amp; District Tuesday Night Pool League</title>
 
