@@ -55,6 +55,11 @@ class User extends Authenticatable
         'confirmed',
     ];
 
+    public function getRedirectRoute()
+    {
+        return route('team.show', $this->team_id); 
+    }
+
     /**
      * Check if the user has confirmed their email address.
      */

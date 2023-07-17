@@ -86,7 +86,7 @@
                         </div>
                     </dl>
                     <div class="bg-green-700 shadow rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-4">
+                        <div class="px-4 sm:px-6 py-4">
                             <h2 class="text-sm font-medium leading-6 text-white">Players</h2>
                         </div>
                         <div class="border-t border-gray-200">
