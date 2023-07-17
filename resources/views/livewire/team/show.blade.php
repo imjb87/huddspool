@@ -33,10 +33,10 @@
                             </dt>
                             <dd class="text-sm font-medium leading-6 text-gray-900">
                                 <a class="hover:underline"
-                                    href="{{ route('player.show', $team->captain->id) }}">{{ $team->captain->name }}</a>
+                                    href="{{ route('player.show', $team->captain->id ?? 0) }}">{{ $team->captain?->name }}</a>
                             </dd>
                         </div>
-                        @if ($team->captain->telephone)
+                        @if ($team->captain?->telephone)
                         <div class="mt-4 flex w-full flex-none gap-x-4 px-6">
                             <dt class="flex w-5">
                                 <span class="sr-only">Captain telephone</span>
@@ -47,8 +47,8 @@
                                 </svg>
                             </dt>
                             <dd class="text-sm leading-6 text-gray-900">
-                                <a href="tel:{{ $team->captain->telephone }}"
-                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain->telephone }}</a>
+                                <a href="tel:{{ $team->captain?->telephone }}"
+                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain?->telephone }}</a>
                             </dd>
                         </div>
                         @endif
@@ -63,8 +63,8 @@
                                 </svg>
                             </dt>
                             <dd class="text-sm leading-6 text-gray-900">
-                                <a href="mailto:{{ $team->captain->email }}"
-                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain->email }}</a>
+                                <a href="mailto:{{ $team->captain?->email }}"
+                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain?->email }}</a>
                             </dd>
                         </div>
                         <div class="mt-4 flex w-full flex-none gap-x-4 px-6 pb-6">

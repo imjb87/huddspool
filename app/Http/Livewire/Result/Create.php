@@ -66,7 +66,7 @@ class Create extends Component
     
     private function isCaptain($userId)
     {
-        return $this->fixture->homeTeam->captain->id == $userId || $this->fixture->awayTeam->captain->id == $userId;
+        return $this->fixture->homeTeam?->captain->id == $userId || $this->fixture->awayTeam?->captain->id == $userId;
     }    
 
     public function updatedFrames()

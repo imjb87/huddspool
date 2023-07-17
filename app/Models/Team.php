@@ -46,7 +46,7 @@ class Team extends Model
 
     public function captain()
     {
-        return $this->hasOne(User::class);
+        return $this->hasOne(User::class, 'id', 'captain_id');
     }
 
     public function fixtures()
