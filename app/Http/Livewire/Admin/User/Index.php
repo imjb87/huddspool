@@ -25,7 +25,6 @@ class Index extends Component
                         ->orWhereHas('team', function ($query) {
                             $query->where('name', 'like', '%' . $this->search . '%');
                         })
-                        ->orderBy('team_id')
                         ->orderBy('name')
                         ->simplePaginate(10)
         ])->layout('layouts.admin');
