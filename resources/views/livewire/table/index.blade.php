@@ -16,63 +16,63 @@
                                 <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
                             </div>
                             <div class="border-t border-gray-200">
-                                <table class="w-full max-w-full overflow-hidden">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">
+                                <div class="w-full max-w-full overflow-hidden">
+                                    <div class="bg-gray-50">
+                                        <div class="flex">
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
                                                 #
-                                            </th>
-                                            <th scope="col"
-                                                class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900">
-                                                Team</th>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">Pl
-                                            </th>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">W
-                                            </th>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">D</th>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:table-cell">L</th>
-                                            <th scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900">Pts</th>
+                                            </div>
+                                            <div scope="col"
+                                                class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 w-6/12">
+                                                Team</div>
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">Pl
+                                            </div>
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">W
+                                            </div>
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">D</div>
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">L</div>
+                                            <div scope="col"
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">Pts</div>
                                         </tr>
-                                    </thead>
-                                    <tbody class="bg-white">
+                                    </div>
+                                    <div class="bg-white">
                                         @foreach ($section->standings() as $team)
-                                            <tr class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50">
-                                                <td
-                                                    class="whitespace-nowrap py-2 px-2 text-sm font-medium text-gray-900 text-center">
+                                            <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
+                                                <div
+                                                    class="whitespace-nowrap py-2 px-2 text-sm font-medium text-gray-900 text-center w-2/12 md:w-1/12">
                                                     {{ $loop->iteration }}
-                                                </td>
-                                                <td
-                                                    class="px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate max-w-[12ch] sm:max-w-[16ch] md:max-w-auto">
-                                                    <a class="hover:underline {{ $team->shortname ? "hidden md:inline" : "" }}" href="{{ route('team.show', $team->id) }}">{{ $team->name }}</a>
+                                                </div>
+                                                <div
+                                                    class="px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate w-6/12">
+                                                    <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                     @if ($team->shortname)
-                                                        <a class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
+                                                        <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
                                                     @endif
-                                                </td>
-                                                <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
-                                                    {{ $team->played }}</td>
-                                                <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
-                                                    {{ $team->wins }}</td>
-                                                <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
-                                                    {{ $team->draws }}</td>
-                                                <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:table-cell">
-                                                    {{ $team->losses }}</td>
-                                                <td
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
-                                                    {{ $team->points }}</td>
-                                            </tr>
+                                                </div>
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
+                                                    {{ $team->played }}</div>
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    {{ $team->wins }}</div>
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    {{ $team->draws }}</div>
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    {{ $team->losses }}</div>
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
+                                                    {{ $team->points }}</div>
+                                            </a>
                                         @endforeach
-                                    </tbody>
-                                </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
