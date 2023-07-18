@@ -93,16 +93,36 @@
                             <div class="overflow-hidden">
                                 <div class="min-w-full divide-y divide-gray-300">
                                     <div class="bg-gray-50">
-                                        <div>
+                                        <div class="flex">
                                             <div scope="col"
-                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                                class="py-3.5 px-4 text-left text-sm font-semibold text-gray-900 w-6/12">
                                                 Name</div>
+                                            <div scope="col"
+                                                class="py-3.5 px-4 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                Pl</div>
+                                            <div scope="col"
+                                                class="py-3.5 px-4 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                W</div>
+                                            <div scope="col"
+                                                class="py-3.5 px-4 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                L</div>
                                         </div>
                                     </div>
                                     <div class="divide-y divide-gray-200 bg-white">
                                         @foreach ($team->players as $player)
-                                            <a href="{{ route('player.show', $player->id) }}" class="block whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 hover:cursor-pointer hover:bg-gray-50">
+                                            <a href="{{ route('player.show', $player->id) }}" class=" hover:cursor-pointer hover:bg-gray-50 flex">
+                                                <div class="block whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 sm:pl-6 w-6/12 truncate">
                                                     {{ $player->name }}
+                                                </div>
+                                                <div class="block whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 sm:pl-6 w-2/12 text-center">
+                                                    {{ $player->framesPlayed->count() }}
+                                                </div>
+                                                <div class="block whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 sm:pl-6 w-2/12 text-center">
+                                                    {{ $player->framesWon->count() }}
+                                                </div>
+                                                <div class="block whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 sm:pl-6 w-2/12 text-center">
+                                                    {{ $player->framesLost->count() }}
+                                                </div>
                                             </a>
                                         @endforeach
                                     </div>
