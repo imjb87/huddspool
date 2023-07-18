@@ -74,7 +74,7 @@
                                         </select>
                                         <div class="w-10 sm:w-12 border-x border-gray-200">
                                             <input wire:model="frames.{{ $i }}.home_score" name="frames.{{ $i }}.home_score" type="number" min="0" max="1"
-                                                class="block w-full border-0 pr-0 pl-0 sm:px-3 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                                class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                                 placeholder="0" />
                                         </div>
                                     </div>
@@ -87,11 +87,11 @@
                                         <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
                                             <input wire:model="frames.{{ $i }}.away_score" type="number" min="0"
                                                 max="1"
-                                                class="block w-full border-0 pr-0 pl-0 sm:px-3 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                                class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                                 placeholder="0">
                                         </div>
                                         <select wire:model="frames.{{ $i }}.away_player_id"
-                                            class="border-0 py-1.5 px-3 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                            class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
                                             <option value="">Select player</option>
                                             <option value="0">Awarded</option>
                                             @foreach ($fixture->awayTeam->players as $player)
