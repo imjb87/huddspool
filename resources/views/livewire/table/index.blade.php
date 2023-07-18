@@ -20,7 +20,7 @@
                                     <div class="bg-gray-50">
                                         <div class="flex">
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-1/12">
+                                                class="px-3 py-2 text-center text-sm font-semibold text-gray-900 w-1/12">
                                                 #
                                             </div>
                                             <div scope="col"
@@ -44,7 +44,7 @@
                                         @foreach ($section->standings() as $team)
                                             <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
                                                 <div
-                                                    class="whitespace-nowrap py-2 px-2 text-sm font-medium text-gray-900 text-center w-1/12">
+                                                    class="whitespace-nowrap py-2 px-3 text-sm font-medium text-gray-900 text-center w-1/12">
                                                     {{ $loop->iteration }}
                                                 </div>
                                                 <div
