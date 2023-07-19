@@ -16,7 +16,7 @@
                             </h3>
                             <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{!! nl2br(e($article->content)) !!}</p>
                         </div>
-                        <div class="relative mt-8 flex items-center gap-x-4">
+                        <div class="relative mt-4 flex items-center gap-x-4">
                             <div class="text-sm leading-6">
                                 <p class="font-semibold text-gray-900 italic">
                                     by {{ $article->author->name }}
