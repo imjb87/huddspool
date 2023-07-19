@@ -12,20 +12,14 @@
                         </div>
                         <div class="group relative">
                             <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                                <a href="#">
-                                    <span class="absolute inset-0"></span>
-                                    {{ $article->title }}
-                                </a>
+                                {{ $article->title }}
                             </h3>
                             <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{!! nl2br(e($article->content)) !!}</p>
                         </div>
                         <div class="relative mt-8 flex items-center gap-x-4">
                             <div class="text-sm leading-6">
-                                <p class="font-semibold text-gray-900">
-                                    <a href="#">
-                                        <span class="absolute inset-0"></span>
-                                        {{ $article->author->name }}
-                                    </a>
+                                <p class="font-semibold text-gray-900 italic">
+                                    {{ $article->author->name }}
                                 </p>
                             </div>
                         </div>
