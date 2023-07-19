@@ -19,7 +19,7 @@
                         <div class="relative mt-8 flex items-center gap-x-4">
                             <div class="text-sm leading-6">
                                 <p class="font-semibold text-gray-900 italic">
-                                    {{ $article->author->name }}
+                                    by {{ $article->author->name }}
                                 </p>
                             </div>
                         </div>
