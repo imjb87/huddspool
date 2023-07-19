@@ -79,7 +79,7 @@
                                         </div>
                                     </div>
                                     <div
-                                        class="w-full sm:w-12 sm:text-center bg-gray-50 py-2 px-4 text-left text-sm font-semibold text-gray-900 order-first sm:order-2 leading-6">
+                                        class="w-full sm:w-12 sm:text-center bg-green-700 py-2 px-4 text-left text-sm font-semibold text-white order-first sm:order-2 leading-6">
                                         <span class="sm:hidden">Frame </span>
                                         {{ $i }}
                                     </div>

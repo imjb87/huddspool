@@ -17,7 +17,7 @@
                                     {{ $article->title }}
                                 </a>
                             </h3>
-                            <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{{ $article->content }}</p>
+                            <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{!! nl2br(e($article->content)) !!}</p>
                         </div>
                         <div class="relative mt-8 flex items-center gap-x-4">
                             <div class="text-sm leading-6">

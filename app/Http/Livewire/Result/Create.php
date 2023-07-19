@@ -41,7 +41,12 @@ class Create extends Component
         }
     
         $user = auth()->user();
+
         if (!$user || !$this->isCaptain($user->id)) {
+            abort(404);
+        }
+
+        if ($fixture->fixture_date->gte(now())) {
             abort(404);
         }
     

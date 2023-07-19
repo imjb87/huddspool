@@ -19,7 +19,7 @@
     <div
         class="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-3 lg:col-start-1">
-            <section class="prose">{!! $news->content !!}</section>
+            <section class="prose">{!! nl2br(e($news->content)) !!}</section>
         </div>    
     </div>
 </div>
