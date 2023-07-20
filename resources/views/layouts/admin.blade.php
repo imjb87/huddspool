@@ -10,7 +10,8 @@
 
     <!-- Fonts -->
     <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.tiny.cloud/1/gj75uu41to8xotbxkn157xgangktxdjx2xrng6bs3qm02mll/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    
     <!-- Scripts -->
     @livewireStyles
     @vite(['resources/css/app.css'])
@@ -28,7 +29,7 @@
                     <div class="fixed inset-0 z-40 flex">
                         <div class="relative flex w-full max-w-xs flex-1 flex-col bg-gray-800 pt-5 pb-4">
                             <div class="absolute top-0 right-0 -mr-12 pt-2">
-                                <button type="button"
+                                <button type="button" x-on:click="open = false"
                                     class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                                     <span class="sr-only">Close sidebar</span>
                                     <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
@@ -169,7 +170,7 @@
                 <div class="flex flex-col lg:pl-64">
                     <div
                         class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-                        <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
+                        <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" x-on:click="open = true">
                             <span class="sr-only">Open sidebar</span>
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" aria-hidden="true">

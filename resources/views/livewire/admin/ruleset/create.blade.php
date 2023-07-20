@@ -15,7 +15,7 @@
 
                 <div class="sm:col-span-6">
                     <label for="content" class="block text-sm font-medium leading-6 text-slate-900">Content</label>
-                    <x-editor id="content" name="content" wire:model="ruleset.content" />
+                    <x-tiny-mce content="ruleset.content">{!! $ruleset->content !!}</x-tiny-mce>
                 </div>
 
             </div>

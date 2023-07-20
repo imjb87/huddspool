@@ -19,7 +19,11 @@
     <div
         class="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-3 lg:col-start-1">
-            <section class="prose">{!! $ruleset->content !!}</section>
+            <div class="bg-white px-6 py-32 lg:px-8">
+                <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
+                    <section class="prose">{!! $ruleset->content !!}</section>
+                </div>
+            </div>
         </div>    
     </div>
 </div>
