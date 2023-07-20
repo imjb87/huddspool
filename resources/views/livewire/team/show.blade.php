@@ -95,16 +95,16 @@
                                     <div class="bg-gray-50">
                                         <div class="flex">
                                             <div scope="col"
-                                                class="py-3.5 px-4 sm:px-6 text-left text-sm font-semibold text-gray-900 w-6/12">
+                                                class="py-2 px-4 sm:px-6 text-left text-sm font-semibold text-gray-900 w-6/12">
                                                 Name</div>
                                             <div scope="col"
-                                                class="py-3.5 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
                                                 Pl</div>
                                             <div scope="col"
-                                                class="py-3.5 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
                                                 W</div>
                                             <div scope="col"
-                                                class="py-3.5 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
+                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12">
                                                 L</div>
                                         </div>
                                     </div>
