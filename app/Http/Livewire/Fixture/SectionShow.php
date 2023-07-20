@@ -30,7 +30,7 @@ class SectionShow extends Component
     {
         return view('livewire.fixture.section-show', [
             'fixtures' => Fixture::where('section_id', $this->section->id)
-                ->orderBy('fixture_date')
+                ->orderBy('week')
                 ->simplePaginate(5, ['*'], 'page', $this->page)
         ])->layout('layouts.admin');
 
