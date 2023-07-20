@@ -25,6 +25,14 @@
                 @endforeach
               </ul>
             </div>
+            <div class="mt-10 md:mt-0">
+              <h3 class="text-sm font-semibold leading-6 text-white">Other</h3>
+              <ul role="list" class="mt-6 space-y-4">
+                <li>
+                  <a href="{{ route('venue.index') }}" class="text-sm leading-6 text-gray-300 hover:text-white">Venues</a>
+                </li>
+              </ul>
+            </div>
           </div>
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
@@ -38,11 +46,13 @@
               </ul>
             </div>
             <div class="mt-10 md:mt-0">
-              <h3 class="text-sm font-semibold leading-6 text-white">Other</h3>
+              <h3 class="text-sm font-semibold leading-6 text-white">Official</h3>
               <ul role="list" class="mt-6 space-y-4">
+                @foreach($rulesets as $ruleset)                
                 <li>
-                  <a href="{{ route('venue.index') }}" class="text-sm leading-6 text-gray-300 hover:text-white">Venues</a>
+                  <a href="{{ route('ruleset.show', $ruleset->id) }}" class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                 </li>
+                @endforeach
               </ul>
             </div>
           </div>
