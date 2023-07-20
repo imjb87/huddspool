@@ -10,7 +10,7 @@
                     </div>
                     <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-5/12">Name
                     </div>
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">P
+                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">Pl
                     </div>
                     <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">W
                     </div>
