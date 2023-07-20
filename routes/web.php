@@ -28,3 +28,4 @@ Route::get('/venues/{venue}', \App\Http\Livewire\Venue\Show::class)->name('venue
 Route::get('/fixtures-and-results/{ruleset}', \App\Http\Livewire\Fixture\Index::class)->name('fixture.index');
 Route::get('/fixtures/{fixture}', \App\Http\Livewire\Fixture\Show::class)->name('fixture.show');
 Route::get('/results/create/{fixture}', \App\Http\Livewire\Result\Create::class)->name('result.create');
+Route::get('/rulesets/{ruleset}', \App\Http\Livewire\Ruleset\Show::class)->name('ruleset.show');
