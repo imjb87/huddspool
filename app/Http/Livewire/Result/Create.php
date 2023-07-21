@@ -71,7 +71,7 @@ class Create extends Component
     
     private function isCaptain($userId)
     {
-        return $this->fixture->homeTeam?->captain->id == $userId || $this->fixture->awayTeam?->captain->id == $userId;
+        return $this->fixture->homeTeam?->captain?->id == $userId || $this->fixture->awayTeam?->captain?->id == $userId;
     }    
 
     public function updatedFrames()
@@ -124,7 +124,7 @@ class Create extends Component
             ]);
         }
 
-        return redirect()->route('fixtures.show', $this->fixture);
+        return redirect()->route('fixture.show', $this->fixture);
     }    
 
     public function render()

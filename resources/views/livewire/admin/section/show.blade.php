@@ -10,9 +10,6 @@
         <div
             class="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-y-0 sm:space-x-3 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
             @if ($section->fixtures->count() > 0 && $section->results->count() == 0)
-                <a type="button" href="{{ route('admin.fixtures.edit', $section) }}"
-                    class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Edit
-                    fixtures</a>
                 <button type="button" wire:click="regenerateFixtures()"
                     class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Regenerate
                     fixtures</button>

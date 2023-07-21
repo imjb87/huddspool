@@ -60,15 +60,14 @@
                 <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
                     @if ($fixture->result)
                         <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-                            <div class="bg-white hidden sm:flex">
-                                <div class="flex-1 leading-6 py-3 px-4 sm:px-6 text-right font-semibold text-gray-900">
-                                    {{ $fixture->homeTeam->name }}
+                            <div class="bg-green-700 hidden sm:flex">
+                                <div class="flex-1 leading-6 py-2 px-4 text-right font-semibold text-white text-sm">
+                                    Home
                                 </div>
                                 <div class="w-12 text-center text-sm leading-6 py-3 font-semibold text-gray-900">
-                                    vs
                                 </div>
-                                <div class="flex-1 leading-6 py-3 px-4 sm:px-6 text-left font-semibold text-gray-900">
-                                    {{ $fixture->awayTeam->name }}
+                                <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
+                                    Away
                                 </div>
                             </div>
                             @foreach ($fixture->result->frames as $key => $frame)
@@ -87,7 +86,7 @@
                                         </div>
                                     </div>
                                     <div
-                                        class="w-full sm:w-12 sm:text-center py-2 px-4 sm:px-0 text-left text-sm font-semibold text-gray-900 order-first sm:order-2 leading-6">
+                                        class="w-full sm:w-12 sm:text-center py-2 px-4 sm:px-0 text-left text-sm font-semibold bg-green-700 sm:bg-gray-50 text-white sm:text-gray-900 order-first sm:order-2 leading-6">
                                         <span class="sm:hidden">Frame </span>
                                         {{ $key + 1 }}
                                     </div>
@@ -105,7 +104,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                            <div class="flex flex-wrap bg-white font-semibold text-gray-900 text-sm">
+                            <div class="flex flex-wrap bg-gray-50 font-semibold text-gray-900 text-sm">
                                 <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200">
                                     <div class="flex-1 leading-6 py-2 px-4 sm:px-6 sm:text-right">
                                         Home total

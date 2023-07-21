@@ -49,14 +49,14 @@
                     <form class="divide-y-slate-200 space-y-8 divide-y" wire:submit.prevent="save">
             
                         <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-                            <div class="bg-gray-50 hidden sm:flex">
-                                <div class="flex-1 leading-6 py-3 px-4 text-left font-semibold text-gray-900">
+                            <div class="bg-green-700 hidden sm:flex">
+                                <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
                                     {{ $fixture->homeTeam->name }}
                                 </div>
-                                <div class="w-12 text-center text-sm leading-6 py-3 font-semibold text-gray-900">
+                                <div class="w-12 text-center leading-6 py-2 font-semibold text-white text-sm">
                                     vs
                                 </div>
-                                <div class="flex-1 leading-6 py-3 px-4 text-right font-semibold text-gray-900">
+                                <div class="flex-1 leading-6 py-2 px-4 text-right font-semibold text-white text-sm">
                                     {{ $fixture->awayTeam->name }}
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                                         class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
                                         <select wire:model="frames.{{ $i }}.home_player_id"
                                             class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
-                                            <option value="">Select player</option>
+                                            <option value="">Select player...</option>
                                             <option value="0">Awarded</option>
                                             @foreach ($fixture->homeTeam->players as $player)
                                                 <option value="{{ $player->id }}">{{ $player->name }}</option>
@@ -79,7 +79,7 @@
                                         </div>
                                     </div>
                                     <div
-                                        class="w-full sm:w-12 sm:text-center bg-green-700 py-2 px-4 text-left text-sm font-semibold text-white order-first sm:order-2 leading-6">
+                                        class="w-full sm:w-12 sm:text-center bg-green-700 sm:bg-gray-50 py-2 px-4 text-left text-sm font-semibold text-white sm:text-gray-900 order-first sm:order-2 leading-6">
                                         <span class="sm:hidden">Frame </span>
                                         {{ $i }}
                                     </div>
@@ -92,7 +92,7 @@
                                         </div>
                                         <select wire:model="frames.{{ $i }}.away_player_id"
                                             class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
-                                            <option value="">Select player</option>
+                                            <option value="">Select player...</option>
                                             <option value="0">Awarded</option>
                                             @foreach ($fixture->awayTeam->players as $player)
                                                 <option value="{{ $player->id }}">{{ $player->name }}</option>
@@ -130,7 +130,7 @@
                             <a href="{{ route('fixture.show', $fixture->id) }}"
                                 class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
                             <button type="submit"
-                                class="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Save</button>
+                                class="inline-flex justify-center rounded-md bg-green-700 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700" wire:loading.attr="disabled" wire:target="save">Submit</button>
                                 
                         </div>
                     </form>                    

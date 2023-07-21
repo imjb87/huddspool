@@ -24,13 +24,8 @@
                                     {{ $fixture->homeTeam->shortname }}</div>
                             @endif
                             @if ($fixture->result)
-                                <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 text-right font-semibold w-1/12">
-                                    <span
-                                        class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->home_score ?? '' }}</span>
-                                </div>
-                                <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 font-semibold w-1/12">
-                                    <span
-                                        class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->away_score ?? '' }}</span>
+                                <div class="whitespace-nowrap px-2 py-4 font-semibold w-2/12">
+                                    <div class="bg-green-700 text-white font-semibold text-sm text-center">{{ $fixture->result->home_score ?? '' }}  -  {{ $fixture->result->away_score ?? '' }}</div>
                                 </div>
                             @else
                                 <div
