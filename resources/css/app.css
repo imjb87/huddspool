@@ -2,10 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-.ProseMirror {
-  height: 100%;
+.tooltip {
+  @apply relative;
+  cursor: pointer;
 }
 
-.ProseMirror:focus-visible {
-  outline: none;
+.tooltip .tooltip-text {
+  @apply invisible opacity-0 px-4 py-1 absolute z-50 inline-block text-sm rounded bg-gray-900 text-white font-semibold max-w-xs;
+  top: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.tooltip .tooltip-text::after {
+  @apply absolute w-0 h-0;
+  content: "";
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip:hover .tooltip-text {
+  @apply visible opacity-100;
 }
