@@ -8,7 +8,7 @@
 }
 
 .tooltip .tooltip-text {
-  @apply invisible opacity-0 px-4 py-1 absolute z-50 inline-block text-sm rounded bg-gray-900 text-white font-semibold max-w-xs;
+  @apply invisible opacity-0 px-4 py-2 absolute z-40 inline-block text-sm rounded bg-gray-900 text-white font-semibold max-w-xs shadow;
   top: calc(100% + 5px);
   left: 50%;
   transform: translateX(-50%);
