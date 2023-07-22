@@ -72,6 +72,10 @@
                                                             <p class="truncate text-sm font-medium text-gray-600">
                                                                 {{ $player->name }}</p>
                                                         </div>                              
+                                                        <div>
+                                                            <p class="truncate text-sm font-medium text-gray-600">
+                                                                {{ $player->role == 1 ? "Player" : "Team Admin" }}</p>
+                                                        </div>                              
                                                     </div>
                                                 </div>
                                                 <div>

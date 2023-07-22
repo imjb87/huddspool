@@ -11,7 +11,7 @@
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3 self-start flex flex-col gap-y-6">
-                    @if ($isCaptain && !$fixture->result)
+                    @if ($isTeamAdmin && !$fixture->result)
                         @if ($fixture->fixture_date->lte(now()))
                         <a href="{{ route('result.create', $fixture->id) }}"
                             class="block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
@@ -67,6 +67,7 @@
                 </div>
                 <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
                     @if ($fixture->result)
+                    <div>
                         <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
                             <div class="bg-green-700 hidden sm:flex">
                                 <div class="flex-1 leading-6 py-2 px-4 text-right font-semibold text-white text-sm">
@@ -133,6 +134,14 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- submitted by -->
+                        <div class="my-3 px-4 sm:px-6">
+                            <p class="italic text-sm text-center max-w-prose mx-auto">This result was submitted by {{ $fixture->result->submittedBy->name }} on
+                                {{ $fixture->result->created_at->format('l jS F Y') }} at
+                                {{ $fixture->result->created_at->format('H:i') }}.
+                            </p>         
+                        </div>          
+                    </div>                              
                     @else
                         <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
                             <div class="px-4 py-4 sm:px-6 bg-green-700">

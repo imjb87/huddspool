@@ -20,6 +20,7 @@ class Create extends Component
             'user.telephone' => 'nullable|string',
             'user.is_admin' => 'nullable|boolean',
             'user.team_id' => ['nullable', 'integer'],
+            'user.role' => 'nullable|integer',
         ];
     }
 

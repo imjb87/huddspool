@@ -113,6 +113,7 @@ class Create extends Component
             'away_deducted' => 0,
             'is_confirmed' => 1,
             'is_overridden' => 0,
+            'submitted_by' => auth()->user()->id,
         ]);
 
         foreach ($this->frames as $frame) {

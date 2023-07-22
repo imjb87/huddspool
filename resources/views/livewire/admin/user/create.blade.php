@@ -43,6 +43,16 @@
                 </div>
 
                 <div class="sm:col-span-3">
+                    <label for="role" class="block text-sm font-medium leading-6 text-slate-900">Role</label>
+                    <select id="role" name="user.role"
+                        class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                        wire:model="user.role">
+                        <option value="1">Player</option>
+                        <option value="2">Team admin</option>
+                    </select>
+                </div>
+
+                <div class="sm:col-span-3">
                     <label for="is_admin" class="block text-sm font-medium leading-6 text-slate-900">Is Admin</label>
                     <select id="is_admin" name="user.is_admin"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"

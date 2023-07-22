@@ -24,6 +24,7 @@ class Result extends Model
         'away_score',
         'is_confirmed',
         'is_overridden',
+        'submitted_by',
     ];
 
     /**
@@ -40,5 +41,10 @@ class Result extends Model
     public function frames()
     {
         return $this->hasMany(Frame::class);
+    }
+
+    public function submittedBy()
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
     }
 }

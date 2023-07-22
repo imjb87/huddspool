@@ -8,7 +8,7 @@ use App\Models\Fixture;
 class Show extends Component
 {
     public Fixture $fixture;
-    public $isCaptain = false;
+    public $isTeamAdmin = false;
 
     public function mount(Fixture $fixture)
     {
@@ -19,8 +19,11 @@ class Show extends Component
         }
 
         if( auth()->check() ) {
-            $user_id = auth()->user()->id;
-            $this->isCaptain = $this->fixture->homeTeam->captain?->id == $user_id || $this->fixture->awayTeam->captain?->id == $user_id;
+            if( $this->fixture->homeTeam->id == auth()->user()->team_id || $this->fixture->awayTeam->id == auth()->user()->team_id ) {
+                if( auth()->user()->role == 2 ) {
+                    $this->isTeamAdmin = true;
+                }
+            }
         }
     }
 
