@@ -79,7 +79,14 @@ class User extends Authenticatable
 
     public function framesWon()
     {
-        return $this->hasMany(Frame::class, 'home_player_id');
+        return $this->hasMany(Frame::class, 'home_player_id')
+            ->where(function ($query) {
+                $query->whereColumn('home_score', '>', 'away_score');
+            })
+            ->orWhere(function ($query) {
+                $query->whereColumn('away_score', '>', 'home_score')
+                    ->where('away_player_id', $this->id);
+            });
     }
 
     public function framesLost()
