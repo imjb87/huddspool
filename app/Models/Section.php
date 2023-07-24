@@ -25,6 +25,7 @@ class Section extends Model
     public function teams()
     {
         return $this->belongsToMany(Team::class)
+            ->withPivot('withdrawn_at')
             ->withTimestamps();
     }
 

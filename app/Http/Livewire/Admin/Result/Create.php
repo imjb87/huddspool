@@ -20,6 +20,7 @@ class Create extends Component
     public Collection $awayPlayers;
     public $homeScore = 0;
     public $awayScore = 0;
+    public $is_overridden = false;
 
     protected function rules()
     {
@@ -71,27 +72,31 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate();
+        if(!$this->is_overridden) {
+            $this->validate();
+        }
 
         $result = Result::create([
             'fixture_id' => $this->fixture->id,
             'home_team_id' => $this->fixture->homeTeam->id,
             'home_team_name' => $this->fixture->homeTeam->name,
             'home_score' => $this->homeScore,
-            'home_deducted' => 0,
             'away_team_id' => $this->fixture->awayTeam->id,
             'away_team_name' => $this->fixture->awayTeam->name,
             'away_score' => $this->awayScore,
-            'away_deducted' => 0,
+            'is_overridden' => $this->is_overridden,
+            'submitted_by' => auth()->user()->id,
         ]);
 
-        foreach ($this->frames as $frame) {
-            $result->frames()->create([
-                'home_player_id' => $frame['home_player_id'],
-                'away_player_id' => $frame['away_player_id'],
-                'home_score' => $frame['home_score'],
-                'away_score' => $frame['away_score'],
-            ]);
+        if(!$this->is_overridden) {
+            foreach ($this->frames as $frame) {
+                $result->frames()->create([
+                    'home_player_id' => $frame['home_player_id'],
+                    'away_player_id' => $frame['away_player_id'],
+                    'home_score' => $frame['home_score'],
+                    'away_score' => $frame['away_score'],
+                ]);
+            }
         }
 
         return redirect()->route('admin.fixtures.show', $this->fixture);

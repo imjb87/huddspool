@@ -113,6 +113,9 @@
                                             <a href="{{ route('player.show', $player->id) }}" class=" hover:cursor-pointer hover:bg-gray-50 flex">
                                                 <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-6/12 truncate">
                                                     {{ $player->name }}
+                                                    @if( $player->role == 2 )
+                                                    <span class="inline-flex items-center rounded-full bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white align-top">T</span>
+                                                    @endif
                                                 </div>
                                                 <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
                                                     {{ $player->framesPlayed->count() }}

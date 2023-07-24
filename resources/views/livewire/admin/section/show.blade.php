@@ -63,15 +63,15 @@
                             the section.</p>
                     </div>
                     <div class="border-t border-gray-200">
-                        <table class="w-full max-w-full overflow-hidden">
+                        <table class="w-full max-w-full overflow-hidden table-fixed">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
                                         class="px-2 py-2 text-center text-sm font-semibold text-gray-900">
                                         #
                                     </th>
-                                    <th scope="col"
-                                        class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900">
+                                    <th scope="col" 
+                                        class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 w-3/12">
                                         Team</th>
                                     <th scope="col"
                                         class="px-2 py-2 text-center text-sm font-semibold text-gray-900">P
@@ -85,6 +85,8 @@
                                         class="px-2 py-2 text-center text-sm font-semibold text-gray-900">L</th>
                                     <th scope="col"
                                         class="px-2 py-2 text-center text-sm font-semibold text-gray-900">Pts</th>
+                                    <th scope="col"
+                                        class="px-2 py-2 text-center text-sm font-semibold text-gray-900"></th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
@@ -95,8 +97,14 @@
                                                 {{ $loop->iteration }}
                                         </td>
                                         <td
-                                            class="whitespace-nowrap px-2 sm:px-3 py-2 text-sm font-medium text-gray-900">
-                                            {{ $team->name }}</td>
+                                            class="tooltip tooltip-top whitespace-nowrap px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }} text-left">
+                                            {{ $team->name }}
+                                            @if ($team->pivot->withdrawn_at)
+                                            <span class="tooltip-text">
+                                                This team was withdrawn from the section on {{ date('d/m/Y', strtotime($team->pivot->withdrawn_at)) }}
+                                            </span>
+                                            @endif
+                                        </td>
                                         <td
                                             class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
                                             {{ $team->played }}</td>
@@ -112,6 +120,14 @@
                                         <td
                                             class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center">
                                             {{ $team->points }}</td>
+                                        <td
+                                            class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-left">
+                                            <button type="button"
+                                                class="rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                wire:click="withdraw({{ $team->id }})"
+                                                >
+                                                {{ $team->id == $team_id ? 'Are you sure?' : 'Withdraw' }}
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

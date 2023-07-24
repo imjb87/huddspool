@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            // add role column to users table
-            $table->string('role')->default('1')->after('team_id');
+        Schema::table('section_team', function (Blueprint $table) {
+            $table->date('withdrawn_at')->nullable()->after('team_id');
         });
     }
 
@@ -26,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('section_team', function (Blueprint $table) {
             //
         });
     }

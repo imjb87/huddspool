@@ -48,11 +48,16 @@
                                                     {{ $loop->iteration }}
                                                 </div>
                                                 <div
-                                                    class="px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate w-6/12">
+                                                    class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate w-6/12 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
                                                     <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                     @if ($team->shortname)
                                                         <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
                                                     @endif
+                                                    @if ($team->pivot->withdrawn_at)
+                                                    <span class="tooltip-text">
+                                                        This team was withdrawn from the section on {{ date('d/m/Y', strtotime($team->pivot->withdrawn_at)) }}
+                                                    </span>
+                                                    @endif        
                                                 </div>
                                                 <div
                                                     class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
