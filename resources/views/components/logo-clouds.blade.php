@@ -14,10 +14,10 @@
         <a href="https://www.nrkfabrication.co.uk/" target="_blank" rel="noopener noreferrer" class="col-span-2 w-full object-contain lg:col-span-1">
           <img class="col-span-2 w-full object-contain lg:col-span-1" src="{{ asset('images/sponsors/nrkfabrication-logo.jpg') }}" alt="NRK Fabrication" width="158" height="48">
         </a>
-        <a href="https://www.levelshuddersfield.co.uk/" target="_blank" rel="noopener noreferrer" class="col-span-4 max-h-20 w-full object-contain lg:col-span-1">
+        <a href="https://www.levelshuddersfield.co.uk/" target="_blank" rel="noopener noreferrer" class="col-span-2 max-h-20 w-full object-contain lg:col-span-1">
           <img class="col-span-2 max-h-20 w-full object-contain lg:col-span-1" src="{{ asset('images/sponsors/levelshuddersfield.svg') }}" alt="Levels Huddersfield" width="158" height="48">
         </a>
-        <a href="https://www.facebook.com/ukplasticsandglazingltd" target="_blank" rel="noopener noreferrer" class="col-span-4 max-h-20 w-full object-contain lg:col-span-1">
+        <a href="https://www.facebook.com/ukplasticsandglazingltd" target="_blank" rel="noopener noreferrer" class="col-span-2 max-h-20 w-full object-contain lg:col-span-1">
           <img class="col-span-2 max-h-20 w-full object-contain lg:col-span-1" src="{{ asset('images/sponsors/ukplasticsandglazing-logo.jpeg') }}" alt="UK Plastics & Glazing Ltd" width="158" height="48">
         </a>
       </div>

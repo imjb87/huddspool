@@ -26,6 +26,14 @@
               </ul>
             </div>
             <div class="mt-10 md:mt-0">
+              <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
+              <ul role="list" class="mt-6 space-y-4">
+                <li>
+                  <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" class="text-sm leading-6 text-gray-300 hover:text-white">Knockout Schedule</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mt-10 md:mt-0">
               <h3 class="text-sm font-semibold leading-6 text-white">Other</h3>
               <ul role="list" class="mt-6 space-y-4">
                 <li>
