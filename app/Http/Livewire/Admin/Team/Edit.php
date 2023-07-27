@@ -27,7 +27,7 @@ class Edit extends Component
     public function mount(Team $team)
     {
         $this->team = $team;
-        $this->venues = Venue::all();
+        $this->venues = Venue::orderBy('name')->get();
     }
 
     public function save()

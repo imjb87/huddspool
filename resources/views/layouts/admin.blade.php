@@ -11,10 +11,11 @@
     <!-- Fonts -->
     <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tiny.cloud/1/gj75uu41to8xotbxkn157xgangktxdjx2xrng6bs3qm02mll/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <!-- Scripts -->
     @livewireStyles
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased h-full [&_[x-cloak]]:hidden">
@@ -224,7 +225,6 @@
         </main>
     </div>
     @livewireScripts
-    @vite('resources/js/app.js');
 </body>
 
 </html>

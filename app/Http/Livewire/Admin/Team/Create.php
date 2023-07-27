@@ -8,8 +8,8 @@ use App\Models\Venue;
 
 class Create extends Component
 {
-    public $venues;
     public $team;
+    public $venues;
 
     protected $rules = [
         'team.name' => 'required|string',
@@ -23,7 +23,8 @@ class Create extends Component
 
     public function mount()
     {
-        $this->venues = Venue::orderByRaw('REPLACE(name, "The ", "")')->get();
+        $this->team = new Team;
+        $this->venues = Venue::orderBy('name')->get();
     }
 
     public function save()
