@@ -1,13 +1,13 @@
-<div x-data="select()" x-init="init()">
+<div class="w-full" x-data="select()" x-init="init()">
     <select x-ref="select" class="hidden" {{ $attributes }}>
         {{ $slot }}
     </select>
     <div class="relative">
         <button type="button" @click="open = !open"
-            class="x-select mt-2 block text-left px-3 w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 bg-white"
+            {{ $attributes->merge(['class' => 'x-select mt-2 block text-left px-3 w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 bg-white']) }}
             x-text="options.find(option => option.value === value)?.text ?? 'Select a venue...'">
         </button>
-        <div x-show="open" @click.away="open = false" class="absolute mt-2 bg-white w-full rounded-md shadow-lg p-2"
+        <div x-show="open" @click.away="open = false" class="absolute mt-2 bg-white w-full rounded-md shadow-lg p-2 z-10"
             x-cloak>
             <input type="text"
                 class="block text-left px-3 w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 bg-white"

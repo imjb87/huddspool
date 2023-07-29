@@ -21,7 +21,7 @@ class Edit extends Component
         return [
             'section.name' => 'required|string',
             'section.ruleset_id' => 'required|int',
-            'section_teams' => ['required', 'size:10', 'array', new UniqueTeamInSeason($this->section->season, $this->section_teams, $this->section->id), new UniqueTeamsInSection($this->section_teams)],
+            //'section_teams' => ['required', 'size:10', 'array', new UniqueTeamInSeason($this->section->season, $this->section_teams, $this->section->id), new UniqueTeamsInSection($this->section_teams)],
         ];
     }
 
@@ -35,7 +35,7 @@ class Edit extends Component
     public function mount(Section $section)
     {
         $this->section = $section;
-        $this->section_teams = $section->teams->pluck('id')->toArray();
+        $this->section_teams = $section->teams->pluck('id', 'name')->toArray();
         $this->rulesets = Ruleset::all();
         $this->teams = Team::all();
     }
