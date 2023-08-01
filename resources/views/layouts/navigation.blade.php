@@ -71,6 +71,24 @@
           <div class="py-1">
             <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Knockout Schedule</a>
           </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/BBINTSinglesKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">BB/Int Singles Knockout</a>
+          </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/BBTeamKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">BB/Int Team Knockout</a>
+          </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/DoublesKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Doubles Knockout</a>
+          </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/EPASinglesKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">EPA Singles Knockout</a>
+          </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/EPATeamKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">EPA Team Knockout</a>
+          </div>
+          <div class="py-1">
+            <a href="{{ asset('knockouts/MixedDoublesKO.pdf') }}" target="_blank" class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Mixed Doubles Knockout</a>
+          </div>
         </div>
       </div>    
       <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
@@ -214,6 +232,12 @@
               <!-- 'Product' sub-menu, show/hide based on menu state. -->
               <div class="mt-2 space-y-2" id="disclosure-1" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                 <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Knockout Schedule</a>
+                <a href="{{ asset('knockouts/BBINTSinglesKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">BB/Int Singles Knockout</a>
+                <a href="{{ asset('knockouts/BBTeamKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">BB/Int Team Knockout</a>
+                <a href="{{ asset('knockouts/DoublesKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Doubles Knockout</a>
+                <a href="{{ asset('knockouts/EPASinglesKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">EPA Singles Knockout</a>
+                <a href="{{ asset('knockouts/EPATeamKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">EPA Team Knockout</a>
+                <a href="{{ asset('knockouts/MixedDoublesKO.pdf') }}" target="_blank" class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Mixed Doubles Knockout</a>
               </div>
             </div>   
             <div class="-mx-3" x-data="{ open: false }">
