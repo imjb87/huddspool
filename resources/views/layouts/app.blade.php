@@ -10,6 +10,10 @@
         <meta property="og:url" content="https://www.huddspool.co.uk" />
         <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
 
+        @if (Route::currentRouteName() == 'result.create')
+            <meta http-equiv="refresh" content="600">
+        @endif
+
         <title>{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
 
         <script>
