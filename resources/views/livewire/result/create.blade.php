@@ -9,8 +9,24 @@
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
+                  
                 <div class="w-full lg:w-1/3 self-start flex flex-col gap-y-6">
-                    <dl class="bg-white flex flex-wrap rounded-lg shadow-sm ring-1 ring-gray-900/5">
+                    <div class="rounded-md bg-yellow-50 p-4">
+                        <div class="flex">
+                          <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                            </svg>
+                          </div>
+                          <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">Please read before submitting</h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                              <p>This tool is not intended to be used for live results. It is intended to be used by team admins to submit results after the match has been played. Please continue to fill out a physical scorecard as normal and submit the result using this tool after the match.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        <dl class="bg-white flex flex-wrap rounded-lg shadow-sm ring-1 ring-gray-900/5">
                         <div class="flex-auto pl-6 pt-6">
                             <dt class="text-sm font-semibold leading-6 text-gray-900">{{ $fixture->section->name }}</dt>
                             <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">
@@ -73,9 +89,12 @@
                                             @endforeach
                                         </select>
                                         <div class="w-10 sm:w-12 border-x border-gray-200">
-                                            <input wire:model="frames.{{ $i }}.home_score" name="frames.{{ $i }}.home_score" type="number" min="0" max="1"
-                                                class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
-                                                placeholder="0" />
+                                            <select wire:model="frames.{{ $i }}.home_score" name="frames.{{ $i }}.home_score"
+                                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                                placeholder="0">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div
@@ -85,10 +104,12 @@
                                     </div>
                                     <div class="w-full sm:w-auto flex sm:flex-1 order-last">
                                         <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
-                                            <input wire:model="frames.{{ $i }}.away_score" type="number" min="0"
-                                                max="1"
-                                                class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                            <select wire:model="frames.{{ $i }}.away_score" name="frames.{{ $i }}.away_score"
+                                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                                 placeholder="0">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                            </select>
                                         </div>
                                         <select wire:model="frames.{{ $i }}.away_player_id"
                                             class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">

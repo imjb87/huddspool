@@ -11,6 +11,7 @@ use App\Rules\AllFramesHavePlayers;
 use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\BothPlayersAwardedIfOneIs;
+use App\Rules\FixtureHasNoResult;
 
 class Create extends Component
 {
@@ -24,7 +25,8 @@ class Create extends Component
     protected function rules()
     {
         return [
-            'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)]
+            'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)],
+            'fixture_id' => [new FixtureHasNoResult($this->fixture)],
         ];
     }
 
@@ -39,11 +41,13 @@ class Create extends Component
         if ($this->isHomeOrAwayTeam(1)) {
             abort(404);
         }
-    
-        $user = auth()->user();
 
-        if (!$user || !$this->isCaptain($user->id)) {
-            abort(404);
+        if( auth()->check() ) {
+            if( $this->fixture->homeTeam->id == auth()->user()->team_id || $this->fixture->awayTeam->id == auth()->user()->team_id ) {
+                if( auth()->user()->role != 2 ) {
+                    abort(404);
+                }
+            }
         }
 
         if ($fixture->fixture_date->gte(now())) {
@@ -68,33 +72,11 @@ class Create extends Component
     {
         return $this->fixture->homeTeam->id == $teamId || $this->fixture->awayTeam->id == $teamId;
     }
-    
-    private function isCaptain($userId)
-    {
-        return $this->fixture->homeTeam?->captain?->id == $userId || $this->fixture->awayTeam?->captain?->id == $userId;
-    }    
 
     public function updatedFrames()
     {
-        $this->homeScore = 0;
-        $this->awayScore = 0;
-
-        foreach ($this->frames as $key => $frame) {
-            if ($frame['home_score'] > 1) {
-                $this->frames[$key]['home_score'] = 1;
-            }
-            if ($frame['home_score'] < 0) {
-                $this->frames[$key]['home_score'] = 0;
-            }
-            if ($frame['away_score'] > 1) {
-                $this->frames[$key]['away_score'] = 1;
-            }
-            if ($frame['away_score'] < 0) {
-                $this->frames[$key]['away_score'] = 0;
-            }            
-            $this->homeScore += (int)$frame['home_score'];
-            $this->awayScore += (int)$frame['away_score'];
-        }
+        $this->homeScore = array_sum(array_column($this->frames, 'home_score'));
+        $this->awayScore = array_sum(array_column($this->frames, 'away_score'));
     }
     
     public function save()
