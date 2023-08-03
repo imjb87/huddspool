@@ -26,7 +26,7 @@ class Create extends Component
     {
         return [
             'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)],
-            'fixture' => [new FixtureHasNoResult($this->fixture)],
+            'fixture' => [new FixtureHasNoResult($this->fixture->id)],
         ];
     }
 
