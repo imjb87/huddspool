@@ -66,7 +66,7 @@
                                                     <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
                                                 @endif
                                                 @if ($name == "teams")
-                                                    <span class="text-xs text-gray-500">{{ $item->section() ?? "" }}</span>
+                                                    <span class="text-xs text-gray-500">{{ $item->section()->name ?? "" }}</span>
                                                 @endif
                                             </a>
                                         @endforeach
