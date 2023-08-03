@@ -37,7 +37,7 @@
                     class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..." role="combobox" aria-expanded="false" aria-controls="options">
             </div>
-
+            
             <!-- Default state, show/hide based on command palette state -->
             @if (empty($searchTerm))
                 <div class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14">
@@ -55,20 +55,22 @@
                     <ul class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2" id="options"
                         role="listbox">
                         @foreach( $searchResults as $name => $items )
-                            @if ( count($items) > 0)
+                            @if ( count($items) > 0 )
                                 <li>
                                     <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 uppercase">{{ $name }}</h2>
                                     <div class="mt-2 text-sm text-gray-800">
                                         @foreach ( $items as $item )
-                                            <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate" href="{{ route(Str::singular($name).'.show', $item->id) }}">
-                                                <span>{{ $item->name }}</span>
-                                                @if ($name == "players")
-                                                    <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
-                                                @endif
-                                                @if ($name == "teams")
-                                                    <span class="text-xs text-gray-500">{{ $item->section()->name ?? "" }}</span>
-                                                @endif
-                                            </a>
+                                            @if ( is_object($item) )
+                                                <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate" href="{{ route(Str::singular($name).'.show', $item->id) }}">
+                                                    <span>{{ $item->name }}</span>
+                                                    @if ($name == "players")
+                                                        <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
+                                                    @endif
+                                                    @if ($name == "teams")
+                                                        <span class="text-xs text-gray-500">{{ $item->section()->name ?? "" }}</span>
+                                                    @endif
+                                                </a>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </li>
