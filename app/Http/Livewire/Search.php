@@ -28,6 +28,10 @@ class Search extends Component
 
     public function search()
     {
+        if (strlen($this->searchTerm) < 3) {
+            return;
+        }
+        
         $players = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
             $query->where('name', 'like', '%' . $this->searchTerm . '%');
         })->orderBy('name')->get();
