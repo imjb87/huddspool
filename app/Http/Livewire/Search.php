@@ -26,15 +26,26 @@ class Search extends Component
         $this->searchResults = [];
     }
 
-    public function updatedSearchTerm()
+    public function search()
     {
+        $players = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
+            $query->where('name', 'like', '%' . $this->searchTerm . '%');
+        })->orderBy('name')->get();
+        $teams = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
+        $venues = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
+
         $this->searchResults = [];
-        if (strlen($this->searchTerm) >= 3) {
-            $this->searchResults['players'] = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
-                $query->where('name', 'like', '%' . $this->searchTerm . '%');
-            })->orderBy('name')->get();
-            $this->searchResults['teams'] = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
-            $this->searchResults['venues'] = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
+
+        if ($players->count() > 0) {
+            $this->searchResults['players'] = $players;
+        }
+
+        if ($teams->count() > 0) {
+            $this->searchResults['teams'] = $teams;
+        }
+
+        if ($venues->count() > 0) {
+            $this->searchResults['venues'] = $venues;
         }
     }
 

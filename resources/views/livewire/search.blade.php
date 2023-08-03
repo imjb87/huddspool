@@ -33,7 +33,7 @@
                         d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
                         clip-rule="evenodd" />
                 </svg>
-                <input type="text" wire:model="searchTerm"
+                <input type="text" wire:model="searchTerm" wire:keyup="search"
                     class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..." role="combobox" aria-expanded="false" aria-controls="options">
             </div>
@@ -58,20 +58,22 @@
                             @if ( count($items) > 0)
                                 <li>
                                     <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 uppercase">{{ $name }}</h2>
-                                    <ul class="mt-2 text-sm text-gray-800">
+                                    <div class="mt-2 text-sm text-gray-800">
                                         @foreach ( $items as $item )
-                                            <li class="cursor-default select-none px-4 py-2" id="option-1" role="option"
-                                                tabindex="-1">
-                                                <a href="{{ route(Str::singular($name).'.show', $item->id) }}"
-                                                    class="flex justify-between">
-                                                    <span>{{ $item->name }}</span>
-                                                    @if ($name == "players")
-                                                        <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
-                                                    @endif
-                                                </a>
-                                            </li>
+                                            <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate" href="{{ route(Str::singular($name).'.show', $item->id) }}">
+                                                <span>{{ $item->name }}</span>
+                                                @if ($name == "players")
+                                                    <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
+                                                @endif
+                                                @if ($name == "teams")
+                                                    <span class="text-xs text-gray-500">{{ $item->ruleset?->name }}</span>
+                                                @endif
+                                                @if ($name == "venues")
+                                                    <span class="text-xs text-gray-500">{{ $item->address }}</span>
+                                                @endif
+                                            </a>
                                         @endforeach
-                                    </ul>
+                                    </div>
                                 </li>
                             @endif
                         @endforeach
