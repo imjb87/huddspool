@@ -300,6 +300,9 @@
     document.querySelectorAll('#searchIcon').forEach(item => {
       item.addEventListener('click', event => {
         Livewire.emit('openSearch'); // Emit the event to the Livewire component
+        setTimeout(function() {
+          document.getElementById('searchInput').focus();
+        }, 100);
       })
     })
   </script>
