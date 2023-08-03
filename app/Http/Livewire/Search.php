@@ -32,9 +32,9 @@ class Search extends Component
         if (strlen($this->searchTerm) >= 3) {
             $this->searchResults['players'] = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
                 $query->where('name', 'like', '%' . $this->searchTerm . '%');
-            })->get();
-            $this->searchResults['teams'] = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->get();
-            $this->searchResults['venues'] = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->get();
+            })->orderBy('name')->get();
+            $this->searchResults['teams'] = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
+            $this->searchResults['venues'] = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
         }
     }
 

@@ -55,15 +55,25 @@
                     <ul class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2" id="options"
                         role="listbox">
                         @foreach( $searchResults as $name => $items )
-                            <li>
-                                <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 uppercase">{{ $name }}</h2>
-                                <ul class="mt-2 text-sm text-gray-800">
-                                    @foreach ( $items as $item )
-                                        <li class="cursor-default select-none px-4 py-2" id="option-1" role="option"
-                                            tabindex="-1">{{ $item->name }} {{ $name == "players" ? ' ('. $item->team?->name .')' : '' }}</li>
-                                    @endforeach
-                                </ul>
-                            </li>
+                            @if ( count($items) > 0)
+                                <li>
+                                    <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 uppercase">{{ $name }}</h2>
+                                    <ul class="mt-2 text-sm text-gray-800">
+                                        @foreach ( $items as $item )
+                                            <li class="cursor-default select-none px-4 py-2" id="option-1" role="option"
+                                                tabindex="-1">
+                                                <a href="{{ route(Str::singular($name).'.show', $item->id) }}"
+                                                    class="flex justify-between">
+                                                    <span>{{ $item->name }}</span>
+                                                    @if ($name == "players")
+                                                        <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
+                                                    @endif
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endif
                         @endforeach
                     </ul>
                 @else
