@@ -28,17 +28,17 @@ class Search extends Component
 
     public function search()
     {
+        $this->searchResults = [];
+
         if (strlen($this->searchTerm) < 3) {
             return;
         }
-        
+
         $players = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
             $query->where('name', 'like', '%' . $this->searchTerm . '%');
         })->orderBy('name')->get();
         $teams = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
         $venues = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
-
-        $this->searchResults = [];
 
         if ($players->count() > 0) {
             $this->searchResults['players'] = $players;
