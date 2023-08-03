@@ -41,6 +41,7 @@
                 {{ $slot }}
             </main>
             @include('layouts.footer')
+            <livewire:search />
         </div>
         @livewireScripts
     </body>

@@ -6,7 +6,10 @@
         <x-application-logo />
       </a>
     </div>
-    <div class="flex lg:hidden">
+    <div class="flex lg:hidden gap-x-4">
+      <button class="search-icon-btn text-gray-700" id="searchIcon">
+        <i class="fa fa-search"></i>
+      </button>      
       <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" @click="open = !open" :aria-expanded="open">
         <span class="sr-only">Open main menu</span>
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -106,9 +109,11 @@
           @endforeach
         </div>
       </div>    
-      <a class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-sm font-semibold leading-6 text-gray-900" href="{{ route('venue.index') }}">Venues</a>
     </div>
-    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+    <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-8">
+      <button class="search-icon-btn text-gray-700" id="searchIcon">
+        <i class="fa fa-search"></i>
+      </button>
       @if (@auth()->user())
 
       <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
@@ -149,7 +154,7 @@
     <div class="fixed inset-0 z-10"></div>
     <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
       <div class="flex items-center justify-between">
-        <x-application-logo />
+        <x-application-logo />  
         <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="open = false">
           <span class="sr-only">Close menu</span>
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -259,7 +264,6 @@
                 @endforeach
               </div>
             </div>               
-            <a href="{{ route('venue.index') }}" class="flex w-full items-center justify-between rounded-lg py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Venues</a>  
           </div>
           <div class="py-6">
             @if (@auth()->user())
@@ -282,4 +286,9 @@
       </div>
     </div>
   </div>
+  <script>
+    document.getElementById('searchIcon').addEventListener('click', function() {
+        Livewire.emit('openSearch'); // Emit the event to the Livewire component
+    });
+  </script>
 </header>
