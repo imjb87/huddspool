@@ -66,10 +66,7 @@
                                                     <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
                                                 @endif
                                                 @if ($name == "teams")
-                                                    <span class="text-xs text-gray-500">{{ $item->ruleset?->name }}</span>
-                                                @endif
-                                                @if ($name == "venues")
-                                                    <span class="text-xs text-gray-500">{{ $item->address }}</span>
+                                                    <span class="text-xs text-gray-500">{{ $item->section?->name }}</span>
                                                 @endif
                                             </a>
                                         @endforeach
