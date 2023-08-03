@@ -12,6 +12,7 @@ use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\BothPlayersAwardedIfOneIs;
 use App\Rules\FixtureHasNoResult;
+use App\Rules\TotalScoresAddUpToTen;
 
 class Create extends Component
 {
@@ -21,12 +22,14 @@ class Create extends Component
     public Collection $awayPlayers;
     public $homeScore = 0;
     public $awayScore = 0;
+    public $totalScore = 0;
 
     protected function rules()
     {
         return [
             'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)],
             'fixture' => [new FixtureHasNoResult($this->fixture->id)],
+            'totalScore' => [new TotalScoresAddUpToTen($this->totalScore)],
         ];
     }
 
@@ -77,6 +80,7 @@ class Create extends Component
     {
         $this->homeScore = array_sum(array_column($this->frames, 'home_score'));
         $this->awayScore = array_sum(array_column($this->frames, 'away_score'));
+        $this->totalScore = $this->homeScore + $this->awayScore;
     }
     
     public function save()
