@@ -40,6 +40,7 @@
             <x-logo-clouds />
         </main>
         @include('layouts.footer')
+        <livewire:search />
         @livewireScripts
     </body>
 </html>
