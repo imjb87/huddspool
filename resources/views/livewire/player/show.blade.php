@@ -105,7 +105,7 @@
                                                                 class="inline-block bg-red-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">L</span>
                                                         @endif
                                                     @endif
-                                                    {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
+                                                    vs {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
                                                     ({{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }})
                                                 </div>
                                             </a>
