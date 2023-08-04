@@ -9,8 +9,8 @@
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.huddspool.co.uk" />
         <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
-        
-        <link rel="favicon" href="{{ asset('images/favicon.svg') }}" type="image/svg">
+
+        <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg">
 
         @if (Route::currentRouteName() == 'result.create')
             <meta http-equiv="refresh" content="600">
