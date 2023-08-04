@@ -11,6 +11,8 @@
 
         <title>Huddersfield &amp; District Tuesday Night Pool League</title>
 
+        <link rel="favicon" href="{{ asset('images/favicon.svg') }}" type="image/svg">
+
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
