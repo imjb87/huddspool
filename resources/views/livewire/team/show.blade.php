@@ -37,20 +37,20 @@
                             </dd>
                         </div>
                         @if ($team->captain?->telephone)
-                        <div class="mt-4 flex w-full flex-none gap-x-4 px-6">
-                            <dt class="flex w-5">
-                                <span class="sr-only">Captain telephone</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 text-gray-400 mx-auto"
-                                    viewBox="0 0 512 512" fill="currentColor">
-                                    <path
-                                        d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
-                                </svg>
-                            </dt>
-                            <dd class="text-sm leading-6 text-gray-900">
-                                <a href="tel:{{ $team->captain?->telephone }}"
-                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain?->telephone }}</a>
-                            </dd>
-                        </div>
+                            <div class="mt-4 flex w-full flex-none gap-x-4 px-6">
+                                <dt class="flex w-5">
+                                    <span class="sr-only">Captain telephone</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 text-gray-400 mx-auto"
+                                        viewBox="0 0 512 512" fill="currentColor">
+                                        <path
+                                            d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
+                                    </svg>
+                                </dt>
+                                <dd class="text-sm leading-6 text-gray-900">
+                                    <a href="tel:{{ $team->captain?->telephone }}"
+                                        class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $team->captain?->telephone }}</a>
+                                </dd>
+                            </div>
                         @endif
                         <div class="mt-4 flex w-full flex-none gap-x-4 px-6">
                             <dt class="flex w-5">
@@ -110,20 +110,26 @@
                                     </div>
                                     <div class="divide-y divide-gray-200 bg-white">
                                         @foreach ($team->players as $player)
-                                            <a href="{{ route('player.show', $player->id) }}" class=" hover:cursor-pointer hover:bg-gray-50 flex">
-                                                <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-6/12 truncate">
+                                            <a href="{{ route('player.show', $player->id) }}"
+                                                class=" hover:cursor-pointer hover:bg-gray-50 flex">
+                                                <div
+                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-6/12 truncate">
                                                     {{ $player->name }}
-                                                    @if( $player->role == 2 )
-                                                    <span class="inline-flex items-center rounded-full bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white align-top">T</span>
+                                                    @if ($player->role == 2)
+                                                        <span
+                                                            class="inline-flex items-center rounded-full bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white align-top">T</span>
                                                     @endif
                                                 </div>
-                                                <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                <div
+                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
                                                     {{ $player->framesPlayed->count() }}
                                                 </div>
-                                                <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                <div
+                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
                                                     {{ $player->framesWon->count() }}
                                                 </div>
-                                                <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                <div
+                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
                                                     {{ $player->framesLost->count() }}
                                                 </div>
                                             </a>
@@ -132,7 +138,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <section class="w-full lg:w-2/3">
                     <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
@@ -142,31 +148,36 @@
                         <div class="border-t border-gray-200 h-full flex flex-col">
                             <div class="min-w-full overflow-hidden">
                                 <div class="bg-gray-50 flex">
-                                    <div scope="col" class="px-2 py-2 text-right text-sm font-semibold text-gray-900 w-5/12">Home
+                                    <div scope="col"
+                                        class="px-2 py-2 text-right text-sm font-semibold text-gray-900 w-5/12">Home
                                     </div>
-                                    <div scope="col" class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-1/12"></div>
-                                    <div scope="col" class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-1/12">
+                                    <div scope="col"
+                                        class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-1/12"></div>
+                                    <div scope="col"
+                                        class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-1/12">
                                     </div>
-                                    <div scope="col" class="px-2 py-2 text-left text-sm font-semibold text-gray-900 w-5/12">Away
+                                    <div scope="col"
+                                        class="px-2 py-2 text-left text-sm font-semibold text-gray-900 w-5/12">Away
                                     </div>
                                 </div>
                                 <div class="bg-white">
                                     @foreach ($team->fixtures->sortBy('fixture_date') as $fixture)
-                                        <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('fixture.show', $fixture) }}">
-                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? "hidden md:block" : "" }}">
+                                        <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                                            href="{{ route('fixture.show', $fixture) }}">
+                                            <div
+                                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                                 {{ $fixture->homeTeam->name }}</div>
                                             @if ($fixture->homeTeam->shortname)
-                                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
                                                     {{ $fixture->homeTeam->shortname }}</div>
                                             @endif
                                             @if ($fixture->result)
-                                                <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 text-right font-semibold w-1/12">
-                                                    <span
-                                                        class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->home_score ?? '' }}</span>
-                                                </div>
-                                                <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 font-semibold w-1/12">
-                                                    <span
-                                                        class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->away_score ?? '' }}</span>
+                                                <div
+                                                    class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12">
+                                                    <div class="block bg-green-700 text-white text-center p-1">
+                                                        {{ $fixture->result->home_score ?? '' }} -
+                                                        {{ $fixture->result->away_score ?? '' }}</div>
                                                 </div>
                                             @else
                                                 <div
@@ -174,10 +185,12 @@
                                                     {{ $fixture->fixture_date->format('d/m') }}
                                                 </div>
                                             @endif
-                                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? "hidden md:block" : "" }}">
+                                            <div
+                                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                                 {{ $fixture->awayTeam->name }}</div>
                                             @if ($fixture->awayTeam->shortname)
-                                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
+                                                <div
+                                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
                                                     {{ $fixture->awayTeam->shortname }}</div>
                                             @endif
                                         </a>

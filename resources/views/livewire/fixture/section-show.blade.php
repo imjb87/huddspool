@@ -16,33 +16,36 @@
                 </div>
                 <div class="bg-white">
                     @foreach ($fixtures as $fixture)
-                        <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('fixture.show', $fixture) }}">
-                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? "hidden md:block" : "" }}">
+                        <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                            href="{{ route('fixture.show', $fixture) }}">
+                            <div
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->homeTeam->name }}</div>
                             @if ($fixture->homeTeam->shortname)
-                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
+                                <div
+                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
                                     {{ $fixture->homeTeam->shortname }}</div>
                             @endif
                             @if ($fixture->result)
-                            <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 text-right font-semibold w-1/12">
-                                <span
-                                    class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->home_score ?? '' }}</span>
-                            </div>
-                            <div class="whitespace-nowrap px-1 py-4 text-sm text-gray-500 font-semibold w-1/12">
-                                <span
-                                    class="inline-block bg-green-700 text-white rounded-md w-6 text-center">{{ $fixture->result->away_score ?? '' }}</span>
-                            </div>
-                        @else
-                            <div
-                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-center font-semibold w-2/12">
-                                {{ $fixture->fixture_date->format('d/m') }}
-                            </div>
-                        @endif
+                                <div
+                                    class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12">
+                                    <div class="block bg-green-700 text-white text-center p-1">
+                                        {{ $fixture->result->home_score ?? '' }} -
+                                        {{ $fixture->result->away_score ?? '' }}</div>
+                                </div>
+                            @else
+                                <div
+                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-center font-semibold w-2/12">
+                                    {{ $fixture->fixture_date->format('d/m') }}
+                                </div>
+                            @endif
 
-                            <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? "hidden md:block" : "" }}">
+                            <div
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->awayTeam->name }}</div>
                             @if ($fixture->awayTeam->shortname)
-                                <div class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
+                                <div
+                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
                                     {{ $fixture->awayTeam->shortname }}</div>
                             @endif
                         </a>
