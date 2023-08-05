@@ -52,7 +52,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="md:grid md:grid-cols-2 md:gap-8">
+                <div class="md:grid md:grid-cols-2 md:gap-8 col-span-2 md:col-span-1">
                     <div class="mt-10 md:mt-0">
                         <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
                         <ul role="list" class="mt-6 space-y-4">
