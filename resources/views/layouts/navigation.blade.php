@@ -8,7 +8,7 @@
     </div>
     <div class="flex lg:hidden gap-x-4">
       <button class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" id="searchIcon">
-        <svg class="h-6 w-6" viewBox="0 0 20 20"
+        <svg class="h-5 w-5" viewBox="0 0 20 20"
             fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd"
                 d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
@@ -117,7 +117,7 @@
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
       <button class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" id="searchIcon">
-        <svg class="h-6 w-6" viewBox="0 0 20 20"
+        <svg class="h-5 w-5" viewBox="0 0 20 20"
             fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd"
                 d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
