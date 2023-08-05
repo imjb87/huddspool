@@ -58,11 +58,11 @@
                         @foreach( $searchResults as $name => $items )
                             @if ( count($items) > 0 )
                                 <li>
-                                    <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 uppercase">{{ $name }}</h2>
+                                    <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 capitalize">{{ $name }}</h2>
                                     <div class="mt-2 text-sm text-gray-800">
                                         @foreach ( $items as $item )
                                             @if ( is_object($item) )
-                                                <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate" href="{{ route(Str::singular($name).'.show', $item->id) }}">
+                                                <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate hover:bg-gray-100 duration-300" href="{{ route(Str::singular($name).'.show', $item->id) }}">
                                                     <span>{{ $item->name }}</span>
                                                     @if ($name == "players")
                                                         <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
