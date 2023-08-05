@@ -1,11 +1,4 @@
-<div>
-    <div class="bg-white pt-24 sm:pt-32 pb-8 sm:pb-12">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="mx-auto max-w-2xl lg:mx-0">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl font-serif">Submit Result</h2>
-            </div>
-        </div>
-    </div>
+<div class="pt-[80px]">
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
