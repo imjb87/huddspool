@@ -13,6 +13,7 @@ class Show extends Component
     public $played;
     public $won;
     public $lost;
+    public $role;
 
     public function mount(User $player)
     {
@@ -38,6 +39,9 @@ class Show extends Component
         });
 
         $this->lost = $this->played - $this->won;
+
+        $this->role = $this->player->id == $this->player->team->captain_id ? 'Captain' : 'Player';
+        $this->role = $this->role != 'Captain' && $this->player->role == 2 ? 'Team Admin' : $this->role;
 
     }
 

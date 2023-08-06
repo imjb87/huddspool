@@ -1,57 +1,61 @@
-<div>
-    <div class="bg-white pt-24 sm:pt-32 pb-8 sm:pb-12">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="mx-auto max-w-2xl lg:mx-0">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl font-serif">{{ $player->name }}
-                </h2>
-            </div>
-        </div>
-    </div>
+<div class="pt-[80px]">
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
-            <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
-                <div class="rounded-lg bg-white shadow-sm ring-1 ring-gray-900/5 w-full lg:w-1/3 self-start">
-                    <dl class="flex flex-wrap pb-6">
-                        <div class="flex-auto pl-6 pt-6">
-                            <dt class="text-sm font-semibold leading-6 text-gray-900">Team</dt>
-                            <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">
-                                <a href="{{ route('team.show', $player->team->id) }}"
-                                    class="hover:underline">{{ $player->team->name }}</a>
-                            </dd>
-                        </div>
-                        <div class="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
-                            <dt class="flex w-5">
-                                <span class="sr-only">Player email address</span>
-                                <svg class="w-4 text-gray-400 mx-auto" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512" fill="currentColor">
-                                    <!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                                    <path
-                                        d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208c13.3 0 24 10.7 24 24s-10.7 24-24 24C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v28c0 50.8-41.2 92-92 92c-31.1 0-58.7-15.5-75.3-39.2C322.7 360.9 291.1 376 256 376c-66.3 0-120-53.7-120-120s53.7-120 120-120c28.8 0 55.2 10.1 75.8 27c4.3-6.6 11.7-11 20.2-11c13.3 0 24 10.7 24 24v80 28c0 24.3 19.7 44 44 44s44-19.7 44-44V256c0-114.9-93.1-208-208-208zm72 208a72 72 0 1 0 -144 0 72 72 0 1 0 144 0z" />
-                                </svg>
-                            </dt>
-                            <dd class="text-sm leading-6 text-gray-900">
-                                <a href="mailto:{{ $player->email }}"
-                                    class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $player->email }}</a>
-                            </dd>
-                        </div>
-                        @if ($player->telephone)
-                            <div class="mt-4 flex w-full flex-none gap-x-4 px-6">
-                                <dt class="flex w-5">
-                                    <span class="sr-only">Player telephone</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 text-gray-400 mx-auto"
-                                        viewBox="0 0 512 512" fill="currentColor">
-                                        <path
-                                            d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
-                                    </svg>
-                                </dt>
-                                <dd class="text-sm leading-6 text-gray-900">
-                                    <a href="tel:{{ $player->telephone }}"
-                                        class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $player->telephone }}</a>
-                                </dd>
-                            </div>
-                        @endif
-                    </dl>
+            <div class="border-b border-gray-200 pb-2 mb-4">
+                <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
+                  <h3 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Player information</h3>
                 </div>
+            </div>                    
+            <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
+                <div class="overflow-hidden bg-white shadow rounded-lg sm:self-start w-full lg:w-1/3">
+                    <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
+                        <div class="flex items-start space-x-5">
+                          <div class="flex-shrink-0">
+                            <div class="relative">
+                              <img class="h-16 w-16 rounded-full" src="{{ asset('/images/user.jpeg') }}" alt="">
+                              <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
+                            </div>
+                          </div>
+                          <!--
+                            Use vertical padding to simulate center alignment when both lines of text are one line,
+                            but preserve the same layout if the text wraps without making the image jump around.
+                          -->
+                          <div class="pt-1.5">
+                            <h1 class="text-2xl font-bold text-gray-900">{{ $player->name }}</h1>
+                            <p class="text-sm font-medium text-gray-500">
+                                <a href="{{ route('team.show', $player->team) }}">
+                                    {{ $player->team->name }}
+                                </a>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    <div class="border-t border-gray-100">
+                      <dl class="divide-y divide-gray-100">
+                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-900">Role</dt>
+                          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ $role }}</dd> 
+                        </div>
+                        @if ($player->email)
+                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-900">Email address</dt>
+                          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                            <a href="mailto:{{ $player->email }}">{{ $player->email }}</a>
+                          </dd>
+                        </div>
+                        @endif
+                        @if ($player->telephone)
+                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-900">Telephone</dt>
+                          <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                            <a href="tel:{{ $player->telephone }}">{{ $player->telephone }}</a>
+                          </dd>
+                        </div>
+                        @endif
+                      </dl>
+                    </div>
+                  </div>
+                  
                 <section class="w-full lg:w-2/3">
                     <dl
                         class="mb-5 grid grid-cols-3 divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:grid-cols-3 divide-x">
