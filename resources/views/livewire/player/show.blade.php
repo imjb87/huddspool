@@ -53,23 +53,40 @@
                     </dl>
                 </div>
                 <section class="w-full lg:w-2/3">
-                    <dl class="grid gap-y-5 grid-cols-3 mb-5 overflow-hidden rounded-lg shadow bg-white divide-x divide-gray-900/5">
-                        <div class="p-6">
-                            <dt class="truncate text-sm font-medium text-gray-500">Played</dt>
-                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ $played ?? 0 }}
+                    <dl
+                        class="mb-5 grid grid-cols-3 divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:grid-cols-3 divide-x">
+                        <div class="px-4 py-5 sm:p-6">
+                            <dt class="text-base font-normal text-gray-900">Played</dt>
+                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
+                                    {{ $played ?? 0 }}
+                                </div>
                             </dd>
                         </div>
-                        <div class="p-6">
-                            <dt class="truncate text-sm font-medium text-gray-500">Won</dt>
-                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ $won ?? 0 }}
+                        <div class="px-4 py-5 sm:p-6">
+                            <dt class="text-base font-normal text-gray-900">Won</dt>
+                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
+                                    {{ $won ?? 0 }}
+                                    <span class="ml-2 text-sm font-medium text-gray-500">
+                                        ({{ $played > 0 ? round(($won / $played) * 100) : 0 }}%)
+                                    </span>
+                                </div>
                             </dd>
                         </div>
-                        <div class="p-6">
-                            <dt class="truncate text-sm font-medium text-gray-500">Lost</dt>
-                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ $lost ?? 0 }}
+                        <div class="px-4 py-5 sm:p-6">
+                            <dt class="text-base font-normal text-gray-900">Lost</dt>
+                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
+                                    {{ $lost ?? 0 }}
+                                    <span class="ml-2 text-sm font-medium text-gray-500">
+                                        ({{ $played > 0 ? round(($lost / $played) * 100) : 0 }}%)
+                                    </span>
+                                </div>
                             </dd>
                         </div>
                     </dl>
+
                     <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
                         <div class="px-4 py-4 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Frames</h2>
@@ -77,17 +94,18 @@
                         <div class="border-gray-200 h-full flex flex-col">
                             <div class="min-w-full overflow-hidden">
                                 <div class="bg-white">
-                                    @if (count($frames) == 0) 
-                                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
+                                    @if (count($frames) == 0)
+                                        <div
+                                            class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
                                             <h3 class="mt-2 text-sm font-semibold text-gray-900">No frames</h3>
-                                            <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">This player hasn't played any frames this season. Please check back here again soon.</p>
+                                            <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">This player hasn't
+                                                played any frames this season. Please check back here again soon.</p>
                                         </div>
-                                    @else               
+                                    @else
                                         @foreach ($frames as $frame)
                                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                                 href="{{ route('fixture.show', $frame->result->fixture) }}">
-                                                <div
-                                                    class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm text-gray-500">
+                                                <div class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm text-gray-500">
                                                     @if ($frame->home_player_id == $player->id)
                                                         @if ($frame->home_score > $frame->away_score)
                                                             <span
@@ -105,8 +123,17 @@
                                                                 class="inline-block bg-red-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">L</span>
                                                         @endif
                                                     @endif
-                                                    vs {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
-                                                    ({{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }})
+                                                    vs
+                                                    {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
+                                                    <span class="hidden md:inline">
+                                                        ({{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }})
+                                                    </span>
+                                                    <span class="md:hidden">
+                                                        ({{ $frame->home_player_id == $player->id ? ( $frame->awayPlayer->team->shortname ?? $frame->awayPlayer->team->name ) : ( $frame->homePlayer->team->shortname ?? $frame->homePlayer->team->name ) }})
+                                                    </span>
+                                                    <span class="text-xs text-gray-500">
+                                                        {{ $frame->result->fixture->fixture_date->format('d/m') }}
+                                                    </span>
                                                 </div>
                                             </a>
                                         @endforeach
