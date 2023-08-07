@@ -1,6 +1,4 @@
-<div>
-@if($isOpen)
-<div class="relative z-[99]" role="dialog" aria-modal="true" x-data="{ open: @entangle('isOpen') }">
+<div class="relative z-[99] duration-300 {{ $isOpen ? "visible opacity-100" : "invisible opacity-0" }}" role="dialog" aria-modal="true" x-data="{ open: @entangle('isOpen') }">
     <!--
       Background backdrop, show/hide based on modal state.
   
@@ -93,6 +91,4 @@
             @endif
         </div>
     </div>
-</div>
-@endif
 </div>
