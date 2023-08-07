@@ -44,7 +44,7 @@
                                             <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
                                                 <div
                                                     class="whitespace-nowrap py-2 px-4 text-sm font-medium text-gray-900 text-left w-2/12 md:w-1/12">
-                                                    {{ $loop->iteration }}
+                                                    {{ $loop->iteration }}.
                                                 </div>
                                                 <div
                                                     class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm text-gray-900 truncate w-6/12 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
@@ -59,13 +59,13 @@
                                                     @endif        
                                                 </div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-2/12 md:w-1/12">
                                                     {{ $team->played }}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
                                                     {{ $team->wins }}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
                                                     {{ $team->draws }}</div>
                                                 <div
                                                     class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">

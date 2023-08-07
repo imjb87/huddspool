@@ -27,16 +27,16 @@
                     @else 
                         @foreach ($players as $player)
                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('player.show', $player->id) }}">
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-[10%] font-semibold">
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-900 w-[10%] font-semibold">
                                     {{ $loop->iteration + ( ($page - 1) * 10 ) }}.</div>
                                 <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-900 w-[54%]">
                                     {{$player->name}}
                                 </div>
-                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                <div class="py-2 text-sm text-gray-900 w-[12%] text-center font-semibold">
                                     {{$player->total_frames}}</div>
-                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                <div class="py-2 text-sm text-gray-900 w-[12%] text-center font-semibold">
                                     {{$player->total_score}}</div>
-                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                <div class="py-2 text-sm text-gray-900 w-[12%] text-center font-semibold">
                                     {{$player->total_against}}</div>
                             </a>
                         @endforeach
