@@ -14,16 +14,16 @@
                     <div scope="col" class="px-2 py-2 text-left text-sm font-semibold text-gray-900 w-5/12">Away
                     </div>
                 </div>
-                <div class="bg-white">
+                <div class="bg-white border-b border-gray-300">
                     @foreach ($fixtures as $fixture)
                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                             href="{{ route('fixture.show', $fixture) }}">
                             <div
-                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->homeTeam->name }}</div>
                             @if ($fixture->homeTeam->shortname)
                                 <div
-                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-right w-5/12 md:hidden">
+                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 md:hidden">
                                     {{ $fixture->homeTeam->shortname }}</div>
                             @endif
                             @if ($fixture->result)
@@ -41,11 +41,11 @@
                             @endif
 
                             <div
-                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->awayTeam->name }}</div>
                             @if ($fixture->awayTeam->shortname)
                                 <div
-                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-left w-5/12 md:hidden">
+                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 md:hidden">
                                     {{ $fixture->awayTeam->shortname }}</div>
                             @endif
                         </a>

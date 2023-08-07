@@ -37,11 +37,14 @@ class SectionShow extends Component
 
         $this->players = DB::select(
             'SELECT users.id, users.name
+            , teams.name AS team_name
+            , teams.shortname AS team_shortname
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.home_score ELSE frames.away_score END) AS total_score
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.away_score ELSE frames.home_score END) AS total_against
             , COUNT(frames.id) AS total_frames
             FROM users
             JOIN frames ON users.id = frames.home_player_id OR users.id = frames.away_player_id
+            JOIN teams ON users.team_id = teams.id
             JOIN results ON frames.result_id = results.id
             JOIN fixtures ON results.fixture_id = fixtures.id
             JOIN sections ON fixtures.section_id = sections.id

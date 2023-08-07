@@ -6,15 +6,15 @@
         <div class="border-t border-gray-200 h-full flex flex-col">
             <div class="min-w-full overflow-hidden">
                 <div class="bg-gray-50 flex">
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-1/12">#
+                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-[10%]">#
                     </div>
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-5/12">Name
+                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-[54%]">Name
                     </div>
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">Pl
+                    <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-[12%] text-center">Pl
                     </div>
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">W
+                    <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-[12%] text-center">W
                     </div>
-                    <div scope="col" class="px-4 sm:px-6 py-2 text-sm font-semibold text-gray-900 w-2/12 text-center">L
+                    <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-[12%] text-center">L
                     </div>
                 </div>
                 <div class="bg-white">
@@ -27,16 +27,17 @@
                     @else 
                         @foreach ($players as $player)
                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50" href="{{ route('player.show', $player->id) }}">
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-1/12 font-semibold">
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-[10%] font-semibold">
                                     {{ $loop->iteration + ( ($page - 1) * 10 ) }}.</div>
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-5/12 font-semibold">
-                                    {{ $player->name }}</div>
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                    {{ $player->total_frames }}</div>
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                    {{ $player->total_score }}</div>
-                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-500 w-2/12 text-center font-semibold">
-                                    {{ $player->total_against }}</div>
+                                <div class="whitespace-nowrap px-4 sm:px-6 py-2 text-sm text-gray-900 w-[54%]">
+                                    {{$player->name}}
+                                </div>
+                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                    {{$player->total_frames}}</div>
+                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                    {{$player->total_score}}</div>
+                                <div class="py-2 text-sm text-gray-500 w-[12%] text-center font-semibold">
+                                    {{$player->total_against}}</div>
                             </a>
                         @endforeach
                     @endif

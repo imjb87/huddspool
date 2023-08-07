@@ -47,7 +47,7 @@
                                                     {{ $loop->iteration }}
                                                 </div>
                                                 <div
-                                                    class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm font-medium text-gray-900 truncate w-6/12 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
+                                                    class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm text-gray-900 truncate w-6/12 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
                                                     <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                     @if ($team->shortname)
                                                         <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
