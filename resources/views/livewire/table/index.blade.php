@@ -68,10 +68,10 @@
                                                     class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
                                                     {{ $team->draws }}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
                                                     {{ $team->losses }}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-2/12 md:w-1/12">
                                                     {{ $team->points }}</div>
                                             </a>
                                         @endforeach
