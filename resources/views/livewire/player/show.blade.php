@@ -3,7 +3,7 @@
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="border-b border-gray-200 pb-2 mb-4">
                 <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
-                  <h3 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Player information</h3>
+                  <h3 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Player profile</h3>
                 </div>
             </div>                    
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
