@@ -83,7 +83,9 @@ class Section extends Model
                 + $this->results->where('away_team_id', $team->id)->sum('away_score');
 
             return $team;
-        })->sortByDesc('points')->sortByDesc('wins')->sortByDesc('draws');
+        })->sortByDesc(function ($team) {
+            return $team->points * 10000 + $team->wins * 1000 + $team->draws * 100 + $team->played;
+        });
 
         return $teams;
     }
