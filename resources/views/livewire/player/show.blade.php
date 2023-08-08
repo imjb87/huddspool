@@ -24,9 +24,13 @@
                             <div class="pt-1.5">
                                 <h1 class="text-2xl font-bold text-gray-900">{{ $player->name }}</h1>
                                 <p class="text-sm font-medium text-gray-500">
+                                    @if ($player->team)
                                     <a href="{{ route('team.show', $player->team) }}">
                                         {{ $player->team->name }}
                                     </a>
+                                    @else
+                                        Free agent
+                                    @endif
                                 </p>
                             </div>
                         </div>
