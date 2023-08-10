@@ -1,5 +1,5 @@
 <header class="bg-white fixed top-0 w-full z-50 duration-500 transition-all" x-data="{ open: false, scroll: false }" @scroll.window="scroll = (window.pageYOffset > 0) ? true : false" :class="{ 'shadow-lg': scroll || open }">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between py-6 px-4 lg:px-8" aria-label="Global">
     <div class="flex lg:flex-1">
       <a href="#" class="-m-1.5 p-1.5">
         <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
