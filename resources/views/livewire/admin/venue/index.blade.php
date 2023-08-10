@@ -1,4 +1,4 @@
-<div class="px-4 sm:px-6 lg:px-8">
+<div>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <h1 class="text-base font-semibold leading-6 text-gray-900">Venues</h1>
@@ -19,8 +19,8 @@
         </div>
     </div>
     <div class="mt-8 flow-root">
-        <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="-my-2 overflow-hidden">
+            <div class="inline-block min-w-full max-w-full py-2 align-middle sm:px-6 lg:px-8">
                 @if ($venues->count() > 0)
                     <div class="overflow-hidden bg-white shadow sm:rounded-md">
                         <ul role="list" class="divide-y divide-gray-200">
@@ -29,7 +29,7 @@
                                     <a class="block hover:bg-gray-50" href="{{ route('admin.venues.show', $venue) }}">
                                         <div class="flex items-center px-4 py-4 sm:px-6">
                                             <div class="flex min-w-0 flex-1 items-center">
-                                                <div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+                                                <div class="min-w-0 flex-1 md:grid md:grid-cols-2 md:gap-4">
                                                     <div>
                                                         <p class="truncate text-sm font-medium text-gray-600">
                                                             {{ $venue->name }}</p>

@@ -21,10 +21,10 @@
 <body class="font-sans antialiased h-full [&_[x-cloak]]:hidden">
     <div class="min-h-screen bg-gray-100">
         <!-- Page Content -->
-        <main>
+        <main x-data="{ open: false }">
             <div>
                 <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
-                <div class="relative z-40 hidden" role="dialog" aria-modal="true">
+                <div class="relative z-40" x-show="open" x-transition:enter="transition ease-in-out duration-150"> 
                     <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
 
                     <div class="fixed inset-0 z-40 flex">
@@ -171,7 +171,7 @@
                 <div class="flex flex-col lg:pl-64">
                     <div
                         class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-                        <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" x-on:click="open = true">
+                        <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" x-on:click="open = !open">
                             <span class="sr-only">Open sidebar</span>
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" aria-hidden="true">

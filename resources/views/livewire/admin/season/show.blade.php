@@ -1,6 +1,5 @@
 <div>
-    <div
-        class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+    <div class="mx-auto max-w-3xl md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
         <div class="flex items-center space-x-5">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
@@ -66,15 +65,15 @@
             </section>
             <section>
                 <div class="bg-white shadow sm:rounded-lg">
-                    <div class="px-4 py-5 sm:px-6 flex">
+                    <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
                         <div class="flex-1">
-                        <h2 class="text-lg font-medium leading-6 text-gray-900">Sections</h2>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">List of sections in the
-                            season.</p>
+                            <h2 class="text-lg font-medium leading-6 text-gray-900">Sections</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">List of sections in the
+                                season.</p>
                         </div>
                         <a href="{{ route('admin.sections.create', $season) }}"
-                        class="self-end justify-self-end rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add
-                        section</a>
+                            class="sm:self-end sm:justify-self-end rounded-md bg-indigo-600 py-2 px-3 mt-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add
+                            section</a>
 
                     </div>
                     <div class="border-t border-gray-200">
@@ -86,7 +85,9 @@
                                             <th scope="col"
                                                 class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                                                 Name</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Ruleset</th>
+                                            <th scope="col"
+                                                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 hidden sm:table-cell">
+                                                Ruleset</th>
                                             <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                                 <span class="sr-only">Edit</span>
                                             </th>
@@ -98,12 +99,14 @@
                                                 <td
                                                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                                     {{ $section->name }}</td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">
                                                     {{ $section->ruleset->name }}
                                                 </td>
                                                 <td
                                                     class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                    <a class="rounded bg-indigo-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="{{ route('admin.sections.show', $section) }}">View</a>
+                                                    <a class="rounded bg-indigo-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                        href="{{ route('admin.sections.show', $section) }}">View</a>
                                                 </td>
                                             </tr>
                                         @endforeach

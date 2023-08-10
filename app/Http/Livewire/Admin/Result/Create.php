@@ -11,6 +11,8 @@ use App\Rules\AllFramesHavePlayers;
 use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\BothPlayersAwardedIfOneIs;
+use App\Rules\FixtureHasNoResult;
+use App\Rules\TotalScoresAddUpToTen;
 
 class Create extends Component
 {
@@ -21,11 +23,14 @@ class Create extends Component
     public $homeScore = 0;
     public $awayScore = 0;
     public $is_overridden = false;
+    public $totalScore = 0;
 
     protected function rules()
     {
         return [
-            'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)]
+            'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)],
+            'fixture' => [new FixtureHasNoResult($this->fixture->id)],
+            'totalScore' => [new TotalScoresAddUpToTen($this->totalScore)],
         ];
     }
 
@@ -49,25 +54,9 @@ class Create extends Component
 
     public function updatedFrames()
     {
-        $this->homeScore = 0;
-        $this->awayScore = 0;
-
-        foreach ($this->frames as $key => $frame) {
-            if ($frame['home_score'] > 1) {
-                $this->frames[$key]['home_score'] = 1;
-            }
-            if ($frame['home_score'] < 0) {
-                $this->frames[$key]['home_score'] = 0;
-            }
-            if ($frame['away_score'] > 1) {
-                $this->frames[$key]['away_score'] = 1;
-            }
-            if ($frame['away_score'] < 0) {
-                $this->frames[$key]['away_score'] = 0;
-            }
-            $this->homeScore += $frame['home_score'];
-            $this->awayScore += $frame['away_score'];
-        }
+        $this->homeScore = array_sum(array_column($this->frames, 'home_score'));
+        $this->awayScore = array_sum(array_column($this->frames, 'away_score'));
+        $this->totalScore = $this->homeScore + $this->awayScore;
     }
 
     public function save()

@@ -1,4 +1,4 @@
-<div class="px-4 sm:px-6 lg:px-8">
+<div>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <h1 class="text-base font-semibold leading-6 text-gray-900">Seasons</h1>
@@ -11,8 +11,8 @@
         </div>
     </div>
     <div class="mt-8 flow-root">
-        <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="-my-2 overflow-hidden">
+            <div class="inline-block min-w-full max-w-full py-2 align-middle sm:px-6 lg:px-8">
                 @if ($seasons->count() > 0)
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                         <table class="min-w-full divide-y divide-gray-300">

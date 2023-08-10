@@ -64,10 +64,13 @@
                                 @endforeach
                             </select>
                             <div class="w-10 sm:w-12 border-x border-gray-200">
-                                <input wire:model="frames.{{ $i }}.home_score" type="number" min="0"
-                                    max="1"
-                                    class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                <select wire:model="frames.{{ $i }}.home_score"
+                                    name="frames.{{ $i }}.home_score"
+                                    class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                     placeholder="0">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                </select>
                             </div>
                         </div>
                         <div
@@ -77,10 +80,13 @@
                         </div>
                         <div class="w-full sm:w-auto flex sm:flex-1 order-last">
                             <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
-                                <input wire:model="frames.{{ $i }}.away_score" type="number" min="0"
-                                    max="1"
-                                    class="block w-full border-0 pr-0 pl-0 sm:pl-4 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                <select wire:model="frames.{{ $i }}.away_score"
+                                    name="frames.{{ $i }}.away_score"
+                                    class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                     placeholder="0">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                </select>
                             </div>
                             <select wire:model="frames.{{ $i }}.away_player_id"
                                 class="border-0 py-1.5 px-3 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
@@ -104,14 +110,15 @@
                     </div>
                     <div class="w-10 sm:w-12 bg-gray-50"></div>
                     <div class="w-full sm:w-auto flex sm:flex-1">
-                        <div class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200 order-last sm:order-first">
+                        <div
+                            class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200 order-last sm:order-first">
                             {{ $this->awayScore }}
                         </div>
                         <div class="flex-1 leading-6 py-1.5 px-3 order-first sm:order-last">
                             Away total
-                        </div>        
+                        </div>
                     </div>
-                </div>            
+                </div>
             </div>
 
             <!-- override result -->
@@ -123,24 +130,23 @@
                 </label>
             </div>
 
-            @if( $is_overridden )
+            @if ($is_overridden)
                 <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-12 sm:gap-x-6">
                     <div class="sm:col-span-6">
-                        <label for="homeScore" class="block text-sm font-medium leading-6 text-slate-900">Home score</label>
-                        <input type="number" name="homeScore" id="homeScore"
-                            wire:model.defer="homeScore"
+                        <label for="homeScore" class="block text-sm font-medium leading-6 text-slate-900">Home
+                            score</label>
+                        <input type="number" name="homeScore" id="homeScore" wire:model.defer="homeScore"
                             class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                     </div>
 
                     <div class="sm:col-span-6">
-                        <label for="awayScore" class="block text-sm font-medium leading-6 text-slate-900">Away score</label>
-                        <input type="number" name="awayScore" id="awayScore"
-                            wire:model.defer="awayScore"
+                        <label for="awayScore" class="block text-sm font-medium leading-6 text-slate-900">Away
+                            score</label>
+                        <input type="number" name="awayScore" id="awayScore" wire:model.defer="awayScore"
                             class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                     </div>
                 </div>
             @endif
-
 
             @if ($errors->any())
                 <x-errors />
@@ -151,7 +157,7 @@
                     class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
                 <button type="submit"
                     class="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Save</button>
-                    
+
             </div>
         </form>
     </div>
