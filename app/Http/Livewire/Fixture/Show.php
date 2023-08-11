@@ -18,6 +18,10 @@ class Show extends Component
             abort(404);
         }
 
+        if( $this->fixture->result ) {
+            abort(404);
+        }
+
         if( auth()->check() ) {
             if( $this->fixture->homeTeam->id == auth()->user()->team_id || $this->fixture->awayTeam->id == auth()->user()->team_id ) {
                 if( auth()->user()->role == 2 ) {

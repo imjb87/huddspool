@@ -116,7 +116,7 @@
                                     @else
                                         @foreach ($frames as $frame)
                                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                                                href="{{ route('fixture.show', $frame->result->fixture) }}">
+                                                href="{{ route('result.show', $frame->result) }}">
                                                 <div class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm text-gray-500">
                                                     @if ($frame->home_player_id == $player->id)
                                                         @if ($frame->home_score > $frame->away_score)

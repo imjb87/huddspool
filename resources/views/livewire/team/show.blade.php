@@ -119,7 +119,7 @@
                                 <div class="bg-white">
                                     @foreach ($team->fixtures->sortBy('fixture_date') as $fixture)
                                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                                            href="{{ route('fixture.show', $fixture) }}">
+                                            href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
                                             <div
                                                 class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                                 {{ $fixture->homeTeam->name }}</div>

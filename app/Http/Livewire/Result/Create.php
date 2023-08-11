@@ -111,7 +111,7 @@ class Create extends Component
             ]);
         }
 
-        return redirect()->route('fixture.show', $this->fixture);
+        return redirect()->route('result.show', $result);
     }    
 
     public function render()
