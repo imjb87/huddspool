@@ -50,7 +50,7 @@ class SectionShow extends Component
             JOIN sections ON fixtures.section_id = sections.id
             WHERE sections.id = ?
             GROUP BY users.id, users.name
-            ORDER BY total_score DESC, total_frames DESC, users.name ASC
+            ORDER BY total_score DESC, total_against ASC, total_frames DESC, users.name ASC
             LIMIT ?
             OFFSET ?',
             [$sectionId, $perPage, ($this->page - 1) * $perPage]
