@@ -29,7 +29,7 @@
                             @if ($fixture->result)
                                 <div
                                     class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12 flex">
-                                    <div class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px]">
+                                    <div class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold">
                                         {{ $fixture->result->home_score ?? '' }} -
                                         {{ $fixture->result->away_score ?? '' }}</div>
                                 </div>
