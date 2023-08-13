@@ -25,7 +25,7 @@
         <main x-data="{ open: false }">
             <div>
                 <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
-                <div class="relative z-40" x-show="open" x-transition:enter="transition ease-in-out duration-150"> 
+                <div class="relative z-40" x-show="open" x-transition:enter="transition ease-in-out duration-150" x-cloak> 
                     <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
 
                     <div class="fixed inset-0 z-40 flex">
