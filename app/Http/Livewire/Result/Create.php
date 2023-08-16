@@ -48,7 +48,9 @@ class Create extends Component
         if( auth()->check() ) {
             if( $this->fixture->homeTeam->id == auth()->user()->team_id || $this->fixture->awayTeam->id == auth()->user()->team_id ) {
                 if( auth()->user()->role != 2 ) {
-                    abort(404);
+                    if( auth()->user()->is_admin != 1 ) {
+                        abort(404);
+                    }
                 }
             }
         }
