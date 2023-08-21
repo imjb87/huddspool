@@ -14,6 +14,8 @@ class OutstandingFixtures extends Component
             [
                 'fixtures' => Fixture::doesntHave('result')
                     ->where('fixture_date', '<', now())
+                    ->where('home_team_id', '!=', 1)
+                    ->where('away_team_id', '!=', 1)
                     ->orderBy('fixture_date', 'asc')
                     ->simplePaginate(10)
             ]
