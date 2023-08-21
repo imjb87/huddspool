@@ -52,9 +52,11 @@
                     @endforeach
                 </div>
             </div>
-            <div class="mt-auto px-4 py-4 sm:px-6">
-                {{ $fixtures->links() }}
-            </div>
+            @if ($fixtures->hasPages())
+                <div class="mt-auto px-4 py-4 sm:px-6">
+                    {{ $fixtures->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </section>
