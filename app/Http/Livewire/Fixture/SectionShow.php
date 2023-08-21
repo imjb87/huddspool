@@ -32,7 +32,7 @@ class SectionShow extends Component
             'fixtures' => Fixture::where('section_id', $this->section->id)
                 ->orderBy('week')
                 ->simplePaginate(5, ['*'], 'page', $this->page)
-        ])->layout('layouts.admin');
+        ]);
 
     }
 }

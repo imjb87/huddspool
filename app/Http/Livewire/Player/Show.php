@@ -47,6 +47,7 @@ class Show extends Component
 
     public function render()
     {
-        return view('livewire.player.show');
+        return view('livewire.player.show')
+            ->layout('layouts.app', ['title' => $this->player->name]);
     }
 }

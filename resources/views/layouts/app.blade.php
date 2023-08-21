@@ -18,7 +18,12 @@
         <meta http-equiv="refresh" content="600">
     @endif
 
-    <title>{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
+    <title>
+        @isset($title) 
+            {{ $title }} | 
+        @endisset 
+        {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}
+    </title>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-620MNWY15S"></script>

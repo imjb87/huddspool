@@ -72,6 +72,6 @@ class SectionShow extends Component
 
     public function render()
     {
-        return view('livewire.player.section-show')->layout('layouts.app');
+        return view('livewire.player.section-show');
     }
 }

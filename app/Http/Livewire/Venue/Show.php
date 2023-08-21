@@ -16,6 +16,7 @@ class Show extends Component
     
     public function render()
     {
-        return view('livewire.venue.show');
+        return view('livewire.venue.show')
+            ->layout('layouts.app', ['title' => $this->venue->name]);
     }
 }

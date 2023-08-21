@@ -16,6 +16,7 @@ class Show extends Component
     
     public function render()
     {
-        return view('livewire.ruleset.show');
+        return view('livewire.ruleset.show')
+            ->layout('layouts.app', ['title' => $this->ruleset->name]);
     }
 }

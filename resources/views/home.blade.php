@@ -11,7 +11,7 @@
     <meta property="og:url" content="https://www.huddspool.co.uk" />
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
 
-    <title>Huddersfield &amp; District Tuesday Night Pool League</title>
+    <title>Home | Huddersfield &amp; District Tuesday Night Pool League</title>
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 

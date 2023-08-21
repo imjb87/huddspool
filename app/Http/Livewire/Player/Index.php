@@ -24,6 +24,7 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.player.index');
+        return view('livewire.player.index')
+            ->layout('layouts.app', ['title' => $this->ruleset->name . ' Averages']);
     }
 }

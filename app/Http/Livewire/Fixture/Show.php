@@ -37,6 +37,6 @@ class Show extends Component
 
     public function render()
     {
-        return view('livewire.fixture.show');
+        return view('livewire.fixture.show')->layout('layouts.app', ['title' => $this->fixture->homeTeam->name . ' vs ' . $this->fixture->awayTeam->name]);
     }
 }

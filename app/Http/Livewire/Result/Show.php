@@ -16,6 +16,7 @@ class Show extends Component
 
     public function render()
     {
-        return view('livewire.result.show')->layout('layouts.app');
+        return view('livewire.result.show')
+            ->layout('layouts.app', ['title' => $this->result->fixture->homeTeam->name . ' vs ' . $this->result->fixture->awayTeam->name]);
     }
 }
