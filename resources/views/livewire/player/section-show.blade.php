@@ -48,33 +48,19 @@
         <div class="mt-auto px-4 py-4 sm:px-6 border-t border-gray-200">
             <div class="flex">
                 <button wire:click="previousPage" wire:loading.attr="disabled"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    class="inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"
                     aria-label="Previous"
                     {{ $page == 1 ? 'disabled' : '' }}
                     >
-                    <svg wire:loading wire:target="previousPage" class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
                     &laquo; Previous 
                 </button>
 
                 <button wire:click="nextPage" wire:loading.attr="disabled"
-                    class="ml-auto inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    class="ml-auto inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"
                     aria-label="Next"
                     {{ $page >= $totalPages ? 'disabled' : '' }}
                     >
                     Next &raquo;
-                    <svg wire:loading wire:target="nextPage" class="animate-spin -mr-1 ml-3 h-5 w-5 text-gray-500"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M20 12a8 8 0 11-16 0 8 8 0 0116 0z"></path>
-                    </svg>
                 </button>
 
             </div>
