@@ -16,11 +16,11 @@ class Show extends Component
         $this->fixture = $fixture;
 
         if ($this->fixture->homeTeam->id == 1 || $this->fixture->awayTeam->id == 1) {
-            abort(404);
+            return redirect()->route('home');
         }
 
         if ($this->fixture->result) {
-            abort(404);
+            return redirect()->route('result.show', $this->fixture->result);
         }
 
         if (auth()->check()) {
