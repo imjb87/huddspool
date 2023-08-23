@@ -161,7 +161,7 @@
   <!-- Mobile menu, show/hide based on menu open state. -->
   <div class="lg:hidden relative z-[99]" role="dialog" aria-modal="true" @click.away="open = false" @close.stop="open = false" @keydown.escape="open = false" x-cloak x-show="open">
     <!-- Background backdrop, show/hide based on slide-over state. -->
-    <div class="fixed inset-0 z-20 bg-gray-500 bg-opacity-50 transition-opacity" x-show="open"></div>
+    <div class="fixed inset-0 z-20 bg-gray-500 bg-opacity-50 transition-opacity" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
     <div class="fixed inset-y-0 right-0 z-30 w-full overflow-y-auto px-4 py-[12px] sm:max-w-sm sm:ring-1 sm:ring-gray-900/10" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1">
       <div class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all px-6 py-4" @click.away="open = false">
       <div class="flow-root">
