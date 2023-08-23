@@ -5,7 +5,6 @@ namespace App\Http\Livewire\Fixture;
 use Livewire\Component;
 use App\Models\Section;
 use App\Models\Fixture;
-use Illuminate\Support\Arr;
 use Livewire\WithPagination;
 
 class SectionShow extends Component
@@ -13,26 +12,39 @@ class SectionShow extends Component
     use WithPagination;
 
     public Section $section;
-    public $page = 1;
+    public $week = 1;
 
     public function mount(Section $section)
     {
         $this->section = $section;
 
-        Arr::map($section->season->dates, function ($date, $key) use (&$page) {
-            if( date('W', strtotime($date)) == date('W') ) {
-                $this->page = $key + 1;
+        foreach ($section->season->dates as $key => $date) {
+            if (date('W', strtotime($date)) == date('W')) {
+                $this->week = $key + 1;
+                break; // Exit the loop after setting the page.
             }
-        });
+        }
+    }
+
+    public function previousWeek()
+    {
+        $this->week--;
+    }
+
+    public function nextWeek()
+    {
+        $this->week++;
     }
 
     public function render()
     {
-        return view('livewire.fixture.section-show', [
-            'fixtures' => Fixture::where('section_id', $this->section->id)
-                ->orderBy('week')
-                ->simplePaginate(5, ['*'], 'page', $this->page)
-        ]);
-
+        return view(
+            'livewire.fixture.section-show',
+            [
+                'fixtures' => Fixture::where('section_id', $this->section->id)
+                    ->where('week', $this->week)
+                    ->get()
+            ]
+        );
     }
 }

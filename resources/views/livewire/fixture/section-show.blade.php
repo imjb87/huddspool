@@ -5,6 +5,10 @@
         </div>
         <div class="border-t border-gray-200 h-full flex flex-col">
             <div class="min-w-full overflow-hidden">
+                <div class="bg-white border-b border-gray-300">
+                    <div scope="col" class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-full">Week {{ $week }}
+                    </div>
+                </div>
                 <div class="bg-gray-50 flex">
                     <div scope="col" class="px-2 py-2 text-right text-sm font-semibold text-gray-900 w-5/12">Home
                     </div>
@@ -52,8 +56,22 @@
                     @endforeach
                 </div>
             </div>
-            <div class="mt-auto px-4 py-4 sm:px-6">
-                {{ $fixtures->links() }}
+            <div class="mt-auto px-4 py-4 sm:px-6 flex justify-between">
+                <button wire:click="previousWeek" wire:loading.attr="disabled"
+                    class="inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"
+                    aria-label="Previous"
+                    {{ $week == 1 ? 'disabled' : '' }}
+                    >
+                    &laquo; Previous 
+                </button>
+
+                <button wire:click="nextWeek" wire:loading.attr="disabled"
+                    class="ml-auto inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"
+                    aria-label="Next"
+                    {{ $week >= 18 ? 'disabled' : '' }}
+                    >
+                    Next &raquo;
+                </button>                
             </div>
         </div>
     </div>
