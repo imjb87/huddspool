@@ -8,7 +8,6 @@ use App\Models\Team;
 
 class Create extends Component
 {
-    public $roles;
     public $teams;
     public $user;
 

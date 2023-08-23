@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Section;
 
-class FixtureGenerator
+class FixtureService
 {
     protected Section $section;
 

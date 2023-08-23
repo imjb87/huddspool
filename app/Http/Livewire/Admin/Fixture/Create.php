@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Admin\Fixture;
 use Livewire\Component;
 use App\Models\Section;
 use App\Models\Team;
-use App\Services\FixtureGenerator;
+use App\Services\FixtureService;
 use App\Rules\NoFixtureClashes;
 
 class Create extends Component
@@ -23,7 +23,7 @@ class Create extends Component
     public function mount(Section $section)
     {
         $this->section = $section;
-        $this->schedule = (new FixtureGenerator($section))->generate();
+        $this->schedule = (new FixtureService($section))->generate();
 
         $this->validate();
     }
