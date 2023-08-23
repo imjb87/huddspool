@@ -33,5 +33,8 @@
         <div class="col-span-4 md:col-span-2">
             <livewire:admin.outstanding-fixtures />
         </div>
+        <div class="col-span-4 md:col-span-2">
+            <livewire:admin.latest-results />
+        </div>
     </div>
 </x-admin-layout>
