@@ -19,35 +19,35 @@
                                     <div class="bg-gray-50">
                                         <div class="flex">
                                             <div scope="col"
-                                                class="px-4 py-2 text-left text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
+                                                class="px-4 py-2 text-left text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">
                                                 #
                                             </div>
                                             <div scope="col"
-                                                class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 w-6/12 truncate">
+                                                class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 flex-grow truncate">
                                                 Team</div>
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">Pl
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">Pl
                                             </div>
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">W
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">W
                                             </div>
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">D</div>
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">D</div>
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">L</div>
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">L</div>
                                             <div scope="col"
-                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">Pts</div>
+                                                class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-[38px] md:w-1/12">Pts</div>
                                         </tr>
                                     </div>
                                     <div class="bg-white">
                                         @foreach ($section->standings() as $team)
                                             <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
                                                 <div
-                                                    class="whitespace-nowrap py-2 px-4 text-sm font-medium text-gray-900 text-left w-2/12 md:w-1/12">
-                                                    {{ $loop->iteration }}.
+                                                    class="whitespace-nowrap py-2 px-4 text-sm font-medium text-gray-900 text-left w-[38px] md:w-1/12">
+                                                    {{$loop->iteration}}.
                                                 </div>
                                                 <div
-                                                    class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm text-gray-900 truncate w-6/12 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
+                                                    class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm text-gray-900 truncate flex-grow {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
                                                     <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                     @if ($team->shortname)
                                                         <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
@@ -59,20 +59,20 @@
                                                     @endif        
                                                 </div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-2/12 md:w-1/12">
-                                                    {{ $team->played }}</div>
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-[38px] md:w-1/12">
+                                                    {{$team->played}}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
-                                                    {{ $team->wins }}</div>
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-[38px] md:w-1/12">
+                                                    {{$team->wins}}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
-                                                    {{ $team->draws }}</div>
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-[38px] md:w-1/12">
+                                                    {{$team->draws}}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center hidden md:block w-1/12">
-                                                    {{ $team->losses }}</div>
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-[38px] md:w-1/12">
+                                                    {{$team->losses}}</div>
                                                 <div
-                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-2/12 md:w-1/12">
-                                                    {{ $team->points }}</div>
+                                                    class="whitespace-nowrap px-2 py-2 text-sm text-gray-900 font-semibold text-center w-[38px] md:w-1/12">
+                                                    {{$team->points}}</div>
                                             </a>
                                         @endforeach
                                     </div>
