@@ -9,8 +9,8 @@
             </div>                    
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-6">
                 @foreach ($sections as $section)
-                    <section>
-                        <div class="bg-white shadow-md rounded-md sm:rounded-lg overflow-hidden">
+                    <section class="-mx-4 sm:m-0">
+                        <div class="bg-white shadow-md sm:rounded-lg overflow-hidden">
                             <div class="px-4 py-4 bg-green-700">
                                 <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
                             </div>
@@ -18,16 +18,16 @@
                                 <div class="w-full max-w-full overflow-hidden">
                                     <div class="bg-gray-50">
                                         <div class="flex">
-                                            <div class="flex w-6/12">
+                                            <div class="flex w-6/12 pl-4">
                                                 <div scope="col"
-                                                    class="px-4 py-2 text-left text-sm font-semibold text-gray-900 w-2/12">
+                                                    class="py-2 text-left text-sm font-semibold text-gray-900 w-2/12">
                                                     #
                                                 </div>
                                                 <div scope="col"
-                                                    class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 w-10/12 truncate">
+                                                    class="py-2 text-left text-sm font-semibold text-gray-900 w-10/12 truncate">
                                                     Team</div>
                                             </div>
-                                            <div class="flex w-6/12">
+                                            <div class="flex w-6/12 pr-1">
                                                 <div scope="col"
                                                     class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pl
                                                 </div>
@@ -46,13 +46,13 @@
                                     <div class="bg-white">
                                         @foreach ($section->standings() as $team)
                                             <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
-                                                <div class="flex w-6/12">
+                                                <div class="flex w-6/12 pl-4">
                                                     <div
-                                                        class="whitespace-nowrap py-2 px-4 text-sm font-medium text-gray-900 text-left w-2/12">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-left font-semibold w-2/12">
                                                         {{$loop->iteration}}.
                                                     </div>
                                                     <div
-                                                        class="tooltip tooltip-top px-2 sm:px-3 py-2 text-sm text-gray-900 w-10/12 truncate {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
+                                                        class="tooltip tooltip-top py-2 text-sm text-gray-900 w-10/12 truncate {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
                                                         <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                         @if ($team->shortname)
                                                             <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
@@ -64,21 +64,21 @@
                                                         @endif        
                                                     </div>
                                                 </div>
-                                                <div class="flex w-6/12">
+                                                <div class="flex w-6/12 pr-1">
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 font-semibold text-center w-1/5">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->played}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 font-semibold text-center w-1/5">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->wins}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 font-semibold text-center w-1/5">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->draws}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 font-semibold text-center w-1/5">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->losses}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 font-semibold text-center w-1/5">
+                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->points}}</div>
                                                 </div>
                                             </a>
