@@ -27,7 +27,7 @@
                                                     class="py-2 text-left text-sm font-semibold text-gray-900 w-10/12 truncate">
                                                     Team</div>
                                             </div>
-                                            <div class="flex w-6/12 pr-1">
+                                            <div class="flex w-6/12 pr-2">
                                                 <div scope="col"
                                                     class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pl
                                                 </div>
@@ -64,7 +64,7 @@
                                                         @endif        
                                                     </div>
                                                 </div>
-                                                <div class="flex w-6/12 pr-1">
+                                                <div class="flex w-6/12 pr-2">
                                                     <div
                                                         class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->played}}</div>
