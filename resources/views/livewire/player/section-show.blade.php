@@ -39,8 +39,15 @@
                                         {{ $loop->iteration + ($page - 1) * 10 }}.</div>
                                     <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex flex-col">
                                         {{ $player->name }}
-                                        <span class="text-xs text-gray-500">
-                                        {{ $player->team_name }}
+                                        <span class="text-xs text-gray-500 sm:hidden">
+                                            @if ($player->team_shortname)
+                                                {{ $player->team_shortname }}
+                                            @else
+                                                {{ $player->team_name }}
+                                            @endif
+                                        </span>
+                                        <span class="text-xs text-gray-500 hidden sm:inline">
+                                            {{ $player->team_name }}
                                         </span>
                                     </div>
                                 </div>
