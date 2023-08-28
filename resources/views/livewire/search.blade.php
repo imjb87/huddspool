@@ -1,4 +1,5 @@
-<div class="relative z-[99] duration-300 {{ $isOpen ? "visible opacity-100" : "invisible opacity-0" }}" role="dialog" aria-modal="true" x-data="{ open: @entangle('isOpen') }">
+<div class="relative z-[99] duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
+    aria-modal="true" x-data="{ open: @entangle('isOpen') }">
     <!--
       Background backdrop, show/hide based on modal state.
   
@@ -11,7 +12,10 @@
     -->
     <div class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity"></div>
 
-    <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+    <div class="fixed inset-0 z-10 overflow-y-auto px-4 py-[12px] sm:p-6 md:p-20" x-show="open"
+        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1">
         <!--
         Command palette, show/hide based on modal state.
   
@@ -34,7 +38,8 @@
                 <input type="text" wire:model="searchTerm" wire:keyup.debounce.300ms="search" id="searchInput"
                     class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..." role="combobox" aria-expanded="false" aria-controls="options">
-                <i class="fa-duotone fa-spinner-third fa-lg fa-spin text-gray-500 absolute right-4 top-6" wire:loading wire:target="search"></i>
+                <i class="fa-duotone fa-spinner-third fa-lg fa-spin text-gray-500 absolute right-4 top-6" wire:loading
+                    wire:target="search"></i>
             </div>
 
             <!-- Default state, show/hide based on command palette state -->
@@ -53,20 +58,24 @@
                 @if (!empty($searchResults))
                     <ul class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2" id="options"
                         role="listbox">
-                        @foreach( $searchResults as $name => $items )
-                            @if ( count($items) > 0 )
+                        @foreach ($searchResults as $name => $items)
+                            @if (count($items) > 0)
                                 <li>
-                                    <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 capitalize">{{ $name }}</h2>
+                                    <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 capitalize">
+                                        {{ $name }}</h2>
                                     <div class="mt-2 text-sm text-gray-800">
-                                        @foreach ( $items as $item )
-                                            @if ( is_object($item) )
-                                                <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate hover:bg-gray-100 duration-300" href="{{ route(Str::singular($name).'.show', $item->id) }}">
+                                        @foreach ($items as $item)
+                                            @if (is_object($item))
+                                                <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate hover:bg-gray-100 duration-300"
+                                                    href="{{ route(Str::singular($name) . '.show', $item->id) }}">
                                                     <span>{{ $item->name }}</span>
-                                                    @if ($name == "players")
-                                                        <span class="text-xs text-gray-500">{{ $item->team?->name }}</span>
+                                                    @if ($name == 'players')
+                                                        <span
+                                                            class="text-xs text-gray-500">{{ $item->team?->name }}</span>
                                                     @endif
-                                                    @if ($name == "teams")
-                                                        <span class="text-xs text-gray-500">{{ $item->section()->name ?? "" }}</span>
+                                                    @if ($name == 'teams')
+                                                        <span
+                                                            class="text-xs text-gray-500">{{ $item->section()->name ?? '' }}</span>
                                                     @endif
                                                 </a>
                                             @endif
