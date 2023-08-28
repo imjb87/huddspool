@@ -118,8 +118,8 @@
                                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                                 href="{{ route('result.show', $frame->result) }}">
                                                 <div
-                                                    class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm flex items-center w-full">
-                                                    <div class="w-1/12">
+                                                    class="whitespace-nowrap px-4 py-4 text-sm flex items-center w-full">
+                                                    <div class="pr-4">
                                                         @if ($frame->home_player_id == $player->id)
                                                             @if ($frame->home_score > $frame->away_score)
                                                                 <span
@@ -138,7 +138,7 @@
                                                             @endif
                                                         @endif
                                                     </div>
-                                                    <div class="flex flex-col w-9/12 px-3">
+                                                    <div class="flex flex-col flex-grow">
                                                         <div>
                                                             {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
                                                         </div>
