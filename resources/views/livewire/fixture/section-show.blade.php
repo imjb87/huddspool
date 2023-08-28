@@ -1,5 +1,5 @@
 <section>
-    <div class="bg-white shadow rounded-lg flex flex-col h-full overflow-hidden">
+    <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
         <div class="px-4 py-4 sm:px-6 bg-green-700">
             <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
         </div>
