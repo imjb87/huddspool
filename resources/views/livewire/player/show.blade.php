@@ -25,9 +25,9 @@
                                 <h1 class="text-2xl font-bold text-gray-900">{{ $player->name }}</h1>
                                 <p class="text-sm font-medium text-gray-500">
                                     @if ($player->team)
-                                    <a href="{{ route('team.show', $player->team) }}">
-                                        {{ $player->team->name }}
-                                    </a>
+                                        <a href="{{ route('team.show', $player->team) }}">
+                                            {{ $player->team->name }}
+                                        </a>
                                     @else
                                         Free agent
                                     @endif
@@ -117,35 +117,38 @@
                                         @foreach ($frames as $frame)
                                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                                 href="{{ route('result.show', $frame->result) }}">
-                                                <div class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm text-gray-500">
-                                                    @if ($frame->home_player_id == $player->id)
-                                                        @if ($frame->home_score > $frame->away_score)
-                                                            <span
-                                                                class="inline-block bg-green-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">W</span>
+                                                <div
+                                                    class="whitespace-nowrap px-4 sm:px-6 py-4 text-sm flex items-center w-full">
+                                                    <div class="w-1/12">
+                                                        @if ($frame->home_player_id == $player->id)
+                                                            @if ($frame->home_score > $frame->away_score)
+                                                                <span
+                                                                    class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">W</span>
+                                                            @else
+                                                                <span
+                                                                    class="inline-block bg-red-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">L</span>
+                                                            @endif
                                                         @else
-                                                            <span
-                                                                class="inline-block bg-red-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">L</span>
+                                                            @if ($frame->home_score < $frame->away_score)
+                                                                <span
+                                                                    class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">W</span>
+                                                            @else
+                                                                <span
+                                                                    class="inline-block bg-red-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">L</span>
+                                                            @endif
                                                         @endif
-                                                    @else
-                                                        @if ($frame->home_score < $frame->away_score)
-                                                            <span
-                                                                class="inline-block bg-green-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">W</span>
-                                                        @else
-                                                            <span
-                                                                class="inline-block bg-red-700 text-white rounded-md w-6 text-center text-xs font-semibold mr-2">L</span>
-                                                        @endif
-                                                    @endif
-                                                    vs
-                                                    {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
-                                                    <span class="hidden md:inline">
-                                                        ({{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }})
-                                                    </span>
-                                                    <span class="md:hidden">
-                                                        ({{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->shortname ?? $frame->awayPlayer->team->name : $frame->homePlayer->team->shortname ?? $frame->homePlayer->team->name }})
-                                                    </span>
-                                                    <span class="text-xs text-gray-500">
+                                                    </div>
+                                                    <div class="flex flex-col w-9/12 px-3">
+                                                        <div>
+                                                            {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
+                                                        </div>
+                                                        <div class="text-xs text-gray-500">
+                                                            {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-2/12 text-right text-gray-500 font-semibold">
                                                         {{ $frame->result->fixture->fixture_date->format('d/m') }}
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             </a>
                                         @endforeach

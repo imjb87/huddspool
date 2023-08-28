@@ -33,15 +33,18 @@
                         @foreach ($players as $player)
                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                 href="{{ route('player.show', $player->id) }}">
-                                <div class="flex w-1/2 pl-4 sm:pl-6">
+                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
                                     <div
                                         class="whitespace-nowrap py-2 text-sm text-gray-900 w-2/12 font-semibold">
                                         {{ $loop->iteration + ($page - 1) * 10 }}.</div>
-                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12">
+                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex flex-col">
                                         {{ $player->name }}
+                                        <span class="text-xs text-gray-500">
+                                        {{ $player->team_name }}
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="flex w-1/2">
+                                <div class="flex w-1/2 items-center">
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
                                         {{ $player->total_frames }}</div>
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
