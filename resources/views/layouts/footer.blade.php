@@ -49,6 +49,10 @@
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach
+                            <li>
+                                <a href="{{ route('page.show', 'handbook') }}"
+                                    class="text-sm leading-6 text-gray-300 hover:text-white">Handbook</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

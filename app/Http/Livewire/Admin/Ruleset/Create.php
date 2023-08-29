@@ -9,6 +9,11 @@ class Create extends Component
 {
     public $ruleset;
 
+    public function mount()
+    {
+        $this->ruleset = new Ruleset();
+    }
+
     protected $rules = [
         'ruleset.name' => 'required|string',
     ];

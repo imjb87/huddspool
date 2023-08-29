@@ -184,6 +184,10 @@
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
+                    <div class="py-1">
+                        <a href="{{ route('page.show', 'handbook') }}"
+                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Handbook</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -429,6 +433,8 @@
                                         <a href="{{ route('ruleset.show', $ruleset->id) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
+                                    <a href="{{ route('page.show', 'handbook') }}"
+                                        class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Handbook</a>
                                 </div>
                             </div>
                         </div>

@@ -130,6 +130,17 @@
                                         News
                                     </a>
 
+                                    <a href="{{ route('admin.pages.index') }}"
+                                        class="{{ Route::is('admin.[pages].*') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} group flex items-center rounded-md px-2 py-2 text-base font-medium">
+                                        <svg class="text-gray-400 group-hover:text-gray-300 mr-4 h-6 w-6 flex-shrink-0"
+                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                            viewBox="0 0 384 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                            <path
+                                                d="M64 464H320c8.8 0 16-7.2 16-16V138.5c0-4.2-1.7-8.3-4.7-11.3L256.8 52.7c-3-3-7.1-4.7-11.3-4.7H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16zm256 48H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H245.5c17 0 33.3 6.7 45.3 18.7l74.5 74.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64z" />
+                                        </svg>
+                                        Pages
+                                    </a>
+
                                 </nav>
                             </div>
                         </div>
@@ -154,7 +165,8 @@
                                     class="{{ Route::is('admin.dashboard') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} group flex items-center rounded-md px-2 py-2 text-sm font-medium">
                                     <!-- Current: "text-gray-300", Default: "text-gray-400 group-hover:text-gray-300" -->
                                     <svg class="text-gray-300 mr-3 h-6 w-6 flex-shrink-0" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                                     </svg>
@@ -227,6 +239,17 @@
                                     </svg>
                                     News
                                 </a>
+
+                                <a href="{{ route('admin.pages.index') }}"
+                                    class="{{ Route::is('admin.pages.*') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} group flex items-center rounded-md px-2 py-2 text-sm font-medium">
+                                    <svg class="text-gray-400 group-hover:text-gray-300 mr-3 h-6 w-6 flex-shrink-0"
+                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                        viewBox="0 0 384 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                        <path
+                                            d="M64 464H320c8.8 0 16-7.2 16-16V138.5c0-4.2-1.7-8.3-4.7-11.3L256.8 52.7c-3-3-7.1-4.7-11.3-4.7H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16zm256 48H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H245.5c17 0 33.3 6.7 45.3 18.7l74.5 74.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64z" />
+                                    </svg>
+                                    Pages
+                                </a>
                             </nav>
                         </div>
                     </div>
@@ -260,8 +283,7 @@
                                         </span>
                                     </button>
                                 </div>
-                                <a href="/"
-                                    class="text-sm font-medium text-gray-500 hover:text-gray-700">
+                                <a href="/" class="text-sm font-medium text-gray-500 hover:text-gray-700">
                                     <span class="sr-only">View home page</span>
                                     <i class="fas fa-home fa-lg"></i>
                                 </a>

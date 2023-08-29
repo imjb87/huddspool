@@ -47,4 +47,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin']], function () {
     Route::get('/news/edit/{news}', \App\Http\Livewire\Admin\News\Edit::class)->name('admin.news.edit');
     Route::get('/news/{news}', \App\Http\Livewire\Admin\News\Show::class)->name('admin.news.show');
 
+    Route::get('/pages', \App\Http\Livewire\Admin\Page\Index::class)->name('admin.pages.index');
+    Route::get('/pages/create', \App\Http\Livewire\Admin\Page\Create::class)->name('admin.pages.create');
+    Route::get('/pages/edit/{page}', \App\Http\Livewire\Admin\Page\Edit::class)->name('admin.pages.edit');
+    Route::get('/pages/{page}', \App\Http\Livewire\Admin\Page\Show::class)->name('admin.pages.show');
+
 });
