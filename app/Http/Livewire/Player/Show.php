@@ -22,6 +22,7 @@ class Show extends Component
         $this->frames = Frame::where('home_player_id', $this->player->id)
             ->orWhere('away_player_id', $this->player->id)
             ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
         $this->played = $this->frames->count();
