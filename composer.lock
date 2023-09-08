@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c7f5f1f167b1d5ec53b846ce7978796",
+    "content-hash": "05806099ce48ca42a2b9a88691ef7094",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -3788,6 +3788,71 @@
                 }
             ],
             "time": "2023-04-15T23:01:58+00:00"
+        },
+        {
+            "name": "shvetsgroup/laravel-email-database-log",
+            "version": "10.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shvetsgroup/laravel-email-database-log.git",
+                "reference": "8ba15db6ab9c0e3824548db74f1f3f290f840cfc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shvetsgroup/laravel-email-database-log/zipball/8ba15db6ab9c0e3824548db74f1f3f290f840cfc",
+                "reference": "8ba15db6ab9c0e3824548db74f1f3f290f840cfc",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.3",
+                "illuminate/support": "^9.0",
+                "nesbot/carbon": "^2.0",
+                "php": "^8.0.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ShvetsGroup\\LaravelEmailDatabaseLog\\LaravelEmailDatabaseLogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "ShvetsGroup\\LaravelEmailDatabaseLog\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Shvets",
+                    "email": "neochief@shvetsgroup.com"
+                },
+                {
+                    "name": "Spaan Productions",
+                    "email": "info@spaanproductions.nl",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple database logger for all outgoing emails sent by Laravel website.",
+            "keywords": [
+                "laravel",
+                "mail",
+                "markdown"
+            ],
+            "support": {
+                "issues": "https://github.com/shvetsgroup/laravel-email-database-log/issues",
+                "source": "https://github.com/shvetsgroup/laravel-email-database-log/tree/10.0.0"
+            },
+            "abandoned": true,
+            "time": "2022-02-16T18:00:18+00:00"
         },
         {
             "name": "silviolleite/laravelpwa",
@@ -8908,5 +8973,5 @@
         "php": "^8.0.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
