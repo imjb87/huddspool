@@ -60,4 +60,12 @@ class Team extends Model
             });
     }
 
+    public function homeFixtures()
+    {
+        return $this->hasMany(Fixture::class, 'home_team_id')
+            ->whereHas('season', function ($query) {
+                $query->where('is_open', true);
+            });
+    }
+
 }

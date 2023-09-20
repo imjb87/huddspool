@@ -34,6 +34,8 @@ class Edit extends Component
     {
         $this->validate();
 
+        $this->team->homeFixtures()->update(['venue_id' => $this->team->venue_id]);
+
         $this->team->save();
 
         return redirect()->route('admin.teams.show', $this->team);
