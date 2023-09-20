@@ -34,7 +34,12 @@ class Edit extends Component
     {
         $this->validate();
 
-        $this->team->homeFixtures()->update(['venue_id' => $this->team->venue_id]);
+        $this->team->homeFixtures()->each(function ($fixture) {
+            if( !$fixture->result ) {
+                $fixture->venue_id = $this->team->venue_id;
+                $fixture->save();
+            }
+        });
 
         $this->team->save();
 
