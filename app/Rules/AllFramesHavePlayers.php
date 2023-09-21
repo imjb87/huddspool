@@ -16,7 +16,7 @@ class AllFramesHavePlayers implements Rule
     public function passes($attribute, $value)
     {
         foreach ($this->frames as $frame) {
-            if( $frame['home_player_id'] == null || $frame['away_player_id'] == null ) {
+            if( empty($frame['home_player_id']) || empty($frame['away_player_id']) ) {
                 return false;
             }
         }
