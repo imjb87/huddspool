@@ -13,6 +13,7 @@
         "itsgoingd/clockwork": "^5.1",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
+        "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.12",
         "shvetsgroup/laravel-email-database-log": "^10.0",
