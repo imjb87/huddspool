@@ -9,16 +9,16 @@ use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
   
-class GoogleController extends Controller
+class FacebookController extends Controller
 {
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function redirectToGoogle()
+    public function redirectToFacebook()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('facebook')->redirect();
     }
            
     /**
@@ -26,9 +26,9 @@ class GoogleController extends Controller
      *
      * @return void
      */
-    public function handleGoogleCallback()
+    public function handleFacebookCallback()
     {
-        $user = Socialite::driver('google')->user();
+        $user = Socialite::driver('facebook')->user();
         
         $finduser = User::where('email', $user->email)->first();
         
@@ -40,7 +40,7 @@ class GoogleController extends Controller
         
         } else {
 
-            return redirect()->route('login')->withErrors('A user does not exist with the email associated with this Google account.');
+            return redirect()->route('login')->withErrors('A user does not exist with the email associated with this Facebook account.');
 
         }    
     }

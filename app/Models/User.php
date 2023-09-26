@@ -58,7 +58,7 @@ class User extends Authenticatable
 
     public function getRedirectRoute()
     {
-        return route('team.show', $this->team_id); 
+        return route('team.show', $this->team_id);
     }
 
     /**
