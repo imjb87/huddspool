@@ -4,9 +4,12 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\Fixture;
+use Livewire\WithPagination;
 
 class OutstandingFixtures extends Component
 {
+    use WithPagination;
+    
     public function render()
     {
         return view(
