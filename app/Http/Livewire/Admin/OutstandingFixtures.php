@@ -17,7 +17,7 @@ class OutstandingFixtures extends Component
                     ->where('home_team_id', '!=', 1)
                     ->where('away_team_id', '!=', 1)
                     ->orderBy('fixture_date', 'asc')
-                    ->simplePaginate(10)
+                    ->simplePaginate(5)
             ]
         );
     }

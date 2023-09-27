@@ -13,7 +13,7 @@ class LatestResults extends Component
             [
                 'results' => Result::with('fixture')
                     ->orderBy('created_at', 'desc')
-                    ->simplePaginate(10)
+                    ->simplePaginate(5)
             ]
         );
     }
