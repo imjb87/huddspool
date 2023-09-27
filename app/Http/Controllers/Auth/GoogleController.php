@@ -36,7 +36,7 @@ class GoogleController extends Controller
         
             Auth::login($finduser);
     
-            return route('team.show', $finduser->team_id);
+            return redirect()->route('team.show', $finduser->team_id);
         
         } else {
 
