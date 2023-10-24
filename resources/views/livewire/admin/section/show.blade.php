@@ -63,7 +63,7 @@
                             the section.</p>
                     </div>
                     <div class="border-t border-gray-200">
-                        <table class="w-full max-w-full overflow-hidden table-fixed">
+                        <table class="w-full max-w-full overflow-hidden">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
@@ -126,7 +126,9 @@
                                                 class="rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                 wire:click="withdraw({{ $team->id }})"
                                                 >
-                                                {{ $team->id == $team_id ? 'Are you sure?' : 'Withdraw' }}
+                                                {{ $team->id == $team_id ? 'Are you sure?' : 'Withdraw' }}</button>
+                                            <button onclick="Livewire.emit('openModal', 'admin.section.deduct', {{ json_encode(['team_id' => $team->id, 'section_id' => $section->id]) }})" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                                                Deduct points</button>
                                         </td>
                                     </tr>
                                 @endforeach

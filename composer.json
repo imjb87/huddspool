@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.12",
         "shvetsgroup/laravel-email-database-log": "^10.0",
-        "silviolleite/laravelpwa": "^2.0"
+        "silviolleite/laravelpwa": "^2.0",
+        "wire-elements/modal": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

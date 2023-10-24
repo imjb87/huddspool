@@ -25,6 +25,7 @@ class Section extends Model
     {
         return $this->belongsToMany(Team::class)
             ->withPivot('withdrawn_at')
+            ->withPivot('deducted')
             ->withTimestamps();
     }
 
@@ -78,8 +79,9 @@ class Section extends Model
                 return $result->home_team_id === $team->id && $result->home_score < $result->away_score
                     || $result->away_team_id === $team->id && $result->away_score < $result->home_score;
             })->count();
-            $team->points = $this->results->where('home_team_id', $team->id)->sum('home_score')
-                + $this->results->where('away_team_id', $team->id)->sum('away_score');
+            $team->points = ($this->results->where('home_team_id', $team->id)->sum('home_score')
+                + $this->results->where('away_team_id', $team->id)->sum('away_score'))
+                - $team->pivot->deducted;
 
             return $team;
         })->sortByDesc(function ($team) {

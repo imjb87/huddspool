@@ -26,6 +26,7 @@
     <script src="https://cdn.tiny.cloud/1/gj75uu41to8xotbxkn157xgangktxdjx2xrng6bs3qm02mll/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Scripts -->
     @livewireStyles
@@ -302,6 +303,7 @@
         </main>
     </div>
     @livewireScripts
+    @livewire('livewire-ui-modal')
 </body>
 
 </html>
