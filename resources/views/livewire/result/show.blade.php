@@ -1,5 +1,6 @@
 <div class="mt-[80px]">
     <div class="py-8 sm:py-16">
+        {{ print_r($ratings) }}
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="border-b border-gray-200 pb-2 mb-4">
                 <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
@@ -59,10 +60,17 @@
                                 <div class="flex flex-wrap bg-white">
                                     <div
                                         class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-t border-gray-200 sm:border-0">
-                                        <a href="{{ route('player.show', $frame->homePlayer) }}"
-                                            class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
-                                            {{ $frame->homePlayer->name ?? 'Awarded' }}
-                                        </a>
+                                        @if($frame->home_player_id)
+                                            <a href="{{ route('player.show', $frame->homePlayer) }}"
+                                                class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
+                                                {{ $frame->homePlayer->name }}
+                                            </a>
+                                        @else
+                                            <div
+                                                class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
+                                                Awarded
+                                            </div>
+                                        @endif
                                         <div class="w-10 sm:w-12 border-x border-gray-200">
                                             <div
                                                 class="block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0">
@@ -82,10 +90,17 @@
                                                 {{ $frame->away_score }}
                                             </div>
                                         </div>
-                                        <a href="{{ route('player.show', $frame->awayPlayer) }}"
-                                            class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
-                                            {{ $frame->awayPlayer->name ?? 'Awarded' }}
-                                        </a>
+                                        @if($frame->away_player_id)
+                                            <a href="{{ route('player.show', $frame->awayPlayer) }}"
+                                                class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                                {{ $frame->awayPlayer->name }}
+                                            </a>
+                                        @else 
+                                            <div
+                                                class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                                Awarded
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach

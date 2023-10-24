@@ -8,6 +8,7 @@ use App\Models\Result;
 class Show extends Component
 {
     public Result $result;
+    public array $ratings;
 
     public function mount(Result $result)
     {
