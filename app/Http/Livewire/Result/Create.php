@@ -13,6 +13,7 @@ use App\Rules\FrameScoreEqualsOne;
 use App\Rules\BothPlayersAwardedIfOneIs;
 use App\Rules\FixtureHasNoResult;
 use App\Rules\TotalScoresAddUpToTen;
+use App\Models\User;
 
 class Create extends Component
 {

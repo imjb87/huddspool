@@ -90,41 +90,51 @@
                                         {{ $fixture->awayTeam->name }}
                                     </div>
                                 </div>
-                                @foreach ($fixture->result->frames as $key => $frame)
-                                    <div class="flex flex-wrap">
+                                @if ($fixture->result->is_overridden)
+                                    <div class="px-6 py-4">
                                         <div
-                                            class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
-                                            <div
-                                                class="border-0 py-1.5 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
-                                                {{ $frame->homePlayer->name ?? 'Awarded' }}
-                                            </div>
-                                            <div class="w-10 sm:w-12 border-x border-gray-200">
-                                                <div
-                                                    class="block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0">
-                                                    {{ $frame->home_score }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="w-full sm:w-12 sm:text-center bg-gray-50 py-1.5 px-4 sm:px-0 text-left text-sm font-semibold text-gray-900 order-first sm:order-2 leading-6">
-                                            <span class="sm:hidden">Frame </span>
-                                            {{ $key + 1 }}
-                                        </div>
-                                        <div class="w-full sm:w-auto flex sm:flex-1 order-last">
-                                            <div
-                                                class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
-                                                <div
-                                                    class="block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0">
-                                                    {{ $frame->away_score }}
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="border-0 py-1.5 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
-                                                {{ $frame->awayPlayer->name ?? 'Awarded' }}
-                                            </div>
+                                            class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                            <span class="mt-2 block text-sm font-semibold text-gray-900">This match was
+                                                overridden by an admin.</span>
                                         </div>
                                     </div>
-                                @endforeach
+                                @else
+                                    @foreach ($fixture->result->frames as $key => $frame)
+                                        <div class="flex flex-wrap">
+                                            <div
+                                                class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
+                                                <div
+                                                    class="border-0 py-1.5 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
+                                                    {{ $frame->homePlayer->name ?? 'Awarded' }}
+                                                </div>
+                                                <div class="w-10 sm:w-12 border-x border-gray-200">
+                                                    <div
+                                                        class="block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0">
+                                                        {{ $frame->home_score }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="w-full sm:w-12 sm:text-center bg-gray-50 py-1.5 px-4 sm:px-0 text-left text-sm font-semibold text-gray-900 order-first sm:order-2 leading-6">
+                                                <span class="sm:hidden">Frame </span>
+                                                {{ $key + 1 }}
+                                            </div>
+                                            <div class="w-full sm:w-auto flex sm:flex-1 order-last">
+                                                <div
+                                                    class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
+                                                    <div
+                                                        class="block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0">
+                                                        {{ $frame->away_score }}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="border-0 py-1.5 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                                    {{ $frame->awayPlayer->name ?? 'Awarded' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
                                 <div class="flex flex-wrap bg-gray-50 font-semibold text-gray-900 text-sm">
                                     <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200">
                                         <div class="flex-1 leading-6 py-1.5 px-4 sm:px-6 sm:text-right">

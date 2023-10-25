@@ -121,33 +121,6 @@
                 </div>
             </div>
 
-            <!-- override result -->
-            <div class="flex items-center mt-8 pt-8">
-                <input id="override" name="override" type="checkbox" wire:model="is_overridden"
-                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-                <label for="override" class="ml-3 block text-sm font-medium text-gray-700">
-                    Override result
-                </label>
-            </div>
-
-            @if ($is_overridden)
-                <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-12 sm:gap-x-6">
-                    <div class="sm:col-span-6">
-                        <label for="homeScore" class="block text-sm font-medium leading-6 text-slate-900">Home
-                            score</label>
-                        <input type="number" name="homeScore" id="homeScore" wire:model.defer="homeScore"
-                            class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
-                    </div>
-
-                    <div class="sm:col-span-6">
-                        <label for="awayScore" class="block text-sm font-medium leading-6 text-slate-900">Away
-                            score</label>
-                        <input type="number" name="awayScore" id="awayScore" wire:model.defer="awayScore"
-                            class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
-                    </div>
-                </div>
-            @endif
-
             @if ($errors->any())
                 <x-errors />
             @endif
@@ -155,6 +128,8 @@
             <div class="flex gap-x-3 pt-8 justify-end">
                 <a href="{{ route('admin.fixtures.show', $fixture) }}"
                     class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
+                <button type="button" onclick="Livewire.emit('openModal', 'admin.result.override', {{ json_encode(['fixture_id' => $fixture->id]) }})" class="inline-flex justify-center rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                    Override result</button>                    
                 <button type="submit"
                     class="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Save</button>
 

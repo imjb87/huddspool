@@ -23,7 +23,7 @@
                         </div>
                         <div class="border-t border-gray-100">
                             <dl class="divide-y divide-gray-100">
-                                <a href="{{ route('venue.show', $team->venue->id) }}" 
+                                <a href="{{ route('venue.show', $team->venue->id) }}"
                                     class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Venue</dt>
                                     <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
@@ -132,9 +132,12 @@
                                                 <div
                                                     class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12 flex">
                                                     <div
-                                                        class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold">
-                                                        {{ $fixture->result->home_score ?? '' }} -
-                                                        {{ $fixture->result->away_score ?? '' }}</div>
+                                                        class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
+                                                        <div class="w-1/2">{{ $fixture->result->home_score ?? '' }}
+                                                        </div>
+                                                        <div class="w-1/2">{{ $fixture->result->away_score ?? '' }}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             @else
                                                 <div
