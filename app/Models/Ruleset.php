@@ -23,4 +23,9 @@ class Ruleset extends Model
     {
         return $this->hasMany(Section::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }
