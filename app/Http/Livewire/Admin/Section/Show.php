@@ -33,26 +33,29 @@ class Show extends Component
         $this->section->teams()->detach($team_id);    
         $this->section->teams()->attach($team_id, ['withdrawn_at' => now()]);
 
-        // determine what week of fixture we are in
-        $week = collect($this->section->season->dates)->map(function ($date, $key) {
-            if( date('W', strtotime($date)) == date('W') ) {
-                return $key + 1;
-            } else {
-                return 1;
+        $week = 0;
+
+        foreach( $this->section->season->dates as $date ) {
+            if( $date < now() ) {
+                $week++;
             }
-        })->filter()->first();
+        }
 
         if( $week < 9 ) {
             // remove all results for this team in this section
             $this->section->results()->each(function ($result) use ($team_id) {
                 if( $result->home_team_id == $team_id || $result->away_team_id == $team_id ) {
+                    // remove all frames for this result
+                    $result->frames()->delete();
                     $result->delete();
                 }
             });
         } else {
-            // remove all results up to week 9 for this team in this section
-            $this->section->results()->where('week', '<', 9)->each(function ($result) use ($team_id) {
+            // remove all results after week 9 for this team in this section
+            $this->section->results()->where('week', '>', 9)->each(function ($result) use ($team_id) {
                 if( $result->home_team_id == $team_id || $result->away_team_id == $team_id ) {
+                    // remove all frames for this result
+                    $result->frames()->delete();
                     $result->delete();
                 }
             });
