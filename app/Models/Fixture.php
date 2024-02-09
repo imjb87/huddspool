@@ -32,7 +32,7 @@ class Fixture extends Model
 
     public function season()
     {
-        return $this->belongsTo(Season::class);
+        return $this->belongsTo(Season::class, 'season_id');
     }
 
     public function section()

@@ -19,9 +19,12 @@ class Show extends Component
     {
         $this->player = $player;
         
-        $this->frames = Frame::where('home_player_id', $this->player->id)
-            ->orWhere('away_player_id', $this->player->id)
-            ->orderBy('created_at', 'desc')
+        $this->frames = Frame::where(function ($query) {
+            $query->where('home_player_id', $this->player->id)
+                ->orWhere('away_player_id', $this->player->id);
+        })->whereHas('result.fixture.season', function ($query) {
+            $query->where('is_open', true);
+        })->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
             ->get();
 

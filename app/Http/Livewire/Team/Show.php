@@ -4,11 +4,11 @@ namespace App\Http\Livewire\Team;
 
 use Livewire\Component;
 use App\Models\Team;
+use Illuminate\Support\Facades\DB;
 
 class Show extends Component
 {
     public Team $team;
-    public $fixtures;
 
     public function mount(Team $team)
     {

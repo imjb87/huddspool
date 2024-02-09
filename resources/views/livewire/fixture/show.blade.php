@@ -167,7 +167,7 @@
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                    {{ $player->framesPlayed->count() }}
+                                                    {{ $player->framesPlayed() }}
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
@@ -218,7 +218,7 @@
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                    {{ $player->framesPlayed->count() }}
+                                                    {{ $player->framesPlayed() }}
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">

@@ -81,11 +81,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Frame::class, 'home_player_id')
             ->where(function ($query) {
-                $query->whereColumn('home_score', '>', 'away_score');
+                $query->whereColumn('home_score', '>', 'away_score')
+                    ->whereHas('result.fixture.season', function ($query) {
+                        $query->where('is_open', true);
+                    });
             })
             ->orWhere(function ($query) {
                 $query->whereColumn('away_score', '>', 'home_score')
-                    ->where('away_player_id', $this->id);
+                    ->where('away_player_id', $this->id)
+                    ->whereHas('result.fixture.season', function ($query) {
+                        $query->where('is_open', true);
+                    });
             });
     }
 
@@ -93,18 +99,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(Frame::class, 'home_player_id')
             ->where(function ($query) {
-                $query->whereColumn('home_score', '<', 'away_score');
+                $query->whereColumn('home_score', '<', 'away_score')
+                ->whereHas('result.fixture.season', function ($query) {
+                    $query->where('is_open', true);
+                });
             })
             ->orWhere(function ($query) {
                 $query->whereColumn('away_score', '<', 'home_score')
-                    ->where('away_player_id', $this->id);
+                    ->where('away_player_id', $this->id)
+                    ->whereHas('result.fixture.season', function ($query) {
+                        $query->where('is_open', true);
+                    });                    
             });
     }
 
     public function framesPlayed()
     {
-        return $this->hasMany(Frame::class, 'home_player_id')
-            ->orWhere('away_player_id', $this->id);
+        return Frame::where(function ($query) {
+            $query->where('home_player_id', $this->id)
+                ->orWhere('away_player_id', $this->id);
+        })->whereHas('result.fixture.season', function ($query) {
+            $query->where('is_open', true);
+        })->count();
     }
 
 }

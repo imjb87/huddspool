@@ -53,11 +53,12 @@ class Team extends Model
 
     public function fixtures()
     {
-        return $this->hasMany(Fixture::class, 'home_team_id')
-            ->orWhere('away_team_id', $this->id)
-            ->whereHas('season', function ($query) {
-                $query->where('is_open', true);
-            });
+        return Fixture::where(function ($query) {
+            $query->where('home_team_id', $this->id)
+                ->orWhere('away_team_id', $this->id);
+        })->whereHas('season', function ($query) {
+            $query->where('is_open', 1);
+        })->get();
     }
 
     public function homeFixtures()

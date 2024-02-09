@@ -34,6 +34,9 @@ class NoFixtureClashes implements Rule
     {
         $this->clashes = Fixture::where('season_id', $this->season_id)
             ->where('section_id', '!=', $this->section_id)
+            ->whereHas('section', function ($query) {
+                $query->whereNull('deleted_at');
+            })
             ->where(function ($query) {
                 foreach ($this->schedule as $week => $fixtures) {
                     foreach ($fixtures as $fixture) {

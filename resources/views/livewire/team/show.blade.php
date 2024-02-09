@@ -14,9 +14,11 @@
                                 <div class="pt-1.5">
                                     <h1 class="text-2xl font-bold text-gray-900">{{ $team->name }}</h1>
                                     <p class="text-sm font-medium text-gray-500">
-                                        <a href="{{ route('table.index', $team->section()->ruleset) }}">
-                                            {{ $team->section()->name }}
-                                        </a>
+                                        @if( $team->section() )
+                                            <a href="{{ route('table.index', $team->section()->ruleset) }}">
+                                                {{ $team->section()->name }}
+                                            </a>
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -78,7 +80,7 @@
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
-                                                    {{ $player->framesPlayed->count() }}
+                                                    {{ $player->framesPlayed() }}
                                                 </div>
                                                 <div
                                                     class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
@@ -117,7 +119,7 @@
                                     </div>
                                 </div>
                                 <div class="bg-white">
-                                    @foreach ($team->fixtures->sortBy('fixture_date') as $fixture)
+                                    @foreach ($team->fixtures() as $fixture)
                                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                             href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
                                             <div
