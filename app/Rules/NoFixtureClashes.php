@@ -51,6 +51,10 @@ class NoFixtureClashes implements Rule
             })
             ->get();
 
+        $this->clashes = $this->clashes->filter(function ($clash) {
+            return $clash->homeTeam->name != 'Bye' && $clash->awayTeam->name != 'Bye';
+        });        
+
         return $this->clashes->isEmpty();
     }
 
