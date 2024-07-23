@@ -1,0 +1,13 @@
+select s.name, 
+case when f.home_player_id = 119 then r.home_team_name else r.away_team_name end as team, 
+count(*) as played, 
+sum(case when f.away_player_id = 119 then f.away_score else f.home_score end) as won
+from frames as f
+join results as r
+on f.result_id = r.id
+join fixtures as fi
+on r.fixture_id = fi.id
+join seasons as s
+on fi.season_id = s.id
+where (f.away_player_id = 119 or f.home_player_id = 119) and s.is_open = 0
+group by s.id

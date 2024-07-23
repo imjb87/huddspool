@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  apache:
+    build: 
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mgy131428
+      MYSQL_DATABASE: huddspool
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mgy131428
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: mgy131428 # Use the same root password as set for MariaDB
+    ports:
+      - "8080:80" # phpMyAdmin will be accessible at http://localhost:8080
+    depends_on:
+      - mariadb      
+
+volumes:
+  mariadb_data:

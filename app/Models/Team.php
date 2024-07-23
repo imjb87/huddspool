@@ -20,6 +20,7 @@ class Team extends Model
         'shortname',
         'venue_id',
         'captain_id',
+        'folded_at',
     ];
 
     public function venue()

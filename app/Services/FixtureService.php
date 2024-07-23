@@ -56,6 +56,8 @@ class FixtureService
         $season = $section->season;
         // get team id and venue id as an array for each team
         $teams = $section->teams->pluck('id')->toArray();
+        // pop the last team from the array and add it to the beginning
+        array_unshift($teams, array_pop($teams));
         $fullSchedule = [];
 
         // generate schedule

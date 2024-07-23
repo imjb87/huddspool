@@ -1,0 +1,19 @@
+{
+    "name": "WordPress Dev Container",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "apache",
+    "workspaceFolder": "/var/www/html",
+    "forwardPorts": [80],
+    "extensions": [
+        "felixfbecker.php-intellisense",
+        "ikappas.phpcs"
+    ],
+    "postCreateCommand": "echo 'Container is ready!'",
+    "settings": { 
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "shutdownAction": "stopCompose",
+    "mounts": ["source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"],
+    "runArgs": ["--network", "host"],
+    "remoteUser": "root"
+}

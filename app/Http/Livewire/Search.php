@@ -34,10 +34,27 @@ class Search extends Component
             return;
         }
 
-        $players = \App\Models\User::where('name', 'like', '%' . $this->searchTerm . '%')->orWhereHas('team', function ($query) {
-            $query->where('name', 'like', '%' . $this->searchTerm . '%');
+        $players = \App\Models\User::where(function ($query) {
+            $query->where('name', 'like', '%' . $this->searchTerm . '%')
+                  ->orWhereHas('team', function ($query) {
+                      $query->where('name', 'like', '%' . $this->searchTerm . '%')
+                      ->where('folded_at', null);
+                  });
+        })->whereHas('team.sections.season', function ($query) {
+            $query->where('is_open', 1);
         })->orderBy('name')->get();
-        $teams = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
+    
+        $teams = \App\Models\Team::where('name', 'like', '%' . $this->searchTerm . '%')
+        ->where('folded_at', null)
+        ->whereHas('sections', function ($query) {
+            $query->whereHas('season', function ($query) {
+                $query->where('is_open', 1);
+            });
+        })
+        ->orderBy('name')
+        ->get();
+    
+    
         $venues = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
 
         if ($players->count() > 0) {
