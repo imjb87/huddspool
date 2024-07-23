@@ -39,7 +39,7 @@ class Create extends Component
     {
         $this->season = $season;
         $this->rulesets = Ruleset::all();
-        $this->teams = Team::orderBy('name')->get();
+        $this->teams = Team::where('folded_at', null)->orderBy('name')->get();
         $this->section['season_id'] = $season->id;
     }
 

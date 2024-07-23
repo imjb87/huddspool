@@ -37,7 +37,7 @@ class Edit extends Component
         $this->section = $section;
         $this->section_teams = $section->teams->pluck('id')->toArray();
         $this->rulesets = Ruleset::all();
-        $this->teams = Team::orderBy('name')->get();
+        $this->teams = Team::where('folded_at', null)->orderBy('name')->get();
     }
 
     public function save()
