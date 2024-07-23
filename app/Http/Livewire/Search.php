@@ -54,7 +54,6 @@ class Search extends Component
         ->orderBy('name')
         ->get();
     
-    
         $venues = \App\Models\Venue::where('name', 'like', '%' . $this->searchTerm . '%')->orderBy('name')->get();
 
         if ($players->count() > 0) {
