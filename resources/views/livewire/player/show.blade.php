@@ -157,6 +157,67 @@
                             </div>
                         </div>
                     </div>
+
+                    @if ( $history->count() > 0 )
+                        <div class="bg-white shadow rounded-lg mt-6 overflow-hidden">
+                            <div class="px-4 py-4 bg-green-700">
+                                <h2 class="text-sm font-medium leading-6 text-white">History</h2>
+                            </div>
+                            <div class="border-gray-200 h-full flex flex-col">
+                                <div class="min-w-full overflow-hidden">
+                                    <div class="bg-white overflow-x-auto">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                        Season
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                        Team
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        Played
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        Won
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        Lost
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
+                                                @foreach ($history as $season)
+                                                    <tr>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900">
+                                                            {{ $season->season }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900">
+                                                            {{ $season->team }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                            {{ $season->played }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                            {{ $season->won }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                            {{ $season->lost }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </section>
             </div>
         </div>

@@ -122,5 +122,4 @@ class User extends Authenticatable
             $query->where('is_open', true);
         })->count();
     }
-
 }
