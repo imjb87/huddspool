@@ -221,6 +221,10 @@
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
+                        <div class="py-1">
+                            <a href="{{ route('player.show', auth()->user()->id) }}"
+                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your profile</a>
+                        </div>
                         @if (auth()->user()->team)
                             <div class="py-1">
                                 <a href="{{ route('team.show', auth()->user()->team->id) }}"
@@ -442,6 +446,9 @@
                             @if (@auth()->user())
                                 <span
                                     class="block rounded-lg py-1 -mx-3 px-3 text-sm font-semibold leading-7 text-gray-500 hover:bg-gray-50">{{ auth()->user()->name }}</span>
+                                <a href="{{ route('player.show', auth()->user()->id) }}"
+                                    class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
+                                    profile</a> 
                                 @if (auth()->user()->team)
                                     <a href="{{ route('team.show', auth()->user()->team->id) }}"
                                         class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your

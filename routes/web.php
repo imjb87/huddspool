@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 
-Route::get('/', \App\Http\Controllers\HomeController::class);
+Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 
 Route::get('/tables/{ruleset}', \App\Http\Livewire\Table\Index::class)->name('table.index');
 Route::get('/teams/{team}', \App\Http\Livewire\Team\Show::class)->name('team.show');

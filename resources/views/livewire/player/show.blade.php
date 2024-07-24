@@ -43,25 +43,36 @@
                                     {{ $role }}</dd>
                             </div>
                             @if ($player->email)
-                                <a href="mailto:{{ $player->email }}"
-                                    class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <div class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        {{ $player->email }}
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 relative">
+                                        @auth
+                                            <a href="mailto:{{ $player->email }}">{{ $player->email }}</a>
+                                        @else
+                                            <span class="relative">
+                                                <span class="bg-black text-black p-1">xxxxxxxxxxxxxxxxxx</span>
+                                            </span>
+                                        @endauth
                                     </dd>
-                                </a>
+                                </div>
                             @endif
                             @if ($player->telephone)
-                                <a href="tel:{{ $player->telephone }}"
-                                    class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <div class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Telephone</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        {{ $player->telephone }}
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 relative">
+                                        @auth
+                                            <a href="tel:{{ $player->telephone }}">{{ $player->telephone }}</a>
+                                        @else
+                                            <span class="relative">
+                                                <span class="bg-black text-black p-1">xxxxxxxxxxxxxxxxxx</span>
+                                            </span>
+                                        @endauth
                                     </dd>
-                                </a>
+                                </div>
                             @endif
                         </dl>
                     </div>
+
                 </div>
 
                 <section class="w-full lg:w-2/3">
@@ -171,7 +182,6 @@
                                                 <tr>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
-                                                        Season
                                                     </th>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
@@ -179,34 +189,34 @@
                                                     </th>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
-                                                        Played
+                                                        Pl
                                                     </th>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
-                                                        Won
+                                                        W
                                                     </th>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
-                                                        Lost
+                                                        L
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
                                                 @foreach ($history as $season)
                                                     <tr>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900">
-                                                            {{ $season->season }}
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-2/12">
+                                                            {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
                                                             {{ $season->team }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
                                                             {{ $season->played }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
                                                             {{ $season->won }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
                                                             {{ $season->lost }}
                                                         </td>
                                                     </tr>
