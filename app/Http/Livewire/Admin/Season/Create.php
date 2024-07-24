@@ -30,6 +30,7 @@ class Create extends Component
 
         $season = Season::create([
             'name' => $this->season['name'],
+            'slug' => \Str::slug($this->season['name']),
             'dates' => $this->season['dates'],
             'is_open' => 0,
         ]);

@@ -1,7 +1,7 @@
 <section>
     <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
         <div class="px-4 py-4 sm:px-6 bg-green-700">
-            <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
+            <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }} {{ $history ? 'Averages' : '' }}</h2>
         </div>
         <div class="border-t border-gray-200 h-full flex flex-col">
             <div class="min-w-full overflow-hidden">
@@ -37,16 +37,9 @@
                                     <div
                                         class="whitespace-nowrap py-2 text-sm text-gray-900 w-2/12 font-semibold">
                                         {{ $loop->iteration + ($page - 1) * 10 }}.</div>
-                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex flex-col">
+                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex gap-x-3 flex-col">
                                         {{ $player->name }}
-                                        <span class="text-xs text-gray-500 sm:hidden">
-                                            @if ($player->team_shortname)
-                                                {{ $player->team_shortname }}
-                                            @else
-                                                {{ $player->team_name }}
-                                            @endif
-                                        </span>
-                                        <span class="text-xs text-gray-500 hidden sm:inline">
+                                        <span class="text-xs text-gray-500 inline {{ $history ? 'hidden' : '' }}">
                                             {{ $player->team_name }}
                                         </span>
                                     </div>

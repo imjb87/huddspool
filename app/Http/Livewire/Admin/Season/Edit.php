@@ -28,6 +28,8 @@ class Edit extends Component
     {
         $this->validate();
 
+        $this->season->slug = \Str::slug($this->season->name);
+
         $this->season->save();
 
         return redirect()->route('admin.seasons.show', $this->season);

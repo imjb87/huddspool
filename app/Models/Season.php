@@ -16,6 +16,7 @@ class Season extends Model
      */
     protected $fillable = [
         'name',
+        'slug',
         'dates',
         'is_open',
     ];
@@ -37,4 +38,8 @@ class Season extends Model
         return $this->hasMany(Section::class);
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

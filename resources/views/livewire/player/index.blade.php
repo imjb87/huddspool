@@ -9,7 +9,7 @@
             </div>                    
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-6">
                 @foreach ($sections as $section)
-                    <livewire:player.section-show :section="$section" />
+                    <livewire:player.section-show :section="$section" :history="false" />
                 @endforeach
             </div>
         </div>

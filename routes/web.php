@@ -30,4 +30,5 @@ Route::get('/fixtures/{fixture}', \App\Http\Livewire\Fixture\Show::class)->name(
 Route::get('/results/create/{fixture}', \App\Http\Livewire\Result\Create::class)->name('result.create');
 Route::get('/results/{result}', \App\Http\Livewire\Result\Show::class)->name('result.show');
 Route::get('/rulesets/{ruleset}', \App\Http\Livewire\Ruleset\Show::class)->name('ruleset.show');
+Route::get('/history/{season}/{ruleset}', \App\Http\Livewire\History::class)->name('history.show');
 Route::get('/{slug}', \App\Http\Livewire\Page\Show::class)->name('page.show');

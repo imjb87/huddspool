@@ -13,10 +13,12 @@ class SectionShow extends Component
     public $players;
     public $page = 1;
     public $totalPages;
+    public $history;
 
-    public function mount(Section $section)
+    public function mount(Section $section, $history)
     {
         $this->section = $section;
+        $this->history = $history;
 
         $sectionId = $this->section->id;
 
@@ -37,14 +39,12 @@ class SectionShow extends Component
 
         $this->players = DB::select(
             'SELECT users.id, users.name
-            , teams.name AS team_name
-            , teams.shortname AS team_shortname
+            , CASE WHEN frames.home_player_id = users.id THEN results.home_team_name ELSE results.away_team_name END AS team_name
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.home_score ELSE frames.away_score END) AS total_score
             , SUM(CASE WHEN frames.home_player_id = users.id THEN frames.away_score ELSE frames.home_score END) AS total_against
             , COUNT(frames.id) AS total_frames
             FROM users
             JOIN frames ON users.id = frames.home_player_id OR users.id = frames.away_player_id
-            JOIN teams ON users.team_id = teams.id
             JOIN results ON frames.result_id = results.id
             JOIN fixtures ON results.fixture_id = fixtures.id
             JOIN sections ON fixtures.section_id = sections.id
@@ -61,13 +61,13 @@ class SectionShow extends Component
     public function nextPage()
     {
         $this->page++;
-        $this->mount($this->section);
+        $this->mount($this->section, $this->history);
     }
 
     public function previousPage()
     {
         $this->page--;
-        $this->mount($this->section);
+        $this->mount($this->section, $this->history);
     }
 
     public function render()
