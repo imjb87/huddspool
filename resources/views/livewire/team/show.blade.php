@@ -170,84 +170,73 @@
                             <div class="border-gray-200 h-full flex flex-col">
                                 <div class="min-w-full overflow-hidden">
                                     <div class="bg-white overflow-x-auto">
-                                        <div class="w-full max-w-full overflow-hidden">
-                                            <div class="bg-gray-50">
-                                                <div class="flex">
-                                                    <div class="flex w-6/12 pl-3">
-                                                        <div scope="col"
-                                                            class="py-2 text-right text-sm font-semibold text-gray-900 w-2/12 text-xs">
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-right text-sm font-semibold text-gray-900 w-2/12 pr-2 sm:pr-3">
-                                                            #
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-left text-sm font-semibold text-gray-900 w-8/12 truncate">
-                                                            Team
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex w-6/12 pr-2">
-                                                        <div scope="col"
-                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pl
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">W
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">D
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">L
-                                                        </div>
-                                                        <div scope="col"
-                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pts
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="bg-white">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                        Section
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                        #
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        Pl
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        W
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        D
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        L
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-center text-sm font-semibold text-gray-900">
+                                                        Pts
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
                                                 @foreach ($history as $season)
-                                                    <div class="border-t border-gray-300 hover:bg-gray-50 flex">
-                                                        <div class="flex w-6/12 pl-3">
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-gray-900 text-right w-2/12 text-[10px] leading-[20px]">
-                                                                {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
-                                                            </div>
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-right font-semibold w-2/12 pr-2 sm:pr-3">
-                                                                {{ $season->rank }}.
-                                                            </div>
-                                                            <div
-                                                                class="py-2 text-sm text-gray-900 w-8/12 truncate">
-                                                                {{ $season->team_name }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="flex w-6/12 pr-2">
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
-                                                                {{ $season->played }}
-                                                            </div>
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
-                                                                {{ $season->won }}
-                                                            </div>
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
-                                                                {{ $season->drawn }}
-                                                            </div>
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
-                                                                {{ $season->lost }}
-                                                            </div>
-                                                            <div
-                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
-                                                                {{ $season->points }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <tr>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-2/12">
+                                                            {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
+                                                            {{ $season->section_name }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
+                                                            {{ $season->rank }}.
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                            {{ $season->played }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                            {{ $season->won }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                            {{ $season->drawn }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                            {{ $season->lost }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                            {{ $season->points }}
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
-                                            </div>
-                                        </div>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
