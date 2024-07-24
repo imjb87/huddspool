@@ -161,6 +161,98 @@
                             </div>
                         </div>
                     </div>
+
+                    @if ( $history->count() > 0 )
+                        <div class="bg-white shadow rounded-lg mt-6 overflow-hidden">
+                            <div class="px-4 py-4 bg-green-700">
+                                <h2 class="text-sm font-medium leading-6 text-white">History</h2>
+                            </div>
+                            <div class="border-gray-200 h-full flex flex-col">
+                                <div class="min-w-full overflow-hidden">
+                                    <div class="bg-white overflow-x-auto">
+                                        <div class="w-full max-w-full overflow-hidden">
+                                            <div class="bg-gray-50">
+                                                <div class="flex">
+                                                    <div class="flex w-6/12 pl-3">
+                                                        <div scope="col"
+                                                            class="py-2 text-right text-sm font-semibold text-gray-900 w-2/12 text-xs">
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-right text-sm font-semibold text-gray-900 w-2/12 pr-2 sm:pr-3">
+                                                            #
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-left text-sm font-semibold text-gray-900 w-8/12 truncate">
+                                                            Team
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex w-6/12 pr-2">
+                                                        <div scope="col"
+                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pl
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">W
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">D
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">L
+                                                        </div>
+                                                        <div scope="col"
+                                                            class="py-2 text-center text-sm font-semibold text-gray-900 w-1/5">Pts
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="bg-white">
+                                                @foreach ($history as $season)
+                                                    <div class="border-t border-gray-300 hover:bg-gray-50 flex">
+                                                        <div class="flex w-6/12 pl-3">
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-gray-900 text-right w-2/12 text-[10px] leading-[20px]">
+                                                                {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
+                                                            </div>
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-right font-semibold w-2/12 pr-2 sm:pr-3">
+                                                                {{ $season->rank }}.
+                                                            </div>
+                                                            <div
+                                                                class="py-2 text-sm text-gray-900 w-8/12 truncate">
+                                                                {{ $season->team_name }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex w-6/12 pr-2">
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                                {{ $season->played }}
+                                                            </div>
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                                {{ $season->won }}
+                                                            </div>
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                                {{ $season->drawn }}
+                                                            </div>
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                                {{ $season->lost }}
+                                                            </div>
+                                                            <div
+                                                                class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                                {{ $season->points }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </section>
             </div>
         </div>
