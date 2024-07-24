@@ -204,10 +204,10 @@
                                             <tbody class="bg-white divide-y divide-gray-200">
                                                 @foreach ($history as $season)
                                                     <tr>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-1/12">
                                                             {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-5/12">
                                                             {{ $season->team }}
                                                         </td>
                                                         <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">

@@ -209,28 +209,28 @@
                                             <tbody class="bg-white divide-y divide-gray-200">
                                                 @foreach ($history as $season)
                                                     <tr>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-1/12">
                                                             {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-5/12">
                                                             {{ $season->section_name }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-4/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-1/12">
                                                             {{ $season->rank }}.
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-1/12">
                                                             {{ $season->played }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-1/12">
                                                             {{ $season->won }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-1/12">
                                                             {{ $season->drawn }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-1/12">
                                                             {{ $season->lost }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-1/12">
                                                             {{ $season->points }}
                                                         </td>
                                                     </tr>
