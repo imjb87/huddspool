@@ -185,6 +185,10 @@
                                                     </th>
                                                     <th scope="col"
                                                         class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
+                                                        Section
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-2 px-4 text-left text-sm font-semibold text-gray-900">
                                                         Team
                                                     </th>
                                                     <th scope="col"
@@ -207,7 +211,10 @@
                                                         <td class="whitespace-nowrap py-4 px-4 text-[10px] font-medium text-gray-900 w-1/12">
                                                             {{ $season->season ? date('m/y', strtotime($season->season)) : '' }}
                                                         </td>
-                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-5/12">
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-2/12">
+                                                            {{ $season->section }}
+                                                        </td>
+                                                        <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 w-3/12">
                                                             {{ $season->team }}
                                                         </td>
                                                         <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900 text-center w-2/12">
