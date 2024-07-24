@@ -54,6 +54,7 @@ class Show extends Component
         $historyResult = DB::select(
             DB::raw("
                 SELECT 
+                    seasons.id AS season_id,
                     seasons.name AS season, 
                     s.name AS section, 
                     CASE 
@@ -81,6 +82,7 @@ class Show extends Component
                 UNION ALL 
                 
                 SELECT 
+                    '' AS season_id,
                     '' AS season, 
                     '' AS section, 
                     'Total' AS team, 
@@ -101,7 +103,7 @@ class Show extends Component
                     fr.home_player_id = $playerId OR fr.away_player_id = $playerId 
         
                 ORDER BY 
-                    CASE WHEN Team = 'Total' THEN 1 ELSE 0 END, section, season
+                    CASE WHEN Team = 'Total' THEN 1 ELSE 0 END, season_id DESC
             ")
         );
         
