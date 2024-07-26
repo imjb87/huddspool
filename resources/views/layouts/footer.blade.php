@@ -1,5 +1,11 @@
 <footer class="bg-neutral-800" aria-labelledby="footer-heading">
     <h2 id="footer-heading" class="sr-only">Footer</h2>
+    @if ( session()->has('previous_user') )
+        <div class="fixed bottom-0 right-0 p-4">            
+            <a href="{{ route('admin.switch-back') }}"
+                class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Switch back to {{ session('previous_user')->name }}</a>
+        </div>
+    @endif
     <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
             <img class="w-28" src="{{ asset('images/logo.png') }}" alt="League Logo">

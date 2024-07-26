@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 
-Route::group(['prefix' => 'admin', 'middleware' => ['is_admin']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/users', \App\Http\Livewire\Admin\User\Index::class)->name('admin.users.index');
@@ -53,4 +53,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin']], function () {
     Route::get('/pages/edit/{page}', \App\Http\Livewire\Admin\Page\Edit::class)->name('admin.pages.edit');
     Route::get('/pages/{page}', \App\Http\Livewire\Admin\Page\Show::class)->name('admin.pages.show');
 
+    Route::get('/switch-user/{user}', [\App\Http\Controllers\AdminController::class, 'switchUser'])->name('admin.switch-user');
+    Route::get('/switch-back', [\App\Http\Controllers\AdminController::class, 'switchBack'])->name('admin.switch-back');
 });
