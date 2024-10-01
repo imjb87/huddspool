@@ -4,7 +4,7 @@
         @if ($errors->any())
           <x-errors />
         @endif
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
 
                 <div class="sm:col-span-3">

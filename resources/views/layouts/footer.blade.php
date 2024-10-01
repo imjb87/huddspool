@@ -12,11 +12,11 @@
             <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
                 <div class="md:grid md:grid-cols-2 md:gap-8">
                     <div>
-                        <h3 class="text-sm font-semibold leading-6 text-white">Tables</h3>
+                        <h3 class="text-sm font-semibold leading-6 text-white">Standings</h3>
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
                                 <li>
-                                    <a href="{{ route('table.index', $ruleset->id) }}"
+                                    <a href="{{ route('standings.index', $ruleset->id) }}"
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach

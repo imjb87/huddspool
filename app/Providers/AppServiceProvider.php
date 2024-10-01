@@ -5,8 +5,11 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Ruleset;
 use App\Models\Season;
+use App\Models\KnockoutMatch;
+use App\Observers\KnockoutMatchObserver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Database\Eloquent\Model;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Model::unguard();
+
+        KnockoutMatch::observe(KnockoutMatchObserver::class);
+
         if(Schema::hasTable('rulesets')) {
             $rulesets = Ruleset::all();
             view()->share('rulesets', $rulesets);
@@ -43,6 +50,6 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
-        ]);        
+        ]);
     }
 }

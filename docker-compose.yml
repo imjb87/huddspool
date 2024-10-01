@@ -32,5 +32,12 @@ services:
     depends_on:
       - mariadb      
 
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "8025:8025"  # Web interface
+      - "1025:1025"  # SMTP server    
+
 volumes:
   mariadb_data:

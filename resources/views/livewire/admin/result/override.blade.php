@@ -1,6 +1,6 @@
 <div class="p-4">
     <h1 class="text-lg font-semibold tracking-tight text-slate-900">Override result</h1>
-    <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="override">
+    <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="override">
         <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
             <div class="sm:col-span-6">
                 <label for="homeScore" class="block text-sm font-medium leading-6 text-slate-900">{{$fixture->homeTeam->name}}</label>

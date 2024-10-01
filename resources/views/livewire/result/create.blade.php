@@ -59,7 +59,7 @@
                     </dl>
                 </div>
                 <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
-                    <form class="divide-y-slate-200 space-y-8 divide-y" wire:submit.prevent="save">
+                    <form class="divide-y-slate-200 space-y-8 divide-y" wire:submit="save">
             
                         <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
                             <div class="bg-green-700 hidden sm:flex">

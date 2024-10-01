@@ -29,6 +29,11 @@ class Section extends Model
             ->withTimestamps();
     }
 
+    public function sectionTeams()
+    {
+        return $this->hasMany(SectionTeam::class);
+    }
+
     /**
      * Get the season that owns the section.
      */

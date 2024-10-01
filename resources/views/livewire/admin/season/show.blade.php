@@ -1,5 +1,5 @@
 <div>
-    <div class="mx-auto max-w-3xl md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl">
+    <div class="mx-auto max-w-3xl md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl sm:px-6">
         <div class="flex items-center space-x-5">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
@@ -23,7 +23,7 @@
         <div class="space-y-6 lg:col-span-2 lg:col-start-1">
             <!-- Description list-->
             <section>
-                <div class="bg-white shadow sm:rounded-lg">
+                <div class="bg-white shadow rounded sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
                         <h2 class="text-lg font-medium leading-6 text-gray-900">Season
                             Information</h2>
@@ -64,7 +64,7 @@
                 </div>
             </section>
             <section>
-                <div class="bg-white shadow sm:rounded-lg">
+                <div class="bg-white shadow rounded sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
                         <div class="flex-1">
                             <h2 class="text-lg font-medium leading-6 text-gray-900">Sections</h2>
@@ -124,10 +124,64 @@
                     </div>
                 </div>
             </section>
+            <section>
+                <div class="bg-white shadow rounded sm:rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
+                        <div class="flex-1">
+                            <h2 class="text-lg font-medium leading-6 text-gray-900">Knockouts</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">List of knockouts in the
+                                season.</p>
+                        </div>
+                        <a href="{{ route('admin.knockouts.create', $season) }}"
+                            class="sm:self-end sm:justify-self-end rounded-md bg-indigo-600 py-2 px-3 mt-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add
+                            knockout</a>
+
+                    </div>
+                    <div class="border-t border-gray-200">
+                        @if ($season->knockouts->count() > 0)
+                            <div class="overflow-hidden rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col"
+                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                                Name</th>
+                                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                                <span class="sr-only">Edit</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach ($season->knockouts as $knockout)
+                                            <tr>
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                    {{ $knockout->name }}</td>
+                                                <td
+                                                    class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                                    <a class="rounded bg-indigo-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                        href="{{ route('admin.knockouts.show', $knockout) }}">View</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="px-4 sm:px-6 py-5">
+                                <a href="{{ route('admin.knockouts.create', $season) }}"
+                                    class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    <span class="mt-2 block text-sm font-semibold text-gray-900">Add knockout</span>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>                
+            </section>
         </div>
 
         <section class="lg:col-span-1 lg:col-start-3">
-            <div class="bg-white shadow sm:rounded-lg overflow-hidden">
+            <div class="bg-white shadow rounded sm:rounded-lg overflow-hidden">
                 <div class="px-4 py-5 sm:px-6">
                     <h2 class="text-lg font-medium leading-6 text-gray-900">Schedule</h2>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500">List of dates in the

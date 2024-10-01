@@ -1,7 +1,7 @@
 <div class="flex-1 xl:overflow-y-auto">
     <div class="mx-auto max-w-4xl py-10 sm:px-6 lg:py-12 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-slate-900">Add Result</h1>
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="overflow-hidden bg-white rounded-lg">
                 <div class="px-4 py-5 sm:p-0">
                     <dl class="divide-y divide-gray-200">

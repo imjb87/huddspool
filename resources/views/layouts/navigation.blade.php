@@ -30,7 +30,7 @@
             <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
                 <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
                     aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Tables
+                    Standings
                     <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
                         aria-hidden="true">
                         <path fill-rule="evenodd"
@@ -47,7 +47,7 @@
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
                     @foreach ($rulesets as $ruleset)
                         <div class="py-1">
-                            <a href="{{ route('table.index', $ruleset->slug) }}"
+                            <a href="{{ route('standings.index', $ruleset->slug) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
@@ -324,7 +324,7 @@
                                     class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                     aria-controls="disclosure-1" aria-expanded="false" @click="open = !open"
                                     :aria-expanded="open">
-                                    Tables
+                                    Standings
                                     <!--
                   Expand/collapse icon, toggle classes based on menu open state.
 
@@ -344,7 +344,7 @@
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                                     @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('table.index', $ruleset->slug) }}"
+                                        <a href="{{ route('standings.index', $ruleset->slug) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
                                 </div>

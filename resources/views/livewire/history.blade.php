@@ -12,7 +12,7 @@
                     <section class="-mx-4 sm:m-0">
                         <div class="bg-white shadow-md sm:rounded-lg overflow-hidden">
                             <div class="px-4 py-4 bg-green-700">
-                                <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }} Table</h2>
+                                <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }} Standings</h2>
                             </div>
                             <div class="border-t border-gray-200">
                                 <div class="w-full max-w-full overflow-hidden">
