@@ -21,6 +21,8 @@ class SeasonResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationGroup = 'Competitions';
+
     public static function form(Form $form): Form
     {
         return $form

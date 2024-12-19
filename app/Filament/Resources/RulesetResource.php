@@ -17,9 +17,11 @@ class RulesetResource extends Resource
 {
     protected static ?string $model = Ruleset::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-numbered';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $navigationIcon = 'heroicon-o-scale';
+
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {

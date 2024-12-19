@@ -21,6 +21,8 @@ class VenueResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationGroup = 'Settings';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -33,7 +35,7 @@ class VenueResource extends Resource
                     ->label('Telephone')
                     ->placeholder('0123456789')
                     ->tel(),
-                    Forms\Components\Textarea::make('address')
+                Forms\Components\Textarea::make('address')
                     ->label('Address')
                     ->required()
                     ->placeholder('Venue address')

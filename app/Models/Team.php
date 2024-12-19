@@ -70,4 +70,46 @@ class Team extends Model
             });
     }
 
+    public function results()
+    {
+        return $this->hasMany(Result::class, 'home_team_id')
+            ->orWhere('away_team_id', $this->id)
+            ->whereHas('fixture', function ($query) {
+                $query->whereHas('season', function ($query) {
+                    $query->where('is_open', true);
+                });
+            });
+    }
+
+    public function getWinsAttribute()
+    {
+        return $this->results
+            ->filter(fn ($result) => $result->home_team_id === $this->id && $result->home_score > $result->away_score
+                || $result->away_team_id === $this->id && $result->away_score > $result->home_score)
+            ->count();
+    }
+
+    public function getDrawsAttribute()
+    {
+        return $this->results
+            ->filter(fn ($result) => $result->home_score === $result->away_score)
+            ->count();
+    }
+
+    public function getLossesAttribute()
+    {
+        return $this->results
+            ->filter(fn ($result) => $result->home_team_id === $this->id && $result->home_score < $result->away_score
+                || $result->away_team_id === $this->id && $result->away_score < $result->home_score)
+            ->count();
+    }
+
+    public function getPointsAttribute()
+    {
+        return $this->results->sum(
+            fn ($result) =>
+            $result->home_team_id === $this->id ? $result->home_score : $result->away_score
+        );
+    }
+
 }

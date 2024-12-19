@@ -21,6 +21,12 @@ class SectionsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('ruleset_id')
+                    ->label('Ruleset')
+                    ->relationship('ruleset', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
             ]);
     }
 
@@ -40,7 +46,10 @@ class SectionsRelationManager extends RelationManager
             ])
             ->actions([
                 // Edit action take the user to the edit page of the record
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('view')
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn ($record) => route('filament.cp.resources.sections.view', $record)),
                 Tables\Actions\DeleteAction::make()
                     ->requiresConfirmation(),
             ])

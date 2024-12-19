@@ -26,6 +26,8 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationGroup = 'Settings';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -100,26 +102,14 @@ class UserResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Action::make('sendInvite')
-                        ->label('Send Invite')
-                        ->icon('heroicon-o-envelope')
-                        ->action(function (User $user) {
-                            try {
-                                InviteController::send($user);
-                                Notification::make()
-                                    ->title('Invite sent')
-                                    ->icon('heroicon-o-check-circle')
-                                    ->iconColor('success')
-                                    ->send();
-                            } catch (\Exception $e) {
-                                Notification::make()
-                                    ->title($e->getMessage())
-                                    ->icon('heroicon-o-x-circle')
-                                    ->iconColor('danger')
-                                    ->send();
-                            }
-                        })
+                    Tables\Actions\EditAction::make()->slideOver(),
+                    Action::make('invite')
+                    ->label('Send Invite')
+                    ->action(function (User $record) {
+                        $inviteController = new \App\Http\Controllers\Auth\InviteController();
+                        $inviteController->send($record);
+                        Notification::make('Invitation sent to ' . $record->email)->success();
+                    }),
                 ])
                 ->iconButton()
                 ->size(ActionSize::Small),
@@ -143,7 +133,6 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
