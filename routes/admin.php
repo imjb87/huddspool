@@ -55,4 +55,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin']], funct
 
     Route::get('/switch-user/{user}', [\App\Http\Controllers\AdminController::class, 'switchUser'])->name('admin.switch-user');
     Route::get('/switch-back', [\App\Http\Controllers\AdminController::class, 'switchBack'])->name('admin.switch-back');
+
+    Route::get('/expulsions/create/{season}', \App\Http\Livewire\Admin\Expulsion\Create::class)->name('admin.expulsions.create');
 });

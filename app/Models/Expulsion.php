@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Season extends Model
+class Expulsion extends Model
 {
     use HasFactory;
 
@@ -15,10 +15,11 @@ class Season extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'slug',
-        'dates',
-        'is_open',
+        'season_id',
+        'expellable_id',
+        'expellable_type',
+        'reason',
+        'date',
     ];
 
     /**
@@ -27,28 +28,22 @@ class Season extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'dates' => 'array',
+        'date' => 'datetime',
     ];
 
     /**
-     * Get the sections for the season.
+     * Get the owning expellable model (team or player).
      */
-    public function sections()
+    public function expellable()
     {
-        return $this->hasMany(Section::class);
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
+        return $this->morphTo();
     }
 
     /**
-     * Get the expulsions for the season.
+     * Get the season associated with the expulsion.
      */
-    public function expulsions()
+    public function season()
     {
-        return $this->hasMany(Expulsion::class);
+        return $this->belongsTo(Season::class);
     }
-
 }

@@ -124,6 +124,50 @@
                     </div>
                 </div>
             </section>
+            <section>
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
+                        <div class="flex-1">
+                            <h2 class="text-lg font-medium leading-6 text-gray-900">Expulsions</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">List of expulsions in the
+                                season.</p>
+                        </div>
+                        <a href="{{ route('admin.expulsions.create', $season) }}"
+                            class="sm:self-end sm:justify-self-end rounded-md bg-indigo-600 py-2 px-3 mt-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add an expulsion</a>
+                    </div>
+                    <div class="border-t border-gray-200">
+                        @if ($season->expulsions->count() > 0)
+                            <div class="overflow-hidden rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col"
+                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                                Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach ($season->expulsions as $expulsion)
+                                            <tr>
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                    {{ $expulsion->expellable->name }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="px-4 sm:px-6 py-5">
+                                <a href="{{ route('admin.expulsions.create', $season) }}"
+                                    class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    <span class="mt-2 block text-sm font-semibold text-gray-900">Add expulsion</span>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </section>            
         </div>
 
         <section class="lg:col-span-1 lg:col-start-3">
@@ -151,6 +195,6 @@
                     </ul>
                 </div>
             </div>
-        </section>
+        </section>        
     </div>
 </div>
