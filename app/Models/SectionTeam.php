@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  
 class SectionTeam extends Pivot
 {
+    protected $fillable = [
+        'section_id',
+        'team_id',
+        'sort',
+    ];
+
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);

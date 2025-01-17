@@ -27,22 +27,27 @@ class TeamResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->placeholder('Team name'),
-                Forms\Components\TextInput::make('shortname')
-                    ->label('Short Name')
-                    ->placeholder('Short name'),
-                Forms\Components\Select::make('venue_id')
-                    ->label('Venue')
-                    ->relationship('venue', 'name')
-                    ->placeholder('Select a venue')
-                    ->required(),
-                Forms\Components\Select::make('captain_id')
-                    ->label('Captain')
-                    ->relationship('captain', 'name')
-                    ->placeholder('Select a captain')
+                Forms\Components\Section::make('Information')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->placeholder('Team name'),
+                        Forms\Components\TextInput::make('shortname')
+                            ->label('Short Name')
+                            ->placeholder('Short name'),
+                        Forms\Components\Select::make('venue_id')
+                            ->label('Venue')
+                            ->relationship('venue', 'name')
+                            ->placeholder('Select a venue')
+                            ->required(),
+                        Forms\Components\Select::make('captain_id')
+                            ->label('Captain')
+                            ->relationship('captain', 'name')
+                            ->placeholder('Select a captain')
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -62,7 +67,7 @@ class TeamResource extends Resource
                     ->badge()
                     ->color('gray')
                     ->label(false)
-                    ->formatStateUsing(fn (string $state): string => $state ? 'Folded' : ''),
+                    ->formatStateUsing(fn(string $state): string => $state ? 'Folded' : ''),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('folded_at')
@@ -75,8 +80,8 @@ class TeamResource extends Resource
                         ->label('Fold Team')
                         ->icon('heroicon-o-archive-box')
                         ->requiresConfirmation()
-                        ->action(fn (Team $team) => $team->update(['folded_at' => now()])),                
-                    ]),
+                        ->action(fn(Team $team) => $team->update(['folded_at' => now()])),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -10,6 +10,7 @@
         "awobaz/compoships": "^2.2",
         "doctrine/dbal": "^3.6",
         "filament/filament": "^3.2",
+        "guava/filament-nested-resources": "^1.2",
         "guzzlehttp/guzzle": "^7.2",
         "itsgoingd/clockwork": "^5.1",
         "laravel/framework": "^11.0",

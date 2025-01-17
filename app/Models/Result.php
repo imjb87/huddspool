@@ -27,6 +27,17 @@ class Result extends Model
         'submitted_by',
     ];
 
+    protected static function booted()
+    {
+        static::saved(function ($result) {
+            // $result->fixture->update([
+            //     'submitted_by' => auth()->id(),
+            //     'home_team_name' => \App\Models\Team::find($result->home_team_id)->name,
+            //     'away_team_name' => \App\Models\Team::find($result->away_team_id)->name,
+            // ]);
+        });
+    }
+
     /**
      * Get the fixture that owns the result.
      */

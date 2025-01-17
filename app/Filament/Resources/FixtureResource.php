@@ -14,9 +14,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Request;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
+use Illuminate\Database\Eloquent\Model;
 
 class FixtureResource extends Resource
 {
+    use NestedResource;
+
     protected static ?string $model = Fixture::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
@@ -29,22 +33,103 @@ class FixtureResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\DateTimePicker::make('fixture_date')
-                    ->label('Fixture Date')
-                    ->required()
-                    ->native(false)
-                    ->placeholder('Fixture date')
-                    ->displayFormat('d/m/Y'),
-                Forms\Components\Select::make('home_team_id')
-                    ->label('Home Team')
-                    ->relationship('homeTeam', 'name')
-                    ->placeholder('Select a home team')
-                    ->required(),
-                Forms\Components\Select::make('away_team_id')
-                    ->label('Away Team')
-                    ->relationship('awayTeam', 'name')
-                    ->placeholder('Select an away team')
-                    ->required(),
+                Forms\Components\Section::make('Fixture Information')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\DateTimePicker::make('fixture_date')
+                            ->label('Fixture Date')
+                            ->required()
+                            ->native(false)
+                            ->placeholder('Fixture date')
+                            ->displayFormat('d/m/Y')
+                            ->columnSpan(2),
+                        Forms\Components\Select::make('home_team_id')
+                            ->label('Home Team')
+                            ->relationship('homeTeam', 'name')
+                            ->placeholder('Select a home team')
+                            ->disabled()
+                            ->required(),
+                        Forms\Components\Select::make('away_team_id')
+                            ->label('Away Team')
+                            ->relationship('awayTeam', 'name')
+                            ->placeholder('Select an away team')
+                            ->disabled()
+                            ->required(),
+                        Forms\Components\Select::make('venue_id')
+                            ->label('Venue')
+                            ->relationship('venue', 'name')
+                            ->placeholder('Select a venue')
+                            ->columnSpan(2)
+                            ->disabled()
+                            ->required(),
+                    ]),
+                Forms\Components\Section::make('Result')
+                    ->relationship('result')
+                        ->schema([
+                            Forms\Components\Section::make('Frames')
+                                ->schema([
+                                    Forms\Components\Repeater::make('frames')
+                                        ->label(false)
+                                        ->relationship('frames')
+                                        ->defaultItems(10)
+                                        ->maxItems(10)
+                                        ->minItems(10)
+                                        ->columns(4)
+                                        ->deletable(false)
+                                        ->schema([
+                                            Forms\Components\Select::make('home_player_id')
+                                                ->label('Home Player')
+                                                ->placeholder('Select a player')
+                                                ->options(function (callable $get) {
+                                                    // Fetch players from the selected home team
+                                                    $homeTeamId = $get('../../../home_team_id');
+                                                    return $homeTeamId ? \App\Models\User::where('team_id', $homeTeamId)->pluck('name', 'id') : [];
+                                                })                                                
+                                                ->required(),
+                                            Forms\Components\TextInput::make('home_score')
+                                                ->label('Home Score')
+                                                ->numeric()
+                                                ->default(0)
+                                                ->minValue(0)
+                                                ->maxValue(1)
+                                                ->live()
+                                                ->required(),
+                                            Forms\Components\TextInput::make('away_score')
+                                                ->label('Away Score')
+                                                ->numeric()
+                                                ->default(0)
+                                                ->minValue(0)
+                                                ->maxValue(1)   
+                                                ->live()                                 
+                                                ->required(),
+                                            Forms\Components\Select::make('away_player_id')
+                                                ->label('Away Player')
+                                                ->placeholder('Select a player')
+                                                ->options(function (callable $get) {
+                                                    // Fetch players from the selected away team
+                                                    $awayTeamId = $get('../../../away_team_id');
+                                                    return $awayTeamId ? \App\Models\User::where('team_id', $awayTeamId)->pluck('name', 'id') : [];
+                                                })
+                                                ->required(),
+                                        ]),
+                                ]),
+                                Forms\Components\Section::make('Totals')
+                                    ->columns(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('home_score')
+                                            ->label('Home Total')
+                                            ->default(0)
+                                            ->minValue(0)
+                                            ->maxValue(10)                
+                                            ->required(),
+                                        Forms\Components\TextInput::make('away_score')
+                                            ->label('Away Total')
+                                            ->default(0)
+                                            ->minValue(0)
+                                            ->maxValue(10)
+                                            ->required(),
+                                    ]),                     
+                    ])
             ]);
     }
 
@@ -69,8 +154,7 @@ class FixtureResource extends Resource
                     ->searchable()
                     ->sortable(),
             ])
-            ->filters([
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make()->slideOver(),
             ])
@@ -79,7 +163,7 @@ class FixtureResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('section_id', Request::route('record')))
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('section_id', Request::route('record')))
             ->defaultSort('week', 'asc');
     }
 
@@ -94,6 +178,16 @@ class FixtureResource extends Resource
     {
         return [
             'index' => Pages\ListFixtures::route('/'),
+            'edit' => Pages\EditFixture::route('/{record}/edit'),
         ];
     }
+
+    public static function getAncestor() : ?\Guava\FilamentNestedResources\Ancestor
+    {
+        // Configure the ancestor (parent) relationship here
+        return \Guava\FilamentNestedResources\Ancestor::make(
+            'fixtures', // Relationship name
+            'section', // Inverse relationship name
+        );
+    }        
 }

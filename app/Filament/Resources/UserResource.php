@@ -85,12 +85,12 @@ class UserResource extends Resource
                     ->label('Team')
                     ->searchable()
                     ->sortable()
-                    ->placeholder('No team'),    
+                    ->placeholder('No team'),
                 Tables\Columns\TextColumn::make('is_admin')
                     ->badge()
                     ->color('success')
                     ->label(false)
-                    ->formatStateUsing(fn (string $state): string => $state === '1' ? 'Admin' : ''),
+                    ->formatStateUsing(fn(string $state): string => $state === '1' ? 'Admin' : ''),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('is_admin')
@@ -104,15 +104,16 @@ class UserResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\EditAction::make()->slideOver(),
                     Action::make('invite')
-                    ->label('Send Invite')
-                    ->action(function (User $record) {
-                        $inviteController = new \App\Http\Controllers\Auth\InviteController();
-                        $inviteController->send($record);
-                        Notification::make('Invitation sent to ' . $record->email)->success();
-                    }),
+                        ->label('Send Invite')
+                        ->icon('heroicon-o-envelope')
+                        ->action(function (User $record) {
+                            $inviteController = new \App\Http\Controllers\Auth\InviteController();
+                            $inviteController->send($record);
+                            Notification::make('Invitation sent to ' . $record->email)->success();
+                        }),
                 ])
-                ->iconButton()
-                ->size(ActionSize::Small),
+                    ->iconButton()
+                    ->size(ActionSize::Small),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

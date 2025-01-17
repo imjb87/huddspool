@@ -19,7 +19,7 @@ class RulesetResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-scale';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static ?string $navigationGroup = 'Settings';
 
@@ -27,10 +27,13 @@ class RulesetResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->placeholder('Ruleset name')
+                Forms\Components\Section::make('Information')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Name')
+                        ->required()
+                        ->placeholder('Ruleset name'),
+                ]),
             ]);
     }
 

@@ -9,9 +9,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class SectionsRelationManager extends RelationManager
 {
+    use NestedRelationManager;
+
     protected static string $relationship = 'sections';
 
     public function form(Form $form): Form
@@ -45,13 +48,7 @@ class SectionsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                // Edit action take the user to the edit page of the record
-                Tables\Actions\Action::make('view')
-                    ->label('View')
-                    ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => route('filament.cp.resources.sections.view', $record)),
-                Tables\Actions\DeleteAction::make()
-                    ->requiresConfirmation(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

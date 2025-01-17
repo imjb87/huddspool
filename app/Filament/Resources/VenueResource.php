@@ -27,19 +27,23 @@ class VenueResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->placeholder('Venue name'),
-                Forms\Components\TextInput::make('telephone')
-                    ->label('Telephone')
-                    ->placeholder('0123456789')
-                    ->tel(),
-                Forms\Components\Textarea::make('address')
-                    ->label('Address')
-                    ->required()
-                    ->placeholder('Venue address')
-                    ->columnSpan(2),
+                Forms\Components\Section::make('Information')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->placeholder('Venue name'),
+                        Forms\Components\TextInput::make('telephone')
+                            ->label('Telephone')
+                            ->placeholder('0123456789')
+                            ->tel(),
+                        Forms\Components\Textarea::make('address')
+                            ->label('Address')
+                            ->required()
+                            ->placeholder('Venue address')
+                            ->columnSpan(2),
+                    ]),
             ]);
     }
 
