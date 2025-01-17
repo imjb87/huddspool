@@ -50,4 +50,13 @@ class Season extends Model
     {
         return 'slug';
     }
+
+    /**
+     * Get the expulsions for the season.
+     */
+    public function expulsions()
+    {
+        return $this->hasMany(Expulsion::class);
+    }
+
 }

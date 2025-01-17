@@ -112,4 +112,9 @@ class Team extends Model
         );
     }
 
+    public function expulsions()
+    {
+        return $this->morphMany(Expulsion::class, 'expellable');
+    }    
+
 }

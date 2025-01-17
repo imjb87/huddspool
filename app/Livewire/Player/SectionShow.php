@@ -48,12 +48,13 @@ class SectionShow extends Component
             JOIN results ON frames.result_id = results.id
             JOIN fixtures ON results.fixture_id = fixtures.id
             JOIN sections ON fixtures.section_id = sections.id
-            WHERE sections.id = ?
+            LEFT JOIN expulsions ON users.id = expulsions.expellable_id AND expulsions.expellable_type = "App\\\Models\\\User" AND expulsions.season_id = ?
+            WHERE sections.id = ? AND expulsions.id IS NULL
             GROUP BY users.id, users.name
             ORDER BY total_score DESC, total_against ASC, total_frames DESC, users.name ASC
             LIMIT ?
             OFFSET ?',
-            [$sectionId, $perPage, ($this->page - 1) * $perPage]
+            [$section->season_id, $sectionId, $perPage, ($this->page - 1) * $perPage]
         );
 
     }

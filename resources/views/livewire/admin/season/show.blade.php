@@ -125,6 +125,7 @@
                 </div>
             </section>
             <section>
+<<<<<<< HEAD
                 <div class="bg-white shadow rounded sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
                         <div class="flex-1">
@@ -139,6 +140,20 @@
                     </div>
                     <div class="border-t border-gray-200">
                         @if ($season->knockouts->count() > 0)
+=======
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row">
+                        <div class="flex-1">
+                            <h2 class="text-lg font-medium leading-6 text-gray-900">Expulsions</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">List of expulsions in the
+                                season.</p>
+                        </div>
+                        <a href="{{ route('admin.expulsions.create', $season) }}"
+                            class="sm:self-end sm:justify-self-end rounded-md bg-indigo-600 py-2 px-3 mt-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add an expulsion</a>
+                    </div>
+                    <div class="border-t border-gray-200">
+                        @if ($season->expulsions->count() > 0)
+>>>>>>> 12743037494432b37f8d22ec27d16f2bb5a7e8e4
                             <div class="overflow-hidden rounded-lg">
                                 <table class="min-w-full divide-y divide-gray-300">
                                     <thead class="bg-gray-50">
@@ -146,6 +161,7 @@
                                             <th scope="col"
                                                 class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                                                 Name</th>
+<<<<<<< HEAD
                                             <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                                 <span class="sr-only">Edit</span>
                                             </th>
@@ -162,6 +178,16 @@
                                                     <a class="rounded bg-indigo-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                         href="{{ route('admin.knockouts.show', $knockout) }}">View</a>
                                                 </td>
+=======
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach ($season->expulsions as $expulsion)
+                                            <tr>
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                    {{ $expulsion->expellable->name }}</td>
+>>>>>>> 12743037494432b37f8d22ec27d16f2bb5a7e8e4
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -169,15 +195,26 @@
                             </div>
                         @else
                             <div class="px-4 sm:px-6 py-5">
+<<<<<<< HEAD
                                 <a href="{{ route('admin.knockouts.create', $season) }}"
                                     class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     <span class="mt-2 block text-sm font-semibold text-gray-900">Add knockout</span>
+=======
+                                <a href="{{ route('admin.expulsions.create', $season) }}"
+                                    class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    <span class="mt-2 block text-sm font-semibold text-gray-900">Add expulsion</span>
+>>>>>>> 12743037494432b37f8d22ec27d16f2bb5a7e8e4
                                 </a>
                             </div>
                         @endif
                     </div>
+<<<<<<< HEAD
                 </div>                
             </section>
+=======
+                </div>
+            </section>            
+>>>>>>> 12743037494432b37f8d22ec27d16f2bb5a7e8e4
         </div>
 
         <section class="lg:col-span-1 lg:col-start-3">
@@ -205,6 +242,6 @@
                     </ul>
                 </div>
             </div>
-        </section>
+        </section>        
     </div>
 </div>

@@ -122,4 +122,9 @@ class User extends Authenticatable
             $query->where('is_open', true);
         })->count();
     }
+
+    public function expulsions()
+    {
+        return $this->morphMany(Expulsion::class, 'expellable');
+    }    
 }

@@ -56,6 +56,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin']], funct
     Route::get('/switch-user/{user}', [\App\Http\Controllers\AdminController::class, 'switchUser'])->name('admin.switch-user');
     Route::get('/switch-back', [\App\Http\Controllers\AdminController::class, 'switchBack'])->name('admin.switch-back');
 
+<<<<<<< HEAD
     Route::get('/knockouts/create/{season}', \App\Livewire\Admin\Knockout\Create::class)->name('admin.knockouts.create');
     Route::get('/knockouts/edit/{knockout}', \App\Livewire\Admin\Knockout\Edit::class)->name('admin.knockouts.edit');
     Route::get('/knockouts/{knockout}', \App\Livewire\Admin\Knockout\Show::class)->name('admin.knockouts.show');
@@ -67,4 +68,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin']], funct
     Route::get('/matches/create/{round}', \App\Livewire\Admin\KnockoutMatch\Create::class)->name('admin.matches.create');
     Route::get('/matches/edit/{match}', \App\Livewire\Admin\KnockoutMatch\Edit::class)->name('admin.matches.edit');
     Route::get('/matches/{match}', \App\Livewire\Admin\KnockoutMatch\Show::class)->name('admin.matches.show');
+=======
+    Route::get('/expulsions/create/{season}', \App\Http\Livewire\Admin\Expulsion\Create::class)->name('admin.expulsions.create');
+>>>>>>> 12743037494432b37f8d22ec27d16f2bb5a7e8e4
 });
