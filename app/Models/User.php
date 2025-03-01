@@ -8,10 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -21,11 +24,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'telephone',
         'password',
         'team_id',
-        'role',
-        'telephone',
-        'is_admin'
     ];
 
     /**
@@ -56,9 +57,15 @@ class User extends Authenticatable
         'confirmed',
     ];
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole('Administrator');
+    }
+
     public function getRedirectRoute()
     {
-        return $this->team_id ? route('team.show', $this->team_id) : route('home');
+        // redirect user to cp if admin or their own profile if player
+        return route($this->hasRole('Administrator') ? 'filament.admin.pages.dashboard' : 'player.show', $this);
     }
 
     /**
@@ -126,5 +133,5 @@ class User extends Authenticatable
     public function expulsions()
     {
         return $this->morphMany(Expulsion::class, 'expellable');
-    }    
+    }  
 }

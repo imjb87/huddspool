@@ -34,20 +34,11 @@ class SeasonResource extends Resource
 
                         // Main section spanning 2 columns
                         Forms\Components\Section::make('Season information')
-                            ->columnSpan(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Name')
                                     ->required()
                                     ->placeholder('Season name'),
-
-                                Forms\Components\Select::make('is_open')
-                                    ->label('Is open')
-                                    ->options([
-                                        0 => 'No',
-                                        1 => 'Yes',
-                                    ])
-                                    ->required(),
                             ]),
 
                         // Dates on the right in a smaller section spanning 1 column
@@ -64,7 +55,9 @@ class SeasonResource extends Resource
                                     ->reorderable(false)
                                     ->grid(6)
                                     ->minItems(18)
-                                    ->maxItems(18),
+                                    ->maxItems(18)
+                                    ->defaultItems(18)
+                                    ->deletable(false),
                             ]),
                         ]);
     }
@@ -77,15 +70,22 @@ class SeasonResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('is_open')
+                Tables\Columns\ToggleColumn::make('is_open')
                     ->label('Is Open?')
-                    ->boolean(),
+                    ->alignCenter()
+                    ->beforeStateUpdated(function ($record, $state) {
+                        Season::all()->each(function ($season) use ($record) {
+                            if ($season->is_open && $season->id !== $record->id) {
+                                $season->update(['is_open' => 0]);
+                            }
+                        });
+                    })                    
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
             ]);
@@ -94,7 +94,9 @@ class SeasonResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\SectionsRelationManager::class,
+            'sections' => RelationManagers\SectionsRelationManager::class,
+            'knockouts' => RelationManagers\KnockoutsRelationManager::class,
+            'expulsions' => RelationManagers\ExpulsionsRelationManager::class,
         ];
     }
 
@@ -106,6 +108,7 @@ class SeasonResource extends Resource
             'edit' => Pages\EditSeason::route('/{record}/edit'),
 
             'sections.create' => Pages\CreateSeasonSection::route('/{record}/sections/create'),
+            'knockouts.create' => Pages\CreateSeasonKnockout::route('/{record}/knockouts/create'),
         ];
     }
 

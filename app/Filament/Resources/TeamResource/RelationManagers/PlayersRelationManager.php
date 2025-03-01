@@ -24,28 +24,17 @@ class PlayersRelationManager extends RelationManager
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->email()
-                    ->unique('users', 'email')
                     ->maxLength(255),
                 // Role
-                Forms\Components\Select::make('role')
-                    ->options([
-                        1 => 'Player',
-                        2 => 'Team admin',
-                    ])
+                Forms\Components\Select::make('roles')
+                    ->multiple()
                     ->required()
-                    ->default(1),
+                    ->default([4])
+                    ->relationship('roles', 'name'),
                 // Telephone
                 Forms\Components\TextInput::make('telephone')
                     ->tel()
                     ->maxLength(255),
-                // Is admin
-                Forms\Components\Select::make('is_admin')
-                    ->options([
-                        0 => 'No',
-                        1 => 'Yes',
-                    ])
-                    ->required()
-                    ->default(0),
             ]);
     }
 
@@ -55,11 +44,7 @@ class PlayersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('role')
-                    ->badge()
-                    ->label(false)
-                    ->color(fn (string $state): string => $state === '1' ? 'success' : 'info')
-                    ->formatStateUsing(fn (string $state): string => $state === '1' ? 'Player' : 'Team admin'),
+                Tables\Columns\TextColumn::make('roles.name')->badge(),
             ])
             ->filters([
                 //
@@ -74,9 +59,8 @@ class PlayersRelationManager extends RelationManager
                 ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+
+            ])
+            ->defaultSort('name', 'asc');
     }
 }

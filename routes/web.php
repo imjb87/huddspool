@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
+//require __DIR__.'/admin.php';
 
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 
@@ -33,3 +33,4 @@ Route::get('/results/{result}', \App\Livewire\Result\Show::class)->name('result.
 Route::get('/rulesets/{ruleset}', \App\Livewire\Ruleset\Show::class)->name('ruleset.show');
 Route::get('/history/{season}/{ruleset}', \App\Livewire\History::class)->name('history.show');
 Route::get('/{slug}', \App\Livewire\Page\Show::class)->name('page.show');
+Route::get('/knockouts/{knockout}', \App\Livewire\Knockout\Show::class)->name('knockout.show');

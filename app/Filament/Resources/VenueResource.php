@@ -41,8 +41,7 @@ class VenueResource extends Resource
                         Forms\Components\Textarea::make('address')
                             ->label('Address')
                             ->required()
-                            ->placeholder('Venue address')
-                            ->columnSpan(2),
+                            ->placeholder('Venue address'),
                     ]),
             ]);
     }
@@ -54,20 +53,16 @@ class VenueResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('address'),
+                Tables\Columns\TextColumn::make('address')
+                    ->size(Tables\Columns\TextColumn\TextColumnSize::ExtraSmall)
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

@@ -5,8 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Ruleset;
 use App\Models\Season;
-use App\Models\KnockoutMatch;
-use App\Observers\KnockoutMatchObserver;
+use App\Models\Knockout;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Database\Eloquent\Model;
@@ -32,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
 
-        KnockoutMatch::observe(KnockoutMatchObserver::class);
-
         if(Schema::hasTable('rulesets')) {
             $rulesets = Ruleset::all();
             view()->share('rulesets', $rulesets);
@@ -46,6 +43,14 @@ class AppServiceProvider extends ServiceProvider
             view()->share('past_seasons', $past_seasons);
         } else {
             view()->share('past_seasons', []);
+        }
+
+        if(Schema::hasTable('knockouts')) {
+            // get all knockouts for the current season
+            $knockouts = Knockout::where('season_id', Season::where('is_open', 1)->first()->id)->get();
+            view()->share('knockouts', $knockouts);
+        } else {
+            view()->share('knockouts', []);
         }
 
         Vite::useScriptTagAttributes([

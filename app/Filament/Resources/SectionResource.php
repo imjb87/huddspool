@@ -35,8 +35,7 @@ class SectionResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label('Name')
                             ->required()
-                            ->placeholder('Section name')
-                            ->columnSpan(2),
+                            ->placeholder('Section name'),
                         Forms\Components\Select::make('ruleset_id')
                             ->label('Ruleset')
                             ->relationship('ruleset', 'name')
@@ -67,9 +66,6 @@ class SectionResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
@@ -97,5 +93,5 @@ class SectionResource extends Resource
             'sections', // Relationship name
             'season', // Inverse relationship name
         );
-    }    
+    }
 }

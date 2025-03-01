@@ -15,6 +15,7 @@ class Index extends Component
     {
         $this->ruleset = $ruleset;
         $this->sections = Section::where('ruleset_id', $this->ruleset->id)
+            ->with('teams')
             ->whereHas('season', function ($query) {
                 $query->where('is_open', true);
             })

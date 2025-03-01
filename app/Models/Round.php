@@ -16,6 +16,10 @@ class Round extends Model
         'best_of',
     ];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     public function knockout()
     {
         return $this->belongsTo(Knockout::class);

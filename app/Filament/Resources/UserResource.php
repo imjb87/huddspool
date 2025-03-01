@@ -10,13 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Support\Enums\ActionSize;
-use App\Http\Controllers\Auth\InviteController;
-use Filament\Notifications\Notification;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -32,39 +26,32 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->placeholder('John Doe'),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->required()
-                    ->placeholder('john.doe@example.com'),
-                Forms\Components\Select::make('team_id')
-                    ->label('Team')
-                    ->relationship('team', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('role')
-                    ->label('Role')
-                    ->options([
-                        1 => 'Player',
-                        2 => 'Team admin',
-                    ])
-                    ->required(),
-                Forms\Components\TextInput::make('telephone')
-                    ->label('Telephone')
-                    ->placeholder('0123456789')
-                    ->tel(),
-                Forms\Components\Select::make('is_admin')
-                    ->label('Is admin')
-                    ->options([
-                        0 => 'No',
-                        1 => 'Yes',
-                    ])
-                    ->required()
-                    ->default(0)
+                Forms\Components\Section::make('Information')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->placeholder('John Doe'),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->placeholder('john.doe@example.com'),
+                        Forms\Components\Select::make('team_id')
+                            ->label('Team')
+                            ->relationship('team', 'name')
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\TextInput::make('telephone')
+                            ->label('Telephone')
+                            ->placeholder('0123456789')
+                            ->tel(),
+                        Forms\Components\Select::make('roles')
+                            ->multiple()
+                            ->required()
+                            ->default([4])
+                            ->relationship('roles', 'name'),
+
+                    ]),
             ]);
     }
 
@@ -72,6 +59,10 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
@@ -86,39 +77,24 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->placeholder('No team'),
-                Tables\Columns\TextColumn::make('is_admin')
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Roles')
                     ->badge()
-                    ->color('success')
-                    ->label(false)
-                    ->formatStateUsing(fn(string $state): string => $state === '1' ? 'Admin' : ''),
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('No roles'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('is_admin')
-                    ->label('Is admin')
-                    ->options([
-                        0 => 'No',
-                        1 => 'Yes',
-                    ]),
+                Tables\Filters\SelectFilter::make('roles')
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
-                ActionGroup::make([
-                    Tables\Actions\EditAction::make()->slideOver(),
-                    Action::make('invite')
-                        ->label('Send Invite')
-                        ->icon('heroicon-o-envelope')
-                        ->action(function (User $record) {
-                            $inviteController = new \App\Http\Controllers\Auth\InviteController();
-                            $inviteController->send($record);
-                            Notification::make('Invitation sent to ' . $record->email)->success();
-                        }),
-                ])
-                    ->iconButton()
-                    ->size(ActionSize::Small),
+                Impersonate::make(),
+                Tables\Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
@@ -134,6 +110,7 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

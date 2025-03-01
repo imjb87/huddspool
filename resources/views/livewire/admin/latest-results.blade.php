@@ -19,12 +19,12 @@
                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                             href="{{ route('result.show', $result) }}">
                             <div
-                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $result->fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
-                                {{ $result->fixture->homeTeam->name }}</div>
-                            @if ($result->fixture->homeTeam->shortname)
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $result->home_team_name ? 'hidden md:block' : '' }}">
+                                {{ $result->home_team_name }}</div>
+                            @if ($result->home_team_name)
                                 <div
                                     class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 md:hidden">
-                                    {{ $result->fixture->homeTeam->shortname }}</div>
+                                    {{ $result->home_team_name }}</div>
                             @endif
                             @if ($result)
                                 <div
@@ -36,12 +36,12 @@
                             @endif
 
                             <div
-                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 {{ $result->fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
-                                {{ $result->fixture->awayTeam->name }}</div>
-                            @if ($result->fixture->awayTeam->shortname)
+                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 {{ $result->away_team_name ? 'hidden md:block' : '' }}">
+                                {{ $result->away_team_name }}</div>
+                            @if ($result->away_team_name)
                                 <div
                                     class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 md:hidden">
-                                    {{ $result->fixture->awayTeam->shortname }}</div>
+                                    {{ $result->away_team_name }}</div>
                             @endif
                         </a>
                     @endforeach

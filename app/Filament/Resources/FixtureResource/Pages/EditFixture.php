@@ -6,7 +6,7 @@ use App\Filament\Resources\FixtureResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
-use App\Models\Team;
+use Illuminate\Database\Eloquent\Model;
 
 class EditFixture extends EditRecord
 {
@@ -20,8 +20,17 @@ class EditFixture extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return $data;
+        if( $record->result ) {
+            $record->result->home_team_id = $record->home_team_id;
+            $record->result->home_team_name = $record->homeTeam->name;
+            $record->result->away_team_id = $record->away_team_id;
+            $record->result->away_team_name = $record->awayTeam->name;
+            $record->result->submitted_by = auth()->id();            
+            $record->result->save();
+        }
+
+        return $record;
     }
 }

@@ -53,7 +53,7 @@ class FixturesRelationManager extends RelationManager
             ->paginated(5)
             ->defaultPaginationPageOption(5)
             ->recordUrl(
-                fn (Model $record): string => $record->result ? route('admin.results.edit', $record->result) : route('filament.cp.resources.fixtures.edit', $record),
+                fn (Model $record): string => route('filament.admin.resources.fixtures.edit', $record),
             )
             ->emptyStateActions([
                 Tables\Actions\Action::make('GenerateFixtures')

@@ -42,11 +42,6 @@ class TeamResource extends Resource
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
                             ->required(),
-                        Forms\Components\Select::make('captain_id')
-                            ->label('Captain')
-                            ->relationship('captain', 'name')
-                            ->placeholder('Select a captain')
-                            ->required(),
                     ]),
             ]);
     }
@@ -55,9 +50,17 @@ class TeamResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('captain.name')
+                    ->label('Captain')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('No captain'),
                 Tables\Columns\TextColumn::make('venue.name')
                     ->label('Venue')
                     ->searchable()
@@ -74,20 +77,9 @@ class TeamResource extends Resource
                     ->nullable(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\Action::make('foldTeam')
-                        ->label('Fold Team')
-                        ->icon('heroicon-o-archive-box')
-                        ->requiresConfirmation()
-                        ->action(fn(Team $team) => $team->update(['folded_at' => now()])),
-                ]),
+                Tables\Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-
-                ]),
             ]);
     }
 

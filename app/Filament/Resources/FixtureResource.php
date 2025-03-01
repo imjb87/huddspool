@@ -41,8 +41,7 @@ class FixtureResource extends Resource
                             ->required()
                             ->native(false)
                             ->placeholder('Fixture date')
-                            ->displayFormat('d/m/Y')
-                            ->columnSpan(2),
+                            ->displayFormat('d/m/Y'),
                         Forms\Components\Select::make('home_team_id')
                             ->label('Home Team')
                             ->relationship('homeTeam', 'name')
@@ -59,7 +58,6 @@ class FixtureResource extends Resource
                             ->label('Venue')
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
-                            ->columnSpan(2)
                             ->disabled()
                             ->required(),
                     ]),
@@ -84,24 +82,19 @@ class FixtureResource extends Resource
                                                     // Fetch players from the selected home team
                                                     $homeTeamId = $get('../../../home_team_id');
                                                     return $homeTeamId ? \App\Models\User::where('team_id', $homeTeamId)->pluck('name', 'id') : [];
-                                                })                                                
-                                                ->required(),
+                                                }),
                                             Forms\Components\TextInput::make('home_score')
                                                 ->label('Home Score')
                                                 ->numeric()
                                                 ->default(0)
                                                 ->minValue(0)
-                                                ->maxValue(1)
-                                                ->live()
-                                                ->required(),
+                                                ->maxValue(1),
                                             Forms\Components\TextInput::make('away_score')
                                                 ->label('Away Score')
                                                 ->numeric()
                                                 ->default(0)
                                                 ->minValue(0)
-                                                ->maxValue(1)   
-                                                ->live()                                 
-                                                ->required(),
+                                                ->maxValue(1),
                                             Forms\Components\Select::make('away_player_id')
                                                 ->label('Away Player')
                                                 ->placeholder('Select a player')
@@ -109,8 +102,7 @@ class FixtureResource extends Resource
                                                     // Fetch players from the selected away team
                                                     $awayTeamId = $get('../../../away_team_id');
                                                     return $awayTeamId ? \App\Models\User::where('team_id', $awayTeamId)->pluck('name', 'id') : [];
-                                                })
-                                                ->required(),
+                                                }),
                                         ]),
                                 ]),
                                 Forms\Components\Section::make('Totals')
