@@ -4,12 +4,12 @@
         @if ($errors->any())
             <x-errors />
         @endif
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
 
                 <div class="sm:col-span-6">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Type</label>
-                    <select name="expellable_type" id="expellable_type" wire:model="expellable_type"
+                    <select name="expellable_type" id="expellable_type" wire:model.live="expellable_type"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
                         <option value="">Select a type</option>
                         <option value="App\Models\Team">Team</option>
@@ -19,7 +19,7 @@
 
                 <div class="sm:col-span-6 <?php if ($expellable_type == 'App\Models\User') echo 'hidden'; ?>">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Team</label>
-                    <x-select name="team_id" id="team_id" wire:model="team_id"
+                    <x-select name="team_id" id="team_id" wire:model.live="team_id"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
                         <option value="">Select a team</option>
                         @foreach ($teams as $team)
@@ -30,7 +30,7 @@
 
                 <div class="sm:col-span-6 <?php if ($expellable_type == 'App\Models\Team') echo 'hidden'; ?>">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Player</label>
-                    <x-select name="user_id" id="user_id" wire:model="user_id"
+                    <x-select name="user_id" id="user_id" wire:model.live="user_id"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
                         <option value="">Select a player</option>
                         @foreach ($users as $user)

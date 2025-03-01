@@ -1,19 +1,26 @@
+// https://aka.ms/devcontainer.json
 {
-    "name": "WordPress Dev Container",
-    "dockerComposeFile": "../docker-compose.yml",
-    "service": "apache",
-    "workspaceFolder": "/var/www/html",
-    "forwardPorts": [80],
-    "extensions": [
-        "felixfbecker.php-intellisense",
-        "ikappas.phpcs"
-    ],
-    "postCreateCommand": "echo 'Container is ready!'",
-    "settings": { 
-        "terminal.integrated.shell.linux": "/bin/bash"
-    },
-    "shutdownAction": "stopCompose",
-    "mounts": ["source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"],
-    "runArgs": ["--network", "host"],
-    "remoteUser": "root"
+	"name": "Existing Docker Compose (Extend)",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "laravel.test",
+	"workspaceFolder": "/var/www/html",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// "mikestead.dotenv",
+				// "amiralizadeh9480.laravel-extra-intellisense",
+				// "ryannaddy.laravel-artisan",
+				// "onecentlin.laravel5-snippets",
+				// "onecentlin.laravel-blade"
+			],
+			"settings": {}
+		}
+	},
+	"remoteUser": "sail",
+	"postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true"
+	// "forwardPorts": [],
+	// "runServices": [],
+	// "shutdownAction": "none",
 }

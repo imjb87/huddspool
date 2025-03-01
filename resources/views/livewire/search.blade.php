@@ -1,5 +1,5 @@
 <div class="relative z-[99] duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
-    aria-modal="true" x-data="{ open: @entangle('isOpen') }">
+    aria-modal="true" x-data="{ open: @entangle('isOpen').live }">
 
     <div class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" x-show="open"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
@@ -21,7 +21,7 @@
                         d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
                         clip-rule="evenodd" />
                 </svg>
-                <input type="text" wire:model.debounce.300ms="searchTerm" wire:keyup.debounce.300ms="search" id="searchInput"
+                <input type="text" wire:model.live.debounce.300ms="searchTerm" wire:keyup.debounce.300ms="search" id="searchInput"
                     class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..." role="combobox" aria-expanded="false" aria-controls="options">
             </div>

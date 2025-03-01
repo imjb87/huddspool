@@ -10,7 +10,7 @@
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="my-4 sm:flex-none w-full lg:max-w-sm lg:ml-auto">
                 <div class="relative">
-                    <input type="text" name="search" id="search" wire:model="search"
+                    <input type="text" name="search" id="search" wire:model.live="search"
                         class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                         placeholder="Start typing to search..." />
                 </div>

@@ -4,19 +4,19 @@
         @if ($errors->any())
             <x-errors />
         @endif
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
 
                 <div class="sm:col-span-6">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Name</label>
                     <input type="text" name="name" id="name" autocomplete="name"
-                        wire:model.defer="section.name"
+                        wire:model="section.name"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                 </div>
 
                 <div class="sm:col-span-6">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Ruleset</label>
-                    <select name="ruleset_id" id="ruleset_id" wire:model="section.ruleset_id"
+                    <select name="ruleset_id" id="ruleset_id" wire:model.live="section.ruleset_id"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6">
                         <option value="">Select a ruleset</option>
                         @foreach ($rulesets as $ruleset)
@@ -36,7 +36,7 @@
                                     for="teams{{ $i }}">{{ $i }}</label>
 
                                 <select name="teams[]" id="teams{{ $i }}"
-                                    wire:model="section.teams.{{ $i - 1 }}"
+                                    wire:model.live="section.teams.{{ $i - 1 }}"
                                     class="block w-full border-0 py-1.5 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6">
                                     <option value="">Select a team</option>
                                     @foreach ($teams as $team)

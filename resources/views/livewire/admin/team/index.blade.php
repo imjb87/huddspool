@@ -7,7 +7,7 @@
         <!-- Search bar -->
         <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <div class="relative">
-                <input type="text" name="search" id="search" wire:model="search"
+                <input type="text" name="search" id="search" wire:model.live="search"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     placeholder="Search" />
             </div>

@@ -127,7 +127,7 @@
                                                 wire:click="withdraw({{ $team->id }})"
                                                 >
                                                 {{ $team->id == $team_id ? 'Are you sure?' : 'Withdraw' }}</button>
-                                            <button onclick="Livewire.emit('openModal', 'admin.section.deduct', {{ json_encode(['team_id' => $team->id, 'section_id' => $section->id]) }})" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                                            <button onclick="Livewire.dispatch('openModal', {component: 'admin.section.deduct', arguments: {{ json_encode(['team_id' => $team->id, 'section_id' => $section->id]) }} })" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                                                 Deduct points</button>
                                         </td>
                                     </tr>

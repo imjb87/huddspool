@@ -28,7 +28,7 @@ class Section extends Model
             ->withPivot('deducted')
             ->withTimestamps();
     }
-
+    
     /**
      * Get the season that owns the section.
      */

@@ -1,7 +1,7 @@
 <div class="flex-1 xl:overflow-y-auto">
     <div class="mx-auto max-w-4xl py-10 sm:px-6 lg:py-12 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-slate-900">Add Result</h1>
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="overflow-hidden bg-white rounded-lg">
                 <div class="px-4 py-5 sm:p-0">
                     <dl class="divide-y divide-gray-200">
@@ -55,7 +55,7 @@
                     <div class="flex flex-wrap">
                         <div
                             class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
-                            <select wire:model="frames.{{ $i }}.home_player_id"
+                            <select wire:model.live="frames.{{ $i }}.home_player_id"
                                 class="border-0 py-1.5 px-3 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
                                 <option value="">Select player</option>
                                 <option value="0">Awarded</option>
@@ -64,7 +64,7 @@
                                 @endforeach
                             </select>
                             <div class="w-10 sm:w-12 border-x border-gray-200">
-                                <select wire:model="frames.{{ $i }}.home_score"
+                                <select wire:model.live="frames.{{ $i }}.home_score"
                                     name="frames.{{ $i }}.home_score"
                                     class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                     placeholder="0">
@@ -80,7 +80,7 @@
                         </div>
                         <div class="w-full sm:w-auto flex sm:flex-1 order-last">
                             <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
-                                <select wire:model="frames.{{ $i }}.away_score"
+                                <select wire:model.live="frames.{{ $i }}.away_score"
                                     name="frames.{{ $i }}.away_score"
                                     class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                                     placeholder="0">
@@ -88,7 +88,7 @@
                                     <option value="1">1</option>
                                 </select>
                             </div>
-                            <select wire:model="frames.{{ $i }}.away_player_id"
+                            <select wire:model.live="frames.{{ $i }}.away_player_id"
                                 class="border-0 py-1.5 px-3 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
                                 <option value="">Select player</option>
                                 <option value="0">Awarded</option>
@@ -128,7 +128,7 @@
             <div class="flex gap-x-3 pt-8 justify-end">
                 <a href="{{ route('admin.fixtures.show', $fixture) }}"
                     class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
-                <button type="button" onclick="Livewire.emit('openModal', 'admin.result.override', {{ json_encode(['fixture_id' => $fixture->id]) }})" class="inline-flex justify-center rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                <button type="button" onclick="Livewire.dispatch('openModal', {component: 'admin.result.override', arguments: {{ json_encode(['fixture_id' => $fixture->id]) }} })" class="inline-flex justify-center rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                     Override result</button>                    
                 <button type="submit"
                     class="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Save</button>

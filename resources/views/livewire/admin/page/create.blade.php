@@ -4,18 +4,18 @@
         @if ($errors->any())
             <x-errors />
         @endif
-        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit.prevent="save">
+        <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
 
                 <div class="sm:col-span-6">
                     <label for="title" class="block text-sm font-medium leading-6 text-slate-900">Title</label>
-                    <input type="text" name="title" id="title" wire:model="page.title"
+                    <input type="text" name="title" id="title" wire:model.live="page.title"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                 </div>
 
                 <div class="sm:col-span-6">
                     <label for="slug" class="block text-sm font-medium leading-6 text-slate-900">Slug</label>
-                    <input type="text" name="slug" id="slug" wire:model="page.slug"
+                    <input type="text" name="slug" id="slug" wire:model.live="page.slug"
                         class="mt-2 block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                 </div>
 
