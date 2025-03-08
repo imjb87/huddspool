@@ -54,6 +54,10 @@ class Edit extends Component
         $this->result->frames()->delete();
 
         foreach ($this->frames as $frame) {
+            if (!$frame['home_player_id'] && !$frame['away_player_id']) {
+                continue;
+            }
+
             $this->result->frames()->create([
                 'home_player_id' => $frame['home_player_id'],
                 'away_player_id' => $frame['away_player_id'],
