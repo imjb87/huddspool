@@ -45,7 +45,8 @@ class GetSectionAverages
                     AND season_id = ' . $this->section->id . ')
             GROUP BY users.id
             ORDER BY frames_won DESC,
-                    frames_lost ASC
+                    frames_lost ASC,
+                    users.name ASC
             LIMIT ' . $this->perPage . '
             OFFSET ' . ($this->page - 1) * $this->perPage
         );
