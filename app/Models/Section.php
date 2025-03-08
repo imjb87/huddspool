@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 class Section extends Model
 {
@@ -29,6 +30,11 @@ class Section extends Model
             ->withTimestamps();
     }
     
+    public function players()
+    {
+        return User::whereIn('team_id', $this->teams()->pluck('teams.id'))->get();
+    }
+
     /**
      * Get the season that owns the section.
      */

@@ -104,15 +104,19 @@
                         <div class="flex-1 leading-6 py-1.5 px-3 sm:text-right">
                             Home total
                         </div>
-                        <div class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200">
-                            {{ $this->homeScore }}
+                        <div class="w-10 sm:w-12 leading-6 text-center border-x border-gray-200">
+                            <input type="text" wire:model="homeScore" name="homeScore"
+                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                placeholder="0">                            
                         </div>
                     </div>
                     <div class="w-10 sm:w-12 bg-gray-50"></div>
                     <div class="w-full sm:w-auto flex sm:flex-1">
                         <div
-                            class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200 order-last sm:order-first">
-                            {{ $this->awayScore }}
+                            class="w-10 sm:w-12 leading-6 text-center border-x border-gray-200 order-last sm:order-first">
+                            <input type="text" wire:model="awayScore" name="awayScore"
+                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                placeholder="0">
                         </div>
                         <div class="flex-1 leading-6 py-1.5 px-3 order-first sm:order-last">
                             Away total

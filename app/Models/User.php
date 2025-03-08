@@ -54,7 +54,7 @@ class User extends Authenticatable
      */
     protected $appends = [
         'confirmed',
-    ];
+    ];                            
 
     public function getRedirectRoute()
     {
@@ -67,7 +67,7 @@ class User extends Authenticatable
     public function getConfirmedAttribute(): bool
     {
         return $this->email_verified_at !== null;
-    }    
+    }
 
     /**
      * Get the user's team.
@@ -75,6 +75,18 @@ class User extends Authenticatable
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function frames()
+    {
+        return $this->hasMany(Frame::class, 'home_player_id')
+            ->whereHas('result.fixture.season', function ($query) {
+                $query->where('is_open', true);
+            })
+            ->orWhere('away_player_id', $this->id)
+            ->whereHas('result.fixture.season', function ($query) {
+                $query->where('is_open', true);
+            });
     }
 
     public function framesWon()
@@ -100,31 +112,71 @@ class User extends Authenticatable
         return $this->hasMany(Frame::class, 'home_player_id')
             ->where(function ($query) {
                 $query->whereColumn('home_score', '<', 'away_score')
-                ->whereHas('result.fixture.season', function ($query) {
-                    $query->where('is_open', true);
-                });
+                    ->whereHas('result.fixture.season', function ($query) {
+                        $query->where('is_open', true);
+                    });
             })
             ->orWhere(function ($query) {
                 $query->whereColumn('away_score', '<', 'home_score')
                     ->where('away_player_id', $this->id)
                     ->whereHas('result.fixture.season', function ($query) {
                         $query->where('is_open', true);
-                    });                    
+                    });
             });
     }
 
-    public function framesPlayed()
+    public function winPercentage()
     {
-        return Frame::where(function ($query) {
-            $query->where('home_player_id', $this->id)
-                ->orWhere('away_player_id', $this->id);
-        })->whereHas('result.fixture.season', function ($query) {
-            $query->where('is_open', true);
-        })->count();
+        $framesPlayed = $this->frames->count();
+
+        if ($framesPlayed === 0) {
+            return 0;
+        }
+
+        return ($this->framesWon()->count() / $framesPlayed) * 100;
+    }
+
+    public function lossPercentage()
+    {
+        $framesPlayed = $this->frames->count();
+
+        if ($framesPlayed === 0) {
+            return 0;
+        }
+
+        return ($this->framesLost()->count() / $framesPlayed) * 100;
     }
 
     public function expulsions()
     {
         return $this->morphMany(Expulsion::class, 'expellable');
-    }    
+    }
+
+    public function isTeamAdmin()
+    {
+        return $this->role === 2;
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
+    public function isCaptain()
+    {
+        return $this->id === $this->team?->captain_id;
+    }
+
+    public function role()
+    {
+        if ($this->isCaptain()) {
+            return 'Captain';
+        }
+
+        if ($this->isTeamAdmin()) {
+            return 'Team Admin';
+        }
+
+        return 'Player';
+    }
 }

@@ -104,15 +104,19 @@
                         <div class="flex-1 leading-6 py-1.5 px-3 sm:text-right">
                             Home total
                         </div>
-                        <div class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200">
-                            {{ $this->homeScore }}
+                        <div class="w-10 sm:w-12 leading-6 text-center border-x border-gray-200">
+                            <input type="text" wire:model="homeScore" name="homeScore"
+                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                placeholder="0">
                         </div>
                     </div>
                     <div class="w-10 sm:w-12 bg-gray-50"></div>
                     <div class="w-full sm:w-auto flex sm:flex-1">
                         <div
-                            class="w-10 sm:w-12 leading-6 py-1.5 text-center border-x border-gray-200 order-last sm:order-first">
-                            {{ $this->awayScore }}
+                            class="w-10 sm:w-12 leading-6 text-center border-x border-gray-200 order-last sm:order-first">
+                            <input type="text" wire:model="awayScore" name="awayScore"
+                                class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-1.5 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                                placeholder="0">
                         </div>
                         <div class="flex-1 leading-6 py-1.5 px-3 order-first sm:order-last">
                             Away total
@@ -127,9 +131,7 @@
 
             <div class="flex gap-x-3 pt-8 justify-end">
                 <a href="{{ route('admin.fixtures.show', $fixture) }}"
-                    class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>
-                <button type="button" onclick="Livewire.dispatch('openModal', {component: 'admin.result.override', arguments: {{ json_encode(['fixture_id' => $fixture->id]) }} })" class="inline-flex justify-center rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                    Override result</button>                    
+                    class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">Cancel</a>            
                 <button type="submit"
                     class="inline-flex justify-center rounded-md bg-blue-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Save</button>
 

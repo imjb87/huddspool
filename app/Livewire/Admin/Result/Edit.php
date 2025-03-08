@@ -26,18 +26,6 @@ class Edit extends Component
     public $is_overridden = false;
     public $totalScore = 0;
 
-    protected function rules()
-    {
-        return [
-            'frames' => ['required', 'array', 'size:10', new PlayerLimit($this->frames), new AllFramesHavePlayers($this->frames), new FrameScoresAddUpToTen($this->frames), new FrameScoreEqualsOne($this->frames), new BothPlayersAwardedIfOneIs($this->frames)],
-            'totalScore' => [new TotalScoresAddUpToTen($this->totalScore)],
-        ];
-    }
-
-    protected $messages = [
-        'frames.size' => 'You must enter all 10 frames'
-    ];
-
     public function mount(Result $result)
     {
         $this->result = $result;

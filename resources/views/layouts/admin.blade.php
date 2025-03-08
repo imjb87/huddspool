@@ -27,8 +27,8 @@
         referrerpolicy="origin"></script>
 
     <!-- Scripts -->
-    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @laravelPWA
 </head>
 

@@ -60,9 +60,8 @@
     <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>
 
     <!-- Scripts -->
-    <script defer src="https://unpkg.com/alpinejs@3.13.9/dist/cdn.min.js"></script>
-    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
     @laravelPWA
 </head>
 
@@ -71,7 +70,7 @@
         @include('layouts.navigation')
         <!-- Page Content -->
         <main>
-            {{ $slot }}
+            @yield('content')
         </main>
         @include('layouts.footer')
         <livewire:search />
