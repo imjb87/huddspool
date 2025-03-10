@@ -133,7 +133,7 @@ class User extends Authenticatable
             return 0;
         }
 
-        return ($this->framesWon()->count() / $framesPlayed) * 100;
+        return number_format(($this->framesWon()->count() / $framesPlayed) * 100, 2);
     }
 
     public function lossPercentage()
@@ -144,7 +144,7 @@ class User extends Authenticatable
             return 0;
         }
 
-        return ($this->framesLost()->count() / $framesPlayed) * 100;
+        return number_format(($this->framesLost()->count() / $framesPlayed) * 100, 2);
     }
 
     public function expulsions()
