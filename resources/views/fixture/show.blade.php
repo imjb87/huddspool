@@ -12,21 +12,21 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3">
-                    @if ((Auth::user()->isTeamAdmin() || Auth::user()->isAdmin()) && !$fixture->result)
-                    @if ($fixture->fixture_date->lte(now()))
-                    <a href="{{ route('result.create', $fixture->id) }}"
-                        class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
-                        Submit Result
-                    </a>
-                    @else
-                    <button disabled
-                        class="tooltip w-full mb-4 block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
-                        <div class="tooltip-text">Oops! You're a bit early! Come back to submit a result from
-                            {{ $fixture->fixture_date->format('l jS F Y') }}
-                        </div>
-                        Submit Result
-                    </button>
-                    @endif
+                    @if ((Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin()) && !$fixture->result)
+                        @if ($fixture->fixture_date->lte(now()))
+                            <a href="{{ route('result.create', $fixture->id) }}"
+                                class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
+                                Submit Result
+                            </a>
+                        @else
+                            <button disabled
+                                class="tooltip w-full mb-4 block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
+                                <div class="tooltip-text">Oops! You're a bit early! Come back to submit a result from
+                                    {{ $fixture->fixture_date->format('l jS F Y') }}
+                                </div>
+                                Submit Result
+                            </button>
+                        @endif
                     @endif
                     <div class="overflow-hidden bg-white shadow rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
