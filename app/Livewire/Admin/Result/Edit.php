@@ -6,13 +6,6 @@ use Livewire\Component;
 use App\Models\Fixture;
 use App\Models\Result;
 use Illuminate\Support\Collection;
-use App\Rules\PlayerLimit;
-use App\Rules\AllFramesHavePlayers;
-use App\Rules\FrameScoresAddUpToTen;
-use App\Rules\FrameScoreEqualsOne;
-use App\Rules\BothPlayersAwardedIfOneIs;
-use App\Rules\TotalScoresAddUpToTen;
-use App\Models\User;
 
 class Edit extends Component
 {
@@ -44,8 +37,6 @@ class Edit extends Component
 
     public function save()
     {
-        $this->validate();
-
         $this->result->update([
             'home_score' => $this->homeScore,
             'away_score' => $this->awayScore,
