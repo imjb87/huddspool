@@ -154,7 +154,7 @@ class User extends Authenticatable
 
     public function isTeamAdmin()
     {
-        return $this->role === 2;
+        return $this->role == 2;
     }
 
     public function isAdmin()
