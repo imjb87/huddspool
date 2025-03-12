@@ -29,6 +29,7 @@ class CpPanelProvider extends PanelProvider
             ->path('admin')
             ->brandLogo(fn () => view('filament.admin.logo'))
             ->brandLogoHeight('2.5rem')
+            ->homeUrl('/')
             ->colors([
                 'primary' => 'rgb(21, 128, 61)',
             ])
