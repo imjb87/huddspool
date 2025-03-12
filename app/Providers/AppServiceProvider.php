@@ -9,6 +9,8 @@ use App\Models\Knockout;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -56,5 +58,9 @@ class AppServiceProvider extends ServiceProvider
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
         ]);
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
+        });        
     }
 }
