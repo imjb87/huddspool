@@ -22,7 +22,6 @@ class PlayersRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
-                    ->required()
                     ->email()
                     ->maxLength(255),
                 // Role
@@ -32,7 +31,6 @@ class PlayersRelationManager extends RelationManager
                         '1' => 'Player',
                         '2' => 'Team Admin',
                     ]),
-                // Telephone
                 Forms\Components\TextInput::make('telephone')
                     ->tel()
                     ->maxLength(255),
