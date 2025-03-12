@@ -26,6 +26,7 @@ class Result extends Model
         'is_confirmed',
         'is_overridden',
         'submitted_by',
+        'section_id',
     ];
 
     /**
