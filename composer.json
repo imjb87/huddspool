@@ -5,27 +5,31 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "*",
-        "awobaz/compoships": "*",
-        "doctrine/dbal": "*",
-        "guzzlehttp/guzzle": "*",
-        "itsgoingd/clockwork": "*",
-        "laravel/framework": "*",
-        "laravel/sanctum": "*",
-        "laravel/socialite": "*",
-        "laravel/tinker": "*",
-        "livewire/livewire": "*",
-        "silviolleite/laravelpwa": "*",
-        "spatie/laravel-responsecache": "^7.6",
-        "wire-elements/modal": "*"
+        "php": "^8.0.2",
+        "awcodes/filament-table-repeater": "^3.0",
+        "awobaz/compoships": "^2.2",
+        "doctrine/dbal": "^3.6",
+        "filament/filament": "^3.2",
+        "guava/filament-nested-resources": "^1.2",
+        "guzzlehttp/guzzle": "^7.2",
+        "itsgoingd/clockwork": "^5.1",
+        "laravel/framework": "^11.0",
+        "laravel/pulse": "^1.2",
+        "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.9",
+        "laravel/tinker": "^2.7",
+        "livewire/livewire": "^3.4",
+        "silviolleite/laravelpwa": "^2.0",
+        "stechstudio/filament-impersonate": "^3.15",
+        "spatie/laravel-responsecache": "^7.6"
     },
     "require-dev": {
-        "fakerphp/faker": "*",
-        "laravel/breeze": "*",
-        "laravel/pint": "*",
-        "laravel/sail": "*",
-        "mockery/mockery": "*",
-        "nunomaduro/collision": "*",
+        "fakerphp/faker": "^1.9.1",
+        "laravel/breeze": "^2.0",
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.0.1",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "*",
         "spatie/laravel-ignition": "*"
     },
@@ -44,7 +48,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class InviteController extends Controller
 {
-    public function send(User $user)
+    public static function send(User $user)
     {
         $invitation_token = hash('sha256', $user->email . time());
         

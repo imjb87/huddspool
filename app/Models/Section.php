@@ -24,10 +24,10 @@ class Section extends Model
 
     public function teams()
     {
-        return $this->belongsToMany(Team::class)
-            ->withPivot('withdrawn_at')
-            ->withPivot('deducted')
-            ->withTimestamps();
+        return $this->belongsToMany(Team::class, 'section_team', 'section_id', 'team_id')
+            ->using(SectionTeam::class) // Reference the custom pivot model
+            ->withTimestamps()
+            ->withPivot(['sort', 'section_id', 'team_id', 'deducted']);
     }
     
     public function players()
@@ -57,6 +57,18 @@ class Section extends Model
     public function fixtures()
     {
         return $this->hasMany(Fixture::class);
+    }
+
+    public function generateFixtures()
+    {
+        $fixture_service = new \App\Services\FixtureService($this);
+        $schedule = $fixture_service->generate($this);
+
+        foreach ($schedule as $fixtures) {
+            foreach ($fixtures as $fixture) {
+                $this->fixtures()->create($fixture);
+            }
+        }
     }
 
     /**
@@ -120,6 +132,5 @@ class Section extends Model
         });
     
         return $sortedTeams;
-    }
-    
+    }    
 }

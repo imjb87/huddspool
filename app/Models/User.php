@@ -8,8 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -21,11 +23,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'telephone',
         'password',
         'team_id',
-        'role',
-        'telephone',
-        'is_admin'
     ];
 
     /**
@@ -56,9 +56,15 @@ class User extends Authenticatable
         'confirmed',
     ];                            
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin();
+    }
+
     public function getRedirectRoute()
     {
-        return $this->team_id ? route('team.show', $this->team_id) : route('home');
+        // redirect user to cp if admin or their own profile if player
+        return route($this->isAdmin() ? 'filament.admin.pages.dashboard' : 'player.show', $this);
     }
 
     /**

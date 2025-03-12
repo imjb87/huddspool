@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
 
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 Route::get('/tables/{ruleset}', 'App\Http\Controllers\TableController@index')->name('table.index');
@@ -28,4 +27,4 @@ Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')->n
 Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('team.show');
 Route::get('/rulesets/{ruleset}', 'App\Http\Controllers\RulesetController@show')->name('ruleset.show');
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
-Route::get('/{slug}', 'App\Http\Controllers\PageController@show')->name('page.show');
+Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');

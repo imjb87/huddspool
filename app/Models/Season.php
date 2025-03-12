@@ -43,6 +43,14 @@ class Season extends Model
         return $this->hasMany(Section::class);
     }
 
+    /**
+     * Get the knockouts for the season.
+     */
+    public function knockouts()
+    {
+        return $this->hasMany(Knockout::class);
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';
