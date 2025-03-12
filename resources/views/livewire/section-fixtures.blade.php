@@ -20,8 +20,12 @@
                 </div>
                 <div class="bg-white border-b border-gray-300">
                     @foreach ($fixtures as $fixture)
+                        @if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
+                        <div class="flex w-full border-t border-gray-300 bg-gray-50">
+                        @else 
                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                             href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
+                        @endif
                             <div
                                 class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->homeTeam->name }}</div>
@@ -53,7 +57,11 @@
                                     class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 md:hidden">
                                     {{ $fixture->awayTeam->shortname }}</div>
                             @endif
-                        </a>
+                        @if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
+                            </div>
+                        @else
+                            </a>
+                        @endif
                     @endforeach
                 </div>
             </div>

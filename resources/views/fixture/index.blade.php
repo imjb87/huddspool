@@ -12,7 +12,7 @@
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-6">
                 @foreach ($sections as $section)
-                <livewire:section-fixtures :section="$section" />
+                    <livewire:section-fixtures :section="$section" />
                 @endforeach
             </div>
         </div>

@@ -27,8 +27,9 @@ class Edit extends Component
         'user.name.required' => 'The user name is required',
     ];
 
-    public function mount()
+    public function mount(User $user)
     {
+        $this->user = $user;
         $this->teams = Team::all();
     }
 

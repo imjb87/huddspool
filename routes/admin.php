@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 
-Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['is_admin', 'admin', 'doNotCacheResponse']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/users', \App\Livewire\Admin\User\Index::class)->name('admin.users.index');

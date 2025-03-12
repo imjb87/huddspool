@@ -6,7 +6,6 @@
         @endif
         <form class="divide-y-slate-200 mt-6 space-y-8 divide-y" wire:submit="save">
             <div class="grid grid-cols-1 gap-y-6 pt-8 sm:grid-cols-6 sm:gap-x-6">
-
                 <div class="sm:col-span-3">
                     <label for="name" class="block text-sm font-medium leading-6 text-slate-900">Name</label>
                     <input type="text" name="name" id="name" autocomplete="name" wire:model.live="user.name"

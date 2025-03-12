@@ -28,7 +28,6 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
     @laravelPWA
 </head>
 
@@ -300,7 +299,6 @@
             </div>
         </main>
     </div>
-    @livewireScripts
 </body>
 
 </html>
