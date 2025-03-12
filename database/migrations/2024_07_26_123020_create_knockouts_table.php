@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Knockout;
 
 class CreateKnockoutsTable extends Migration
 {
@@ -17,7 +16,7 @@ class CreateKnockoutsTable extends Migration
         Schema::create('knockouts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', [Knockout::TYPE_SINGLES, Knockout::TYPE_DOUBLES, Knockout::TYPE_TEAM]);
+            $table->enum('type', ['singles', 'doubles', 'team']);
             $table->foreignId('season_id');
             $table->timestamps(); // Adds created_at and updated_at columns
         });

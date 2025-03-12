@@ -26,11 +26,12 @@ class PlayersRelationManager extends RelationManager
                     ->email()
                     ->maxLength(255),
                 // Role
-                Forms\Components\Select::make('roles')
-                    ->multiple()
+                Forms\Components\Select::make('role')
                     ->required()
-                    ->default([4])
-                    ->relationship('roles', 'name'),
+                    ->options([
+                        '1' => 'Player',
+                        '2' => 'Team Admin',
+                    ]),
                 // Telephone
                 Forms\Components\TextInput::make('telephone')
                     ->tel()
@@ -44,7 +45,11 @@ class PlayersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('roles.name')->badge(),
+                Tables\Columns\TextColumn::make('role')
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        '1' => 'Player',
+                        '2' => 'Team Admin',
+                    })->badge()
             ])
             ->filters([
                 //

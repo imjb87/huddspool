@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\ClearsResponseCache;
 
 class Result extends Model
 {
-    use HasFactory;
+    use HasFactory, ClearsResponseCache;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,7 @@ class Result extends Model
         'is_confirmed',
         'is_overridden',
         'submitted_by',
+        'section_id',
     ];
 
     /**
@@ -47,4 +49,17 @@ class Result extends Model
     {
         return $this->belongsTo(User::class, 'submitted_by');
     }
+
+    public function ruleset()
+    {
+        return $this->hasOneThrough(
+            Ruleset::class,  // The final model we want to access
+            Fixture::class,  // The intermediate model
+            'id',            // Foreign key on the Fixture table
+            'id',            // Foreign key on the Ruleset table
+            'fixture_id',    // Local key on the Result table
+            'ruleset_id'     // Local key on the Fixture table
+        );
+    }
+    
 }

@@ -49,7 +49,7 @@ class Team extends Model
     /**
      * Get the active section for the team.
      */
-    public function activeSection()
+    public function section()
     {
         return $this->sections()->whereHas('season', function ($query) {
             $query->where('is_open', true);
@@ -61,7 +61,7 @@ class Team extends Model
      */
     public function captain()
     {
-        return $this->hasOne(User::class)->role('captain');
+        return $this->hasOne(User::class, 'id', 'captain_id');
     }
 
     /**

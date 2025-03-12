@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,21 +15,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 require __DIR__.'/auth.php';
-//require __DIR__.'/admin.php';
 
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
-
-Route::get('/standings/{ruleset}', \App\Livewire\Standings\Index::class)->name('standings.index');
-Route::get('/teams/{team}', \App\Livewire\Team\Show::class)->name('team.show');
-Route::get('/players/averages/{ruleset}', \App\Livewire\Player\Index::class)->name('player.index');
-Route::get('/players/{player}', \App\Livewire\Player\Show::class)->name('player.show');
-Route::get('/venues', \App\Livewire\Venue\Index::class)->name('venue.index');
-Route::get('/venues/{venue}', \App\Livewire\Venue\Show::class)->name('venue.show');
-Route::get('/fixtures-and-results/{ruleset}', \App\Livewire\Fixture\Index::class)->name('fixture.index');
-Route::get('/fixtures/{fixture}', \App\Livewire\Fixture\Show::class)->name('fixture.show');
-Route::get('/results/create/{fixture}', \App\Livewire\Result\Create::class)->name('result.create');
-Route::get('/results/{result}', \App\Livewire\Result\Show::class)->name('result.show');
-Route::get('/rulesets/{ruleset}', \App\Livewire\Ruleset\Show::class)->name('ruleset.show');
-Route::get('/history/{season}/{ruleset}', \App\Livewire\History::class)->name('history.show');
-Route::get('/{slug}', \App\Livewire\Page\Show::class)->name('page.show');
-Route::get('/knockouts/{knockout}', \App\Livewire\Knockout\Show::class)->name('knockout.show');
+Route::get('/tables/{ruleset}', 'App\Http\Controllers\TableController@index')->name('table.index');
+Route::get('/fixtures-and-results/{ruleset}', 'App\Http\Controllers\FixtureController@index')->name('fixture.index');
+Route::get('/fixtures/{fixture}', 'App\Http\Controllers\FixtureController@show')->name('fixture.show');
+Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')->name('result.show');
+Route::get('/results/create/{fixture}', 'App\Http\Controllers\ResultController@create')->name('result.create');
+Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController@index')->name('player.index');
+Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')->name('player.show');
+Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('team.show');
+Route::get('/rulesets/{ruleset}', 'App\Http\Controllers\RulesetController@show')->name('ruleset.show');
+Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
+Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');

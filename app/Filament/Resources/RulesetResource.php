@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RulesetResource\Pages;
-use App\Filament\Resources\RulesetResource\RelationManagers;
 use App\Models\Ruleset;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RulesetResource extends Resource
 {
@@ -33,6 +30,10 @@ class RulesetResource extends Resource
                         ->label('Name')
                         ->required()
                         ->placeholder('Ruleset name'),
+                    Forms\Components\RichEditor::make('content')
+                        ->label('Content')
+                        ->required()
+                        ->placeholder('Ruleset content'),
                 ]),
             ]);
     }

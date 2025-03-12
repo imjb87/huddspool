@@ -30,6 +30,11 @@ class Season extends Model
         'dates' => 'array',
     ];
 
+    public function isOpen()
+    {
+        return $this->is_open;
+    }
+
     /**
      * Get the sections for the season.
      */

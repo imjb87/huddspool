@@ -95,7 +95,7 @@ class SeasonResource extends Resource
     {
         return [
             'sections' => RelationManagers\SectionsRelationManager::class,
-            'knockouts' => RelationManagers\KnockoutsRelationManager::class,
+            //'knockouts' => RelationManagers\KnockoutsRelationManager::class,
             'expulsions' => RelationManagers\ExpulsionsRelationManager::class,
         ];
     }
@@ -108,7 +108,7 @@ class SeasonResource extends Resource
             'edit' => Pages\EditSeason::route('/{record}/edit'),
 
             'sections.create' => Pages\CreateSeasonSection::route('/{record}/sections/create'),
-            'knockouts.create' => Pages\CreateSeasonKnockout::route('/{record}/knockouts/create'),
+            //'knockouts.create' => Pages\CreateSeasonKnockout::route('/{record}/knockouts/create'),
         ];
     }
 

@@ -24,6 +24,6 @@ class History extends Component
 
     public function render()
     {
-        return view('livewire.history')->layout('layouts.app', ['title' => 'History']);
+        return view('livewire.history')->layout('layouts.app', ['title' => $this->ruleset->name . ' - ' . $this->season->name]);
     }
 }

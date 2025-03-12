@@ -45,12 +45,13 @@ class UserResource extends Resource
                             ->label('Telephone')
                             ->placeholder('0123456789')
                             ->tel(),
-                        Forms\Components\Select::make('roles')
-                            ->multiple()
-                            ->required()
-                            ->default([4])
-                            ->relationship('roles', 'name'),
-
+                        Forms\Components\Select::make('role')
+                            ->label('Role')
+                            ->options([
+                                '1' => 'Player',
+                                '2' => 'Team Admin',
+                            ])
+                            ->required(),
                     ]),
             ]);
     }
@@ -77,18 +78,17 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->placeholder('No team'),
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
-                    ->badge()
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Role')
                     ->searchable()
                     ->sortable()
-                    ->placeholder('No roles'),
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        '1' => 'Player',
+                        '2' => 'Team Admin',
+                    })->badge(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('roles')
-                    ->relationship('roles', 'name')
-                    ->searchable()
-                    ->preload(),
+                //
             ])
             ->actions([
                 Impersonate::make(),

@@ -36,30 +36,29 @@ class FixtureResource extends Resource
                 Forms\Components\Section::make('Fixture Information')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('home_team_id')
+                            ->label('Home Team')
+                            ->relationship('homeTeam', 'name')
+                            ->placeholder('Select a home team')
+                            ->disabled(),
+                        Forms\Components\Select::make('away_team_id')
+                            ->label('Away Team')
+                            ->relationship('awayTeam', 'name')
+                            ->placeholder('Select an away team')
+                            ->disabled(),
                         Forms\Components\DateTimePicker::make('fixture_date')
                             ->label('Fixture Date')
                             ->required()
                             ->native(false)
                             ->placeholder('Fixture date')
-                            ->displayFormat('d/m/Y'),
-                        Forms\Components\Select::make('home_team_id')
-                            ->label('Home Team')
-                            ->relationship('homeTeam', 'name')
-                            ->placeholder('Select a home team')
-                            ->disabled()
-                            ->required(),
-                        Forms\Components\Select::make('away_team_id')
-                            ->label('Away Team')
-                            ->relationship('awayTeam', 'name')
-                            ->placeholder('Select an away team')
-                            ->disabled()
-                            ->required(),
+                            ->displayFormat('d/m/Y')
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('venue_id')
                             ->label('Venue')
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
                             ->disabled()
-                            ->required(),
+                            ->columnSpanFull(),
                     ]),
                 Forms\Components\Section::make('Result')
                     ->relationship('result')

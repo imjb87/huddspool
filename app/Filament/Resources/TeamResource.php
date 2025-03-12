@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TeamResource extends Resource
 {
@@ -42,6 +40,10 @@ class TeamResource extends Resource
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
                             ->required(),
+                        Forms\Components\Select::make('captain_id')
+                            ->label('Captain')
+                            ->relationship('players', 'name')
+                            ->placeholder('Select a captain'),
                     ]),
             ]);
     }

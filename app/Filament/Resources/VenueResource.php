@@ -41,7 +41,8 @@ class VenueResource extends Resource
                         Forms\Components\Textarea::make('address')
                             ->label('Address')
                             ->required()
-                            ->placeholder('Venue address'),
+                            ->placeholder('Venue address')
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
