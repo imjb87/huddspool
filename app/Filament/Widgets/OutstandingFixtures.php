@@ -21,14 +21,16 @@ class OutstandingFixtures extends BaseWidget
                 Fixture::whereDoesntHave('result') // Exclude fixtures with a result
                     ->whereHas('season', function ($query) {
                         $query->where('is_open', true); // Include only seasons with is_open = true
-                    })->where('home_team_id', '!=', 1) // Exclude fixtures with home_team_id = 0
-                    ->where('away_team_id', '!=', 1) // Exclude fixtures with away_team_id = 0
+                    })->where('home_team_id', '!=', 1) // Exclude fixtures with home_team_id = 1
+                    ->where('away_team_id', '!=', 1) // Exclude fixtures with away_team_id = 1
+                    ->where('fixture_date', '<', now()) // Include only fixtures with a fixture_date in the past
+                    ->orderBy('fixture_date', 'asc')
 
             )
             ->columns([
                 Tables\Columns\TextColumn::make('homeTeam.name')->label('Home team')->alignRight()->searchable(),
                 Tables\Columns\TextColumn::make('fixture_date')->label(false)->state(function (Model $record) {
-                    return $record->result ? $record->result->home_score . ' - ' . $record->result->away_score : $record->fixture_date->format('d/m');
+                    return $record->fixture_date->format('d/m');
                 })->alignCenter(),
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),                
             ])

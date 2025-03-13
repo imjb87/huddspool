@@ -48,6 +48,12 @@ class CpPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 IsAdmin::class,
             ])
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Pulse')
+                    ->url('/pulse')
+                    ->icon('heroicon-o-chart-pie')
+                    ->group('Application Health'),
+            ])
             ->login();
     }
 }

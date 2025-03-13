@@ -63,8 +63,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function getRedirectRoute()
     {
-        // redirect user to cp if admin or their own profile if player
-        return route($this->isAdmin() ? 'filament.admin.pages.dashboard' : 'player.show', $this);
+        return route('player.show', $this);
     }
 
     /**
