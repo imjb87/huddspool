@@ -18,9 +18,9 @@
                                     <h1 class="text-2xl font-bold text-gray-900">{{ $team->name }}</h1>
                                     <p class="text-sm font-medium text-gray-500">
                                         @if( $team->section() )
-                                            <a href="{{ route('table.index', $team->section()->ruleset) }}">
-                                                {{ $team->section()->name }}
-                                            </a>
+                                        <a href="{{ route('table.index', $team->section()->ruleset) }}">
+                                            {{ $team->section()->name }}
+                                        </a>
                                         @endif
                                     </p>
                                 </div>
@@ -32,16 +32,17 @@
                                     class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Venue</dt>
                                     <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        {{ $team->venue->name }}</dd>
+                                        {{ $team->venue->name }}
+                                    </dd>
                                 </a>
                                 @if ($team->captain)
-                                    <a href="{{ route('player.show', $team->captain->id) }}"
-                                        class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                        <dt class="text-sm font-medium leading-6 text-gray-900">Captain</dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {{ $team->captain->name }}
-                                        </dd>
-                                    </a>
+                                <a href="{{ route('player.show', $team->captain->id) }}"
+                                    class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium leading-6 text-gray-900">Captain</dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                        {{ $team->captain->name }}
+                                    </dd>
+                                </a>
                                 @endif
                             </dl>
                         </div>
@@ -71,29 +72,29 @@
                                     </div>
                                     <div class="divide-y divide-gray-200 bg-white">
                                         @foreach ($team->players as $player)
-                                            <a href="{{ route('player.show', $player->id) }}"
-                                                class=" hover:cursor-pointer hover:bg-gray-50 flex">
-                                                <div
-                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm text-gray-900 w-6/12 truncate">
-                                                    {{ $player->name }}
-                                                    @if ($player->role == 2)
-                                                        <span
-                                                            class="inline-flex items-center rounded-full bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white align-top">T</span>
-                                                    @endif
-                                                </div>
-                                                <div
-                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
-                                                    {{ $player->frames()->count() }}
-                                                </div>
-                                                <div
-                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
-                                                    {{ $player->framesWon->count() }}
-                                                </div>
-                                                <div
-                                                    class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
-                                                    {{ $player->framesLost->count() }}
-                                                </div>
-                                            </a>
+                                        <a href="{{ route('player.show', $player->id) }}"
+                                            class=" hover:cursor-pointer hover:bg-gray-50 flex">
+                                            <div
+                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm text-gray-900 w-6/12 truncate">
+                                                {{ $player->name }}
+                                                @if ($player->role == 2)
+                                                <span
+                                                    class="inline-flex items-center rounded-full bg-green-700 px-1.5 py-0.5 text-xs font-semibold text-white align-top">T</span>
+                                                @endif
+                                            </div>
+                                            <div
+                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                {{ $player->frames()->count() }}
+                                            </div>
+                                            <div
+                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                {{ $player->framesWon->count() }}
+                                            </div>
+                                            <div
+                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
+                                                {{ $player->framesLost->count() }}
+                                            </div>
+                                        </a>
                                         @endforeach
                                     </div>
                                 </div>
@@ -123,42 +124,54 @@
                                 </div>
                                 <div class="bg-white">
                                     @foreach ($team->fixtures() as $fixture)
+                                    @if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
+                                    <div class="flex w-full border-t border-gray-300 bg-gray-50">
+                                        @else
                                         <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                             href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
+                                            @endif
                                             <div
                                                 class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
-                                                {{ $fixture->homeTeam->name }}</div>
+                                                {{ $fixture->homeTeam->name }}
+                                            </div>
                                             @if ($fixture->homeTeam->shortname)
-                                                <div
-                                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 md:hidden">
-                                                    {{ $fixture->homeTeam->shortname }}</div>
+                                            <div
+                                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-right w-5/12 md:hidden">
+                                                {{ $fixture->homeTeam->shortname }}
+                                            </div>
                                             @endif
                                             @if ($fixture->result)
+                                            <div
+                                                class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12 flex">
                                                 <div
-                                                    class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-right font-semibold w-2/12 flex">
-                                                    <div
-                                                        class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
-                                                        <div class="w-1/2">{{ $fixture->result->home_score ?? '' }}
-                                                        </div>
-                                                        <div class="w-1/2">{{ $fixture->result->away_score ?? '' }}
-                                                        </div>
+                                                    class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
+                                                    <div class="w-1/2">{{ $fixture->result->home_score ?? '' }}
+                                                    </div>
+                                                    <div class="w-1/2">{{ $fixture->result->away_score ?? '' }}
                                                     </div>
                                                 </div>
+                                            </div>
                                             @else
-                                                <div
-                                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-center font-semibold w-2/12">
-                                                    {{ $fixture->fixture_date->format('d/m') }}
-                                                </div>
+                                            <div
+                                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-center font-semibold w-2/12">
+                                                {{ $fixture->fixture_date->format('d/m') }}
+                                            </div>
                                             @endif
                                             <div
                                                 class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
-                                                {{ $fixture->awayTeam->name }}</div>
+                                                {{ $fixture->awayTeam->name }}
+                                            </div>
                                             @if ($fixture->awayTeam->shortname)
-                                                <div
-                                                    class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 md:hidden">
-                                                    {{ $fixture->awayTeam->shortname }}</div>
+                                            <div
+                                                class="whitespace-nowrap px-2 py-4 text-sm text-gray-900 text-left w-5/12 md:hidden">
+                                                {{ $fixture->awayTeam->shortname }}
+                                            </div>
                                             @endif
-                                        </a>
+                                            @if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
+                                    </div>
+                                    @else
+                                    </a>
+                                    @endif
                                     @endforeach
                                 </div>
                             </div>
