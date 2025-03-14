@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                                 <div class="bg-white">
-                                    @foreach ($team->fixtures() as $fixture)
+                                    @foreach ($fixtures as $fixture)
                                     @if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
                                     <div class="flex w-full border-t border-gray-300 bg-gray-50">
                                         @else
