@@ -23,6 +23,16 @@ class FixtureController extends Controller
             abort(404);
         }
 
+        // Eager load players with counts for frames, framesWon, and framesLost.
+        $fixture->load([
+            'homeTeam.players' => function ($query) {
+                $query->withCount(['frames', 'framesWon', 'framesLost']);
+            },
+            'awayTeam.players' => function ($query) {
+                $query->withCount(['frames', 'framesWon', 'framesLost']);
+            },
+        ]);        
+
         return view('fixture.show', compact('fixture'));
     }
 }

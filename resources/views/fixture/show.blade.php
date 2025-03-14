@@ -179,15 +179,15 @@
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames()->count() }}
+                                                {{ $player->frames_count }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->framesWon->count() }}
+                                                {{ $player->frames_won_count }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->framesLost->count() }}
+                                                {{ $player->frames_lost_count }}
                                             </div>
                                         </a>
                                         @endforeach
@@ -231,15 +231,15 @@
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames->count() }}
+                                                {{ $player->frames_count }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->framesWon->count() }}
+                                                {{ $player->frames_won_count }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->framesLost->count() }}
+                                                {{ $player->frames_lost_count }}
                                             </div>
                                         </a>
                                         @endforeach
