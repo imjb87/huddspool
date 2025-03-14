@@ -14,6 +14,16 @@ class ResultController extends Controller
 
     public function create(Fixture $fixture)
     {
+        $user = auth()->user();
+
+        if ($fixture->result) {
+            return redirect()->route('results.show', $fixture->result);
+        }
+
+        if (!$user->isTeamAdmin() || $fixture->team->id !== $user->team->id) {
+            abort(403);
+        }
+
         return view('result.create', compact('fixture'));
     }
 }
