@@ -35,6 +35,11 @@ class Season extends Model
         return $this->is_open;
     }
 
+    public static function current()
+    {
+        return Season::where('is_open', true)->first();
+    }
+
     /**
      * Get the sections for the season.
      */

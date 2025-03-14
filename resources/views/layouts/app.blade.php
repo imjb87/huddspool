@@ -61,21 +61,30 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
     @laravelPWA
+
+    <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+</script>    
 </head>
 
 <body class="font-sans antialiased [&_[x-cloak]]:hidden">
-    <div class="min-h-screen bg-gray-100">
-        @include('layouts.navigation')
-        <!-- Page Content -->
-        <main>
-            @yield('content')
-        </main>
-        @include('layouts.footer')
+    <div class="min-h-screen bg-gray-200 dark:bg-gray-900 duration-500">
+        <x-navigation />
         <livewire:search />
+        <main class="max-w-6xl mx-auto min-h-[calc(100vh-121px)] flex gap-x-4 md:gap-x-6 px-4 md:px-6">
+            <x-desktop-aside />
+            <div class="flex-1 py-4 md:py-6">
+                @yield('content')
+            </div>
+            <x-sponsors />
+        </main>
     </div>
-    @livewireScripts
 </body>
 
 </html>

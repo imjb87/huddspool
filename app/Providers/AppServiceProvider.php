@@ -33,19 +33,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
 
-        if(Schema::hasTable('rulesets')) {
-            $rulesets = Ruleset::all();
-            view()->share('rulesets', $rulesets);
-        } else {
-            view()->share('rulesets', []);
-        }
-
-        if(Schema::hasTable('seasons')) {
-            $past_seasons = Season::where('is_open', 0)->orderBy('id', 'desc')->get();
-            view()->share('past_seasons', $past_seasons);
-        } else {
-            view()->share('past_seasons', []);
-        }
+        view()->share('season', Season::current());
 
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
