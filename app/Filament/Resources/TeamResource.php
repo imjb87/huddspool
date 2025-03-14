@@ -40,10 +40,19 @@ class TeamResource extends Resource
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
                             ->required(),
-                        Forms\Components\Select::make('captain_id')
+                            Forms\Components\Select::make('captain_id')
                             ->label('Captain')
-                            ->relationship('players', 'name')
+                            ->searchable()
+                            ->options(
+                                \App\Models\User::query()
+                                ->where('team_id', $form->getLivewire()->record?->getKey())
+                                ->get()
+                                ->mapWithKeys(fn ($user) => [
+                                    $user->id => $user->name,
+                                ])                            
+                            )
                             ->placeholder('Select a captain'),
+                        
                     ]),
             ]);
     }
