@@ -47,14 +47,6 @@ class AppServiceProvider extends ServiceProvider
             view()->share('past_seasons', []);
         }
 
-        if(Schema::hasTable('knockouts')) {
-            // get all knockouts for the current season
-            $knockouts = Knockout::where('season_id', Season::where('is_open', 1)->first()->id)->get();
-            view()->share('knockouts', $knockouts);
-        } else {
-            view()->share('knockouts', []);
-        }
-
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
         ]);

@@ -123,12 +123,6 @@
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="opacity-100 translate-y-0"
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    @foreach ($knockouts as $knockout)
-                        <div class="py-1">
-                            <a href="{{ route('knockout.show', $knockout) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $knockout->name }}</a>
-                        </div>
-                    @endforeach
                     <div class="py-1">
                         <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" target="_blank"
                             class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Knockout
@@ -398,10 +392,6 @@
                                     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($knockouts as $knockout)
-                                        <a href="{{ route('knockout.show', $knockout) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $knockout->name }}</a>
-                                    @endforeach
                                     <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" target="_blank"
                                         class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Knockout
                                         Schedule</a>
