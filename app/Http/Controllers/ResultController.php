@@ -20,7 +20,15 @@ class ResultController extends Controller
             return redirect()->route('results.show', $fixture->result);
         }
 
-        if (!$user->isTeamAdmin() || $fixture->team->id !== $user->team->id) {
+        if (!$user) {
+            abort(403);
+        }
+
+        if (!$user->isTeamAdmin()) {
+            abort(403);
+        }
+
+        if (!$fixture->homeTeam->is($user->team) && !$fixture->awayTeam->is($user->team)) {
             abort(403);
         }
 
