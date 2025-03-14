@@ -19,6 +19,10 @@ class FixtureController extends Controller
 
     public function show(Fixture $fixture)
     {
+        if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1) {
+            abort(404);
+        }
+
         return view('fixture.show', compact('fixture'));
     }
 }
