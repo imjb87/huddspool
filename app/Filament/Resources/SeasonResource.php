@@ -25,7 +25,7 @@ class SeasonResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Competitions';
+    protected static ?string $navigationGroup = 'League Management';
 
     public static function form(Form $form): Form
     {

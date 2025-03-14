@@ -19,7 +19,7 @@ class TeamResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'League Management';
 
     public static function form(Form $form): Form
     {

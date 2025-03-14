@@ -18,7 +18,7 @@ class RulesetResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'League Management';
 
     public static function form(Form $form): Form
     {
