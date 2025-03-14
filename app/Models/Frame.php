@@ -35,7 +35,7 @@ class Frame extends Model
      */
     public function homePlayer()
     {
-        return $this->belongsTo(User::class, 'home_player_id');
+        return $this->belongsTo(User::class, 'home_player_id')->withTrashed();
     }
 
     /**
@@ -43,6 +43,6 @@ class Frame extends Model
      */
     public function awayPlayer()
     {
-        return $this->belongsTo(User::class, 'away_player_id');
+        return $this->belongsTo(User::class, 'away_player_id')->withTrashed();
     }
 }
