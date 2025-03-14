@@ -8,6 +8,10 @@ class TeamController extends Controller
 {
     public function show(Team $team)
     {
+        if ($team->id === 1) {
+            abort(404);
+        }
+
         // Eager load players with their counts and the team's venue.
         $team->load([
             'players' => function ($query) {
