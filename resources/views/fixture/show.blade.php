@@ -170,7 +170,7 @@
                                         </div>
                                     </div>
                                     <div class="divide-y divide-gray-200 bg-white">
-                                        @foreach ($fixture->homeTeam->players as $player)
+                                        @foreach ($home_team_players as $player)
                                         <a href="{{ route('player.show', $player->id) }}"
                                             class=" hover:cursor-pointer hover:bg-gray-50 flex">
                                             <div
@@ -179,15 +179,15 @@
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_count }}
+                                                {{ $player->frames_played }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_won_count }}
+                                                {{ $player->frames_won }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_lost_count }}
+                                                {{ $player->frames_lost }}
                                             </div>
                                         </a>
                                         @endforeach
@@ -222,7 +222,7 @@
                                         </div>
                                     </div>
                                     <div class="divide-y divide-gray-200 bg-white">
-                                        @foreach ($fixture->awayTeam->players as $player)
+                                        @foreach ($away_team_players as $player)
                                         <a href="{{ route('player.show', $player->id) }}"
                                             class=" hover:cursor-pointer hover:bg-gray-50 flex">
                                             <div
@@ -231,15 +231,15 @@
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_count }}
+                                                {{ $player->frames_played }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_won_count }}
+                                                {{ $player->frames_won }}
                                             </div>
                                             <div
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_lost_count }}
+                                                {{ $player->frames_lost }}
                                             </div>
                                         </a>
                                         @endforeach
