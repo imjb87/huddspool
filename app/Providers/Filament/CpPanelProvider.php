@@ -52,7 +52,10 @@ class CpPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationItem::make('Pulse')
                     ->url('/pulse')
                     ->icon('heroicon-o-chart-pie')
-                    ->group('Application Health'),
+                    ->group('System'),
+            ])
+            ->plugins([
+                \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
             ])
             ->login();
     }
