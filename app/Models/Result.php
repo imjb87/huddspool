@@ -47,7 +47,7 @@ class Result extends Model
 
     public function submittedBy()
     {
-        return $this->belongsTo(User::class, 'submitted_by');
+        return $this->belongsTo(User::class, 'submitted_by')->withTrashed();
     }
 
     public function ruleset()
