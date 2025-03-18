@@ -33,22 +33,29 @@ class GetSectionAverages
                                     AND frames.away_score < frames.home_score) THEN 1
                             ELSE 0
                         END) AS frames_lost
-            FROM frames
-            JOIN users ON frames.home_player_id = users.id
-            OR frames.away_player_id = users.id
-            JOIN results ON results.id = frames.result_id
-            WHERE results.section_id = ' . $this->section->id . '
-            AND users.id NOT IN
-                (SELECT expellable_id
-                FROM expulsions
-                WHERE expellable_type = "App\\\Models\\\User"
-                    AND season_id = ' . $this->section->id . ')
-            GROUP BY users.id
-            ORDER BY frames_won DESC,
-                    frames_lost ASC,
-                    users.name ASC
-            LIMIT ' . $this->perPage . '
-            OFFSET ' . ($this->page - 1) * $this->perPage
+            FROM 
+                frames
+            JOIN 
+                users ON frames.home_player_id = users.id OR frames.away_player_id = users.id
+            JOIN 
+                results ON results.id = frames.result_id
+            WHERE 
+                results.section_id = ' . $this->section->id . '
+                AND users.id NOT IN
+                    (SELECT expellable_id
+                    FROM expulsions
+                    WHERE expellable_type = "App\\\Models\\\User"
+                        AND season_id = ' . $this->section->id . ')
+            GROUP BY 
+                users.id
+            ORDER BY 
+                frames_won DESC,
+                frames_lost ASC,
+                users.name ASC
+            LIMIT 
+                ' . $this->perPage . '
+            OFFSET 
+                ' . ($this->page - 1) * $this->perPage
         );
     }
 }
