@@ -128,9 +128,9 @@
                                                 played any frames this season. Please check back here again soon.</p>
                                         </div>
                                     @else
-                                        @foreach ($player->frames as $frame)
+                                        @foreach ($frames as $frame)
                                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                                                href="{{ route('result.show', $frame->result) }}">
+                                                href="{{ route('result.show', $frame->result_id) }}">
                                                 <div
                                                     class="whitespace-nowrap px-4 py-4 text-sm flex items-center w-full">
                                                     <div class="pr-4">
@@ -154,14 +154,14 @@
                                                     </div>
                                                     <div class="flex flex-col flex-grow">
                                                         <div>
-                                                            {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->name : $frame->homePlayer->name }}
+                                                            {{ $frame->home_player_id == $player->id ? $frame->away_player_name : $frame->home_player_name }}
                                                         </div>
                                                         <div class="text-xs text-gray-500">
-                                                            {{ $frame->home_player_id == $player->id ? $frame->awayPlayer->team->name : $frame->homePlayer->team->name }}
+                                                            {{ $frame->home_player_id == $player->id ? $frame->away_team_name : $frame->home_team_name }}
                                                         </div>
                                                     </div>
                                                     <div class="w-2/12 text-right text-gray-500 font-semibold">
-                                                        {{ $frame->result->fixture->fixture_date->format('d/m') }}
+                                                        {{ date('d/m', strtotime($frame->fixture_date)) }}
                                                     </div>
                                                 </div>
                                             </a>
