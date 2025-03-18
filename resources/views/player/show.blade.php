@@ -95,7 +95,7 @@
                                 <div class="flex items-baseline text-2xl font-semibold text-green-700">
                                     {{ $averages->frames_won ?? 0 }}
                                     <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ number_format($averages->frames_won_percentage,2) ?? 0 }}%)
+                                        ({{ number_format($averages?->frames_won_percentage,2) ?? 0 }}%)
                                     </span>
                                 </div>
                             </dd>
@@ -106,7 +106,7 @@
                                 <div class="flex items-baseline text-2xl font-semibold text-green-700">
                                     {{ $averages->frames_lost ?? 0 }}
                                     <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ number_format($averages->frames_lost_percentage,2) ?? 0 }}%)
+                                        ({{ number_format($averages?->frames_lost_percentage,2) ?? 0 }}%)
                                     </span>
                                 </div>
                             </dd>
@@ -120,7 +120,7 @@
                         <div class="border-gray-200 h-full flex flex-col">
                             <div class="min-w-full overflow-hidden">
                                 <div class="bg-white">
-                                    @if (count($player->frames) == 0)
+                                    @if ($player->frames && count($player->frames) == 0)
                                         <div
                                             class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
                                             <h3 class="mt-2 text-sm font-semibold text-gray-900">No frames</h3>

@@ -54,7 +54,7 @@ class GetPlayerAverages
             JOIN 
                 results ON results.id = frames.result_id
             WHERE 
-                results.section_id = ' . $this->section?->id . '
+                results.section_id = ' . $this->section->id . '
                 AND users.id = ' . $this->player->id
         ))->first();
     }
