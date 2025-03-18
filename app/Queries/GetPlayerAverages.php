@@ -10,7 +10,7 @@ class GetPlayerAverages
 {
     public function __construct(
         protected User $player,
-        protected Section $section,
+        protected ?Section $section = null,
     ) {}
 
     public function __invoke()
