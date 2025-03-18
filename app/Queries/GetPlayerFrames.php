@@ -45,7 +45,7 @@ class GetPlayerFrames
                 users AS away_players ON away_players.id = frames.away_player_id
             WHERE
                 (frames.home_player_id = ' . $this->player->id . ' OR frames.away_player_id = ' . $this->player->id . ')
-                AND results.section_id = ' . $this->section->id . '
+                AND results.section_id = ' . $this->section?->id . '
             ORDER BY
                 fixtures.fixture_date DESC'
         );
