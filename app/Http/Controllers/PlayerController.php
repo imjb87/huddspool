@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ruleset;
 use App\Models\User;
+use App\Queries\GetPlayerAverages;
 
 class PlayerController extends Controller
 {
@@ -19,6 +20,8 @@ class PlayerController extends Controller
 
     public function show(User $player)
     {
-        return view('player.show', compact('player'));
+        $averages = (new GetPlayerAverages($player, $player->team->section()))();
+
+        return view('player.show', compact('player', 'averages'));
     }
 }

@@ -85,7 +85,7 @@
                             <dt class="text-base font-normal text-gray-900">Played</dt>
                             <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                                 <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ count($player->frames) ?? 0 }}
+                                    {{ $averages->frames_played ?? 0 }}
                                 </div>
                             </dd>
                         </div>
@@ -93,9 +93,9 @@
                             <dt class="text-base font-normal text-gray-900">Won</dt>
                             <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                                 <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ $player->framesWon->count() ?? 0 }}
+                                    {{ $averages->frames_won ?? 0 }}
                                     <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ $player->winPercentage() ?? 0 }}%)
+                                        ({{ number_format($averages->frames_won_percentage,2) ?? 0 }}%)
                                     </span>
                                 </div>
                             </dd>
@@ -104,9 +104,9 @@
                             <dt class="text-base font-normal text-gray-900">Lost</dt>
                             <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                                 <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ $player->framesLost->count() ?? 0 }}
+                                    {{ $averages->frames_lost ?? 0 }}
                                     <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ $player->lossPercentage() ?? 0 }}%)
+                                        ({{ number_format($averages->frames_lost_percentage,2) ?? 0 }}%)
                                     </span>
                                 </div>
                             </dd>
