@@ -21,8 +21,8 @@ class PlayerController extends Controller
 
     public function show(User $player)
     {
-        $averages = (new GetPlayerAverages($player, $player->team->section()))();
-        $frames = (new GetPlayerFrames($player, $player->team->section()))();
+        $averages = (new GetPlayerAverages($player, $player->team?->section()))();
+        $frames = (new GetPlayerFrames($player, $player->team?->section()))();
 
         return view('player.show', compact('player', 'averages', 'frames'));
     }
