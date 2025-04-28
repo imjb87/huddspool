@@ -82,7 +82,6 @@ class FixtureResource extends Resource
                                         ->relationship('frames')
                                         ->defaultItems(10)
                                         ->maxItems(10)
-                                        ->minItems(10)
                                         ->columns(4)
                                         ->deletable(false)
                                         ->schema([
