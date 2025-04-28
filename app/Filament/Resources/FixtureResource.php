@@ -83,7 +83,6 @@ class FixtureResource extends Resource
                                         ->defaultItems(10)
                                         ->maxItems(10)
                                         ->columns(4)
-                                        ->deletable(false)
                                         ->schema([
                                             Forms\Components\Select::make('home_player_id')
                                                 ->label('Home Player')
