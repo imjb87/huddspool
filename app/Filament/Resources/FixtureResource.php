@@ -66,7 +66,7 @@ class FixtureResource extends Resource
                     ]),
                 Forms\Components\Section::make('Result')
                     ->relationship('result')
-                        ->mutateRelationshipDataBeforeCreateUsing(function (Model $record, array $data): array {
+                        ->mutateRelationshipDataBeforeSaveUsing(function (Model $record, array $data): array {
                             $data['section_id'] = $record->section_id;
                             $data['home_team_id'] = $record->home_team_id;
                             $data['away_team_id'] = $record->away_team_id;
