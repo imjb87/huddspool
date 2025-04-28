@@ -46,13 +46,17 @@ class FixtureResource extends Resource
                             ->relationship('awayTeam', 'name')
                             ->placeholder('Select an away team')
                             ->disabled(),
+                        Forms\Components\Select::make('section_id')
+                            ->label('Section')
+                            ->relationship('section', 'name')
+                            ->placeholder('Select a section')
+                            ->disabled(),
                         Forms\Components\DateTimePicker::make('fixture_date')
                             ->label('Fixture Date')
                             ->required()
                             ->native(false)
                             ->placeholder('Fixture date')
-                            ->displayFormat('d/m/Y')
-                            ->columnSpanFull(),
+                            ->displayFormat('d/m/Y'),
                         Forms\Components\Select::make('venue_id')
                             ->label('Venue')
                             ->relationship('venue', 'name')
@@ -62,6 +66,14 @@ class FixtureResource extends Resource
                     ]),
                 Forms\Components\Section::make('Result')
                     ->relationship('result')
+                        ->mutateRelationshipDataBeforeCreateUsing(function (Model $record, array $data): array {
+                            $data['section_id'] = $record->section_id;
+                            $data['home_team_id'] = $record->home_team_id;
+                            $data['away_team_id'] = $record->away_team_id;
+                            $data['home_team_name'] = $record->homeTeam->name;
+                            $data['away_team_name'] = $record->awayTeam->name;
+                            return $data;
+                        })
                         ->schema([
                             Forms\Components\Section::make('Frames')
                                 ->schema([
