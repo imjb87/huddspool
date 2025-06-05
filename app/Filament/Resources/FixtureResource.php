@@ -29,6 +29,16 @@ class FixtureResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    private function populateTeamData(Model $record, array $data): array
+    {
+        $data['section_id'] = $record->section_id;
+        $data['home_team_id'] = $record->home_team_id;
+        $data['away_team_id'] = $record->away_team_id;
+        $data['home_team_name'] = $record->homeTeam->name;
+        $data['away_team_name'] = $record->awayTeam->name;
+        return $data;
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -65,14 +75,22 @@ class FixtureResource extends Resource
                             ->columnSpanFull(),
                     ]),
                 Forms\Components\Section::make('Result')
-                    ->relationship('result')
-                        ->mutateRelationshipDataBeforeSaveUsing(function (Model $record, array $data): array {
-                            $data['section_id'] = $record->section_id;
-                            $data['home_team_id'] = $record->home_team_id;
-                            $data['away_team_id'] = $record->away_team_id;
-                            $data['home_team_name'] = $record->homeTeam->name;
-                            $data['away_team_name'] = $record->awayTeam->name;
-                            return $data;
+                        ->relationship('result')
+                        ->mutateRelationshipDataBeforeCreateUsing(function (Model $record, array $data) {
+                            if (empty($data['home_score']) || empty($data['away_score'])) {
+                                // If scores aren't filled, return an empty array — won't create a result.
+                                return [];
+                            }
+                    
+                            return $this->populateTeamData($record, $data);
+                        })
+                        ->mutateRelationshipDataBeforeSaveUsing(function (Model $record, array $data) {
+                            if (empty($data['home_score']) || empty($data['away_score'])) {
+                                // Prevent update if scores aren't filled
+                                return [];
+                            }
+                    
+                            return $this->populateTeamData($record, $data);
                         })
                         ->schema([
                             Forms\Components\Section::make('Frames')
@@ -119,14 +137,10 @@ class FixtureResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('home_score')
                                             ->label('Home Total')
-                                            ->default(0)
-                                            ->minValue(0)
                                             ->maxValue(10)                
                                             ->required(),
                                         Forms\Components\TextInput::make('away_score')
                                             ->label('Away Total')
-                                            ->default(0)
-                                            ->minValue(0)
                                             ->maxValue(10)
                                             ->required(),
                                     ]),                     
