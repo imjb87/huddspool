@@ -29,7 +29,7 @@ class FixtureResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    private function populateTeamData(Model $record, array $data): array
+    private static function populateTeamData(Model $record, array $data): array
     {
         $data['section_id'] = $record->section_id;
         $data['home_team_id'] = $record->home_team_id;
@@ -82,7 +82,7 @@ class FixtureResource extends Resource
                                 return [];
                             }
                     
-                            return $this->populateTeamData($record, $data);
+                            return self::populateTeamData($record, $data);
                         })
                         ->mutateRelationshipDataBeforeSaveUsing(function (Model $record, array $data) {
                             if (empty($data['home_score']) || empty($data['away_score'])) {
@@ -90,7 +90,7 @@ class FixtureResource extends Resource
                                 return [];
                             }
                     
-                            return $this->populateTeamData($record, $data);
+                            return self::populateTeamData($record, $data);
                         })
                         ->schema([
                             Forms\Components\Section::make('Frames')
