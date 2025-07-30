@@ -53,7 +53,10 @@ class FixtureService
     public function generate()
     {
         // get team id and venue id as an array for each team order by "sort"
-        $teams = $this->section->teams->sortBy('sort')->pluck('id')->toArray();
+        $teams = $this->section->teams
+                    ->sortBy(fn($team) => $team->pivot->sort)
+                    ->pluck('id')
+                    ->toArray();
 
         // pop the last team from the array and add it to the beginning
         array_unshift($teams, array_pop($teams));
