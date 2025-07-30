@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
+use App\Models\Season;
 
 class SectionResource extends Resource
 {
@@ -45,6 +46,9 @@ class SectionResource extends Resource
                         Forms\Components\Select::make('season_id')
                             ->label('Season')
                             ->relationship('season', 'name')
+                            ->default(fn () => Season::query()
+                                ->where('slug', request()->route('record'))
+                                ->first()?->id)
                             ->searchable()
                             ->preload()
                             ->required()
