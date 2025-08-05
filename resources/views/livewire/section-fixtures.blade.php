@@ -1,7 +1,13 @@
 <section>
     <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
-        <div class="px-4 py-4 sm:px-6 bg-green-700">
+        <div class="px-4 py-4 sm:px-6 bg-green-700 flex justify-between items-center">
             <h2 class="text-sm font-medium leading-6 text-white">{{ $section->name }}</h2>
+            <a href="{{ route('fixture.download', $section) }}"
+                target="_blank"
+                class="inline-flex items-center px-2 py-1 text-xs font-bold rounded-md text-green-700 bg-white"
+                aria-label="Download Fixtures">
+                Print
+            </a>
         </div>
         <div class="border-t border-gray-200 h-full flex flex-col">
             <div class="min-w-full overflow-hidden">

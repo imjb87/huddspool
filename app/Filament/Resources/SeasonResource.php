@@ -31,35 +31,34 @@ class SeasonResource extends Resource
     {
         return $form
             ->schema([
+                // Main section spanning 2 columns
+                Forms\Components\Section::make('Season information')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->placeholder('Season name'),
+                    ]),
 
-                        // Main section spanning 2 columns
-                        Forms\Components\Section::make('Season information')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Name')
+                // Dates on the right in a smaller section spanning 1 column
+                Forms\Components\Section::make('Schedule')
+                    ->columnSpan(2)
+                    ->schema([
+                        Forms\Components\Repeater::make('dates')
+                            ->label(false)
+                            ->simple(
+                                Forms\Components\DatePicker::make('date')
+                                    ->label('Date')
                                     ->required()
-                                    ->placeholder('Season name'),
-                            ]),
-
-                        // Dates on the right in a smaller section spanning 1 column
-                        Forms\Components\Section::make('Schedule')
-                            ->columnSpan(2)
-                            ->schema([
-                                Forms\Components\Repeater::make('dates')
-                                    ->label(false)
-                                    ->simple(
-                                        Forms\Components\DatePicker::make('date')
-                                            ->label('Date')
-                                            ->required()
-                                    )
-                                    ->reorderable(false)
-                                    ->grid(6)
-                                    ->minItems(18)
-                                    ->maxItems(18)
-                                    ->defaultItems(18)
-                                    ->deletable(false),
-                            ]),
-                        ]);
+                            )
+                            ->reorderable(false)
+                            ->grid(6)
+                            ->minItems(18)
+                            ->maxItems(18)
+                            ->defaultItems(18)
+                            ->deletable(false),
+                    ]),
+            ]);
     }
 
 
@@ -79,7 +78,7 @@ class SeasonResource extends Resource
                                 $season->update(['is_open' => 0]);
                             }
                         });
-                    })                    
+                    })
             ])
             ->filters([
                 //
@@ -87,8 +86,7 @@ class SeasonResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->color('warning'),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array
@@ -115,7 +113,7 @@ class SeasonResource extends Resource
     public static function getAncestor(): ?Ancestor
     {
         return null;
-    }    
+    }
 
     public static function getBreadcrumbRecordLabel($record): string
     {
