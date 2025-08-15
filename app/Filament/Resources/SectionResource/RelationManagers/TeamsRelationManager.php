@@ -76,7 +76,12 @@ class TeamsRelationManager extends RelationManager
                     ->action(function (RelationManager $livewire, Model $record): void {
                         $week = 0;
 
-                        foreach ($livewire->getOwnerRecord()->season->dates as $date) {
+                        $section = $livewire->getOwnerRecord();
+
+                        $section->teams()->detach($record->id);
+                        $section->teams()->attach($record->id, ['withdrawn_at' => now()]);
+
+                        foreach ($section->season->dates as $date) {
                             $week++;
                             if ($date > now()) {
                                 break;
@@ -98,6 +103,21 @@ class TeamsRelationManager extends RelationManager
                                 }
                             });
                         }
+
+                        $section->fixtures()->each(function ($fixture) use ($record) {
+                            if( $fixture->home_team_id == $record->id ) {
+                                if ( !$fixture->result ) {
+                                    $fixture->home_team_id = 1; // Set to bye team
+                                    $fixture->save();
+                                }
+                            }
+                            if( $fixture->away_team_id == $record->id ) {
+                                if ( !$fixture->result ) {
+                                    $fixture->away_team_id = 1; // Set to bye team
+                                    $fixture->save();
+                                }
+                            }
+                        }); 
                     }),
 
             ])
