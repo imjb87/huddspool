@@ -21,10 +21,10 @@ class EditFixture extends EditRecord
     {
         return [
             Action::make('enterOrEditResult')
-                ->label(fn () => $this->record->result ? 'Edit Result' : 'Enter Result')
-                ->icon(fn () => $this->record->result ? 'heroicon-o-pencil' : 'heroicon-o-pencil-square')
+                ->label(fn() => $this->record->result ? 'Edit Result' : 'Enter Result')
+                ->icon(fn() => $this->record->result ? 'heroicon-o-pencil' : 'heroicon-o-pencil-square')
                 ->modalHeading('Result & Frames')
-                ->modalSubmitActionLabel(fn () => $this->record->result ? 'Update Result' : 'Save Result')
+                ->modalSubmitActionLabel(fn() => $this->record->result ? 'Update Result' : 'Save Result')
                 ->form([
                     Forms\Components\Section::make('Result Totals')
                         ->columns(2)
@@ -53,7 +53,14 @@ class EditFixture extends EditRecord
                                 ->schema([
                                     Forms\Components\Select::make('home_player_id')
                                         ->label('Home Player')
-                                        ->options(fn () => User::where('team_id', $this->record->home_team_id)->pluck('name', 'id'))
+                                        ->options(
+                                            fn() =>
+                                            [0 => 'Awarded']
+                                                + User::where('team_id', $this->record->home_team_id)
+                                                ->orderBy('name')
+                                                ->pluck('name', 'id')
+                                                ->toArray()
+                                        )
                                         ->searchable()
                                         ->required(),
 
@@ -73,7 +80,14 @@ class EditFixture extends EditRecord
 
                                     Forms\Components\Select::make('away_player_id')
                                         ->label('Away Player')
-                                        ->options(fn () => User::where('team_id', $this->record->away_team_id)->pluck('name', 'id'))
+                                        ->options(
+                                            fn() =>
+                                            [0 => 'Awarded']
+                                                + User::where('team_id', $this->record->away_team_id)
+                                                ->orderBy('name')
+                                                ->pluck('name', 'id')
+                                                ->toArray()
+                                        )
                                         ->searchable()
                                         ->required(),
                                 ]),
@@ -90,7 +104,7 @@ class EditFixture extends EditRecord
                         'home_score' => $result->home_score,
                         'away_score' => $result->away_score,
                         'frames' => $result->frames
-                            ->map(fn ($f) => [
+                            ->map(fn($f) => [
                                 'home_player_id' => $f->home_player_id,
                                 'home_score'     => $f->home_score,
                                 'away_score'     => $f->away_score,
