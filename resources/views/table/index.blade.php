@@ -48,14 +48,14 @@
                                     </div>
                                     <div class="bg-white">
                                         @foreach ($section->standings() as $team)
-                                            <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
+                                            <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
                                                 <div class="flex w-6/12 pl-4">
                                                     <div
                                                         class="whitespace-nowrap py-2 text-sm text-gray-900 text-left font-semibold w-2/12">
                                                         {{$loop->iteration}}.
                                                     </div>
                                                     <div
-                                                        class="tooltip tooltip-top py-2 text-sm text-gray-900 w-10/12 truncate {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
+                                                        class="tooltip tooltip-top py-2 text-sm text-gray-900 w-10/12 truncate">
                                                         <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                         @if ($team->shortname)
                                                             <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
@@ -64,7 +64,7 @@
                                                         <span class="tooltip-text">
                                                             This team was withdrawn from the section on {{ date('d/m/Y', strtotime($team->pivot->withdrawn_at)) }}
                                                         </span>
-                                                        @endif        
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="flex w-6/12 pr-2">
