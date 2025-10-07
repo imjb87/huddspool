@@ -1,5 +1,7 @@
 <?php
 
+// app/Queries/GetSectionAverages.php
+
 namespace App\Queries;
 
 use Illuminate\Support\Facades\DB;
@@ -15,47 +17,70 @@ class GetSectionAverages
 
     public function __invoke()
     {
-        return DB::select(
-            'SELECT users.id,
-                    users.name,
-                    COUNT(frames.id) AS frames_played,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score > frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score > frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_won,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score < frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score < frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_lost
-            FROM 
-                frames
-            JOIN 
-                users ON frames.home_player_id = users.id OR frames.away_player_id = users.id
-            JOIN 
-                results ON results.id = frames.result_id
-            WHERE 
-                results.section_id = ' . $this->section->id . '
-                AND users.id NOT IN
-                    (SELECT expellable_id
-                    FROM expulsions
-                    WHERE expellable_type = "App\\\Models\\\User"
-                        AND season_id = ' . $this->section->id . ')
-            GROUP BY 
-                users.id
-            ORDER BY 
-                frames_won DESC,
-                frames_lost ASC,
-                users.name ASC
-            LIMIT 
-                ' . $this->perPage . '
-            OFFSET 
-                ' . ($this->page - 1) * $this->perPage
-        );
+        $sql = <<<SQL
+SELECT 
+    u.id,
+    u.name,
+    COUNT(f.id) AS frames_played,
+    SUM(
+        CASE 
+            WHEN (u.id = f.home_player_id AND f.home_score > f.away_score)
+              OR (u.id = f.away_player_id AND f.away_score > f.home_score)
+            THEN 1 ELSE 0 
+        END
+    ) AS frames_won,
+    SUM(
+        CASE 
+            WHEN (u.id = f.home_player_id AND f.home_score < f.away_score)
+              OR (u.id = f.away_player_id AND f.away_score < f.home_score)
+            THEN 1 ELSE 0 
+        END
+    ) AS frames_lost,
+    ROUND(
+        100.0 * SUM(
+            CASE 
+                WHEN (u.id = f.home_player_id AND f.home_score > f.away_score)
+                  OR (u.id = f.away_player_id AND f.away_score > f.home_score)
+                THEN 1 ELSE 0 
+            END
+        ) / NULLIF(COUNT(f.id), 0), 1
+    ) AS frames_won_pct,
+    ROUND(
+        100.0 * SUM(
+            CASE 
+                WHEN (u.id = f.home_player_id AND f.home_score < f.away_score)
+                  OR (u.id = f.away_player_id AND f.away_score < f.home_score)
+                THEN 1 ELSE 0 
+            END
+        ) / NULLIF(COUNT(f.id), 0), 1
+    ) AS frames_lost_pct
+FROM frames f
+JOIN users u 
+  ON u.id = f.home_player_id OR u.id = f.away_player_id
+JOIN results r 
+  ON r.id = f.result_id
+WHERE 
+  r.section_id = ?
+  AND u.id NOT IN (
+      SELECT e.expellable_id
+      FROM expulsions e
+      WHERE e.expellable_type = 'App\\Models\\User'
+        AND e.season_id = ?
+  )
+GROUP BY u.id, u.name
+ORDER BY 
+  frames_won_pct DESC,
+  frames_won DESC,
+  frames_lost ASC,
+  u.name ASC
+LIMIT ? OFFSET ?
+SQL;
+
+        return DB::select($sql, [
+            $this->section->id,
+            $this->section->season_id,           // <- use the season id here
+            $this->perPage,
+            ($this->page - 1) * $this->perPage,
+        ]);
     }
 }

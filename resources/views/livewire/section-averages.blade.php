@@ -43,11 +43,15 @@
                                 </div>
                                 <div class="flex w-1/2 items-center">
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                        {{ $player->frames_played }}</div>
+                                        {{ $player->frames_played }}
+                                    </div>
+                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center relative">
+                                        {{ $player->frames_won }}
+                                        <span class="items-center rounded-md bg-green-100 px-1 text-[10px] font-semibold text-green-700 absolute left-full -translate-x-1/2">{{ $player->frames_won_pct !== null ? rtrim(rtrim(number_format($player->frames_won_pct, 1), '0'), '.') : '0' }}%</span>
+                                    </div>
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                        {{ $player->frames_won }}</div>
-                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                        {{ $player->frames_lost }}</div>
+                                        {{ $player->frames_lost }}
+                                    </div>
                                 </div>
                             </a>
                         @endforeach
