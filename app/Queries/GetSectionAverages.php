@@ -69,7 +69,6 @@ WHERE
   )
 GROUP BY u.id, u.name
 ORDER BY 
-  frames_won_pct DESC,
   frames_won DESC,
   frames_lost ASC,
   u.name ASC
