@@ -59,5 +59,5 @@ class SectionTeam extends Pivot
     
         // Subtract the deducted points (default to 0 if null)
         return max(0, $totalPoints - ($this->deducted ?? 0));
-    }    
+    }
 }

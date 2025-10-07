@@ -5,7 +5,7 @@ namespace App\Queries;
 use Illuminate\Support\Facades\DB;
 use App\Models\Section;
 
-class GetSectionAverages
+class GetSectionStandings
 {
     public function __construct(
         protected Section $section,

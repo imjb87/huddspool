@@ -8,7 +8,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\DB;
 class TeamsRelationManager extends RelationManager
 {
     protected static ?string $title = 'Teams';
@@ -33,7 +33,7 @@ class TeamsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
                     ->formatStateUsing(fn(string $state): string => $state == 10 ? '0' : $state),
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('deducted'),
+                Tables\Columns\TextColumn::make('pivot.deducted'),
             ])
             ->filters([
                 //
@@ -61,9 +61,13 @@ class TeamsRelationManager extends RelationManager
                             ->rules('numeric')
                             ->default(0),
                     ])
-                    ->action(function (array $data, Model $record): void {
-                        $record->deducted = $record->deducted + $data['deducted'];
-                        $record->save();
+                    ->action(function (RelationManager $livewire, Model $record, array $data): void {
+                        $section = $livewire->getOwnerRecord();
+
+                        $section->teams()->updateExistingPivot(
+                            $record->id,
+                            ['deducted' => DB::raw('COALESCE(deducted,0) + ' . (int) $data['deducted'])]
+                        );
                     })
                     ->color('warning')
                     ->icon('heroicon-o-arrow-down'),
@@ -78,8 +82,7 @@ class TeamsRelationManager extends RelationManager
 
                         $section = $livewire->getOwnerRecord();
 
-                        $section->teams()->detach($record->id);
-                        $section->teams()->attach($record->id, ['withdrawn_at' => now()]);
+                        $section->teams()->updateExistingPivot($record->id, ['withdrawn_at' => now()]);
 
                         foreach ($section->season->dates as $date) {
                             $week++;
@@ -105,19 +108,19 @@ class TeamsRelationManager extends RelationManager
                         }
 
                         $section->fixtures()->each(function ($fixture) use ($record) {
-                            if( $fixture->home_team_id == $record->id ) {
-                                if ( !$fixture->result ) {
+                            if ($fixture->home_team_id == $record->id) {
+                                if (!$fixture->result) {
                                     $fixture->home_team_id = 1; // Set to bye team
                                     $fixture->save();
                                 }
                             }
-                            if( $fixture->away_team_id == $record->id ) {
-                                if ( !$fixture->result ) {
+                            if ($fixture->away_team_id == $record->id) {
+                                if (!$fixture->result) {
                                     $fixture->away_team_id = 1; // Set to bye team
                                     $fixture->save();
                                 }
                             }
-                        }); 
+                        });
                     }),
 
             ])

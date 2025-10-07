@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ruleset;
-use App\Queries\GetSectionStandings;
 
 class TableController extends Controller
 {
