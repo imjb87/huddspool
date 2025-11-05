@@ -12,7 +12,7 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3">
-                        @if (Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin())
+                        @if (! $result->is_confirmed && (Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin()))
                             @if (Auth::user()?->team?->id === $result->home_team_id || Auth::user()?->team?->id === $result->away_team_id || Auth::user()?->isAdmin())
                                 <div class="flex mb-4">
                                     <a href="{{ route('result.create', $result->fixture_id) }}"

@@ -285,6 +285,58 @@ class ResultSubmissionTest extends TestCase
         $response->assertDontSeeText('Continue submitting result');
     }
 
+    public function test_continue_link_hidden_for_confirmed_results(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        Team::factory()->create();
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $teamAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+        ]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'home_score' => 6,
+            'away_score' => 4,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $this->actingAs($teamAdmin);
+
+        $response = $this->get(route('result.show', $result));
+        $response->assertOk();
+        $response->assertDontSeeText('Continue submitting result');
+    }
+
     public function test_only_one_team_admin_can_hold_the_edit_lock_at_a_time(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
