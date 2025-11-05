@@ -108,7 +108,9 @@ class Section extends Model
     public function standings(): Collection
     {
         return Cache::remember($this->standingsCacheKey(), now()->addMinutes(2), function () {
-            $results = $this->results()->get();
+            $results = $this->results()
+                ->where('is_confirmed', true)
+                ->get();
 
             $teamExpulsions = Expulsion::query()
                 ->where('season_id', $this->season_id)

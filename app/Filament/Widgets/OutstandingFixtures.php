@@ -17,19 +17,26 @@ class OutstandingFixtures extends BaseWidget
     {
         return $table
             ->query(
-                // get all fixtures with a null result for the current is_open season
-                Fixture::whereDoesntHave('result') // Exclude fixtures with a result
+                Fixture::query()
+                    ->with('result')
+                    ->whereDoesntHave('result', function ($query) {
+                        $query->where('is_confirmed', true);
+                    })
                     ->whereHas('season', function ($query) {
-                        $query->where('is_open', true); // Include only seasons with is_open = true
-                    })->where('home_team_id', '!=', 1) // Exclude fixtures with home_team_id = 1
-                    ->where('away_team_id', '!=', 1) // Exclude fixtures with away_team_id = 1
-                    ->where('fixture_date', '<', now()) // Include only fixtures with a fixture_date in the past
+                        $query->where('is_open', true);
+                    })
+                    ->where('home_team_id', '!=', 1)
+                    ->where('away_team_id', '!=', 1)
+                    ->where('fixture_date', '<', now())
                     ->orderBy('fixture_date', 'asc')
-
             )
             ->columns([
                 Tables\Columns\TextColumn::make('homeTeam.name')->label('Home team')->alignRight()->searchable(),
-                Tables\Columns\TextColumn::make('fixture_date')->label(false)->state(function (Model $record) {
+                Tables\Columns\TextColumn::make('fixture_status')->label(false)->state(function (Model $record) {
+                    if ($record->result && ! $record->result->is_confirmed) {
+                        return $record->result->home_score . ' - ' . $record->result->away_score;
+                    }
+
                     return $record->fixture_date->format('d/m');
                 })->alignCenter(),
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),                

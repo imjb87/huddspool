@@ -12,6 +12,16 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3">
+                        @if (Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin())
+                            @if (Auth::user()?->team?->id === $result->home_team_id || Auth::user()?->team?->id === $result->away_team_id || Auth::user()?->isAdmin())
+                                <div class="flex mb-4">
+                                    <a href="{{ route('result.create', $result->fixture_id) }}"
+                                        class="block w-full text-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+                                        Continue submitting result
+                                    </a>
+                                </div>
+                            @endif
+                        @endif                          
                     <div class="overflow-hidden bg-white shadow rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                             <div class="flex items-start space-x-5">
@@ -49,6 +59,13 @@
                     </div>
                 </div>
                 <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
+                    @if (! $result->is_confirmed)
+                    <div class="rounded-md bg-yellow-50 border border-yellow-200 px-4 py-3 sm:px-6 space-y-3">
+                        <p class="text-sm font-medium text-yellow-800 text-center">
+                            This result is still in progress and will remain editable until it is locked.
+                        </p>
+                    </div>
+                    @endif
                     <div>
                         <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
                             <div class="bg-green-700 hidden sm:flex">

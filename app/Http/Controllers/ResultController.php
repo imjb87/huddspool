@@ -16,8 +16,10 @@ class ResultController extends Controller
     {
         $user = auth()->user();
 
-        if ($fixture->result) {
-            return redirect()->route('results.show', $fixture->result);
+        $fixture->load('result');
+
+        if ($fixture->result && $fixture->result->is_confirmed) {
+            return redirect()->route('result.show', $fixture->result);
         }
 
         if (!$user) {

@@ -19,9 +19,12 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-yellow-800">Please read before submitting</h3>
+                                <h3 class="text-sm font-medium text-yellow-800">Automatic saving in progress</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
-                                    <p>This tool is not intended to be used for live results. It is intended to be used by team admins to submit results after the match has been played. Please continue to fill out a physical scorecard as normal and submit the result using this tool after the match.</p>
+                                    <p>Frames are saved automatically as you enter them. When the card is signed off, hit <strong>Submit result</strong> to lock everything in.</p>
+                                    @if ($fixture->result && ! $fixture->result->is_confirmed)
+                                        <p class="mt-2">This fixture already has a draft result that was last updated on {{ $fixture->result->updated_at->format('l jS F Y \\a\\t H:i') }}.</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>

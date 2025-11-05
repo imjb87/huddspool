@@ -12,11 +12,11 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3">
-                    @if ((Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin()) && !$fixture->result && (Auth::user()?->team?->id == $fixture->homeTeam?->id || Auth::user()?->team?->id == $fixture->awayTeam?->id))
+                    @if ((Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin()) && (!$fixture->result || ! $fixture->result->is_confirmed) && (Auth::user()?->team?->id == $fixture->homeTeam?->id || Auth::user()?->team?->id == $fixture->awayTeam?->id))
                         @if ($fixture->fixture_date->lte(now()))
                             <a href="{{ route('result.create', $fixture->id) }}"
                                 class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
-                                Submit Result
+                                {{ $fixture->result ? 'Update Result' : 'Submit Result' }}
                             </a>
                         @else
                             <button disabled

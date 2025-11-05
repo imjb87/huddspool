@@ -17,11 +17,12 @@ class LatestResults extends BaseWidget
         return $table
             ->query(
                 Result::query()
-                    ->orderBy('created_at', 'desc')
-                    ->limit(5)
+                    ->where('is_confirmed', true)
                     ->whereHas('fixture.season', function ($query) {
                         $query->where('is_open', true);
                     })
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('home_team_name')->label('Home team')->alignRight()->searchable(),
