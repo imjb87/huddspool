@@ -191,10 +191,9 @@
                                         <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Ruleset</div>
                                     </div>
                                     <div class="flex w-1/2">
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">Pl</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">W</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">D</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">L</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">Pl</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">W</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">L</div>
                                     </div>
                                 </div>
                                 <div class="bg-white">
@@ -219,16 +218,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex w-1/2 items-center">
-                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
                                                         {{ $entry['played'] }}
                                                     </div>
-                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
                                                         {{ $entry['wins'] }}
                                                     </div>
-                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
-                                                        {{ $entry['draws'] }}
-                                                    </div>
-                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
                                                         {{ $entry['losses'] }}
                                                     </div>
                                                 </div>
