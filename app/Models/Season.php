@@ -28,9 +28,10 @@ class Season extends Model
      */
     protected $casts = [
         'dates' => 'array',
+        'is_open' => 'boolean',
     ];
 
-    public function isOpen()
+    public function isOpen(): bool
     {
         return $this->is_open;
     }

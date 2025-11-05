@@ -2,13 +2,52 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use App\Models\Section;
 
 class SectionTeam extends Pivot
 {
     protected $table = 'section_team';
+
+    protected static function booted()
+    {
+        $flush = fn (SectionTeam $pivot) => $pivot->flushSectionCaches();
+
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'withdrawn_at' => 'datetime',
+        'deducted' => 'integer',
+        'sort' => 'integer',
+    ];
+
+    protected function flushSectionCaches(): void
+    {
+        if (! $this->section_id) {
+            return;
+        }
+
+        Cache::forget(sprintf('section:%d:averages', $this->section_id));
+        Cache::forget(sprintf('section:%d:standings', $this->section_id));
+        Cache::forget('nav:past-seasons');
+        Cache::forget('history:index');
+        Cache::forget("team:season-history:{$this->team_id}");
+
+        if ($section = Section::query()->select('season_id', 'ruleset_id')->find($this->section_id)) {
+            if ($section->season_id && $section->ruleset_id) {
+                Cache::forget(sprintf('history:sections:%d:%d', $section->season_id, $section->ruleset_id));
+            }
+        }
+
+    }
 
     public function results()
     {

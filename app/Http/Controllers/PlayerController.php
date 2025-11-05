@@ -6,6 +6,7 @@ use App\Models\Ruleset;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
+use App\Queries\GetPlayerSeasonHistory;
 
 class PlayerController extends Controller
 {
@@ -23,7 +24,8 @@ class PlayerController extends Controller
     {
         $averages = $player->team ? (new GetPlayerAverages($player, $player->team?->section()))() : null;
         $frames = $player->team ? (new GetPlayerFrames($player, $player->team?->section()))() : null;
+        $history = (new GetPlayerSeasonHistory($player))();
 
-        return view('player.show', compact('player', 'averages', 'frames'));
+        return view('player.show', compact('player', 'averages', 'frames', 'history'));
     }
 }

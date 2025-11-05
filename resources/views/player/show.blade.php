@@ -43,7 +43,7 @@
                             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium leading-6 text-gray-900">Role</dt>
                                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {{ $player->role() }}</dd>
+                                    {{ $player->roleLabel() }}</dd>
                             </div>
                             @if ($player->email)
                                 <div class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -154,14 +154,14 @@
                                                     </div>
                                                     <div class="flex flex-col flex-grow">
                                                         <div>
-                                                            {{ $frame->home_player_id == $player->id ? $frame->away_player_name : $frame->home_player_name }}
+                                                        {{ $frame->home_player_id == $player->id ? $frame->away_player_name : $frame->home_player_name }}
                                                         </div>
                                                         <div class="text-xs text-gray-500">
                                                             {{ $frame->home_player_id == $player->id ? $frame->away_team_name : $frame->home_team_name }}
                                                         </div>
                                                     </div>
                                                     <div class="w-2/12 text-right text-gray-500 font-semibold">
-                                                        {{ date('d/m', strtotime($frame->fixture_date)) }}
+                                                        {{ $frame->fixture_date->format('d/m') }}
                                                     </div>
                                                 </div>
                                             </a>
@@ -175,6 +175,77 @@
             </div>
         </div>
     </div>
+    @if ($history->isNotEmpty())
+        <div class="py-8 sm:py-16">
+            <div class="mx-auto max-w-7xl px-4 lg:px-8">
+                <section>
+                    <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
+                        <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
+                            <h2 class="text-sm font-medium leading-6 text-white">History</h2>
+                        </div>
+                        <div class="border-t border-gray-200 h-full flex flex-col">
+                            <div class="min-w-full overflow-hidden">
+                                <div class="bg-gray-50 flex">
+                                    <div class="flex w-1/2 pl-4 sm:pl-6">
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Season</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Ruleset</div>
+                                    </div>
+                                    <div class="flex w-1/2">
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">Pl</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">W</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">D</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-3/12 text-center">L</div>
+                                    </div>
+                                </div>
+                                <div class="bg-white">
+                                    @foreach ($history as $entry)
+                                        @php
+                                            $historyLink = $entry['ruleset_slug']
+                                                ? route('history.show', ['season' => $entry['season_slug'], 'ruleset' => $entry['ruleset_slug']])
+                                                : null;
+                                        @endphp
+                                        @if ($historyLink)
+                                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                                                href="{{ $historyLink }}">
+                                        @else
+                                            <div class="flex w-full border-t border-gray-300">
+                                        @endif
+                                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
+                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-6/12 font-semibold" title="{{ $entry['season_name'] }}">
+                                                        {{ $entry['season_label'] ?? $entry['season_name'] }}
+                                                    </div>
+                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-500 w-6/12 truncate">
+                                                        {{ $entry['ruleset_name'] ?? 'N/A' }}
+                                                    </div>
+                                                </div>
+                                                <div class="flex w-1/2 items-center">
+                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                        {{ $entry['played'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                        {{ $entry['wins'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                        {{ $entry['draws'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-3/12 text-center">
+                                                        {{ $entry['losses'] }}
+                                                    </div>
+                                                </div>
+                                        @if ($historyLink)
+                                            </a>
+                                        @else
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    @endif
     <x-logo-clouds />
 </div>
 @endsection

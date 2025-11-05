@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Team extends Model
 {
@@ -20,6 +21,15 @@ class Team extends Model
         'shortname',
         'venue_id',
         'folded_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'folded_at' => 'datetime',
     ];
 
     /**
@@ -68,14 +78,11 @@ class Team extends Model
     /**
      * Get all fixtures (home and away) for the team.
      */
-    public function fixtures()
+    public function fixtures(): Builder
     {
-        return Fixture::where(function ($query) {
-            $query->where('home_team_id', $this->id)
-                ->orWhere('away_team_id', $this->id);
-        })->whereHas('season', function ($query) {
-            $query->where('is_open', true);
-        })->get();
+        return Fixture::query()
+            ->forTeam($this)
+            ->inOpenSeason();
     }
 
     /**
@@ -90,18 +97,46 @@ class Team extends Model
     }
 
     /**
-     * Get the results for the team.
+     * Get the away fixtures for the team.
      */
-    public function results()
+    public function awayFixtures()
     {
-        return Result::where(function ($query) {
-            $query->where('home_team_id', $this->id)
-                ->orWhere('away_team_id', $this->id);
-        })->whereHas('fixture', function ($query) {
-            $query->whereHas('season', function ($query) {
+        return $this->hasMany(Fixture::class, 'away_team_id')
+            ->whereHas('season', function ($query) {
                 $query->where('is_open', true);
             });
-        })->get();
+    }
+
+    /**
+     * Get the results for the team.
+     */
+    public function results(): Builder
+    {
+        return Result::query()
+            ->forTeam($this)
+            ->inOpenSeason();
+    }
+
+    /**
+     * Get the results where the team played at home.
+     */
+    public function homeResults()
+    {
+        return $this->hasMany(Result::class, 'home_team_id')
+            ->whereHas('fixture.season', function ($query) {
+                $query->where('is_open', true);
+            });
+    }
+
+    /**
+     * Get the results where the team played away.
+     */
+    public function awayResults()
+    {
+        return $this->hasMany(Result::class, 'away_team_id')
+            ->whereHas('fixture.season', function ($query) {
+                $query->where('is_open', true);
+            });
     }
 
     /**

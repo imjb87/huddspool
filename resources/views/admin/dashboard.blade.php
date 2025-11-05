@@ -8,7 +8,7 @@
                     <dt class="text-base font-normal text-gray-900">Active Players</dt>
                     <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                            {{ $stats->total_players }}
+                            {{ $stats->totalPlayers }}
                         </div>
                     </dd>
                 </div>
@@ -16,7 +16,7 @@
                     <dt class="text-base font-normal text-gray-900">Matches Played</dt>
                     <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                            {{ $stats->total_results }}
+                            {{ $stats->totalResults }}
                         </div>
                     </dd>
                 </div>
@@ -24,7 +24,7 @@
                     <dt class="text-base font-normal text-gray-900">Frames Played</dt>
                     <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
                         <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                            {{ $stats->total_frames }}
+                            {{ $stats->totalFrames }}
                         </div>
                     </dd>
                 </div>

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
-use App\Queries\GetTeamPlayers;
 use App\Queries\GetTeamFixtures;
+use App\Queries\GetTeamSeasonHistory;
+use App\Queries\GetTeamPlayers;
 
 class TeamController extends Controller
 {
@@ -14,12 +15,16 @@ class TeamController extends Controller
             abort(404);
         }
 
+        $section = $team->section();
+
         // Retrieve players for this team with frames played, frames won, and frames lost.
-        $players = new GetTeamPlayers($team, $team->section())();
+        $players = new GetTeamPlayers($team, $section)();
 
         // Retrieve fixtures for this team with related result, homeTeam, and awayTeam eager loaded.
-        $fixtures = new GetTeamFixtures($team, $team->section())();
+        $fixtures = new GetTeamFixtures($team, $section)();
 
-        return view('team.show', compact('team', 'fixtures', 'players'));
+        $history = (new GetTeamSeasonHistory($team))();
+
+        return view('team.show', compact('team', 'fixtures', 'players', 'section', 'history'));
     }
 }

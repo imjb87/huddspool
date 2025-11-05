@@ -2,7 +2,8 @@
 
 namespace App\Queries;
 
-use Illuminate\Support\Facades\DB;
+use App\Data\PlayerAverageData;
+use App\Models\Frame;
 use App\Models\Section;
 use App\Models\User;
 
@@ -11,51 +12,62 @@ class GetPlayerAverages
     public function __construct(
         protected User $player,
         protected ?Section $section = null,
-    ) {}
+    ) {
+    }
 
-    public function __invoke()
+    public function __invoke(): PlayerAverageData
     {
-        return collect(DB::select(
-            'SELECT users.id,
-                    users.name,
-                    COUNT(frames.id) AS frames_played,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score > frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score > frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_won,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score > frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score > frames.home_score) THEN 1
-                            ELSE 0
-                        END) / COUNT(frames.id) * 100 AS frames_won_percentage,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score < frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score < frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_lost,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score < frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score < frames.home_score) THEN 1
-                            ELSE 0
-                        END) / COUNT(frames.id) * 100 AS frames_lost_percentage
-            FROM 
-                frames
-            JOIN 
-                users ON frames.home_player_id = users.id OR frames.away_player_id = users.id
-            JOIN 
-                results ON results.id = frames.result_id
-            WHERE 
-                results.section_id = ' . $this->section->id . '
-                AND users.id = ' . $this->player->id
-        ))->first();
+        $frames = Frame::query()
+            ->select('frames.*', 'results.section_id')
+            ->join('results', 'results.id', '=', 'frames.result_id')
+            ->where(function ($builder) {
+                $builder
+                    ->where('frames.home_player_id', $this->player->id)
+                    ->orWhere('frames.away_player_id', $this->player->id);
+            })
+            ->when($this->section, function ($builder) {
+                $builder->where('results.section_id', $this->section->id);
+            })
+            ->get();
+
+        if ($frames->isEmpty()) {
+            return PlayerAverageData::empty($this->player->id, $this->player->name);
+        }
+
+        $framesPlayed = $frames->count();
+
+        $framesWon = $frames->filter(function (Frame $frame) {
+            $playerIsHome = $frame->home_player_id === $this->player->id;
+
+            return $playerIsHome
+                ? $frame->home_score > $frame->away_score
+                : $frame->away_score > $frame->home_score;
+        })->count();
+
+        $framesLost = $frames->filter(function (Frame $frame) {
+            $playerIsHome = $frame->home_player_id === $this->player->id;
+
+            return $playerIsHome
+                ? $frame->home_score < $frame->away_score
+                : $frame->away_score < $frame->home_score;
+        })->count();
+
+        $winPercentage = $framesPlayed > 0
+            ? round(($framesWon / $framesPlayed) * 100, 2)
+            : 0.0;
+
+        $lossPercentage = $framesPlayed > 0
+            ? round(($framesLost / $framesPlayed) * 100, 2)
+            : 0.0;
+
+        return new PlayerAverageData(
+            id: $this->player->id,
+            name: $this->player->name,
+            frames_played: $framesPlayed,
+            frames_won: $framesWon,
+            frames_won_percentage: $winPercentage,
+            frames_lost: $framesLost,
+            frames_lost_percentage: $lossPercentage,
+        );
     }
 }

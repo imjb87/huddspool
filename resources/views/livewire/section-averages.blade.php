@@ -23,7 +23,7 @@
                 </div>
                 <div class="bg-white">
                     <!-- if there are players, otherwise show empty state -->
-                    @if (!$players)
+                    @if ($players->isEmpty())
                         <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
                             <h3 class="mt-2 text-sm font-semibold text-gray-900">No frames</h3>
                             <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">There have been no frames played
@@ -36,7 +36,7 @@
                                 <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
                                     <div
                                         class="whitespace-nowrap py-2 text-sm text-gray-900 w-2/12 font-semibold">
-                                        {{ $loop->iteration + ($page - 1) * 10 }}.</div>
+                                        {{ $loop->iteration + ($page - 1) * $perPage }}.</div>
                                     <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex gap-x-3 flex-col">
                                         {{ $player->name }}
                                     </div>
@@ -47,7 +47,7 @@
                                     </div>
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center relative">
                                         {{ $player->frames_won }}
-                                        <span class="items-center rounded-md bg-green-100 px-1 text-[10px] font-semibold text-green-700 absolute left-full -translate-x-1/2">{{ $player->frames_won_pct !== null ? rtrim(rtrim(number_format($player->frames_won_pct, 1), '0'), '.') : '0' }}%</span>
+                                        <span class="items-center rounded-md bg-green-100 px-1 text-[10px] font-semibold text-green-700 absolute left-full -translate-x-1/2">{{ rtrim(rtrim(number_format($player->frames_won_percentage, 1), '0'), '.') }}%</span>
                                     </div>
                                     <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
                                         {{ $player->frames_lost }}
@@ -70,7 +70,7 @@
 
                 <button wire:click="nextPage" wire:loading.attr="disabled"
                     class="ml-auto inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"
-                    aria-label="Next" {{ $players && count($players) < 10 ? 'disabled' : '' }}>
+                    aria-label="Next" {{ $players->count() < $perPage ? 'disabled' : '' }}>
                     Next &raquo;
                 </button>
 

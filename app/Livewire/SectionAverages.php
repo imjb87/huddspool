@@ -41,7 +41,8 @@ class SectionAverages extends Component
         $players = (new GetSectionAverages($this->section, $this->page, $this->perPage)());
 
         return view('livewire.section-averages', [
-            'players' => $players
+            'players' => $players,
+            'perPage' => $this->perPage,
         ]);
     }    
 }

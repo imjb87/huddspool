@@ -63,7 +63,14 @@ class KnockoutMatch extends Model
 
     public function dependant()
     {
-        return $this->hasOne(MatchDependancy::class, 'depends_on_id');
+        return $this->hasOneThrough(
+            self::class,
+            MatchDependancy::class,
+            'depends_on_id',
+            'id',
+            'id',
+            'knockout_match_id'
+        );
     }
 
     public function player1()
@@ -121,24 +128,31 @@ class KnockoutMatch extends Model
         return 'Unknown';
     }
 
+    protected function resolvePairPlayer(?array $pair, int $index): ?User
+    {
+        $playerId = $pair[$index] ?? null;
+
+        return $playerId ? User::find($playerId) : null;
+    }
+
     public function getPair1Player1Attribute()
     {
-        return User::find($this->pair1[0]);
+        return $this->resolvePairPlayer($this->pair1 ?? [], 0);
     }
 
     public function getPair1Player2Attribute()
     {
-        return User::find($this->pair1[1]);
+        return $this->resolvePairPlayer($this->pair1 ?? [], 1);
     }
 
     public function getPair2Player1Attribute()
     {
-        return User::find($this->pair2[0]);
+        return $this->resolvePairPlayer($this->pair2 ?? [], 0);
     }
 
     public function getPair2Player2Attribute()
     {
-        return User::find($this->pair2[1]);
+        return $this->resolvePairPlayer($this->pair2 ?? [], 1);
     }
 
     /**
@@ -146,18 +160,67 @@ class KnockoutMatch extends Model
      */
     public function updateNextMatch()
     {
-        $match = $this;
-        $dependant = $this->dependant;
+        if ($this->score1 === null || $this->score2 === null || $this->score1 === $this->score2) {
+            return;
+        }
 
-        // get the winner of current match
-        $winner = $match->score1 > $match->score2 ? $match->player1_id : $match->player2_id;
+        $dependentMatch = $this->dependant()
+            ->with(['dependancies', 'round.knockout'])
+            ->first();
 
-        // use search to find which position the winner should be in
-        $position = array_search($match->id, $dependant->dependancies->pluck('id')->toArray()) + 1;
+        if (! $dependentMatch) {
+            return;
+        }
 
-        // update the dependant match with the winner
-        $dependant->update([
-            "player{$position}_id" => $winner,
-        ]);
+        if (! $dependentMatch->dependancies->contains('depends_on_id', $this->id)) {
+            return;
+        }
+
+        $position = $dependentMatch->dependancies
+            ->pluck('depends_on_id')
+            ->search($this->id);
+
+        if ($position === false) {
+            return;
+        }
+
+        $position += 1;
+        $winnerSlot = $this->score1 > $this->score2 ? 1 : 2;
+        $knockoutType = $dependentMatch->round?->knockout?->type?->value;
+        $payload = [];
+
+        switch ($knockoutType) {
+            case 'singles':
+                $winnerId = $this->{"player{$winnerSlot}_id"} ?? null;
+
+                if ($winnerId) {
+                    $payload = ["player{$position}_id" => $winnerId];
+                }
+                break;
+            case 'doubles':
+                $winningPair = $this->{"pair{$winnerSlot}"} ?? null;
+
+                if (is_array($winningPair) && ! empty($winningPair)) {
+                    $payload = ["pair{$position}" => $winningPair];
+                }
+                break;
+            case 'team':
+                $winnerTeamId = $this->{"team{$winnerSlot}_id"} ?? null;
+
+                if ($winnerTeamId) {
+                    $payload = ["team{$position}_id" => $winnerTeamId];
+                }
+                break;
+        }
+
+        if (empty($payload)) {
+            return;
+        }
+
+        $dependentMatch->fill($payload);
+
+        if ($dependentMatch->isDirty()) {
+            $dependentMatch->save();
+        }
     }
 }

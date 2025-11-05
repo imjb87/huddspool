@@ -2,56 +2,54 @@
 
 namespace App\Queries;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Team;
 use App\Models\Section;
+use App\Models\Team;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection;
 
 class GetTeamPlayers
 {
     public function __construct(
         protected Team $team,
-        protected Section $section,
-    ) {}
+        protected ?Section $section,
+    ) {
+    }
 
-    public function __invoke()
+    public function __invoke(): Collection
     {
-        return DB::select(
-            'SELECT users.id,
-                    users.name,
-                    COUNT(frames.id) AS frames_played,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score > frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score > frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_won,
-                    SUM(CASE
-                            WHEN (users.id = frames.home_player_id
-                                AND frames.home_score < frames.away_score)
-                                OR (users.id = frames.away_player_id
-                                    AND frames.away_score < frames.home_score) THEN 1
-                            ELSE 0
-                        END) AS frames_lost
-            FROM
-                users
-            JOIN 
-                teams ON teams.id = users.team_id
-            LEFT OUTER JOIN
-                frames ON (frames.home_player_id = users.id OR frames.away_player_id = users.id) AND frames.result_id IN (
-                    SELECT
-                        results.id
-                    FROM
-                        results
-                    WHERE
-                        results.section_id = ' . $this->section->id . '
-                )
-            WHERE
-                teams.id = ' . $this->team->id . '
-            GROUP BY
-                users.id
-            ORDER BY
-                users.name ASC'
-        );
+        $sectionId = $this->section?->id;
+
+        $query = $this->team->players()
+            ->select('users.id', 'users.name')
+            ->leftJoin('frames', function (JoinClause $join) {
+                $join->on('frames.home_player_id', '=', 'users.id')
+                    ->orOn('frames.away_player_id', '=', 'users.id');
+            })
+            ->leftJoin('results', 'results.id', '=', 'frames.result_id')
+            ->groupBy('users.id', 'users.name')
+            ->orderBy('users.name');
+
+        if ($sectionId) {
+            $query->selectRaw(
+                'COALESCE(SUM(CASE WHEN results.section_id = ? THEN 1 ELSE 0 END), 0) AS frames_played',
+                [$sectionId]
+            )->selectRaw(
+                'COALESCE(SUM(CASE WHEN results.section_id = ? AND ((frames.home_player_id = users.id AND frames.home_score > frames.away_score) OR (frames.away_player_id = users.id AND frames.away_score > frames.home_score)) THEN 1 ELSE 0 END), 0) AS frames_won',
+                [$sectionId]
+            )->selectRaw(
+                'COALESCE(SUM(CASE WHEN results.section_id = ? AND ((frames.home_player_id = users.id AND frames.home_score < frames.away_score) OR (frames.away_player_id = users.id AND frames.away_score < frames.home_score)) THEN 1 ELSE 0 END), 0) AS frames_lost',
+                [$sectionId]
+            );
+        } else {
+            $query->selectRaw(
+                'COALESCE(SUM(CASE WHEN results.id IS NOT NULL THEN 1 ELSE 0 END), 0) AS frames_played'
+            )->selectRaw(
+                'COALESCE(SUM(CASE WHEN (frames.home_player_id = users.id AND frames.home_score > frames.away_score) OR (frames.away_player_id = users.id AND frames.away_score > frames.home_score) THEN 1 ELSE 0 END), 0) AS frames_won'
+            )->selectRaw(
+                'COALESCE(SUM(CASE WHEN (frames.home_player_id = users.id AND frames.home_score < frames.away_score) OR (frames.away_player_id = users.id AND frames.away_score < frames.home_score) THEN 1 ELSE 0 END), 0) AS frames_lost'
+            );
+        }
+
+        return $query->get();
     }
 }

@@ -101,6 +101,7 @@ class ResultForm extends Component
             'is_overridden' => 0,
             'submitted_by' => auth()->user()->id,
             'section_id' => $this->fixture->section_id,
+            'ruleset_id' => $this->fixture->ruleset_id,
         ]);
 
         foreach ($this->frames as $frame) {

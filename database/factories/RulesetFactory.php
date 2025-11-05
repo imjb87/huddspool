@@ -16,8 +16,12 @@ class RulesetFactory extends Factory
      */
     public function definition()
     {
+        $name = $this->faker->unique()->words(3, true);
+
         return [
-            'name' => $this->faker->name,
+            'name' => ucfirst($name),
+            'slug' => 
+                \Illuminate\Support\Str::slug($name),
         ];
     }
 }

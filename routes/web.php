@@ -28,5 +28,7 @@ Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController
 Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')->name('player.show');
 Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('team.show');
 Route::get('/rulesets/{ruleset}', 'App\Http\Controllers\RulesetController@show')->name('ruleset.show');
+Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
+Route::get('/history/{season}/{ruleset}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
 Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');

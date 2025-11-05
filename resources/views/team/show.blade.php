@@ -147,7 +147,7 @@
                                             @else
                                             <div
                                                 class="whitespace-nowrap px-2 py-4 text-sm text-gray-500 text-center font-semibold w-2/12">
-                                                {{ date('d/m', strtotime($fixture->fixture_date)) }}
+                                                {{ optional($fixture->fixture_date)->format('d/m') }}
                                             </div>
                                             @endif
                                             <div
@@ -174,5 +174,80 @@
             </div>
         </div>
     </div>
+    @if ($history->isNotEmpty())
+        <div class="py-8 sm:py-16">
+            <div class="mx-auto max-w-7xl px-4 lg:px-8">
+                <section>
+                    <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
+                        <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
+                            <h2 class="text-sm font-medium leading-6 text-white">History</h2>
+                        </div>
+                        <div class="border-t border-gray-200 h-full flex flex-col">
+                            <div class="min-w-full overflow-hidden">
+                                <div class="bg-gray-50 flex">
+                                    <div class="flex w-1/2 pl-4 sm:pl-6">
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Season</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Ruleset</div>
+                                    </div>
+                                    <div class="flex w-1/2">
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">Pl</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">W</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">D</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">L</div>
+                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">Pts</div>
+                                    </div>
+                                </div>
+                                <div class="bg-white overflow-hidden">
+                                    @foreach ($history as $entry)
+                                        @php
+                                            $historyLink = $entry['ruleset_slug']
+                                                ? route('history.show', ['season' => $entry['season_slug'], 'ruleset' => $entry['ruleset_slug']])
+                                                : null;
+                                        @endphp
+                                        @if ($historyLink)
+                                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                                                href="{{ $historyLink }}">
+                                        @else
+                                            <div class="flex w-full border-t border-gray-300">
+                                        @endif
+                                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
+                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-6/12 font-semibold" title="{{ $entry['season_name'] }}">
+                                                        {{ $entry['season_label'] ?? $entry['season_name'] }}
+                                                    </div>
+                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-500 w-6/12 truncate">
+                                                        {{ $entry['ruleset_name'] ?? 'N/A' }}
+                                                    </div>
+                                                </div>
+                                                <div class="flex w-1/2 items-center">
+                                                    <div class="py-2 text-sm text-gray-900 w-1/5 text-center">
+                                                        {{ $entry['played'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-1/5 text-center">
+                                                        {{ $entry['wins'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-1/5 text-center">
+                                                        {{ $entry['draws'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-gray-900 w-1/5 text-center">
+                                                        {{ $entry['losses'] }}
+                                                    </div>
+                                                    <div class="py-2 text-sm text-center font-semibold text-green-700 w-1/5">
+                                                        {{ $entry['points'] }}
+                                                    </div>
+                                                </div>
+                                        @if ($historyLink)
+                                            </a>
+                                        @else
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    @endif
 </div>
 @endsection

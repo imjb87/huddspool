@@ -1,11 +1,13 @@
 <?php
 
-// app/Queries/GetSectionAverages.php
-
 namespace App\Queries;
 
-use Illuminate\Support\Facades\DB;
+use App\Data\SectionPlayerAverageData;
+use App\Models\Expulsion;
+use App\Models\Frame;
 use App\Models\Section;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class GetSectionAverages
 {
@@ -13,73 +15,114 @@ class GetSectionAverages
         protected Section $section,
         protected int $page = 1,
         protected int $perPage = 10
-    ) {}
+    ) {
+    }
 
-    public function __invoke()
+    /**
+     * @return Collection<int, SectionPlayerAverageData>
+     */
+    public function __invoke(): Collection
     {
-        $sql = <<<SQL
-SELECT 
-    u.id,
-    u.name,
-    COUNT(f.id) AS frames_played,
-    SUM(
-        CASE 
-            WHEN (u.id = f.home_player_id AND f.home_score > f.away_score)
-              OR (u.id = f.away_player_id AND f.away_score > f.home_score)
-            THEN 1 ELSE 0 
-        END
-    ) AS frames_won,
-    SUM(
-        CASE 
-            WHEN (u.id = f.home_player_id AND f.home_score < f.away_score)
-              OR (u.id = f.away_player_id AND f.away_score < f.home_score)
-            THEN 1 ELSE 0 
-        END
-    ) AS frames_lost,
-    ROUND(
-        100.0 * SUM(
-            CASE 
-                WHEN (u.id = f.home_player_id AND f.home_score > f.away_score)
-                  OR (u.id = f.away_player_id AND f.away_score > f.home_score)
-                THEN 1 ELSE 0 
-            END
-        ) / NULLIF(COUNT(f.id), 0), 1
-    ) AS frames_won_pct,
-    ROUND(
-        100.0 * SUM(
-            CASE 
-                WHEN (u.id = f.home_player_id AND f.home_score < f.away_score)
-                  OR (u.id = f.away_player_id AND f.away_score < f.home_score)
-                THEN 1 ELSE 0 
-            END
-        ) / NULLIF(COUNT(f.id), 0), 1
-    ) AS frames_lost_pct
-FROM frames f
-JOIN users u 
-  ON u.id = f.home_player_id OR u.id = f.away_player_id
-JOIN results r 
-  ON r.id = f.result_id
-WHERE 
-  r.section_id = ?
-  AND u.id NOT IN (
-      SELECT e.expellable_id
-      FROM expulsions e
-      WHERE e.expellable_type = 'App\\Models\\User'
-        AND e.season_id = ?
-  )
-GROUP BY u.id, u.name
-ORDER BY 
-  frames_won DESC,
-  frames_lost ASC,
-  u.name ASC
-LIMIT ? OFFSET ?
-SQL;
+        $sectionId = $this->section->id;
+        $cacheKey = sprintf('section:%d:averages', $sectionId);
 
-        return DB::select($sql, [
-            $this->section->id,
-            $this->section->season_id,           // <- use the season id here
-            $this->perPage,
-            ($this->page - 1) * $this->perPage,
-        ]);
+        $allPlayers = Cache::remember($cacheKey, now()->addMinutes(2), function () use ($sectionId) {
+            $frames = Frame::query()
+                ->with([
+                    'homePlayer:id,name',
+                    'awayPlayer:id,name',
+                    'result:id,section_id',
+                ])
+                ->whereHas('result', fn ($query) => $query->where('section_id', $sectionId))
+                ->get();
+
+            if ($frames->isEmpty()) {
+                return collect();
+            }
+
+            $stats = [];
+
+            $ensurePlayer = function (int $playerId, ?string $name) use (&$stats) {
+                if (! array_key_exists($playerId, $stats)) {
+                    $stats[$playerId] = [
+                        'name' => $name ?? 'Unknown',
+                        'frames_played' => 0,
+                        'frames_won' => 0,
+                        'frames_lost' => 0,
+                    ];
+                }
+            };
+
+            foreach ($frames as $frame) {
+                $homeId = $frame->home_player_id;
+                $awayId = $frame->away_player_id;
+
+                if ($homeId !== null) {
+                    $ensurePlayer($homeId, $frame->homePlayer?->name);
+                    $stats[$homeId]['frames_played']++;
+                }
+
+                if ($awayId !== null) {
+                    $ensurePlayer($awayId, $frame->awayPlayer?->name);
+                    $stats[$awayId]['frames_played']++;
+                }
+
+                if ($homeId !== null && $awayId !== null) {
+                    if ($frame->home_score > $frame->away_score) {
+                        $stats[$homeId]['frames_won']++;
+                        $stats[$awayId]['frames_lost']++;
+                    } elseif ($frame->home_score < $frame->away_score) {
+                        $stats[$awayId]['frames_won']++;
+                        $stats[$homeId]['frames_lost']++;
+                    }
+                }
+            }
+
+            $expelledPlayerIds = Expulsion::query()
+                ->where('season_id', $this->section->season_id)
+                ->where('expellable_type', 'App\\Models\\User')
+                ->pluck('expellable_id')
+                ->all();
+
+            return collect($stats)
+                ->reject(fn ($data, $playerId) => in_array((int) $playerId, $expelledPlayerIds, true))
+                ->map(function (array $data, $playerId) {
+                    $playerId = (int) $playerId;
+                    $played = $data['frames_played'] ?? 0;
+                    $won = $data['frames_won'] ?? 0;
+                    $lost = $data['frames_lost'] ?? 0;
+
+                    $winPercentage = $played > 0 ? round(($won / $played) * 100, 1) : 0.0;
+                    $lossPercentage = $played > 0 ? round(($lost / $played) * 100, 1) : 0.0;
+
+                    return new SectionPlayerAverageData(
+                        id: $playerId,
+                        name: $data['name'] ?? 'Unknown',
+                        frames_played: $played,
+                        frames_won: $won,
+                        frames_lost: $lost,
+                        frames_won_percentage: $winPercentage,
+                        frames_lost_percentage: $lossPercentage,
+                    );
+                })
+                ->sort(function (SectionPlayerAverageData $a, SectionPlayerAverageData $b) {
+                    if ($a->frames_won !== $b->frames_won) {
+                        return $a->frames_won < $b->frames_won ? 1 : -1;
+                    }
+
+                    if ($a->frames_lost !== $b->frames_lost) {
+                        return $a->frames_lost < $b->frames_lost ? -1 : 1;
+                    }
+
+                    return strcmp($a->name, $b->name);
+                })
+                ->values();
+        });
+
+        $offset = max(0, ($this->page - 1) * $this->perPage);
+
+        return $allPlayers
+            ->slice($offset, $this->perPage)
+            ->values();
     }
 }

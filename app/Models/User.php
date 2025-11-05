@@ -172,7 +172,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->id === $this->team?->captain_id;
     }
 
-    public function role()
+    public function roleLabel()
     {
         if ($this->isCaptain()) {
             return 'Captain';
