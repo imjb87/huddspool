@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         if (Schema::hasTable('rulesets')) {
             $rulesets = Cache::remember('nav:rulesets', now()->addMinutes(10), function () {
-                return Ruleset::query()->orderBy('name')->get();
+                return Ruleset::all();
             });
             view()->share('rulesets', $rulesets);
         } else {
