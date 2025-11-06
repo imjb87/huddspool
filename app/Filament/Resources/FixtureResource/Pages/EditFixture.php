@@ -123,6 +123,7 @@ class EditFixture extends EditRecord
                             'home_score'    => $data['home_score'],
                             'away_score'    => $data['away_score'],
                             'submitted_by'  => auth()->id(),
+                            'is_confirmed'  => true,
                         ]);
 
                         // Nuke & repopulate frames (simple + reliable)
@@ -154,6 +155,7 @@ class EditFixture extends EditRecord
                         'home_team_name' => $this->record->homeTeam->name,
                         'away_team_name' => $this->record->awayTeam->name,
                         'submitted_by'   => auth()->id(),
+                        'is_confirmed'   => true,
                     ]);
 
                     foreach ($data['frames'] ?? [] as $frame) {
