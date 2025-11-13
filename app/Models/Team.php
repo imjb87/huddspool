@@ -49,6 +49,16 @@ class Team extends Model
     }
 
     /**
+     * Scope teams that belong to the currently open season.
+     */
+    public function scopeInOpenSeason(Builder $query): Builder
+    {
+        return $query->whereHas('sections', function (Builder $sectionQuery) {
+            $sectionQuery->whereHas('season', fn (Builder $seasonQuery) => $seasonQuery->where('is_open', true));
+        });
+    }
+
+    /**
      * Get the sections the team belongs to.
      */
     public function sections()

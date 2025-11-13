@@ -17,6 +17,10 @@ class TeamController extends Controller
 
         $section = $team->section();
 
+        if (! $section) {
+            abort(404);
+        }
+
         // Retrieve players for this team with frames played, frames won, and frames lost.
         $players = new GetTeamPlayers($team, $section)();
 
