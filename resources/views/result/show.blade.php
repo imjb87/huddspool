@@ -103,8 +103,13 @@
                                     </a>
                                     @else
                                     <div
-                                        class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
-                                        Awarded
+                                        class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
+                                        <span class="flex items-center gap-3">
+                                            <img class="w-6 h-6 rounded-full object-cover"
+                                                src="{{ asset('/images/user.jpg') }}"
+                                                alt="Awarded">
+                                            Awarded
+                                        </span>
                                     </div>
                                     @endif
                                     <div class="w-10 sm:w-12 border-x border-gray-200">
@@ -139,8 +144,13 @@
                                     </a>
                                     @else
                                     <div
-                                        class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
-                                        Awarded
+                                        class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                        <span class="flex items-center gap-3">
+                                            <img class="w-6 h-6 rounded-full object-cover"
+                                                src="{{ asset('/images/user.jpg') }}"
+                                                alt="Awarded">
+                                            Awarded
+                                        </span>
                                     </div>
                                     @endif
                                 </div>
