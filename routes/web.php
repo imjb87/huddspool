@@ -26,6 +26,9 @@ Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')->n
 Route::get('/results/create/{fixture}', 'App\Http\Controllers\ResultController@create')->name('result.create');
 Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController@index')->name('player.index');
 Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')->name('player.show');
+Route::post('/players/{player}/avatar', [\App\Http\Controllers\PlayerController::class, 'updateAvatar'])
+    ->middleware('auth')
+    ->name('player.avatar');
 Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('team.show');
 Route::get('/rulesets/{ruleset}', 'App\Http\Controllers\RulesetController@show')->name('ruleset.show');
 Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');

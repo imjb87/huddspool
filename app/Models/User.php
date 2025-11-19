@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -24,6 +24,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'telephone',
+        'avatar_path',
         'password',
         'team_id',
     ];
@@ -183,5 +184,14 @@ class User extends Authenticatable implements FilamentUser
         }
 
         return 'Player';
+    }
+
+    public function avatarUrl(): string
+    {
+        if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
+            return Storage::url($this->avatar_path);
+        }
+
+        return asset('/images/user.jpg');
     }
 }

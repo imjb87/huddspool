@@ -251,10 +251,13 @@ class ResultForm extends Component
                 'away_score' => $awayScore,
                 'is_confirmed' => $lock,
                 'is_overridden' => $isOverridden,
-                'submitted_by' => auth()->id(),
                 'section_id' => $this->fixture->section_id,
                 'ruleset_id' => $this->fixture->ruleset_id,
             ];
+
+            if ($lock) {
+                $attributes['submitted_by'] = auth()->id();
+            }
 
             if (! $this->result) {
                 $this->result = Result::create(array_merge($attributes, [

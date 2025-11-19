@@ -93,8 +93,13 @@
                                     class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-t border-gray-200 sm:border-0">
                                     @if ($frame->home_player_id)
                                     <a href="{{ route('player.show', $frame->homePlayer) }}"
-                                        class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
-                                        {{ $frame->homePlayer->name }}
+                                        class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
+                                        <span class="flex items-center gap-3">
+                                            <img class="w-6 h-6 rounded-full object-cover"
+                                                src="{{ $frame->homePlayer->avatarUrl() }}"
+                                                alt="{{ $frame->homePlayer->name }} avatar">
+                                            <span>{{ $frame->homePlayer->name }}</span>
+                                        </span>
                                     </a>
                                     @else
                                     <div
@@ -124,8 +129,13 @@
                                     </div>
                                     @if ($frame->away_player_id)
                                     <a href="{{ route('player.show', $frame->awayPlayer) }}"
-                                        class="border-0 py-2 px-4 sm:px-6 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
-                                        {{ $frame->awayPlayer->name }}
+                                        class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
+                                        <span class="flex items-center gap-3">
+                                            <img class="w-6 h-6 rounded-full object-cover"
+                                                src="{{ $frame->awayPlayer->avatarUrl() }}"
+                                                alt="{{ $frame->awayPlayer->name }} avatar">
+                                            <span>{{ $frame->awayPlayer->name }}</span>
+                                        </span>
                                     </a>
                                     @else
                                     <div

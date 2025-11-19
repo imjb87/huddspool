@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $canUpdateAvatar = auth()->check() && (auth()->user()->is($player) || auth()->user()->isAdmin());
+@endphp
 <div class="pt-[80px]">
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
@@ -14,11 +17,32 @@
                     <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                         <div class="flex items-start space-x-5">
                             <div class="flex-shrink-0">
-                                <div class="relative">
-                                    <img class="h-16 w-16 rounded-full" src="{{ asset('/images/user.jpeg') }}"
-                                        alt="">
-                                    <span class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></span>
-                                </div>
+                                @if ($canUpdateAvatar)
+                                    <form method="POST" action="{{ route('player.avatar', $player) }}"
+                                        enctype="multipart/form-data" class="relative group">
+                                        @csrf
+                                        <label for="avatar-upload-{{ $player->id }}"
+                                            class="block cursor-pointer relative"
+                                            title="Click to upload a new avatar">
+                                            <img class="h-16 w-16 rounded-full object-cover"
+                                                src="{{ $player->avatarUrl() }}"
+                                                alt="{{ $player->name }} avatar">
+                                            <span
+                                                class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-semibold text-white z-10">Change</span>
+                                            <span class="absolute inset-0 rounded-full shadow-inner"
+                                                aria-hidden="true"></span>
+                                        </label>
+                                        <input type="file" name="avatar" id="avatar-upload-{{ $player->id }}"
+                                            class="hidden" accept="image/*" onchange="this.form.submit()">
+                                    </form>
+                                @else
+                                    <div class="relative">
+                                        <img class="h-16 w-16 rounded-full object-cover"
+                                            src="{{ $player->avatarUrl() }}" alt="{{ $player->name }} avatar">
+                                        <span class="absolute inset-0 rounded-full shadow-inner"
+                                            aria-hidden="true"></span>
+                                    </div>
+                                @endif
                             </div>
                             <!--
                             Use vertical padding to simulate center alignment when both lines of text are one line,
