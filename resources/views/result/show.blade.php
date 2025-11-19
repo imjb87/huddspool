@@ -159,7 +159,7 @@
                             @endif
                             <div class="flex flex-wrap bg-gray-50 font-semibold text-gray-900 text-sm">
                                 <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200">
-                                    <div class="flex-1 leading-6 py-2 px-4 sm:px-6 sm:text-right">
+                                    <div class="flex-1 leading-6 py-2 px-4 sm:text-right">
                                         Home total
                                     </div>
                                     <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200">
@@ -172,14 +172,14 @@
                                         class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200 order-last sm:order-first">
                                         {{ $result->away_score }}
                                     </div>
-                                    <div class="flex-1 leading-6 py-2 px-4 sm:px-6 order-first sm:order-last">
+                                    <div class="flex-1 leading-6 py-2 px-4 order-first sm:order-last">
                                         Away total
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- submitted by -->
-                        <div class="my-3 px-4 sm:px-6">
+                        <div class="my-3 px-4">
                             <p class="italic text-sm text-center mx-auto">This result was submitted by
                                 {{ $result->submittedBy->name }} on
                                 {{ $result->created_at->format('l jS F Y') }} at
