@@ -12,6 +12,7 @@ final class SectionPlayerAverageData
         public int $frames_lost,
         public float $frames_won_percentage,
         public float $frames_lost_percentage,
+        public string $avatar_url,
     ) {
     }
 }

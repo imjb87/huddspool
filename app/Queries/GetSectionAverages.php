@@ -6,6 +6,7 @@ use App\Data\SectionPlayerAverageData;
 use App\Models\Expulsion;
 use App\Models\Frame;
 use App\Models\Section;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -84,25 +85,33 @@ class GetSectionAverages
                 ->pluck('expellable_id')
                 ->all();
 
+            $playerUsers = User::withTrashed()
+                ->select(['id', 'name', 'avatar_path'])
+                ->whereIn('id', array_keys($stats))
+                ->get()
+                ->keyBy('id');
+
             return collect($stats)
                 ->reject(fn ($data, $playerId) => in_array((int) $playerId, $expelledPlayerIds, true))
-                ->map(function (array $data, $playerId) {
+                ->map(function (array $data, $playerId) use ($playerUsers) {
                     $playerId = (int) $playerId;
                     $played = $data['frames_played'] ?? 0;
                     $won = $data['frames_won'] ?? 0;
                     $lost = $data['frames_lost'] ?? 0;
+                    $user = $playerUsers->get($playerId);
 
                     $winPercentage = $played > 0 ? round(($won / $played) * 100, 1) : 0.0;
                     $lossPercentage = $played > 0 ? round(($lost / $played) * 100, 1) : 0.0;
 
                     return new SectionPlayerAverageData(
                         id: $playerId,
-                        name: $data['name'] ?? 'Unknown',
+                        name: $user?->name ?? $data['name'] ?? 'Unknown',
                         frames_played: $played,
                         frames_won: $won,
                         frames_lost: $lost,
                         frames_won_percentage: $winPercentage,
                         frames_lost_percentage: $lossPercentage,
+                        avatar_url: $user ? $user->avatarUrl() : asset('/images/user.jpg'),
                     );
                 })
                 ->sort(function (SectionPlayerAverageData $a, SectionPlayerAverageData $b) {

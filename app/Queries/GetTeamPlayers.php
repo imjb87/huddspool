@@ -20,13 +20,13 @@ class GetTeamPlayers
         $sectionId = $this->section?->id;
 
         $query = $this->team->players()
-            ->select('users.id', 'users.name')
+            ->select('users.id', 'users.name', 'users.avatar_path')
             ->leftJoin('frames', function (JoinClause $join) {
                 $join->on('frames.home_player_id', '=', 'users.id')
                     ->orOn('frames.away_player_id', '=', 'users.id');
             })
             ->leftJoin('results', 'results.id', '=', 'frames.result_id')
-            ->groupBy('users.id', 'users.name')
+            ->groupBy('users.id', 'users.name', 'users.avatar_path')
             ->orderBy('users.name');
 
         if ($sectionId) {

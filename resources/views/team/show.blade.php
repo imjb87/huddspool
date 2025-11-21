@@ -75,8 +75,13 @@
                                         <a href="{{ route('player.show', $player->id) }}"
                                             class=" hover:cursor-pointer hover:bg-gray-50 flex">
                                             <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm text-gray-900 w-6/12 truncate">
-                                                {{ $player->name }}
+                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm text-gray-900 w-6/12">
+                                                <div class="flex items-center gap-x-3">
+                                                    <img class="h-6 w-6 rounded-full object-cover"
+                                                        src="{{ $player->avatarUrl() }}"
+                                                        alt="{{ $player->name }} avatar">
+                                                    <span class="truncate">{{ $player->name }}</span>
+                                                </div>
                                             </div>
                                             <div class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 text-center">
                                                 {{ $player->frames_played }}

@@ -34,11 +34,13 @@
                             <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
                                 href="{{ route('player.show', $player->id) }}">
                                 <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
-                                    <div
-                                        class="whitespace-nowrap py-2 text-sm text-gray-900 w-2/12 font-semibold">
+                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-2/12 font-semibold">
                                         {{ $loop->iteration + ($page - 1) * $perPage }}.</div>
-                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex gap-x-3 flex-col">
-                                        {{ $player->name }}
+                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-10/12 flex items-center gap-x-3">
+                                        <img class="h-6 w-6 rounded-full object-cover"
+                                            src="{{ $player->avatar_url }}"
+                                            alt="{{ $player->name }} avatar">
+                                        <span class="truncate">{{ $player->name }}</span>
                                     </div>
                                 </div>
                                 <div class="flex w-1/2 items-center">
