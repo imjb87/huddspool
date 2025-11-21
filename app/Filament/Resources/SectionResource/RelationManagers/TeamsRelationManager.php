@@ -8,7 +8,8 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use App\Models\SectionTeam;
+
 class TeamsRelationManager extends RelationManager
 {
     protected static ?string $title = 'Teams';
@@ -64,10 +65,17 @@ class TeamsRelationManager extends RelationManager
                     ->action(function (RelationManager $livewire, Model $record, array $data): void {
                         $section = $livewire->getOwnerRecord();
 
-                        $section->teams()->updateExistingPivot(
-                            $record->id,
-                            ['deducted' => DB::raw('COALESCE(deducted,0) + ' . (int) $data['deducted'])]
-                        );
+                        $pivot = SectionTeam::query()
+                            ->where('section_id', $section->id)
+                            ->where('team_id', $record->id)
+                            ->first();
+
+                        if (! $pivot) {
+                            return;
+                        }
+
+                        $pivot->deducted = ((int) $pivot->deducted) + (int) $data['deducted'];
+                        $pivot->save();
                     })
                     ->color('warning')
                     ->icon('heroicon-o-arrow-down'),
