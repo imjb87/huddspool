@@ -34,6 +34,15 @@
                                         </label>
                                         <input type="file" name="avatar" id="avatar-upload-{{ $player->id }}"
                                             class="hidden" accept="image/*" onchange="this.form.submit()">
+                                        <p class="mt-2 text-xs text-gray-500">
+                                            Upload JPG, PNG or WebP files up to 5&nbsp;MB.
+                                        </p>
+                                        @error('avatar')
+                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                        @if (session('status'))
+                                            <p class="mt-1 text-xs text-green-600">{{ session('status') }}</p>
+                                        @endif
                                     </form>
                                 @else
                                     <div class="relative">

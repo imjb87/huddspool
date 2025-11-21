@@ -34,7 +34,7 @@ class PlayerController extends Controller
     public function updateAvatar(Request $request, User $player)
     {
         $request->validate([
-            'avatar' => ['required', 'image', 'max:2048'],
+            'avatar' => ['required', 'image', 'max:5120'], // allow images up to 5MB
         ]);
 
         $user = $request->user();

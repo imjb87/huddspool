@@ -62,6 +62,22 @@ class TeamsRelationManager extends RelationManager
                             ->rules('numeric')
                             ->default(0),
                     ])
+                    ->fillForm(function (RelationManager $livewire, Model $record): array {
+                        $pivot = $record->pivot;
+
+                        if (! $pivot) {
+                            $section = $livewire->getOwnerRecord();
+
+                            $pivot = SectionTeam::query()
+                                ->where('section_id', $section->id)
+                                ->where('team_id', $record->id)
+                                ->first();
+                        }
+
+                        return [
+                            'deducted' => (int) ($pivot->deducted ?? 0),
+                        ];
+                    })
                     ->action(function (RelationManager $livewire, Model $record, array $data): void {
                         $section = $livewire->getOwnerRecord();
 
@@ -74,7 +90,7 @@ class TeamsRelationManager extends RelationManager
                             return;
                         }
 
-                        $pivot->deducted = ((int) $pivot->deducted) + (int) $data['deducted'];
+                        $pivot->deducted = (int) $data['deducted'];
                         $pivot->save();
                     })
                     ->color('warning')
