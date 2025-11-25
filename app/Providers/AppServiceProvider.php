@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use App\Observers\SeasonObserver;
+use Laravel\Pulse\Facades\Pulse;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,12 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
+        ]);
+
+        Pulse::user(fn ($user) => [
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar_url,
         ]);
 
         Gate::define('viewPulse', function (User $user) {

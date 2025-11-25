@@ -111,7 +111,7 @@ class GetSectionAverages
                         frames_lost: $lost,
                         frames_won_percentage: $winPercentage,
                         frames_lost_percentage: $lossPercentage,
-                        avatar_url: $user ? $user->avatarUrl() : asset('/images/user.jpg'),
+                        avatar_url: $user ? $user->avatar_url : asset('/images/user.jpg'),
                     );
                 })
                 ->sort(function (SectionPlayerAverageData $a, SectionPlayerAverageData $b) {

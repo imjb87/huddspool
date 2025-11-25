@@ -55,6 +55,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $appends = [
         'confirmed',
+        'avatar_url',
     ];                            
 
     public function canAccessPanel(Panel $panel): bool
@@ -186,7 +187,7 @@ class User extends Authenticatable implements FilamentUser
         return 'Player';
     }
 
-    public function avatarUrl(): string
+    public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
             return Storage::url($this->avatar_path);

@@ -25,7 +25,7 @@
                                             class="block cursor-pointer relative"
                                             title="Click to upload a new avatar">
                                             <img class="h-16 w-16 rounded-full object-cover"
-                                                src="{{ $player->avatarUrl() }}"
+                                                src="{{ $player->avatar_url }}"
                                                 alt="{{ $player->name }} avatar">
                                             <span
                                                 class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-semibold text-white z-10">Change</span>
@@ -38,7 +38,7 @@
                                 @else
                                     <div class="relative">
                                         <img class="h-16 w-16 rounded-full object-cover"
-                                            src="{{ $player->avatarUrl() }}" alt="{{ $player->name }} avatar">
+                                            src="{{ $player->avatar_url }}" alt="{{ $player->name }} avatar">
                                         <span class="absolute inset-0 rounded-full shadow-inner"
                                             aria-hidden="true"></span>
                                     </div>

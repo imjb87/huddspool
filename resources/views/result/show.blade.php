@@ -96,7 +96,7 @@
                                         class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0">
                                         <span class="flex items-center gap-3">
                                             <img class="w-6 h-6 rounded-full object-cover"
-                                                src="{{ $frame->homePlayer->avatarUrl() }}"
+                                                src="{{ $frame->homePlayer->avatar_url }}"
                                                 alt="{{ $frame->homePlayer->name }} avatar">
                                             <span>{{ $frame->homePlayer->name }}</span>
                                         </span>
@@ -137,7 +137,7 @@
                                         class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0">
                                         <span class="flex items-center gap-3">
                                             <img class="w-6 h-6 rounded-full object-cover"
-                                                src="{{ $frame->awayPlayer->avatarUrl() }}"
+                                                src="{{ $frame->awayPlayer->avatar_url }}"
                                                 alt="{{ $frame->awayPlayer->name }} avatar">
                                             <span>{{ $frame->awayPlayer->name }}</span>
                                         </span>

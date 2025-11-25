@@ -78,7 +78,7 @@
                                                 class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm text-gray-900 w-6/12">
                                                 <div class="flex items-center gap-x-3">
                                                     <img class="h-6 w-6 rounded-full object-cover"
-                                                        src="{{ $player->avatarUrl() }}"
+                                                        src="{{ $player->avatar_url }}"
                                                         alt="{{ $player->name }} avatar">
                                                     <span class="truncate">{{ $player->name }}</span>
                                                 </div>
