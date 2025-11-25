@@ -179,6 +179,7 @@
                             </div>
                         </div>
                         <!-- submitted by -->
+                        @if ($result->submittedBy) 
                         <div class="my-3 px-4">
                             <p class="italic text-sm text-center mx-auto">This result was submitted by
                                 {{ $result->submittedBy->name }} on
@@ -186,6 +187,7 @@
                                 {{ $result->created_at->format('H:i') }}.
                             </p>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
