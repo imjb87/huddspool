@@ -27,6 +27,7 @@ class User extends Authenticatable implements FilamentUser
         'avatar_path',
         'password',
         'team_id',
+        'is_admin', 
     ];
 
     /**
