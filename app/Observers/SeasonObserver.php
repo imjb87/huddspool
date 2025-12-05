@@ -27,6 +27,7 @@ class SeasonObserver
         Cache::forget('stats:open-season');
         Cache::forget('nav:past-seasons');
         Cache::forget('history:index');
+        Cache::forget(sprintf('history:season:%d', $season->id));
 
         $season->loadMissing('sections');
         foreach ($season->sections as $section) {

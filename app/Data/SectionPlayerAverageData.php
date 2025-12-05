@@ -7,6 +7,7 @@ final class SectionPlayerAverageData
     public function __construct(
         public int $id,
         public string $name,
+        public ?string $team_name,
         public int $frames_played,
         public int $frames_won,
         public int $frames_lost,

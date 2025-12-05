@@ -22,6 +22,9 @@ class Section extends Model
             Cache::forget('nav:past-seasons');
             Cache::forget(sprintf('section:%d:averages', $section->id));
             Cache::forget(sprintf('section:%d:standings', $section->id));
+            if ($section->season_id) {
+                Cache::forget(sprintf('history:season:%d', $section->season_id));
+            }
 
             if ($section->season_id && $section->ruleset_id) {
                 Cache::forget(sprintf('history:sections:%d:%d', $section->season_id, $section->ruleset_id));

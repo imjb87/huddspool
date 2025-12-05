@@ -45,9 +45,6 @@ class UserResource extends Resource
                             ->label('Telephone')
                             ->placeholder('0123456789')
                             ->tel(),
-                        Forms\Components\ToggleButtons::make('is_admin')
-                            ->label('Is Admin?') 
-                            ->boolean(), 
                         Forms\Components\Select::make('role')
                             ->label('Role')
                             ->options([

@@ -129,7 +129,7 @@
                         @endphp
                         @if ($seasonRulesets->isNotEmpty())
                             <div class="py-2">
-                                <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $season->name }}</p>
+                                <a href="{{ route('history.season', $season) }}" class="px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $season->name }}</a>
                                 @foreach ($seasonRulesets as $ruleset)
                                     <a href="{{ route('history.show', [$season, $ruleset]) }}"
                                         class="block rounded-md py-2 pl-6 pr-4 text-sm leading-5 text-gray-700 hover:bg-gray-50 font-semibold">{{ $ruleset->name }}</a>
@@ -426,9 +426,9 @@
                                         @endphp
                                         @if ($seasonRulesets->isNotEmpty())
                                             <div class="space-y-1">
-                                                <p class="px-6 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                                <a href="{{ route('history.season', $season) }}" class="px-6 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
                                                     {{ $season->name }}
-                                                </p>
+                                                </a>                                                
                                                 @foreach ($seasonRulesets as $ruleset)
                                                     <a href="{{ route('history.show', [$season, $ruleset]) }}"
                                                         class="block rounded-lg py-2 pl-9 pr-3 text-sm leading-7 text-gray-900 hover:bg-gray-50 font-semibold">

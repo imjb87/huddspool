@@ -72,6 +72,10 @@ class Frame extends Model
         $seasonId = $this->result?->fixture?->season_id ?? $this->result?->section?->season_id;
         $rulesetId = $this->result?->fixture?->ruleset_id ?? $this->result?->section?->ruleset_id;
 
+        if ($seasonId) {
+            Cache::forget(sprintf('history:season:%d', $seasonId));
+        }
+
         if ($seasonId && $rulesetId) {
             Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
         }

@@ -42,6 +42,10 @@ class SectionTeam extends Pivot
         Cache::forget("team:season-history:{$this->team_id}");
 
         if ($section = Section::query()->select('season_id', 'ruleset_id')->find($this->section_id)) {
+            if ($section->season_id) {
+                Cache::forget(sprintf('history:season:%d', $section->season_id));
+            }
+
             if ($section->season_id && $section->ruleset_id) {
                 Cache::forget(sprintf('history:sections:%d:%d', $section->season_id, $section->ruleset_id));
             }

@@ -67,6 +67,8 @@ class Expulsion extends Model
             return;
         }
 
+        Cache::forget(sprintf('history:season:%d', $this->season_id));
+
         $sections = Section::query()
             ->where('season_id', $this->season_id)
             ->get(['id', 'ruleset_id']);

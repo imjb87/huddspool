@@ -28,6 +28,10 @@ class Result extends Model
             $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;
             $rulesetId = $result->fixture?->ruleset_id ?? $result->section?->ruleset_id;
 
+            if ($seasonId) {
+                Cache::forget(sprintf('history:season:%d', $seasonId));
+            }
+
             if ($seasonId && $rulesetId) {
                 Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
             }

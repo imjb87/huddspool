@@ -32,7 +32,7 @@ class GetSectionAverages
                 ->with([
                     'homePlayer:id,name',
                     'awayPlayer:id,name',
-                    'result:id,section_id',
+                    'result:id,section_id,home_team_id,home_team_name,away_team_id,away_team_name',
                 ])
                 ->whereHas('result', fn ($query) => $query->where('section_id', $sectionId))
                 ->get();
@@ -50,8 +50,27 @@ class GetSectionAverages
                         'frames_played' => 0,
                         'frames_won' => 0,
                         'frames_lost' => 0,
+                        'teams' => [],
                     ];
                 }
+            };
+
+            $trackTeam = function (int $playerId, ?int $teamId, ?string $teamName) use (&$stats): void {
+                if ($teamId === null && empty($teamName)) {
+                    return;
+                }
+
+                $key = $teamId !== null ? (string) $teamId : sprintf('name:%s', strtolower($teamName ?? ''));
+
+                if (! isset($stats[$playerId]['teams'][$key])) {
+                    $stats[$playerId]['teams'][$key] = [
+                        'id' => $teamId,
+                        'name' => $teamName ?: 'Unknown',
+                        'frames' => 0,
+                    ];
+                }
+
+                $stats[$playerId]['teams'][$key]['frames']++;
             };
 
             foreach ($frames as $frame) {
@@ -60,11 +79,21 @@ class GetSectionAverages
 
                 if ($homeId !== null) {
                     $ensurePlayer($homeId, $frame->homePlayer?->name);
+                    $trackTeam(
+                        $homeId,
+                        $frame->result?->home_team_id,
+                        $frame->result?->home_team_name
+                    );
                     $stats[$homeId]['frames_played']++;
                 }
 
                 if ($awayId !== null) {
                     $ensurePlayer($awayId, $frame->awayPlayer?->name);
+                    $trackTeam(
+                        $awayId,
+                        $frame->result?->away_team_id,
+                        $frame->result?->away_team_name
+                    );
                     $stats[$awayId]['frames_played']++;
                 }
 
@@ -99,6 +128,9 @@ class GetSectionAverages
                     $won = $data['frames_won'] ?? 0;
                     $lost = $data['frames_lost'] ?? 0;
                     $user = $playerUsers->get($playerId);
+                    $topTeam = collect($data['teams'] ?? [])
+                        ->sortByDesc('frames')
+                        ->first();
 
                     $winPercentage = $played > 0 ? round(($won / $played) * 100, 1) : 0.0;
                     $lossPercentage = $played > 0 ? round(($lost / $played) * 100, 1) : 0.0;
@@ -106,6 +138,7 @@ class GetSectionAverages
                     return new SectionPlayerAverageData(
                         id: $playerId,
                         name: $user?->name ?? $data['name'] ?? 'Unknown',
+                        team_name: $topTeam['name'] ?? null,
                         frames_played: $played,
                         frames_won: $won,
                         frames_lost: $lost,

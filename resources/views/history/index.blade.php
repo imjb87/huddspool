@@ -12,10 +12,16 @@
             @forelse ($seasonGroups as $group)
                 <section class="mb-8 bg-white shadow sm:rounded-lg overflow-hidden">
                     <div class="px-4 sm:px-6 py-4 bg-green-700">
-                        <h2 class="text-sm font-medium leading-6 text-white flex items-center justify-between">
-                            <span>{{ $group['season']->name }}</span>
-                            <span class="text-xs text-green-100">{{ $group['season']->slug }}</span>
-                        </h2>
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <h2 class="text-sm font-medium leading-6 text-white">{{ $group['season']->name }}</h2>
+                                <p class="text-[11px] uppercase tracking-wide text-green-100">{{ $group['season']->slug }}</p>
+                            </div>
+                            <a href="{{ route('history.season', $group['season']) }}"
+                                class="inline-flex items-center gap-1 rounded-md border border-white/30 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10">
+                                Season overview
+                            </a>
+                        </div>
                     </div>
                     <div class="divide-y divide-gray-200">
                         @forelse ($group['rulesets'] as $ruleset)

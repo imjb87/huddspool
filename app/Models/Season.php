@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,11 +59,56 @@ class Season extends Model
     }
 
     /**
+     * Determine if the season should appear in history (either closed or all scheduled weeks completed).
+     */
+    public function hasConcluded(): bool
+    {
+        if (! $this->is_open) {
+            return true;
+        }
+
+        $lastWeek = $this->lastScheduledDate();
+
+        if (! $lastWeek) {
+            return false;
+        }
+
+        return now()->greaterThanOrEqualTo($lastWeek->copy()->endOfDay());
+    }
+
+    /**
+     * Fetch the final scheduled date for the season.
+     */
+    public function lastScheduledDate(): ?Carbon
+    {
+        return collect($this->dates ?? [])
+            ->flatten()
+            ->filter()
+            ->map(function ($value) {
+                if ($value instanceof Carbon) {
+                    return $value;
+                }
+
+                if (is_string($value)) {
+                    try {
+                        return Carbon::parse($value);
+                    } catch (\Throwable) {
+                        return null;
+                    }
+                }
+
+                return null;
+            })
+            ->filter()
+            ->sort()
+            ->last();
+    }
+
+    /**
      * Get the expulsions for the season.
      */
     public function expulsions()
     {
         return $this->hasMany(Expulsion::class);
     }
-
 }
