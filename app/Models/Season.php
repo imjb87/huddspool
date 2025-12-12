@@ -5,10 +5,20 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Season extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saving(function (Season $season) {
+            if ($season->isDirty('name') || blank($season->slug)) {
+                $season->slug = $season->generateSlug($season->name, $season->id);
+            }
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -56,6 +66,23 @@ class Season extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    private function generateSlug(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name);
+        $original = $slug;
+        $i = 1;
+
+        while (self::query()
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = "{$original}-{$i}";
+            $i++;
+        }
+
+        return $slug;
     }
 
     /**

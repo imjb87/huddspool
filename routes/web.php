@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KnockoutController;
+use App\Http\Controllers\KnockoutMatchController;
 
 
 /*
@@ -35,4 +37,9 @@ Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index']
 Route::get('/history/{season}', [\App\Http\Controllers\HistoryController::class, 'season'])->name('history.season');
 Route::get('/history/{season}/{ruleset}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
+Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
+Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
+Route::middleware('auth')->group(function () {
+    Route::get('/knockout-matches/{match}/submit', [KnockoutMatchController::class, 'submit'])->name('knockout.matches.submit');
+});
 Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');

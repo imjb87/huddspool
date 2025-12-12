@@ -60,6 +60,19 @@ class AppServiceProvider extends ServiceProvider
             view()->share('past_seasons', []);
         }
 
+        if (Schema::hasTable('knockouts')) {
+            $activeKnockouts = Cache::remember('nav:active-knockouts', now()->addMinutes(10), function () {
+                return Knockout::query()
+                    ->whereNotNull('published_at')
+                    ->orderByDesc('season_id')
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'slug']);
+            });
+            view()->share('active_knockouts', $activeKnockouts);
+        } else {
+            view()->share('active_knockouts', collect());
+        }
+
         Vite::useScriptTagAttributes([
             'defer' => true, // Specify an attribute without a value...
         ]);

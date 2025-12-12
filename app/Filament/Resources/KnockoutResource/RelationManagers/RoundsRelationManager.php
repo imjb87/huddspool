@@ -2,40 +2,49 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use App\KnockoutType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class RoundsRelationManager extends RelationManager
 {
-    use NestedRelationManager;
-
     protected static string $relationship = 'rounds';
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('position')
+                ->numeric()
+                ->minValue(1)
+                ->default(1)
+                ->required(),
+            Forms\Components\DatePicker::make('scheduled_for'),
+            Forms\Components\TextInput::make('best_of')
+                ->label('Best of (frames)')
+                ->numeric()
+                ->minValue(1)
+                ->helperText('Leave blank to inherit the knockout best-of. Team knockouts are fixed at 10 frames.')
+                ->hidden(fn () => $this->getOwnerRecord()->type === KnockoutType::Team),
+        ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('position')->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('scheduled_for')->date(),
+                Tables\Columns\TextColumn::make('best_of_display')
+                    ->label('Best of')
+                    ->state(fn ($record) => $record->bestOfValue())
+                    ->suffix(' frames'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
@@ -44,10 +53,7 @@ class RoundsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('position');
     }
+
 }
