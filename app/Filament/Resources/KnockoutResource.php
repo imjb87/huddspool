@@ -6,6 +6,7 @@ use App\Filament\Resources\KnockoutResource\Pages;
 use App\Filament\Resources\KnockoutResource\RelationManagers;
 use App\KnockoutType;
 use App\Models\Knockout;
+use App\Models\Season;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -39,7 +40,7 @@ class KnockoutResource extends Resource
                             ->relationship('season', 'name')
                             ->searchable()
                             ->required()
-                            ->disabled(fn (?Knockout $record) => filled($record?->season_id)),
+                            ->default(fn (?Knockout $record) => $record?->season_id ?? static::getContextSeasonId()),
                         Forms\Components\Select::make('type')
                             ->options(KnockoutType::class)
                             ->required()
@@ -102,5 +103,25 @@ class KnockoutResource extends Resource
             'knockouts',
             'season',
         );
+    }
+
+    protected static function getContextSeasonId(): ?int
+    {
+        $route = request()?->route();
+
+        if (! $route) {
+            return null;
+        }
+
+        $seasonIdentifier = $route->parameter('record');
+
+        if (! $seasonIdentifier) {
+            return null;
+        }
+
+        return Season::query()
+            ->whereKey($seasonIdentifier)
+            ->orWhere('slug', $seasonIdentifier)
+            ->value('id');
     }
 }
