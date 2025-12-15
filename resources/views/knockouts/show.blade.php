@@ -13,6 +13,31 @@
                     </div>
                 </div>
 
+                @php
+                    $slotLabel = function ($match, $slot) use ($matchNumbers) {
+                        $participant = $slot === 'home' ? $match->homeParticipant : $match->awayParticipant;
+
+                        if ($participant) {
+                            return $participant->display_name;
+                        }
+
+                        $previousMatch = $match->previousMatches->firstWhere('next_slot', $slot);
+
+                        if ($previousMatch && isset($matchNumbers[$previousMatch->id])) {
+                            return 'Winner of Match ' . $matchNumbers[$previousMatch->id];
+                        }
+
+                        $pairedParticipantId = $slot === 'home'
+                            ? $match->away_participant_id
+                            : $match->home_participant_id;
+
+                        if ($pairedParticipantId) {
+                            return 'Bye';
+                        }
+
+                        return 'TBC';
+                    };
+                @endphp
                 <div class="grid grid-cols-1 gap-x-6 gap-y-6 -mx-4 sm:mx-0">
                     @forelse ($knockout->rounds as $round)
                         <div class="bg-white shadow-md sm:rounded-lg overflow-hidden">
@@ -24,44 +49,43 @@
                                     Best of {{ $round->bestOfValue() }} frames
                                 </div>
                             </div>
-                            @php
-                                $matchesByVenue = $round->matches->sortBy(fn ($match) => $match->venue?->name ?? 'TBC')->groupBy(function ($match) {
-                                    return $match->venue?->name ?? 'TBC Venue';
-                                });
-                            @endphp
                             <div class="border-t border-gray-200">
-                                @forelse ($matchesByVenue as $venueName => $matches)
-                                    <div class="border-b border-gray-200 last:border-b-0">
-                                        <div class="bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide flex justify-center items-center">
-                                            <span>{{ $venueName }}</span>
-                                        </div>
-                                        @foreach ($matches as $match)
-                                            <div class="relative flex flex-wrap items-center justify-between px-4 py-3 text-sm text-gray-900 border-t border-gray-200 first:border-t-0">
-                                                <div class="w-5/12 text-center sm:text-right font-semibold">
-                                                    {{ $match->homeParticipant?->display_name ?? 'TBC' }}
-                                                </div>
-                                                <div class="w-2/12 text-center text-xs font-semibold text-gray-600">
-                                                    @if ($match->home_score !== null && $match->away_score !== null)
-                                                        <span class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
-                                                            <div class="w-1/2">{{ $match->home_score }}</div><div class="w-1/2">{{ $match->away_score }}</div>
-                                                        </span>
-                                                    @elseif ($match->starts_at)
-                                                        <span class="text-gray-500">{{ $match->starts_at->format('j/m') }}</span>
-                                                    @else
-                                                        <span class="text-gray-400">Vs</span>
-                                                    @endif
-                                                </div>
-                                                <div class="w-5/12 text-center sm:text-left font-semibold">
-                                                    {{ $match->awayParticipant?->display_name ?? 'TBC' }}
-                                                </div>
-                                                <div class="w-full text-center sm:text-right text-xs mt-2 sm:mt-0 sm:absolute sm:top-3.5 sm:right-4">
-                                                    @if ($match->userCanSubmit(auth()->user()) && ! $match->completed_at)
-                                                        <a href="{{ route('knockout.matches.submit', $match) }}"
-                                                            class="font-semibold bg-green-700 hover:bg-green-800 py-1 px-2 rounded text-white">Submit result</a>
-                                                    @endif
-                                                </div>
+                                @forelse ($round->matches as $match)
+                                    @php
+                                        $matchLabel = isset($matchNumbers[$match->id]) ? 'Match ' . $matchNumbers[$match->id] : null;
+                                        $homeLabel = $slotLabel($match, 'home');
+                                        $awayLabel = $slotLabel($match, 'away');
+                                        $hasBothParticipants = $match->home_participant_id && $match->away_participant_id;
+                                    @endphp
+                                    <div class="relative flex flex-wrap items-center justify-between px-4 py-4 text-sm text-gray-900 border-t border-gray-200 first:border-t-0">
+                                        @if ($matchLabel)
+                                            <div class="w-full sm:w-3/12 text-xs font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-left mb-2 sm:mb-0">
+                                                {{ $matchLabel }}
                                             </div>
-                                        @endforeach
+                                        @endif
+                                        <div class="flex flex-wrap w-full sm:w-6/12 items-center">
+                                            <div class="w-5/12 text-center sm:text-right font-semibold">
+                                                {{ $homeLabel }}
+                                            </div>
+                                            <div class="w-2/12 text-center text-xs font-semibold text-gray-600">
+                                                @if ($match->home_score !== null && $match->away_score !== null)
+                                                    <span class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
+                                                        <div class="w-1/2">{{ $match->home_score }}</div>
+                                                        <div class="w-1/2">{{ $match->away_score }}</div>
+                                                    </span>
+                                                @elseif ($match->starts_at)
+                                                    <span class="text-gray-500">{{ $match->starts_at->format('d/m') }}</span>
+                                                @else
+                                                    <span class="text-gray-400">Vs</span>
+                                                @endif
+                                            </div>
+                                            <div class="w-5/12 text-center sm:text-left font-semibold">
+                                                {{ $awayLabel }}
+                                            </div>
+                                        </div>
+                                        <div class="w-full sm:w-3/12 text-xs font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-right mt-2 sm:mt-0">
+                                            {{ $match->venue?->name ?? 'Venue TBC' }}
+                                        </div>
                                     </div>
                                 @empty
                                     <div class="px-4 py-4 text-sm text-gray-500">No matches scheduled for this round yet.</div>

@@ -24,6 +24,33 @@ class KnockoutRound extends Model
         'best_of' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (KnockoutRound $round) {
+            if (! $round->wasChanged('scheduled_for') || ! $round->scheduled_for) {
+                return;
+            }
+
+            $date = $round->scheduled_for->copy();
+
+            $round->matches()->get()->each(function (KnockoutMatch $match) use ($date) {
+                $startsAt = $match->starts_at;
+
+                if ($startsAt) {
+                    $updated = $date->copy()->setTime(
+                        (int) $startsAt->format('H'),
+                        (int) $startsAt->format('i'),
+                        (int) $startsAt->format('s')
+                    );
+                } else {
+                    $updated = $date->copy();
+                }
+
+                $match->forceFill(['starts_at' => $updated])->saveQuietly();
+            });
+        });
+    }
+
     public function knockout(): BelongsTo
     {
         return $this->belongsTo(Knockout::class);

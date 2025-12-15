@@ -33,10 +33,21 @@ class KnockoutController extends Controller
             'rounds.matches.awayParticipant.team',
             'rounds.matches.winner',
             'rounds.matches.venue',
+            'rounds.matches.previousMatches',
         ]);
+
+        $matchNumbers = [];
+        $counter = 1;
+
+        foreach ($knockout->rounds as $round) {
+            foreach ($round->matches as $match) {
+                $matchNumbers[$match->id] = $counter++;
+            }
+        }
 
         return view('knockouts.show', [
             'knockout' => $knockout,
+            'matchNumbers' => $matchNumbers,
         ]);
     }
 }

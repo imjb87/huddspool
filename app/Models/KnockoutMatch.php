@@ -39,11 +39,18 @@ class KnockoutMatch extends Model
     ];
 
     protected ?int $previousWinnerId = null;
+    protected bool $suppressAutoBye = false;
 
     protected static function booted(): void
     {
         static::saving(function (KnockoutMatch $match) {
             $match->previousWinnerId = $match->getOriginal('winner_participant_id');
+
+            if ($match->venue_id && $match->venueConflictsWithParticipants()) {
+                throw ValidationException::withMessages([
+                    'venue_id' => 'A match cannot be assigned to a venue that belongs to one of the teams involved.',
+                ]);
+            }
 
             if ($match->hasSingleParticipantBye()) {
                 $match->winner_participant_id = $match->home_participant_id ?: $match->away_participant_id;
@@ -69,6 +76,11 @@ class KnockoutMatch extends Model
         static::saved(function (KnockoutMatch $match) {
             $match->syncNextMatchSlot();
         });
+    }
+
+    public function suppressAutoBye(): void
+    {
+        $this->suppressAutoBye = true;
     }
 
     public function round(): BelongsTo
@@ -155,11 +167,11 @@ class KnockoutMatch extends Model
     public function ensureScoresAreValid(int $homeScore, int $awayScore): void
     {
         if ($homeScore < 0 || $awayScore < 0) {
-            throw ValidationException::withMessages(['score' => 'Scores must be zero or a positive number.']);
+            $this->scoreValidationError('Scores must be zero or a positive number.');
         }
 
         if ($homeScore === $awayScore) {
-            throw ValidationException::withMessages(['score' => 'Knockout matches cannot end in a draw.']);
+            $this->scoreValidationError('Knockout matches cannot end in a draw.');
         }
 
         $target = $this->targetScoreToWin();
@@ -168,15 +180,11 @@ class KnockoutMatch extends Model
         $winnerScore = max($homeScore, $awayScore);
 
         if ($winnerScore < $target) {
-            throw ValidationException::withMessages([
-                'score' => "Winning participant must reach {$target} points.",
-            ]);
+            $this->scoreValidationError("Winning participant must reach {$target} points.");
         }
 
         if ($maxFrames && $total > $maxFrames) {
-            throw ValidationException::withMessages([
-                'score' => "Total frames cannot exceed {$maxFrames}.",
-            ]);
+            $this->scoreValidationError("Total frames cannot exceed {$maxFrames}.");
         }
     }
 
@@ -234,9 +242,48 @@ class KnockoutMatch extends Model
 
     private function hasSingleParticipantBye(): bool
     {
+        if ($this->suppressAutoBye) {
+            return false;
+        }
+
         $participants = collect([$this->home_participant_id, $this->away_participant_id])->filter();
 
         return $participants->count() === 1 && $this->home_score === null && $this->away_score === null;
+    }
+
+    private function scoreValidationError(string $message): void
+    {
+        throw ValidationException::withMessages([
+            'home_score' => $message,
+            'away_score' => $message,
+        ]);
+    }
+
+    private function venueConflictsWithParticipants(): bool
+    {
+        if (! $this->venue_id) {
+            return false;
+        }
+
+        $venueId = $this->venue_id;
+
+        return collect([$this->homeParticipant, $this->awayParticipant])
+            ->filter()
+            ->contains(function (KnockoutParticipant $participant) use ($venueId) {
+                $participant->loadMissing('team', 'playerOne.team', 'playerTwo.team');
+
+                $teamVenueIds = collect([
+                    $participant->team?->venue_id,
+                    $participant->playerOne?->team?->venue_id,
+                    $participant->playerTwo?->team?->venue_id,
+                ])->filter();
+
+                if ($teamVenueIds->isEmpty()) {
+                    return false;
+                }
+
+                return $teamVenueIds->contains(fn ($id) => (int) $id === (int) $venueId);
+            });
     }
 
     private function decideWinner(): ?int

@@ -122,18 +122,48 @@
                     x-transition:enter-end="opacity-100 translate-y-0"
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
+                    x-transition:leave-end="opacity-0 translate-y-1"
+                    @click="open = false">
                     @foreach ($past_seasons as $season)
                         @php
-                            $seasonRulesets = $season->sections->map(fn($section) => $section->ruleset)->filter()->unique('id')->values();
+                            $seasonRulesets = $season->sections->map(fn ($section) => $section->ruleset)->filter()->unique('id')->values();
                         @endphp
                         @if ($seasonRulesets->isNotEmpty())
-                            <div class="py-2">
-                                <a href="{{ route('history.season', $season) }}" class="px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $season->name }}</a>
-                                @foreach ($seasonRulesets as $ruleset)
-                                    <a href="{{ route('history.show', [$season, $ruleset]) }}"
-                                        class="block rounded-md py-2 pl-6 pr-4 text-sm leading-5 text-gray-700 hover:bg-gray-50 font-semibold">{{ $ruleset->name }}</a>
-                                @endforeach
+                            <div class="py-2 first:border-0" x-data="{ seasonOpen: false }">
+                                <button type="button"
+                                    class="flex w-full items-center justify-between px-1 pb-1 text-left text-sm font-semibold tracking-wide text-gray-900"
+                                    @click.stop="seasonOpen = !seasonOpen" :aria-expanded="seasonOpen"
+                                    aria-controls="history-season-{{ $season->id }}">
+                                    <span>{{ $season->name }}</span>
+                                    <svg class="h-4 w-4 text-gray-700 transition-transform duration-150"
+                                        :class="{ 'rotate-180': seasonOpen }" viewBox="0 0 20 20" fill="currentColor"
+                                        aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div class="mt-2 space-y-1" x-show="seasonOpen" x-cloak
+                                    x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0"
+                                    x-transition:enter-end="opacity-100"
+                                    x-transition:leave="transition ease-in duration-150"
+                                    x-transition:leave-start="opacity-100"
+                                    x-transition:leave-end="opacity-0"
+                                    id="history-season-{{ $season->id }}">
+                                    <a href="{{ route('history.season', $season) }}"
+                                        class="block rounded-md py-2 pl-4 pr-4 text-sm font-semibold tracking-wide text-gray-900 hover:bg-gray-50"
+                                        @click="open = false">
+                                        Overview
+                                    </a>
+                                    @foreach ($seasonRulesets as $ruleset)
+                                        <a href="{{ route('history.show', [$season, $ruleset]) }}"
+                                            class="block rounded-md py-2 pl-4 pr-4 text-sm leading-5 text-gray-900 hover:bg-gray-50 font-semibold"
+                                            @click="open = false">
+                                            {{ $ruleset->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
                             </div>
                         @endif
                     @endforeach

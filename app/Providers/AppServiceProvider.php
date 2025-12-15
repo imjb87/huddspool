@@ -63,7 +63,6 @@ class AppServiceProvider extends ServiceProvider
         if (Schema::hasTable('knockouts')) {
             $activeKnockouts = Cache::remember('nav:active-knockouts', now()->addMinutes(10), function () {
                 return Knockout::query()
-                    ->whereNotNull('published_at')
                     ->orderByDesc('season_id')
                     ->orderBy('name')
                     ->get(['id', 'name', 'slug']);

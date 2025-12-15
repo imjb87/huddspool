@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
+use App\Models\KnockoutRound;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Validation\ValidationException;
 
 class MatchesRelationManager extends RelationManager
 {
@@ -31,6 +35,46 @@ class MatchesRelationManager extends RelationManager
                     ->searchable();
             };
 
+            $scoreRule = function (callable $get) use ($livewire, $knockout) {
+                return function (string $attribute, $value, Closure $fail) use ($get, $livewire, $knockout) {
+                    $homeScore = $get('home_score');
+                    $awayScore = $get('away_score');
+
+                    if ($homeScore === '' || $homeScore === null || $awayScore === '' || $awayScore === null) {
+                        return;
+                    }
+
+                    $homeScore = (int) $homeScore;
+                    $awayScore = (int) $awayScore;
+
+                    $roundId = $get('knockout_round_id') ?: $livewire->getMountedTableActionRecord()?->knockout_round_id;
+                    $round = $roundId ? KnockoutRound::query()->where('knockout_id', $knockout->id)->find($roundId) : null;
+
+                    $record = $livewire->getMountedTableActionRecord();
+                    $match = $record ? $record->replicate() : new KnockoutMatch();
+                    $match->knockout_id = $knockout->id;
+                    $match->best_of = $get('best_of') ?: $record?->best_of;
+                    $match->home_score = $homeScore;
+                    $match->away_score = $awayScore;
+                    $match->setRelation('knockout', $knockout);
+
+                    if ($round) {
+                        $match->knockout_round_id = $round->id;
+                        $match->setRelation('round', $round);
+                    }
+
+                    try {
+                        $match->ensureScoresAreValid($homeScore, $awayScore);
+                    } catch (ValidationException $exception) {
+                        foreach ($exception->errors() as $messages) {
+                            foreach ($messages as $message) {
+                                $fail($message);
+                            }
+                        }
+                    }
+                };
+            };
+
             return [
                 Forms\Components\Hidden::make('knockout_id')
                     ->default($knockout->id),
@@ -51,7 +95,42 @@ class MatchesRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Select::make('venue_id')
                     ->relationship('venue', 'name')
-                    ->searchable(),
+                    ->searchable()
+                    ->rule(function (callable $get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            if (! $value) {
+                                return;
+                            }
+
+                            $participantIds = collect([
+                                $get('home_participant_id'),
+                                $get('away_participant_id'),
+                            ])->filter();
+
+                            if ($participantIds->isEmpty()) {
+                                return;
+                            }
+
+                            $participants = KnockoutParticipant::query()
+                                ->with(['team', 'playerOne.team', 'playerTwo.team'])
+                                ->whereIn('id', $participantIds)
+                                ->get();
+
+                            $conflict = $participants->contains(function (KnockoutParticipant $participant) use ($value) {
+                                return collect([
+                                    $participant->team?->venue_id,
+                                    $participant->playerOne?->team?->venue_id,
+                                    $participant->playerTwo?->team?->venue_id,
+                                ])
+                                    ->filter()
+                                    ->contains(fn ($id) => (int) $id === (int) $value);
+                            });
+
+                            if ($conflict) {
+                                $fail('A match cannot be assigned to a venue that belongs to one of the participants involved.');
+                            }
+                        };
+                    }),
                 Forms\Components\DateTimePicker::make('starts_at')
                     ->seconds(false),
                 Forms\Components\TextInput::make('best_of')
@@ -60,10 +139,12 @@ class MatchesRelationManager extends RelationManager
                     ->helperText('Override frames for this match only.'),
                 Forms\Components\TextInput::make('home_score')
                     ->numeric()
-                    ->minValue(0),
+                    ->minValue(0)
+                    ->rule($scoreRule),
                 Forms\Components\TextInput::make('away_score')
                     ->numeric()
-                    ->minValue(0),
+                    ->minValue(0)
+                    ->rule($scoreRule),
             ];
         });
     }
