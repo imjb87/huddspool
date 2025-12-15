@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KnockoutMatch;
 use App\Models\Ruleset;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
@@ -28,7 +29,34 @@ class PlayerController extends Controller
         $frames = $player->team ? (new GetPlayerFrames($player, $player->team?->section()))() : null;
         $history = (new GetPlayerSeasonHistory($player))();
 
-        return view('player.show', compact('player', 'averages', 'frames', 'history'));
+        $participantQuery = function ($query) use ($player) {
+            $query->where('player_one_id', $player->id)
+                ->orWhere('player_two_id', $player->id);
+
+            if ($player->team_id) {
+                $query->orWhere('team_id', $player->team_id);
+            }
+        };
+
+        $knockoutMatches = KnockoutMatch::query()
+            ->with([
+                'round.knockout',
+                'homeParticipant',
+                'awayParticipant',
+                'venue',
+            ])
+            ->whereNull('winner_participant_id')
+            ->where(function ($query) use ($participantQuery) {
+                $query->whereHas('homeParticipant', $participantQuery)
+                    ->orWhereHas('awayParticipant', $participantQuery);
+            })
+            ->orderBy('starts_at')
+            ->orderBy('id')
+            ->get()
+            ->filter(fn (KnockoutMatch $match) => $match->userCanSubmit($player))
+            ->values();
+
+        return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
     }
 
     public function updateAvatar(Request $request, User $player)
