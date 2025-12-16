@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
 use App\KnockoutType;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -18,6 +19,10 @@ class ParticipantsRelationManager extends RelationManager
     {
         return $form->schema(function (Manager $livewire) {
             $type = $livewire->getOwnerRecord()->type;
+            $formatPlayerOption = fn (?User $player) => trim(
+                ($player?->name ?? 'Unknown') .
+                ($player?->team?->name ? ' (' . $player->team->name . ')' : '')
+            );
 
             return [
                 Forms\Components\TextInput::make('label')
@@ -35,14 +40,16 @@ class ParticipantsRelationManager extends RelationManager
                     ->required($type === KnockoutType::Team),
                 Forms\Components\Select::make('player_one_id')
                     ->label($type === KnockoutType::Doubles ? 'Player 1' : 'Player')
-                    ->relationship('playerOne', 'name')
+                    ->relationship('playerOne', 'name', fn ($query) => $query->with('team'))
                     ->searchable()
+                    ->getOptionLabelFromRecordUsing(fn (User $player) => $formatPlayerOption($player))
                     ->hidden($type === KnockoutType::Team)
                     ->required($type !== KnockoutType::Team),
                 Forms\Components\Select::make('player_two_id')
                     ->label('Player 2')
-                    ->relationship('playerTwo', 'name')
+                    ->relationship('playerTwo', 'name', fn ($query) => $query->with('team'))
                     ->searchable()
+                    ->getOptionLabelFromRecordUsing(fn (User $player) => $formatPlayerOption($player))
                     ->hidden($type !== KnockoutType::Doubles)
                     ->required($type === KnockoutType::Doubles),
             ];

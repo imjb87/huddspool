@@ -40,7 +40,17 @@ class KnockoutResource extends Resource
                             ->relationship('season', 'name')
                             ->searchable()
                             ->required()
-                            ->default(fn (?Knockout $record) => $record?->season_id ?? static::getContextSeasonId()),
+                            ->default(function (?Knockout $record, $livewire) {
+                                if ($record?->season_id) {
+                                    return $record->season_id;
+                                }
+
+                                if (method_exists($livewire, 'getOwnerRecord')) {
+                                    return $livewire->getOwnerRecord()?->getKey();
+                                }
+
+                                return static::getContextSeasonId();
+                            }),
                         Forms\Components\Select::make('type')
                             ->options(KnockoutType::class)
                             ->required()

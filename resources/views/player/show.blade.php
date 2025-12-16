@@ -218,7 +218,7 @@
                                                 • {{ $match->starts_at ? $match->starts_at->format('D j M, g:ia') : 'Date TBC' }}
                                             </p>
                                         </div>
-                                        @if ($match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
+                                        @if ($match->starts_at && $match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
                                             <a href="{{ route('knockout.matches.submit', $match) }}"
                                                 class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-800">
                                                 Submit result
