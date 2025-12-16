@@ -179,6 +179,14 @@ class MatchesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('clear_result')
+                    ->label('Clear result')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->visible(fn (KnockoutMatch $record) => $record->home_score !== null || $record->away_score !== null)
+                    ->action(fn (KnockoutMatch $record) => $record->clearResult())
+                    ->successNotificationTitle('Result cleared'),
                 Tables\Actions\DeleteAction::make(),
             ]);
     }
