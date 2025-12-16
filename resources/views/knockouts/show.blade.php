@@ -59,13 +59,43 @@
                                     @endphp
                                     <div class="relative flex flex-wrap items-center justify-between px-4 py-4 text-sm text-gray-900 border-t border-gray-200 first:border-t-0">
                                         @if ($matchLabel)
-                                            <div class="w-full sm:w-3/12 text-xs font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-left mb-2 sm:mb-0">
+                                            <div class="w-full sm:w-3/12 text-[11px] font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-left mb-2 sm:mb-0">
                                                 {{ $matchLabel }}
                                             </div>
                                         @endif
                                         <div class="flex flex-wrap w-full sm:w-6/12 items-center">
                                             <div class="w-5/12 text-center sm:text-right font-semibold">
-                                                {{ $homeLabel }}
+                                                @php
+                                                    $homeParticipant = $match->homeParticipant;
+                                                @endphp
+                                                @if ($homeParticipant)
+                                                    @if ($knockout->type === \App\KnockoutType::Doubles)
+                                                        <div class="flex flex-col gap-0.5">
+                                                            @foreach ([$homeParticipant->playerOne, $homeParticipant->playerTwo] as $player)
+                                                                @if ($player)
+                                                                    <a href="{{ route('player.show', $player) }}"
+                                                                        class="hover:text-gray-500 transition">
+                                                                        {{ $player->name }}
+                                                                    </a>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    @elseif ($homeParticipant->playerOne)
+                                                        <a href="{{ route('player.show', $homeParticipant->playerOne) }}"
+                                                            class="hover:text-gray-500 transition">
+                                                            {{ $homeLabel }}
+                                                        </a>
+                                                    @elseif ($homeParticipant->team)
+                                                        <a href="{{ route('team.show', $homeParticipant->team) }}"
+                                                            class="hover:text-gray-500 transition">
+                                                            {{ $homeLabel }}
+                                                        </a>
+                                                    @else
+                                                        {{ $homeLabel }}
+                                                    @endif
+                                                @else
+                                                    {{ $homeLabel }}
+                                                @endif
                                             </div>
                                             <div class="w-2/12 text-center text-xs font-semibold text-gray-600">
                                                 @if ($match->home_score !== null && $match->away_score !== null)
@@ -80,11 +110,55 @@
                                                 @endif
                                             </div>
                                             <div class="w-5/12 text-center sm:text-left font-semibold">
-                                                {{ $awayLabel }}
+                                                @php
+                                                    $awayParticipant = $match->awayParticipant;
+                                                @endphp
+                                                @if ($awayParticipant)
+                                                    @if ($knockout->type === \App\KnockoutType::Doubles)
+                                                        <div class="flex flex-col gap-0.5">
+                                                            @foreach ([$awayParticipant->playerOne, $awayParticipant->playerTwo] as $player)
+                                                                @if ($player)
+                                                                    <a href="{{ route('player.show', $player) }}"
+                                                                        class="hover:text-gray-500 transition">
+                                                                        {{ $player->name }}
+                                                                    </a>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    @elseif ($awayParticipant->playerOne)
+                                                        <a href="{{ route('player.show', $awayParticipant->playerOne) }}"
+                                                            class="hover:text-gray-500 transition">
+                                                            {{ $awayLabel }}
+                                                        </a>
+                                                    @elseif ($awayParticipant->team)
+                                                        <a href="{{ route('team.show', $awayParticipant->team) }}"
+                                                            class="hover:text-gray-500 transition">
+                                                            {{ $awayLabel }}
+                                                        </a>
+                                                    @else
+                                                        {{ $awayLabel }}
+                                                    @endif
+                                                @else
+                                                    {{ $awayLabel }}
+                                                @endif
                                             </div>
                                         </div>
-                                        <div class="w-full sm:w-3/12 text-xs font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-right mt-2 sm:mt-0">
-                                            {{ $match->venue?->name ?? 'Venue TBC' }}
+                                        <div class="w-full sm:w-3/12 text-[11px] font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-right mt-2 sm:mt-0">
+                                            <div>
+                                                @if ($match->venue)
+                                                    <a href="{{ route('venue.show', $match->venue) }}"
+                                                        class="hover:text-gray-500 transition">
+                                                        {{ $match->venue->name }}
+                                                    </a>
+                                                @else
+                                                    Venue TBC
+                                                @endif
+                                            </div>
+                                            @if ($match->referee)
+                                                <div class="text-[11px]">
+                                                    Referee: <span class="font-semibold">{{ $match->referee }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @empty

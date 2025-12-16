@@ -23,6 +23,7 @@ class KnockoutMatch extends Model
         'away_participant_id',
         'winner_participant_id',
         'venue_id',
+        'referee',
         'starts_at',
         'home_score',
         'away_score',
@@ -181,6 +182,10 @@ class KnockoutMatch extends Model
 
         if ($winnerScore < $target) {
             $this->scoreValidationError("Winning participant must reach {$target} points.");
+        }
+
+        if ($winnerScore > $target) {
+            $this->scoreValidationError("Winning participant cannot score more than {$target} points.");
         }
 
         if ($maxFrames && $total > $maxFrames) {

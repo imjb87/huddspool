@@ -20,7 +20,7 @@ class KnockoutRound extends Model
     ];
 
     protected $casts = [
-        'scheduled_for' => 'date',
+        'scheduled_for' => 'datetime',
         'best_of' => 'integer',
     ];
 

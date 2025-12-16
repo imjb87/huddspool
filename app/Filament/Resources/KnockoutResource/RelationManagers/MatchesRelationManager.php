@@ -131,8 +131,19 @@ class MatchesRelationManager extends RelationManager
                             }
                         };
                     }),
+                Forms\Components\TextInput::make('referee')
+                    ->maxLength(255)
+                    ->label('Referee')
+                    ->helperText('Optional official assigned to the match.'),
                 Forms\Components\DateTimePicker::make('starts_at')
-                    ->seconds(false),
+                    ->seconds(false)
+                    ->default(function (?KnockoutMatch $record) {
+                        if ($record?->starts_at) {
+                            return $record->starts_at;
+                        }
+
+                        return now()->setTime(20, 15);
+                    }),
                 Forms\Components\TextInput::make('best_of')
                     ->numeric()
                     ->minValue(1)
@@ -163,6 +174,7 @@ class MatchesRelationManager extends RelationManager
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('awayParticipant.display_name')->label('Away'),
                 Tables\Columns\TextColumn::make('starts_at')->label('Scheduled')->dateTime(),
+                Tables\Columns\TextColumn::make('venue.name')->label('Venue')->wrap(),
             ])
             ->filters([
                 SelectFilter::make('round')

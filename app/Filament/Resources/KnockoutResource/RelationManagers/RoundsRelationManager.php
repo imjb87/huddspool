@@ -24,7 +24,15 @@ class RoundsRelationManager extends RelationManager
                 ->minValue(1)
                 ->default(1)
                 ->required(),
-            Forms\Components\DatePicker::make('scheduled_for'),
+            Forms\Components\DateTimePicker::make('scheduled_for')
+                ->seconds(false)
+                ->default(function ($record) {
+                    if ($record?->scheduled_for) {
+                        return $record->scheduled_for;
+                    }
+
+                    return now()->setTime(20, 15);
+                }),
             Forms\Components\TextInput::make('best_of')
                 ->label('Best of (frames)')
                 ->numeric()
@@ -40,7 +48,7 @@ class RoundsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('position')->sortable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('scheduled_for')->date(),
+                Tables\Columns\TextColumn::make('scheduled_for')->dateTime('D j M, g:ia'),
                 Tables\Columns\TextColumn::make('best_of_display')
                     ->label('Best of')
                     ->state(fn ($record) => $record->bestOfValue())

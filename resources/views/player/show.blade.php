@@ -217,6 +217,11 @@
                                                 {{ $match->venue?->name ?? 'Venue TBC' }}
                                                 • {{ $match->starts_at ? $match->starts_at->format('D j M, g:ia') : 'Date TBC' }}
                                             </p>
+                                            @if ($match->referee)
+                                                <p class="text-xs text-gray-500">
+                                                    Referee: <span class="font-semibold text-gray-700">{{ $match->referee }}</span>
+                                                </p>
+                                            @endif
                                         </div>
                                         @if ($match->starts_at && $match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
                                             <a href="{{ route('knockout.matches.submit', $match) }}"
