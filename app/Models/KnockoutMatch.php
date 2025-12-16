@@ -23,6 +23,8 @@ class KnockoutMatch extends Model
         'away_participant_id',
         'winner_participant_id',
         'venue_id',
+        'forfeit_participant_id',
+        'forfeit_reason',
         'referee',
         'starts_at',
         'home_score',
@@ -56,6 +58,20 @@ class KnockoutMatch extends Model
             if ($match->hasSingleParticipantBye()) {
                 $match->winner_participant_id = $match->home_participant_id ?: $match->away_participant_id;
                 $match->completed_at = now();
+
+                return;
+            }
+
+            if (! $match->forfeit_participant_id) {
+                $match->forfeit_reason = null;
+            }
+
+            if ($match->forfeit_participant_id) {
+                $winner = $match->determineWinnerFromForfeit();
+                $match->winner_participant_id = $winner;
+                $match->completed_at = $winner ? now() : null;
+                $match->home_score = null;
+                $match->away_score = null;
 
                 return;
             }
@@ -109,6 +125,11 @@ class KnockoutMatch extends Model
         return $this->belongsTo(KnockoutParticipant::class, 'winner_participant_id');
     }
 
+    public function forfeitParticipant(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutParticipant::class, 'forfeit_participant_id');
+    }
+
     public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
@@ -147,6 +168,8 @@ class KnockoutMatch extends Model
             'home_score' => $homeScore,
             'away_score' => $awayScore,
             'reported_by_id' => $user->id,
+            'forfeit_participant_id' => null,
+            'forfeit_reason' => null,
         ]);
 
         $this->save();
@@ -160,6 +183,8 @@ class KnockoutMatch extends Model
             'reported_by_id' => null,
             'completed_at' => null,
             'winner_participant_id' => null,
+            'forfeit_participant_id' => null,
+            'forfeit_reason' => null,
         ]);
 
         $this->save();
@@ -304,6 +329,23 @@ class KnockoutMatch extends Model
         return $this->home_score > $this->away_score
             ? $this->home_participant_id
             : $this->away_participant_id;
+    }
+
+    private function determineWinnerFromForfeit(): ?int
+    {
+        if (! $this->forfeit_participant_id) {
+            return null;
+        }
+
+        if ((int) $this->home_participant_id === (int) $this->forfeit_participant_id) {
+            return $this->away_participant_id;
+        }
+
+        if ((int) $this->away_participant_id === (int) $this->forfeit_participant_id) {
+            return $this->home_participant_id;
+        }
+
+        return null;
     }
 
     private function syncNextMatchSlot(): void

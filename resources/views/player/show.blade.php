@@ -222,6 +222,16 @@
                                                     Referee: <span class="font-semibold text-gray-700">{{ $match->referee }}</span>
                                                 </p>
                                             @endif
+                                            @if ($match->forfeitParticipant)
+                                                <p class="text-xs text-red-600">
+                                                    Forfeit: <span class="font-semibold">{{ $match->forfeitParticipant->display_name }}</span>
+                                                </p>
+                                                @if ($match->forfeit_reason)
+                                                    <p class="text-xs text-gray-500">
+                                                        {{ $match->forfeit_reason }}
+                                                    </p>
+                                                @endif
+                                            @endif
                                         </div>
                                         @if ($match->starts_at && $match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
                                             <a href="{{ route('knockout.matches.submit', $match) }}"

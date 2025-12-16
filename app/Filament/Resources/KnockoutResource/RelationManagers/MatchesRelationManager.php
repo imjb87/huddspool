@@ -75,6 +75,28 @@ class MatchesRelationManager extends RelationManager
                 };
             };
 
+            $forfeitOptions = function (callable $get) use ($knockout) {
+                $participantIds = collect([
+                    $get('home_participant_id'),
+                    $get('away_participant_id'),
+                ])->filter()->unique();
+
+                if ($participantIds->isEmpty()) {
+                    return [];
+                }
+
+                return KnockoutParticipant::query()
+                    ->where('knockout_id', $knockout->id)
+                    ->whereIn('id', $participantIds)
+                    ->get()
+                    ->mapWithKeys(function (KnockoutParticipant $participant) use ($knockout) {
+                        $participant->setRelation('knockout', $knockout);
+
+                        return [$participant->id => $participant->display_name];
+                    })
+                    ->toArray();
+            };
+
             return [
                 Forms\Components\Hidden::make('knockout_id')
                     ->default($knockout->id),
@@ -151,11 +173,44 @@ class MatchesRelationManager extends RelationManager
                 Forms\Components\TextInput::make('home_score')
                     ->numeric()
                     ->minValue(0)
-                    ->rule($scoreRule),
+                    ->rule($scoreRule)
+                    ->disabled(fn (callable $get) => filled($get('forfeit_participant_id'))),
                 Forms\Components\TextInput::make('away_score')
                     ->numeric()
                     ->minValue(0)
-                    ->rule($scoreRule),
+                    ->rule($scoreRule)
+                    ->disabled(fn (callable $get) => filled($get('forfeit_participant_id'))),
+                Forms\Components\Select::make('forfeit_participant_id')
+                    ->label('Forfeit by')
+                    ->options(fn (callable $get) => $forfeitOptions($get))
+                    ->searchable()
+                    ->placeholder('Match played')
+                    ->reactive()
+                    ->helperText('Select the participant who forfeited to award the match automatically.')
+                    ->rule(function (callable $get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            if (! $value) {
+                                return;
+                            }
+
+                            $validIds = collect([
+                                $get('home_participant_id'),
+                                $get('away_participant_id'),
+                            ])->filter()->map(fn ($id) => (int) $id);
+
+                            if (! $validIds->contains((int) $value)) {
+                                $fail('Forfeit participant must be part of this match.');
+                            }
+                        };
+                    })
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('forfeit_reason')
+                    ->label('Forfeit reason')
+                    ->rows(2)
+                    ->maxLength(1000)
+                    ->visible(fn (callable $get) => filled($get('forfeit_participant_id')))
+                    ->required(fn (callable $get) => filled($get('forfeit_participant_id')))
+                    ->columnSpanFull(),
             ];
         });
     }
@@ -168,9 +223,17 @@ class MatchesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('position')->sortable(),
                 Tables\Columns\TextColumn::make('homeParticipant.display_name')->label('Home'),
                 Tables\Columns\TextColumn::make('score')
-                    ->state(fn ($record) => $record->home_score !== null && $record->away_score !== null
-                        ? "{$record->home_score} - {$record->away_score}"
-                        : 'TBC')
+                    ->state(function (KnockoutMatch $record) {
+                        if ($record->forfeitParticipant) {
+                            return 'Forfeit';
+                        }
+
+                        if ($record->home_score !== null && $record->away_score !== null) {
+                            return "{$record->home_score} - {$record->away_score}";
+                        }
+
+                        return 'TBC';
+                    })
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('awayParticipant.display_name')->label('Away'),
                 Tables\Columns\TextColumn::make('starts_at')->label('Scheduled')->dateTime(),
@@ -196,7 +259,7 @@ class MatchesRelationManager extends RelationManager
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->visible(fn (KnockoutMatch $record) => $record->home_score !== null || $record->away_score !== null)
+                    ->visible(fn (KnockoutMatch $record) => $record->home_score !== null || $record->away_score !== null || $record->forfeit_participant_id)
                     ->action(fn (KnockoutMatch $record) => $record->clearResult())
                     ->successNotificationTitle('Result cleared'),
                 Tables\Actions\DeleteAction::make(),

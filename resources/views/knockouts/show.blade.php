@@ -98,7 +98,9 @@
                                                 @endif
                                             </div>
                                             <div class="w-2/12 text-center text-xs font-semibold text-gray-600">
-                                                @if ($match->home_score !== null && $match->away_score !== null)
+                                                @if ($match->forfeitParticipant)
+                                                    <span class="text-gray-500">FF</span>
+                                                @elseif ($match->home_score !== null && $match->away_score !== null)
                                                     <span class="inline-flex bg-green-700 text-white text-center mx-auto text-xs leading-7 min-w-[44px] font-extrabold divide-x-2 divide-x-white">
                                                         <div class="w-1/2">{{ $match->home_score }}</div>
                                                         <div class="w-1/2">{{ $match->away_score }}</div>

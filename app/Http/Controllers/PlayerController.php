@@ -44,6 +44,7 @@ class PlayerController extends Controller
                 'homeParticipant',
                 'awayParticipant',
                 'venue',
+                'forfeitParticipant',
             ])
             ->whereNull('winner_participant_id')
             ->where(function ($query) use ($participantQuery) {

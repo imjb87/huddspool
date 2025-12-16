@@ -9,12 +9,12 @@ class KnockoutMatchController extends Controller
 {
     public function submit(KnockoutMatch $match): View
     {
-        if (! $match->userCanSubmit(auth()->user())) {
+        if ($match->winner_participant_id || ! $match->userCanSubmit(auth()->user())) {
             abort(403);
         }
 
         return view('knockouts.submit-result', [
-            'match' => $match->load('round.knockout', 'homeParticipant', 'awayParticipant'),
+            'match' => $match->load('round.knockout', 'homeParticipant', 'awayParticipant', 'forfeitParticipant'),
         ]);
     }
 }
