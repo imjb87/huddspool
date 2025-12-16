@@ -22,7 +22,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    <div>
+                    <div class="mt-10 md:mt-0">
                         <h3 class="text-sm font-semibold leading-6 text-white">Fixtures &amp; Results</h3>
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
@@ -46,7 +46,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    <div>
+                    <div class="mt-10 md:mt-0">
                         <h3 class="text-sm font-semibold leading-6 text-white">Official</h3>
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
@@ -64,7 +64,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
-                    <ul role="list" class="mt-6 grid grid-cols-2 grid-rows-{{ ceil($active_knockouts->count() / 2) }} gap-4 items-start">
+                    <ul role="list" class="mt-6 grid md:grid-cols-2 grid-rows-{{ ceil($active_knockouts->count() / 2) }} gap-4 items-start">
                         @forelse ($active_knockouts as $knockout)
                             <li>
                                 <a href="{{ route('knockout.show', $knockout) }}"
