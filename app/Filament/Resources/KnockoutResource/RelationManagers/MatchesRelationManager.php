@@ -118,6 +118,18 @@ class MatchesRelationManager extends RelationManager
                 Forms\Components\Select::make('venue_id')
                     ->relationship('venue', 'name')
                     ->searchable()
+                    ->default(function (callable $get) use ($knockout) {
+                        // Only for team knockouts, and only for rounds before semi-finals
+                        $roundId = $get('knockout_round_id');
+                        $round = $roundId ? KnockoutRound::find($roundId) : null;
+                        if ($knockout->type === \App\KnockoutType::Team && $round && !str_contains(strtolower($round->name), 'semi') && !str_contains(strtolower($round->name), 'final')) {
+                            $homeParticipantId = $get('home_participant_id');
+                            $homeParticipant = $homeParticipantId ? KnockoutParticipant::find($homeParticipantId) : null;
+                            $team = $homeParticipant?->team;
+                            return $team?->venue_id;
+                        }
+                        return null;
+                    })
                     ->rule(function (callable $get) {
                         return function (string $attribute, $value, Closure $fail) use ($get) {
                             if (! $value) {

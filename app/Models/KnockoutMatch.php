@@ -13,7 +13,7 @@ class KnockoutMatch extends Model
 {
     use HasFactory;
 
-    public const TEAM_TARGET_FRAMES = 6;
+    public const TEAM_TARGET_FRAMES = 6; // Still 6 to win, but best of is 11
 
     protected $fillable = [
         'knockout_id',
@@ -258,7 +258,7 @@ class KnockoutMatch extends Model
     {
         $type = $this->type();
 
-        return $type === KnockoutType::Team ? 10 : $this->bestOfValue();
+    return $type === KnockoutType::Team ? 11 : $this->bestOfValue();
     }
 
     public function targetScoreToWin(): int
@@ -363,7 +363,19 @@ class KnockoutMatch extends Model
         $column = $this->next_slot === 'home' ? 'home_participant_id' : 'away_participant_id';
 
         if ($this->winner_participant_id) {
-            $next->update([$column => $this->winner_participant_id]);
+            $update = [$column => $this->winner_participant_id];
+
+            // Set venue for team knockouts up to semi-finals
+            $knockout = $next->knockout;
+            $round = $next->round;
+            if ($knockout && $knockout->type === \App\KnockoutType::Team && $round && !str_contains(strtolower($round->name), 'semi') && !str_contains(strtolower($round->name), 'final')) {
+                $homeParticipant = $next->homeParticipant;
+                if ($homeParticipant && $homeParticipant->team) {
+                    $update['venue_id'] = $homeParticipant->team->venue_id;
+                }
+            }
+
+            $next->update($update);
         } elseif ($this->previousWinnerId && $next->{$column} === $this->previousWinnerId) {
             $next->update([$column => null]);
         }
