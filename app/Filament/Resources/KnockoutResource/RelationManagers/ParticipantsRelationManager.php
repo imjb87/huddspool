@@ -67,7 +67,7 @@ class ParticipantsRelationManager extends RelationManager
                     ->required($type !== KnockoutType::Team)
                     ->reactive()
                     ->rules([
-                        function ($attribute, $value, $fail) use (&$livewire, $existingParticipantIds) {
+                        function ($value, $fail) use (&$livewire, $existingParticipantIds) {
                             $data = $livewire->form->getState();
                             if (
                                 isset($data['player_one_id'], $data['player_two_id']) &&
@@ -96,7 +96,7 @@ class ParticipantsRelationManager extends RelationManager
                     ->hidden($type === KnockoutType::Team)
                     ->required($type !== KnockoutType::Team)
                     ->rules([
-                        function ($attribute, $value, $fail) use (&$livewire, $existingParticipantIds) {
+                        function ($value, $fail) use (&$livewire, $existingParticipantIds) {
                             $data = $livewire->form->getState();
                             if (
                                 isset($data['player_one_id'], $data['player_two_id']) &&
