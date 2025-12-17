@@ -67,7 +67,7 @@ class ParticipantsRelationManager extends RelationManager
                     ->required($type !== KnockoutType::Team)
                     ->reactive()
                     ->rules([
-                        function ($value, $fail) use (&$livewire, $existingParticipantIds) {
+                        function (?string $attribute, $value, $fail) use (&$livewire, $existingParticipantIds, $type) {
                             $data = $livewire->form->getState();
                             if (
                                 isset($data['player_one_id'], $data['player_two_id']) &&
@@ -76,9 +76,21 @@ class ParticipantsRelationManager extends RelationManager
                             ) {
                                 $fail('You cannot select the same player twice.');
                             }
-                            // Check if player already exists in this knockout (ignore if editing self)
-                            if ($data['player_one_id'] && in_array($data['player_one_id'], $existingParticipantIds)) {
-                                // If editing, allow if it's the same as the current participant
+                            // For doubles, check if this pair already exists (regardless of order)
+                            if ($type === KnockoutType::Doubles && $data['player_one_id'] && $data['player_two_id']) {
+                                $editingId = $livewire->record->id ?? null;
+                                $alreadyUsed = $livewire->getOwnerRecord()->participants->first(function($p) use ($data, $editingId) {
+                                    $ids = [$p->player_one_id, $p->player_two_id];
+                                    $inputIds = [$data['player_one_id'], $data['player_two_id']];
+                                    sort($ids);
+                                    sort($inputIds);
+                                    return $ids == $inputIds && $p->id != $editingId;
+                                });
+                                if ($alreadyUsed) {
+                                    $fail('This pair is already a participant in this knockout.');
+                                }
+                            } else if ($data['player_one_id'] && in_array($data['player_one_id'], $existingParticipantIds)) {
+                                // For singles, check if player already exists
                                 $editingId = $livewire->record->id ?? null;
                                 $alreadyUsed = $livewire->getOwnerRecord()->participants->first(function($p) use ($data, $editingId) {
                                     return ($p->player_one_id == $data['player_one_id'] || $p->player_two_id == $data['player_one_id']) && $p->id != $editingId;
@@ -93,10 +105,10 @@ class ParticipantsRelationManager extends RelationManager
                     ->label('Player 2')
                     ->options($playerTwoOptions)
                     ->searchable()
-                    ->hidden($type === KnockoutType::Team)
-                    ->required($type !== KnockoutType::Team)
+                    ->hidden($type !== KnockoutType::Doubles)
+                    ->required($type === KnockoutType::Doubles)
                     ->rules([
-                        function ($value, $fail) use (&$livewire, $existingParticipantIds) {
+                        function (?string $attribute, $value, $fail) use (&$livewire, $existingParticipantIds, $type) {
                             $data = $livewire->form->getState();
                             if (
                                 isset($data['player_one_id'], $data['player_two_id']) &&
@@ -105,8 +117,21 @@ class ParticipantsRelationManager extends RelationManager
                             ) {
                                 $fail('You cannot select the same player twice.');
                             }
-                            // Check if player already exists in this knockout (ignore if editing self)
-                            if ($data['player_two_id'] && in_array($data['player_two_id'], $existingParticipantIds)) {
+                            // For doubles, check if this pair already exists (regardless of order)
+                            if ($type === KnockoutType::Doubles && $data['player_one_id'] && $data['player_two_id']) {
+                                $editingId = $livewire->record->id ?? null;
+                                $alreadyUsed = $livewire->getOwnerRecord()->participants->first(function($p) use ($data, $editingId) {
+                                    $ids = [$p->player_one_id, $p->player_two_id];
+                                    $inputIds = [$data['player_one_id'], $data['player_two_id']];
+                                    sort($ids);
+                                    sort($inputIds);
+                                    return $ids == $inputIds && $p->id != $editingId;
+                                });
+                                if ($alreadyUsed) {
+                                    $fail('This pair is already a participant in this knockout.');
+                                }
+                            } else if ($data['player_two_id'] && in_array($data['player_two_id'], $existingParticipantIds)) {
+                                // For singles, check if player already exists
                                 $editingId = $livewire->record->id ?? null;
                                 $alreadyUsed = $livewire->getOwnerRecord()->participants->first(function($p) use ($data, $editingId) {
                                     return ($p->player_one_id == $data['player_two_id'] || $p->player_two_id == $data['player_two_id']) && $p->id != $editingId;
