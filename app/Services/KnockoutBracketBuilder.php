@@ -55,9 +55,18 @@ class KnockoutBracketBuilder
 
             $position = 1;
 
+
             for ($i = 0; $i < $firstRoundMatchCount; $i++) {
                 $home = $firstRoundParticipants[$i * 2] ?? null;
                 $away = $firstRoundParticipants[$i * 2 + 1] ?? null;
+
+                $venueId = null;
+                // Set venue for team knockouts up to semi-finals
+                if ($this->knockout->type === \App\KnockoutType::Team && !str_contains(strtolower($firstRound->name), 'semi') && !str_contains(strtolower($firstRound->name), 'final')) {
+                    if ($home && $home->team) {
+                        $venueId = $home->team->venue_id;
+                    }
+                }
 
                 $match = KnockoutMatch::create([
                     'knockout_id' => $this->knockout->id,
@@ -65,18 +74,26 @@ class KnockoutBracketBuilder
                     'position' => $position++,
                     'home_participant_id' => $home?->id,
                     'away_participant_id' => $away?->id,
+                    'venue_id' => $venueId,
                 ]);
 
                 $matchesByRound[0]->push($match);
             }
 
             foreach ($byeParticipants as $participant) {
+                $venueId = null;
+                if ($this->knockout->type === \App\KnockoutType::Team && !str_contains(strtolower($firstRound->name), 'semi') && !str_contains(strtolower($firstRound->name), 'final')) {
+                    if ($participant && $participant->team) {
+                        $venueId = $participant->team->venue_id;
+                    }
+                }
                 $match = KnockoutMatch::create([
                     'knockout_id' => $this->knockout->id,
                     'knockout_round_id' => $firstRound->id,
                     'position' => $position++,
                     'home_participant_id' => $participant?->id,
                     'away_participant_id' => null,
+                    'venue_id' => $venueId,
                 ]);
 
                 $matchesByRound[0]->push($match);

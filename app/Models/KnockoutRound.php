@@ -17,11 +17,13 @@ class KnockoutRound extends Model
         'position',
         'scheduled_for',
         'best_of',
+        'is_visible',
     ];
 
     protected $casts = [
         'scheduled_for' => 'datetime',
         'best_of' => 'integer',
+        'is_visible' => 'boolean',
     ];
 
     protected static function booted(): void

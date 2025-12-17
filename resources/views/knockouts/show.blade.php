@@ -39,7 +39,7 @@
                     };
                 @endphp
                 <div class="grid grid-cols-1 gap-x-6 gap-y-6 -mx-4 sm:mx-0">
-                    @forelse ($knockout->rounds as $round)
+                    @forelse ($knockout->rounds->where('is_visible', true) as $round)
                         <div class="bg-white shadow-md sm:rounded-lg overflow-hidden">
                             <div class="px-4 py-4 bg-green-700 flex items-center justify-between">
                                 <div>
