@@ -39,6 +39,9 @@ class RoundsRelationManager extends RelationManager
                 ->minValue(1)
                 ->helperText('Leave blank to inherit the knockout best-of. Team knockouts are fixed at 10 frames.')
                 ->hidden(fn () => $this->getOwnerRecord()->type === KnockoutType::Team),
+            Forms\Components\Toggle::make('is_visible')
+                ->label('Visible to users')
+                ->helperText('If off, this round will be hidden from the public knockout view.'),
         ]);
     }
 
@@ -53,6 +56,9 @@ class RoundsRelationManager extends RelationManager
                     ->label('Best of')
                     ->state(fn ($record) => $record->bestOfValue())
                     ->suffix(' frames'),
+                Tables\Columns\ToggleColumn::make('is_visible')
+                    ->label('Visible')
+                    ->sortable(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
