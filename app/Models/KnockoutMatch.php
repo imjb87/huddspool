@@ -49,7 +49,9 @@ class KnockoutMatch extends Model
         static::saving(function (KnockoutMatch $match) {
             $match->previousWinnerId = $match->getOriginal('winner_participant_id');
 
-            if ($match->venue_id && $match->venueConflictsWithParticipants()) {
+            // Only enforce venue conflict for non-team knockouts
+            $type = $match->knockout?->type;
+            if ($type !== \App\KnockoutType::Team && $match->venue_id && $match->venueConflictsWithParticipants()) {
                 throw ValidationException::withMessages([
                     'venue_id' => 'A match cannot be assigned to a venue that belongs to one of the teams involved.',
                 ]);
