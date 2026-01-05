@@ -47,6 +47,7 @@ class PlayerController extends Controller
                 'forfeitParticipant',
             ])
             ->whereNull('winner_participant_id')
+            ->whereHas('round', fn ($query) => $query->where('is_visible', true))
             ->where(function ($query) use ($participantQuery) {
                 $query->whereHas('homeParticipant', $participantQuery)
                     ->orWhereHas('awayParticipant', $participantQuery);
