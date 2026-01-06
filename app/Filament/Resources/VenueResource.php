@@ -44,6 +44,22 @@ class VenueResource extends Resource
                             ->placeholder('Venue address')
                             ->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Location')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('latitude')
+                            ->label('Latitude')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->helperText('Automatically populated from the address.')
+                            ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 7) : null),
+                        Forms\Components\TextInput::make('longitude')
+                            ->label('Longitude')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->helperText('Automatically populated from the address.')
+                            ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 7) : null),
+                    ]),
             ]);
     }
 

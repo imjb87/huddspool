@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use App\Observers\SeasonObserver;
+use App\Models\Venue;
+use App\Observers\VenueObserver;
 use Laravel\Pulse\Facades\Pulse;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         Season::observe(SeasonObserver::class);
+        Venue::observe(VenueObserver::class);
 
         if (Schema::hasTable('rulesets')) {
             $rulesets = Cache::remember('nav:rulesets', now()->addMinutes(10), function () {
