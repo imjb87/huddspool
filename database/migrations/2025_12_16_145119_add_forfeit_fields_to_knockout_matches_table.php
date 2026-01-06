@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('knockout_matches', function (Blueprint $table) {
-            $table->unsignedInteger('player1_id')->nullable()->after('score2');
-            $table->unsignedInteger('player2_id')->nullable()->after('player1_id');
-            $table->json('pair1')->nullable()->after('player2_id');
-            $table->json('pair2')->nullable()->after('pair1');
-            $table->unsignedInteger('team1_id')->nullable()->after('pair2');
-            $table->unsignedInteger('team2_id')->nullable()->after('team1_id');
+            $table->foreignId('forfeit_participant_id')
+                ->nullable()
+                ->after('winner_participant_id')
+                ->constrained('knockout_participants')
+                ->nullOnDelete();
+            $table->text('forfeit_reason')->nullable()->after('forfeit_participant_id');
         });
     }
 
@@ -27,7 +27,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('knockout_matches', function (Blueprint $table) {
-            //
+            $table->dropForeign(['forfeit_participant_id']);
+            $table->dropColumn(['forfeit_participant_id', 'forfeit_reason']);
         });
     }
 };

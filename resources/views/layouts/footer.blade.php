@@ -62,46 +62,20 @@
                         </ul>
                     </div>
                 </div>
-                <div class="md:grid md:grid-cols-2 md:gap-8 col-span-2 md:col-span-1">
-                    <div class="mt-10 md:mt-0">
-                        <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
-                        <ul role="list" class="mt-6 space-y-4">
+                <div>
+                    <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
+                    <ul role="list" class="mt-6 grid md:grid-cols-2 grid-rows-{{ ceil($active_knockouts->count() / 2) }} gap-4 items-start">
+                        @forelse ($active_knockouts as $knockout)
                             <li>
-                                <a href="{{ asset('knockouts/KOSCHEDULE.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">Knockout Schedule</a>
+                                <a href="{{ route('knockout.show', $knockout) }}"
+                                    class="text-sm leading-6 text-gray-300 hover:text-white">
+                                    {{ $knockout->name }}
+                                </a>
                             </li>
-
-                            <li>
-                                <a href="{{ asset('knockouts/BBINTSinglesKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">BB/Int Singles Knockout</a>
-                            </li>
-                            <li>
-                                <a href="{{ asset('knockouts/BBTeamKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">BB/Int Team Knockout</a>
-                            </li>
-                            <li>
-                                <a href="{{ asset('knockouts/DoublesKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">Doubles Knockout</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold leading-6 text-white hidden md:block">&nbsp;</h3>
-                        <ul role="list" class="mt-6 space-y-4">
-                            <li>
-                                <a href="{{ asset('knockouts/EPASinglesKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">EPA Singles Knockout</a>
-                            </li>
-                            <li>
-                                <a href="{{ asset('knockouts/EPATeamKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">EPA Team Knockout</a>
-                            </li>
-                            <li>
-                                <a href="{{ asset('knockouts/MixedDoublesKO.pdf') }}" target="_blank"
-                                    class="text-sm leading-6 text-gray-300 hover:text-white">Mixed Doubles Knockout</a>
-                            </li>
-                        </ul>
-                    </div>
+                        @empty
+                            <li class="text-sm leading-6 text-gray-400">No active knockouts right now.</li>
+                        @endforelse
+                    </ul>
                 </div>
             </div>
         </div>

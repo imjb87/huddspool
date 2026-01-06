@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use App\Observers\SeasonObserver;
+use App\Models\Venue;
+use App\Observers\VenueObserver;
 use Laravel\Pulse\Facades\Pulse;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         Season::observe(SeasonObserver::class);
+        Venue::observe(VenueObserver::class);
 
         if (Schema::hasTable('rulesets')) {
             $rulesets = Cache::remember('nav:rulesets', now()->addMinutes(10), function () {
@@ -58,6 +61,18 @@ class AppServiceProvider extends ServiceProvider
             view()->share('past_seasons', $past_seasons);
         } else {
             view()->share('past_seasons', []);
+        }
+
+        if (Schema::hasTable('knockouts')) {
+            $activeKnockouts = Cache::remember('nav:active-knockouts', now()->addMinutes(10), function () {
+                return Knockout::query()
+                    ->orderByDesc('season_id')
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'slug']);
+            });
+            view()->share('active_knockouts', $activeKnockouts);
+        } else {
+            view()->share('active_knockouts', collect());
         }
 
         Vite::useScriptTagAttributes([

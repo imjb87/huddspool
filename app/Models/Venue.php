@@ -19,6 +19,13 @@ class Venue extends Model
         'name',
         'address',
         'telephone',
+        'latitude',
+        'longitude',
+    ];
+
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function teams()

@@ -4,31 +4,30 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKnockoutsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('knockouts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('season_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->enum('type', ['singles', 'doubles', 'team']);
-            $table->foreignId('season_id');
-            $table->timestamps(); // Adds created_at and updated_at columns
+            $table->string('slug')->unique();
+            $table->string('type');
+            $table->unsignedTinyInteger('best_of')->nullable();
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('knockouts');
     }
-}
+};

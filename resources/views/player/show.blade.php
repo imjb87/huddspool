@@ -195,6 +195,59 @@
                             </div>
                         </div>
                     </div>
+                    <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden mt-6">
+                        <div class="px-4 py-4 bg-green-700">
+                            <h2 class="text-sm font-medium leading-6 text-white">Knockout matches</h2>
+                        </div>
+                        <div class="border-t border-gray-200 divide-y divide-gray-200">
+                            @forelse ($knockoutMatches as $match)
+                                <div class="px-4 py-4 flex flex-col gap-y-2">
+                                    <div class="flex flex-wrap items-center justify-between text-xs uppercase tracking-wide text-gray-500">
+                                        <span>{{ $match->round?->knockout?->name ?? 'Knockout' }}</span>
+                                        <span>{{ $match->round?->name ?? 'Round TBC' }}</span>
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-2">
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900">
+                                                {{ $match->homeParticipant?->display_name ?? 'TBC' }}
+                                                <span class="text-gray-400 font-normal">vs</span>
+                                                {{ $match->awayParticipant?->display_name ?? 'TBC' }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                {{ $match->venue?->name ?? 'Venue TBC' }}
+                                                • {{ $match->starts_at ? $match->starts_at->format('D j M, g:ia') : 'Date TBC' }}
+                                            </p>
+                                            @if ($match->referee)
+                                                <p class="text-xs text-gray-500">
+                                                    Referee: <span class="font-semibold text-gray-700">{{ $match->referee }}</span>
+                                                </p>
+                                            @endif
+                                            @if ($match->forfeitParticipant)
+                                                <p class="text-xs text-red-600">
+                                                    Forfeit: <span class="font-semibold">{{ $match->forfeitParticipant->display_name }}</span>
+                                                </p>
+                                                @if ($match->forfeit_reason)
+                                                    <p class="text-xs text-gray-500">
+                                                        {{ $match->forfeit_reason }}
+                                                    </p>
+                                                @endif
+                                            @endif
+                                        </div>
+                                        @if ($match->starts_at && $match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
+                                            <a href="{{ route('knockout.matches.submit', $match) }}"
+                                                class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-800">
+                                                Submit result
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-4 py-6 text-sm text-gray-500">
+                                    No knockout matches require action right now.
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>

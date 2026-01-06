@@ -2,225 +2,395 @@
 
 namespace App\Models;
 
+use App\KnockoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Validation\ValidationException;
 
 class KnockoutMatch extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'round_id',
-        'venue_id',
-        'score1',
-        'score2',
-        'player1_id',
-        'player2_id',
-        'pair1',
-        'pair2',
-        'team1_id',
-        'team2_id',
-    ];
+    public const TEAM_TARGET_FRAMES = 6; // Still 6 to win, but best of is 11
 
-    protected $appends = [
-        'title',
-        'pair1Player1',
-        'pair1Player2',
-        'pair2Player1',
-        'pair2Player2',
+    protected $fillable = [
+        'knockout_id',
+        'knockout_round_id',
+        'position',
+        'home_participant_id',
+        'away_participant_id',
+        'winner_participant_id',
+        'venue_id',
+        'forfeit_participant_id',
+        'forfeit_reason',
+        'referee',
+        'starts_at',
+        'home_score',
+        'away_score',
+        'best_of',
+        'next_match_id',
+        'next_slot',
+        'completed_at',
+        'reported_by_id',
     ];
 
     protected $casts = [
-        'pair1' => 'array',
-        'pair2' => 'array',
+        'starts_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
-    protected static function booted()
-    {
-        static::saved(function ($match) {
-            // Check if a winner is decided
-            if ($match->score1 !== null && $match->score2 !== null) {
-                $match->updateNextMatch();
-            }
-        });
-    }    
+    protected ?int $previousWinnerId = null;
+    protected bool $suppressAutoBye = false;
 
-    public function round()
+    protected static function booted(): void
     {
-        return $this->belongsTo(Round::class);
+        static::saving(function (KnockoutMatch $match) {
+            $match->previousWinnerId = $match->getOriginal('winner_participant_id');
+
+            // Only enforce venue conflict for non-team knockouts
+            $type = $match->knockout?->type;
+            if ($type !== \App\KnockoutType::Team && $match->venue_id && $match->venueConflictsWithParticipants()) {
+                throw ValidationException::withMessages([
+                    'venue_id' => 'A match cannot be assigned to a venue that belongs to one of the teams involved.',
+                ]);
+            }
+
+            if ($match->hasSingleParticipantBye()) {
+                $match->winner_participant_id = $match->home_participant_id ?: $match->away_participant_id;
+                $match->completed_at = now();
+
+                return;
+            }
+
+            if (! $match->forfeit_participant_id) {
+                $match->forfeit_reason = null;
+            }
+
+            if ($match->forfeit_participant_id) {
+                $winner = $match->determineWinnerFromForfeit();
+                $match->winner_participant_id = $winner;
+                $match->completed_at = $winner ? now() : null;
+                $match->home_score = null;
+                $match->away_score = null;
+
+                return;
+            }
+
+            if ($match->home_score === null || $match->away_score === null) {
+                $match->winner_participant_id = null;
+                $match->completed_at = null;
+
+                return;
+            }
+
+            $match->ensureScoresAreValid($match->home_score, $match->away_score);
+
+            $winner = $match->decideWinner();
+            $match->winner_participant_id = $winner;
+            $match->completed_at = $winner ? now() : null;
+        });
+
+        static::saved(function (KnockoutMatch $match) {
+            $match->syncNextMatchSlot();
+        });
     }
 
-    public function venue()
+    public function suppressAutoBye(): void
+    {
+        $this->suppressAutoBye = true;
+    }
+
+    public function round(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutRound::class, 'knockout_round_id');
+    }
+
+    public function knockout(): BelongsTo
+    {
+        return $this->belongsTo(Knockout::class);
+    }
+
+    public function homeParticipant(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutParticipant::class, 'home_participant_id');
+    }
+
+    public function awayParticipant(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutParticipant::class, 'away_participant_id');
+    }
+
+    public function winner(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutParticipant::class, 'winner_participant_id');
+    }
+
+    public function forfeitParticipant(): BelongsTo
+    {
+        return $this->belongsTo(KnockoutParticipant::class, 'forfeit_participant_id');
+    }
+
+    public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
     }
 
-    public function dependancies()
+    public function nextMatch(): BelongsTo
     {
-        return $this->hasMany(MatchDependancy::class, 'knockout_match_id');
+        return $this->belongsTo(self::class, 'next_match_id');
     }
 
-    public function dependant()
+    public function previousMatches(): HasMany
     {
-        return $this->hasOneThrough(
-            self::class,
-            MatchDependancy::class,
-            'depends_on_id',
-            'id',
-            'id',
-            'knockout_match_id'
-        );
+        return $this->hasMany(self::class, 'next_match_id');
     }
 
-    public function player1()
+    public function reporter(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'player1_id');
+        return $this->belongsTo(User::class, 'reported_by_id');
     }
 
-    public function player2()
+    public function scopeOrdered($query)
     {
-        return $this->belongsTo(User::class, 'player2_id');
+        return $query->orderBy('position');
     }
 
-    public function team1()
+    public function type(): ?KnockoutType
     {
-        return $this->belongsTo(Team::class, 'team1_id');
+        return $this->knockout?->type;
     }
 
-    public function team2()
+    public function recordResult(int $homeScore, int $awayScore, User $user): void
     {
-        return $this->belongsTo(Team::class, 'team2_id');
+        $this->ensureScoresAreValid($homeScore, $awayScore);
+
+        $this->fill([
+            'home_score' => $homeScore,
+            'away_score' => $awayScore,
+            'reported_by_id' => $user->id,
+            'forfeit_participant_id' => null,
+            'forfeit_reason' => null,
+        ]);
+
+        $this->save();
     }
 
-    public function getTitleAttribute()
+    public function clearResult(): void
     {
-        // singles, doubles or team?
-        $type = $this->round->knockout->type->value;
+        $this->fill([
+            'home_score' => null,
+            'away_score' => null,
+            'reported_by_id' => null,
+            'completed_at' => null,
+            'winner_participant_id' => null,
+            'forfeit_participant_id' => null,
+            'forfeit_reason' => null,
+        ]);
 
-        switch ($type) {
-            case 'singles':
-                if ( ! $this->player1 && ! $this->player2) {
-                    return 'Winner of above match';
-                }
-                if ($this->player1 && ! $this->player2) {
-                    return "{$this->player1->name} vs Winner of above match";
-                }
-                if ( ! $this->player1 && $this->player2) {
-                    return "Winner of above match vs {$this->player2->name}";
-                }
-                return "{$this->player1->name} vs {$this->player2->name}";
-            case 'doubles':
-                if ( ! $this->pair1Player1 || ! $this->pair1Player2 || ! $this->pair2Player1 || ! $this->pair2Player2) {
-                    return 'Winner of above match';
-                }
-                if ($this->pair1Player1 && $this->pair1Player2 && ! $this->pair2Player1 && ! $this->pair2Player2) {
-                    return "{$this->pair1Player1->name} & {$this->pair1Player2->name} vs Winner of above match";
-                }
-                if ( ! $this->pair1Player1 && ! $this->pair1Player2 && $this->pair2Player1 && $this->pair2Player2) {
-                    return "Winner of above match vs {$this->pair2Player1->name} & {$this->pair2Player2->name}";
-                }
-                return "{$this->pair1Player1->name} & {$this->pair1Player2->name} vs {$this->pair2Player1->name} & {$this->pair2Player2->name}";
-            case 'team':
-                return "{$this->team1->name} vs {$this->team2->name}";
+        $this->save();
+    }
+
+    public function ensureScoresAreValid(int $homeScore, int $awayScore): void
+    {
+        if ($homeScore < 0 || $awayScore < 0) {
+            $this->scoreValidationError('Scores must be zero or a positive number.');
         }
 
-        return 'Unknown';
+        if ($homeScore === $awayScore) {
+            $this->scoreValidationError('Knockout matches cannot end in a draw.');
+        }
+
+        $target = $this->targetScoreToWin();
+        $maxFrames = $this->maxFramesAllowed();
+        $total = $homeScore + $awayScore;
+        $winnerScore = max($homeScore, $awayScore);
+
+        if ($winnerScore < $target) {
+            $this->scoreValidationError("Winning participant must reach {$target} points.");
+        }
+
+        if ($winnerScore > $target) {
+            $this->scoreValidationError("Winning participant cannot score more than {$target} points.");
+        }
+
+        if ($maxFrames && $total > $maxFrames) {
+            $this->scoreValidationError("Total frames cannot exceed {$maxFrames}.");
+        }
     }
 
-    protected function resolvePairPlayer(?array $pair, int $index): ?User
+    public function userCanSubmit(?User $user): bool
     {
-        $playerId = $pair[$index] ?? null;
+        if (! $user) {
+            return false;
+        }
 
-        return $playerId ? User::find($playerId) : null;
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        $type = $this->type();
+
+        return match ($type) {
+            KnockoutType::Singles => $this->homeParticipant?->includesPlayer($user)
+                || $this->awayParticipant?->includesPlayer($user),
+            KnockoutType::Doubles => $this->homeParticipant?->includesPlayer($user)
+                || $this->awayParticipant?->includesPlayer($user),
+            KnockoutType::Team => $this->userIsTeamRepresentative($user),
+            default => false,
+        };
     }
 
-    public function getPair1Player1Attribute()
+    public function title(): string
     {
-        return $this->resolvePairPlayer($this->pair1 ?? [], 0);
+        return trim("{$this->homeParticipant?->display_name} vs {$this->awayParticipant?->display_name}") ?: 'TBC';
     }
 
-    public function getPair1Player2Attribute()
+    public function bestOfValue(): int
     {
-        return $this->resolvePairPlayer($this->pair1 ?? [], 1);
+        return $this->best_of
+            ?? $this->round?->bestOfValue()
+            ?? $this->knockout?->bestOfValue()
+            ?? $this->type()?->defaultBestOf()
+            ?? 5;
     }
 
-    public function getPair2Player1Attribute()
+    public function maxFramesAllowed(): int
     {
-        return $this->resolvePairPlayer($this->pair2 ?? [], 0);
+        $type = $this->type();
+
+    return $type === KnockoutType::Team ? 11 : $this->bestOfValue();
     }
 
-    public function getPair2Player2Attribute()
+    public function targetScoreToWin(): int
     {
-        return $this->resolvePairPlayer($this->pair2 ?? [], 1);
+        $type = $this->type();
+
+        return $type === KnockoutType::Team
+            ? self::TEAM_TARGET_FRAMES
+            : (int) ceil($this->bestOfValue() / 2);
     }
 
-    /**
-     * Update the next match with the winner's ID.
-     */
-    public function updateNextMatch()
+    private function hasSingleParticipantBye(): bool
     {
-        if ($this->score1 === null || $this->score2 === null || $this->score1 === $this->score2) {
+        if ($this->suppressAutoBye) {
+            return false;
+        }
+
+        $participants = collect([$this->home_participant_id, $this->away_participant_id])->filter();
+
+        return $participants->count() === 1 && $this->home_score === null && $this->away_score === null;
+    }
+
+    private function scoreValidationError(string $message): void
+    {
+        throw ValidationException::withMessages([
+            'home_score' => $message,
+            'away_score' => $message,
+        ]);
+    }
+
+    private function venueConflictsWithParticipants(): bool
+    {
+        if (! $this->venue_id) {
+            return false;
+        }
+
+        $venueId = $this->venue_id;
+
+        return collect([$this->homeParticipant, $this->awayParticipant])
+            ->filter()
+            ->contains(function (KnockoutParticipant $participant) use ($venueId) {
+                $participant->loadMissing('team', 'playerOne.team', 'playerTwo.team');
+
+                $teamVenueIds = collect([
+                    $participant->team?->venue_id,
+                    $participant->playerOne?->team?->venue_id,
+                    $participant->playerTwo?->team?->venue_id,
+                ])->filter();
+
+                if ($teamVenueIds->isEmpty()) {
+                    return false;
+                }
+
+                return $teamVenueIds->contains(fn ($id) => (int) $id === (int) $venueId);
+            });
+    }
+
+    private function decideWinner(): ?int
+    {
+        if ($this->home_score === null || $this->away_score === null) {
+            return null;
+        }
+
+        if ($this->home_score === $this->away_score) {
+            return null;
+        }
+
+        return $this->home_score > $this->away_score
+            ? $this->home_participant_id
+            : $this->away_participant_id;
+    }
+
+    private function determineWinnerFromForfeit(): ?int
+    {
+        if (! $this->forfeit_participant_id) {
+            return null;
+        }
+
+        if ((int) $this->home_participant_id === (int) $this->forfeit_participant_id) {
+            return $this->away_participant_id;
+        }
+
+        if ((int) $this->away_participant_id === (int) $this->forfeit_participant_id) {
+            return $this->home_participant_id;
+        }
+
+        return null;
+    }
+
+    private function syncNextMatchSlot(): void
+    {
+        if (! $this->next_match_id || ! $this->next_slot) {
             return;
         }
 
-        $dependentMatch = $this->dependant()
-            ->with(['dependancies', 'round.knockout'])
-            ->first();
+        $next = $this->nextMatch;
 
-        if (! $dependentMatch) {
+        if (! $next) {
             return;
         }
 
-        if (! $dependentMatch->dependancies->contains('depends_on_id', $this->id)) {
-            return;
-        }
+        $column = $this->next_slot === 'home' ? 'home_participant_id' : 'away_participant_id';
 
-        $position = $dependentMatch->dependancies
-            ->pluck('depends_on_id')
-            ->search($this->id);
+        if ($this->winner_participant_id) {
+            $update = [$column => $this->winner_participant_id];
 
-        if ($position === false) {
-            return;
-        }
-
-        $position += 1;
-        $winnerSlot = $this->score1 > $this->score2 ? 1 : 2;
-        $knockoutType = $dependentMatch->round?->knockout?->type?->value;
-        $payload = [];
-
-        switch ($knockoutType) {
-            case 'singles':
-                $winnerId = $this->{"player{$winnerSlot}_id"} ?? null;
-
-                if ($winnerId) {
-                    $payload = ["player{$position}_id" => $winnerId];
+            // Set venue for team knockouts up to semi-finals
+            $knockout = $next->knockout;
+            $round = $next->round;
+            if ($knockout && $knockout->type === \App\KnockoutType::Team && $round && !str_contains(strtolower($round->name), 'semi') && !str_contains(strtolower($round->name), 'final')) {
+                $homeParticipant = $next->homeParticipant;
+                if ($homeParticipant && $homeParticipant->team) {
+                    $update['venue_id'] = $homeParticipant->team->venue_id;
                 }
-                break;
-            case 'doubles':
-                $winningPair = $this->{"pair{$winnerSlot}"} ?? null;
+            }
 
-                if (is_array($winningPair) && ! empty($winningPair)) {
-                    $payload = ["pair{$position}" => $winningPair];
-                }
-                break;
-            case 'team':
-                $winnerTeamId = $this->{"team{$winnerSlot}_id"} ?? null;
+            $next->update($update);
+        } elseif ($this->previousWinnerId && $next->{$column} === $this->previousWinnerId) {
+            $next->update([$column => null]);
+        }
+    }
 
-                if ($winnerTeamId) {
-                    $payload = ["team{$position}_id" => $winnerTeamId];
-                }
-                break;
+    private function userIsTeamRepresentative(User $user): bool
+    {
+        $teamIds = collect([$this->homeParticipant?->team_id, $this->awayParticipant?->team_id])->filter();
+
+        if ($teamIds->isEmpty()) {
+            return false;
         }
 
-        if (empty($payload)) {
-            return;
-        }
-
-        $dependentMatch->fill($payload);
-
-        if ($dependentMatch->isDirty()) {
-            $dependentMatch->save();
-        }
+        return $teamIds->contains($user->team_id) && ($user->isCaptain() || $user->isTeamAdmin());
     }
 }

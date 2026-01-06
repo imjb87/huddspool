@@ -18,4 +18,28 @@ enum KnockoutType: string implements HasLabel
             self::Team => 'Team',
         };
     }
+
+    public function requiresBestOf(): bool
+    {
+        return $this !== self::Team;
+    }
+
+    public function defaultBestOf(): int
+    {
+    return $this === self::Team ? 11 : 5;
+    }
+
+    public function participantsLabel(): string
+    {
+        return match ($this) {
+            self::Singles => 'Player',
+            self::Doubles => 'Pair',
+            self::Team => 'Team',
+        };
+    }
+
+    public function maxScoreAllowed(): int
+    {
+    return $this === self::Team ? 11 : 9;
+    }
 }

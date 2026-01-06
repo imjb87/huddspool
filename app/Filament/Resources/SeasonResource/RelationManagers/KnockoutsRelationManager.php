@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\SeasonResource\RelationManagers;
 
+use App\KnockoutType;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class KnockoutsRelationManager extends RelationManager
@@ -19,25 +19,40 @@ class KnockoutsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\Select::make('type')
+                ->options(KnockoutType::class)
+                ->required()
+                ->reactive(),
+            Forms\Components\TextInput::make('best_of')
+                ->numeric()
+                ->minValue(1)
+                ->visible(fn (Get $get) => in_array($get('type'), [
+                    KnockoutType::Singles->value,
+                    KnockoutType::Doubles->value,
+                ])),
+        ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                // use enum for type
-                Tables\Columns\TextColumn::make('type'),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(function ($state) {
+                        if ($state instanceof KnockoutType) {
+                            return $state->getLabel();
+                        }
+
+                        return KnockoutType::from($state)->getLabel();
+                    }),
+                Tables\Columns\TextColumn::make('best_of')
+                    ->label('Best Of')
+                    ->placeholder('-'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
@@ -46,10 +61,6 @@ class KnockoutsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('name');
     }
 }
