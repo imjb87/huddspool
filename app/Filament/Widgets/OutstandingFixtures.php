@@ -5,9 +5,9 @@ namespace App\Filament\Widgets;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Support\Facades\App;
 use App\Models\Fixture;
 use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\FixtureResource;
 
 class OutstandingFixtures extends BaseWidget
 {
@@ -42,7 +42,7 @@ class OutstandingFixtures extends BaseWidget
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),                
             ])
             ->recordUrl(
-                fn (Model $record): string => route('filament.admin.resources.fixtures.edit', ['record' => $record]),
+                fn (Model $record): string => FixtureResource::getUrl('edit', ['record' => $record]),
             )
             ->paginated(5)
             ->searchable(false)
