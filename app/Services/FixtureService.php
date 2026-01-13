@@ -65,15 +65,20 @@ class FixtureService
         // generate schedule
         $schedule = $this->createSchedule($teams);
 
+        $dates = $this->section->season?->dates ?? [];
+
         foreach ($schedule as $week => $fixtures) {
             foreach ($fixtures as $fixture) {
 
                 $home = $this->section->teams->find($fixture[0]);
                 $away = $this->section->teams->find($fixture[1]);
+                if (! $home || ! $away) {
+                    continue;
+                }
 
                 $fullSchedule[$week + 1][] = [
                     'week' => $week + 1,
-                    'fixture_date' => $this->section->season->dates[$week],
+                    'fixture_date' => $dates[$week] ?? null,
                     'home_team_id' => $home->id,
                     'away_team_id' => $away->id,
                     'season_id' => $this->section->season->id,

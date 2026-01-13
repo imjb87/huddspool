@@ -9,7 +9,6 @@ use Filament\Forms;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use App\Models\User;
-use Filament\Support\Enums\MaxWidth;
 
 class EditFixture extends EditRecord
 {
@@ -172,7 +171,7 @@ class EditFixture extends EditRecord
                         ->success()
                         ->send();
                 })
-                ->modalWidth(MaxWidth::SixExtraLarge),
+                ->modalWidth('6xl'),
         ];
     }
 }

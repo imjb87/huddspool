@@ -1,0 +1,11 @@
+.border {
+  border-width: 1px;
+}
+
+.border-red-300 {
+  border-color: #fca5a5;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}

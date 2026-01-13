@@ -8,6 +8,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -32,6 +33,10 @@ class CpPanelProvider extends PanelProvider
             ->homeUrl('/')
             ->colors([
                 'primary' => 'rgb(21, 128, 61)',
+            ])
+            ->assets([
+                Css::make('filament-overrides')
+                    ->relativePublicPath('css/filament-overrides.css'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
