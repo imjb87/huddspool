@@ -7,7 +7,6 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use App\Models\Fixture;
 use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\FixtureResource;
 
 class OutstandingFixtures extends BaseWidget
 {
@@ -18,7 +17,7 @@ class OutstandingFixtures extends BaseWidget
         return $table
             ->query(
                 Fixture::query()
-                    ->with('result')
+                    ->with(['result', 'section.season', 'season'])
                     ->whereDoesntHave('result', function ($query) {
                         $query->where('is_confirmed', true);
                     })
@@ -42,7 +41,14 @@ class OutstandingFixtures extends BaseWidget
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),                
             ])
             ->recordUrl(
-                fn (Model $record): string => FixtureResource::getUrl('edit', ['record' => $record]),
+                fn (Model $record): string => route(
+                    'filament.admin.resources.seasons.sections.fixtures.edit',
+                    [
+                        'record' => $record,
+                        'section' => $record->section,
+                        'season' => $record->season ?? $record->section?->season,
+                    ],
+                ),
             )
             ->paginated(5)
             ->searchable(false)
