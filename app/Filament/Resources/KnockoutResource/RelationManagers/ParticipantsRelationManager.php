@@ -97,7 +97,7 @@ class ParticipantsRelationManager extends RelationManager
                     ->searchable()
                     ->getOptionLabelFromRecordUsing(fn (User $player) => $formatPlayerOption($player))
                     ->hidden($type !== KnockoutType::Doubles)
-                    ->required($type === KnockoutType::Doubles)
+                    ->helperText('Optional. Leave blank to mark as TBC.')
                     ->rule($uniqueParticipantRule),
             ];
         });

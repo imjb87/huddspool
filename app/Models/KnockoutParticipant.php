@@ -60,7 +60,7 @@ class KnockoutParticipant extends Model
 
         return match ($type) {
             KnockoutType::Singles => $this->playerOne?->name ?? 'TBC',
-            KnockoutType::Doubles => trim(collect([$this->playerOne?->name, $this->playerTwo?->name])->filter()->implode(' & ')) ?: 'TBC',
+            KnockoutType::Doubles => $this->formatDoublesName(),
             KnockoutType::Team => $this->team?->name ?? 'TBC',
         };
     }
@@ -69,5 +69,25 @@ class KnockoutParticipant extends Model
     {
         return $this->player_one_id === $user->id
             || $this->player_two_id === $user->id;
+    }
+
+    private function formatDoublesName(): string
+    {
+        $playerOne = $this->playerOne?->name;
+        $playerTwo = $this->playerTwo?->name;
+
+        if (! $playerOne && ! $playerTwo) {
+            return 'TBC';
+        }
+
+        if ($playerOne && ! $playerTwo) {
+            return "{$playerOne} & TBC";
+        }
+
+        if (! $playerOne && $playerTwo) {
+            return "TBC & {$playerTwo}";
+        }
+
+        return "{$playerOne} & {$playerTwo}";
     }
 }

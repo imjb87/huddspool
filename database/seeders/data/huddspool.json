@@ -1,0 +1,2462 @@
+{
+  "source": "https://www.huddspool.co.uk",
+  "generated_at": "2026-01-13",
+  "season": {
+    "name": "Current Season",
+    "is_open": true,
+    "dates": []
+  },
+  "rulesets": [
+    {
+      "name": "International Rules",
+      "slug": "international-rules",
+      "sections": [
+        {
+          "name": "International Premier",
+          "teams": [
+            "11",
+            "4",
+            "3",
+            "12",
+            "28",
+            "5",
+            "50",
+            "6",
+            "15",
+            "13"
+          ]
+        },
+        {
+          "name": "International Section 1",
+          "teams": [
+            "23",
+            "7",
+            "10",
+            "8",
+            "16",
+            "20",
+            "21",
+            "32",
+            "19",
+            "14"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blackball Rules",
+      "slug": "blackball-rules",
+      "sections": [
+        {
+          "name": "Blackball Premier",
+          "teams": [
+            "24",
+            "41",
+            "42",
+            "40",
+            "25",
+            "51",
+            "47",
+            "26",
+            "52",
+            "31"
+          ]
+        },
+        {
+          "name": "Blackball Section 1",
+          "teams": [
+            "116",
+            "46",
+            "43",
+            "63",
+            "35",
+            "57",
+            "54",
+            "33",
+            "44",
+            "90"
+          ]
+        },
+        {
+          "name": "Blackball Section 2",
+          "teams": [
+            "45",
+            "17",
+            "48",
+            "115",
+            "69",
+            "65",
+            "56",
+            "58",
+            "38",
+            "39"
+          ]
+        },
+        {
+          "name": "Blackball Section 3",
+          "teams": [
+            "145",
+            "101",
+            "37",
+            "122",
+            "73",
+            "123",
+            "60",
+            "152",
+            "61",
+            "91"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EPA Rules",
+      "slug": "epa-rules",
+      "sections": [
+        {
+          "name": "EPA Premier",
+          "teams": [
+            "82",
+            "76",
+            "79",
+            "102",
+            "97",
+            "108",
+            "67",
+            "77",
+            "29",
+            "98"
+          ]
+        },
+        {
+          "name": "EPA Section 1",
+          "teams": [
+            "80",
+            "136",
+            "75",
+            "68",
+            "83",
+            "92",
+            "74",
+            "64",
+            "66",
+            "1"
+          ]
+        },
+        {
+          "name": "EPA Section 2",
+          "teams": [
+            "88",
+            "85",
+            "78",
+            "103",
+            "106",
+            "113",
+            "99",
+            "109",
+            "70",
+            "95"
+          ]
+        },
+        {
+          "name": "EPA Section 3",
+          "teams": [
+            "132",
+            "138",
+            "133",
+            "72",
+            "94",
+            "119",
+            "120",
+            "100",
+            "93",
+            "1"
+          ]
+        },
+        {
+          "name": "EPA Section 4",
+          "teams": [
+            "143",
+            "131",
+            "137",
+            "134",
+            "127",
+            "105",
+            "110",
+            "1",
+            "114",
+            "130"
+          ]
+        },
+        {
+          "name": "EPA Section 5",
+          "teams": [
+            "22",
+            "141",
+            "104",
+            "140",
+            "139",
+            "146",
+            "84",
+            "86",
+            "128",
+            "1"
+          ]
+        },
+        {
+          "name": "EPA Section 6",
+          "teams": [
+            "142",
+            "151",
+            "147",
+            "59",
+            "149",
+            "148",
+            "150",
+            "135",
+            "112",
+            "1"
+          ]
+        }
+      ]
+    }
+  ],
+  "teams": {
+    "11": {
+      "name": "Slaithwaite Con 'A'",
+      "players": [
+        "Andrew Patchett",
+        "Chris Dyson",
+        "Chris Heywood",
+        "Harris Ali",
+        "Michael Whaley",
+        "Paul Hirst",
+        "Ryan Bodsworth",
+        "Ryan Driver",
+        "Shabir Ali"
+      ],
+      "captain": "Shabir Ali"
+    },
+    "4": {
+      "name": "Elland WMC",
+      "players": [
+        "Alex Bishop",
+        "Dave Halliday",
+        "James McColgan",
+        "Luke McEvoy",
+        "Mark Dawson",
+        "Richard Lightowlers",
+        "Rob Austin",
+        "Simon Hill",
+        "Steve Stokes"
+      ],
+      "captain": "Alex Bishop"
+    },
+    "3": {
+      "name": "Rack Caf\u00e9 Champs",
+      "players": [
+        "Ady Ibbitson",
+        "Billy Johnson",
+        "Dave Keen",
+        "Gary Hudson",
+        "Izzy Hussain",
+        "Karl Buck",
+        "Mukhtar Hussain",
+        "Nick Keen",
+        "Shane Byrne",
+        "Simon Phillips"
+      ],
+      "captain": "Nick Keen"
+    },
+    "12": {
+      "name": "Golcar Legion Slammers",
+      "players": [
+        "Adam Lee",
+        "Ash Gavin",
+        "Carl Standidge",
+        "Christian Duncan",
+        "Colin Wood",
+        "Glen Cockroft",
+        "Jack O'Connor",
+        "Kyle Wood",
+        "Lee Richardson",
+        "Nathan Laverack"
+      ],
+      "captain": "Ash Gavin"
+    },
+    "28": {
+      "name": "Ashfield Badgers",
+      "players": [
+        "A Hardcastle",
+        "Adam Kelly",
+        "Bryn Cropper",
+        "Dean Shields",
+        "Deon Hunter",
+        "Emma Cunningham",
+        "Jo Coe",
+        "Paul Watkins",
+        "Rob Making",
+        "Simon Wagstaff",
+        "Vicki Lomax"
+      ],
+      "captain": "Vicki Lomax"
+    },
+    "5": {
+      "name": "Beechfield",
+      "players": [
+        "Adam Taylor",
+        "Andrew Lister",
+        "Chris Booth",
+        "Dale Brooke",
+        "Dale Greenwood",
+        "Jack Bunting",
+        "John Lingard",
+        "Kyle Joe-Malin",
+        "Mark Booth",
+        "Mark Kelly",
+        "Matthew Benson",
+        "Micky Butterfield",
+        "Ricky Smith",
+        "Rob Oldfield",
+        "Ross Evans",
+        "Simon Capewell",
+        "Simon Hoaksey",
+        "Simon Lockwood"
+      ],
+      "captain": "Matthew Benson"
+    },
+    "50": {
+      "name": "Levels Above",
+      "players": [
+        "Alfie Wilkinson",
+        "Bobby Patel",
+        "Carl Hardcastle",
+        "Craig Bales",
+        "Daniel Dowie",
+        "Jake Read",
+        "James Halstead",
+        "Josh Dunne",
+        "Kris Midgley",
+        "Liam Fallas",
+        "Mark Cheetham",
+        "Martin Wood",
+        "Oliver Read",
+        "Pups Tandy",
+        "Ronnie Stout",
+        "Sahood Nawab",
+        "Shaun Priestley"
+      ],
+      "captain": "Martin Wood"
+    },
+    "6": {
+      "name": "Commercial (S'waite)",
+      "players": [
+        "Danny Haigh",
+        "Gary Holmes",
+        "Glenn Wilkinson",
+        "Harrison Quarmby",
+        "Jeff Anderson",
+        "Josh Hirst",
+        "Simon Reilly",
+        "Stephen Carlton",
+        "Will Strutt"
+      ],
+      "captain": "Gary Holmes"
+    },
+    "15": {
+      "name": "Golcar Legion 'A'",
+      "players": [
+        "Dave Orentas",
+        "Ian Hoyle",
+        "Joel Swift",
+        "Lee Shaw",
+        "Martin Taylor",
+        "Sam Lucas"
+      ],
+      "captain": "Joel Swift"
+    },
+    "13": {
+      "name": "Spangled Bull Sharks",
+      "players": [
+        "Damien Overton",
+        "Darren Crowe",
+        "Finley Allsebrook",
+        "Gary Shore",
+        "George Townend",
+        "Nathan Taylor",
+        "Nik Townend",
+        "Ross Studholme",
+        "Ryan Waterworth",
+        "Steve Hall"
+      ],
+      "captain": "Nik Townend"
+    },
+    "23": {
+      "name": "Shelley S&SC 'D'",
+      "players": [
+        "Adrian Harrison",
+        "Charles Crosland",
+        "Dave Crosland",
+        "Ian Booth",
+        "Jack Nixon",
+        "John Nixon",
+        "Justin Riley",
+        "Paul Badminton",
+        "Reece Dyson",
+        "Steve Hilton",
+        "Steve Weatherby",
+        "Stuart Hodgson",
+        "Wayne Boustead"
+      ],
+      "captain": "Steve Weatherby"
+    },
+    "7": {
+      "name": "Foresters 'A'",
+      "players": [
+        "Daz Lucks",
+        "Dean Harley",
+        "Jason Knowles",
+        "Jason McMahon",
+        "John Siswick",
+        "Lewis McQuillan",
+        "Mark Aston",
+        "Martin Shaw",
+        "Matthew Werritt",
+        "Paul Bodsworth",
+        "Paul O'Conner",
+        "Philip Shaw",
+        "Sean Goddard"
+      ],
+      "captain": "Paul Bodsworth"
+    },
+    "10": {
+      "name": "Paddock C&BC Panthers",
+      "players": [
+        "Jaesh Shukla",
+        "Jamahl Liburd",
+        "Jayden Hunte",
+        "John King",
+        "Johnny Flowers",
+        "Lewis Griffin",
+        "Louise Hunte",
+        "Mitchell Taylor",
+        "Morris Simpson",
+        "Niall Jerome",
+        "Richard Clarke",
+        "Robert Flowers",
+        "Rowan Brockman",
+        "William Hunte"
+      ],
+      "captain": "Mitchell Taylor"
+    },
+    "8": {
+      "name": "Foresters 'B'",
+      "players": [
+        "Chris Sykes",
+        "Craig Smith",
+        "Craig Sugden",
+        "Graham Dean",
+        "Ian Gough",
+        "Joe Burnand",
+        "Lee Moseley",
+        "Oliver Shaw",
+        "Tim Moriarty",
+        "Tony Smith"
+      ],
+      "captain": "Tim Moriarty"
+    },
+    "16": {
+      "name": "Honley Libs",
+      "players": [
+        "Dan Armitage",
+        "Danny Booth",
+        "Gary Doughty",
+        "Greg Atkinson",
+        "Jamie Armitage",
+        "Marcus Clough",
+        "Mat Brook",
+        "Nikki Lee",
+        "Richard Haigh",
+        "Sam Nunn"
+      ],
+      "captain": "Mat Brook"
+    },
+    "20": {
+      "name": "Outlane BC Rebels",
+      "players": [
+        "Adam Pell",
+        "Ash Pogson",
+        "Gary Dobson",
+        "Heath Taylor",
+        "Jamie McKeeman",
+        "Peter Arundale",
+        "Richard Hankinson",
+        "Steve Hepworth"
+      ],
+      "captain": "Richard Hankinson"
+    },
+    "21": {
+      "name": "Slaithwaite Con'Dors",
+      "players": [
+        "Alex Woodworth",
+        "Carol Hey",
+        "Christine Armitage",
+        "Damien Cooper",
+        "David Sewell",
+        "John Heap",
+        "Katie Liddicoat-Jackson",
+        "Kevin Armitage",
+        "Lisa McGirr",
+        "Louise Dyson",
+        "Mandy Booth"
+      ],
+      "captain": "Christine Armitage"
+    },
+    "32": {
+      "name": "Shelley S&SC 'B'",
+      "players": [
+        "Chris Barraclough",
+        "Chris Hague",
+        "Chris Wood",
+        "Jody Leeming",
+        "Ken Taylor",
+        "Luke Taylor",
+        "Matthew Crofts",
+        "Paul Fish",
+        "Rachel Hague",
+        "Reggie Pickford",
+        "Sam Hughes"
+      ],
+      "captain": "Paul Fish"
+    },
+    "19": {
+      "name": "Milnsbridge Lib Dreamers",
+      "players": [
+        "Andy Pearson",
+        "Conrad Wass",
+        "Ethan Pember",
+        "Gary Knell",
+        "Josh Fiddes",
+        "Kieron Pember",
+        "Zak Pearson"
+      ],
+      "captain": "Zak Pearson"
+    },
+    "14": {
+      "name": "Four Sons Amateurs",
+      "players": [
+        "Alex Yates",
+        "Andy Turner",
+        "Andy Wood",
+        "Callum Hirst",
+        "Connor Crossland",
+        "Dave Werritt",
+        "Daz Smith",
+        "Elliott Glover",
+        "Gary Marshall",
+        "Gavin Shaw",
+        "Geoff Flood",
+        "Lee Parkhouse"
+      ],
+      "captain": "Callum Hirst"
+    },
+    "24": {
+      "name": "Savile Arms",
+      "players": [
+        "Carl Zaffino",
+        "Dale Rogers",
+        "Jack Hopkinson",
+        "Jason O'Kane",
+        "Lee Rogers",
+        "Marvin Nestor",
+        "Sam Wheatcroft",
+        "Stuart Gothard",
+        "Warren Wheatcroft"
+      ],
+      "captain": "Jason O'Kane"
+    },
+    "41": {
+      "name": "Milnsbridge Lib 'C'",
+      "players": [
+        "Azii Ali",
+        "Chris Reynolds",
+        "Craig Westoby",
+        "Jamie Halstead",
+        "Martyn Graham",
+        "Martyn Houlton",
+        "Rick Worsley"
+      ],
+      "captain": "Craig Westoby"
+    },
+    "42": {
+      "name": "Golcar Lib",
+      "players": [
+        "Ben Leinasar",
+        "Chris Fawcett",
+        "Gav Petts",
+        "Jacob Mulhall",
+        "Jason Longmore",
+        "Nick Sutton",
+        "Paul Ditchfield",
+        "Richard Wilkins",
+        "Tony Glover"
+      ],
+      "captain": "Richard Wilkins"
+    },
+    "40": {
+      "name": "Mirfield Parish CC",
+      "players": [
+        "C Pygott",
+        "Craig Farrell",
+        "Gary Pearce",
+        "Jack Thompson",
+        "Johnny Storey",
+        "Mark Pygott",
+        "Martyn Pearson",
+        "Mick Page",
+        "Richard Wadsworth",
+        "Steve Driver"
+      ],
+      "captain": "Johnny Storey"
+    },
+    "25": {
+      "name": "Levels Jewels",
+      "players": [
+        "Alan Dunne",
+        "Dom Hegarty",
+        "Jack McQuillan",
+        "Martyn Kelly",
+        "Matthew Wright",
+        "Oly Dunne",
+        "Richard Kelly",
+        "Simon Abel",
+        "Steven Berry",
+        "Steven Gill"
+      ],
+      "captain": "Martyn Kelly"
+    },
+    "51": {
+      "name": "Shelley S&SC 'A'",
+      "players": [
+        "Andrew Wilkinson",
+        "Anton Edwards",
+        "Ben Sykes",
+        "Bernie Gately",
+        "Graham Bailey",
+        "Jamie Nagle",
+        "Manjinder Basra",
+        "Peter Brooke",
+        "Richard Walker"
+      ],
+      "captain": "Ben Sykes"
+    },
+    "47": {
+      "name": "Lockwood Con 'A'",
+      "players": [
+        "Andrew Sullivan",
+        "Anthony Haigh",
+        "Barry North",
+        "D Dennis",
+        "Hiram Birkett",
+        "Jack Robinson",
+        "Jonathan Berry",
+        "Josh Matthews",
+        "Nathan Foster",
+        "Paul Berry",
+        "R Nettleton",
+        "Tony Manley",
+        "Wayne Holmes"
+      ],
+      "captain": "Anthony Haigh"
+    },
+    "26": {
+      "name": "Marsh United 'A'",
+      "players": [
+        "Alex Georgiou",
+        "Ben Pace",
+        "Carl Moon",
+        "Chris Mann",
+        "Jane Fowler",
+        "Jason Brook",
+        "Joe Martin",
+        "Jordan Berry",
+        "Michael Jowett",
+        "Neil Dyson",
+        "Tom Wareham"
+      ],
+      "captain": "Tom Wareham"
+    },
+    "52": {
+      "name": "Royal",
+      "players": [
+        "Aidy Patterson",
+        "Dan Henesey",
+        "Darren Kelly",
+        "Gary Marshall",
+        "George Hanson",
+        "Helen Wright",
+        "John Gibson",
+        "Matty Hunt",
+        "Niall Henesey",
+        "Theo Armitage",
+        "Thomas Kelly"
+      ],
+      "captain": "Darren Kelly"
+    },
+    "31": {
+      "name": "Cavalry Arms Troopers",
+      "players": [
+        "Andrew Griffiths",
+        "Cameron Sheilds",
+        "Chris Ambler",
+        "Chris Palmer",
+        "Graham Harrison",
+        "Jess Beaurain",
+        "Josh Luty",
+        "Kyle Walton",
+        "Louden Gee",
+        "Richard Ambler",
+        "Stuart Lancaster",
+        "Tom James"
+      ],
+      "captain": "Louden Gee"
+    },
+    "116": {
+      "name": "Spangled Bull Shooters",
+      "players": [
+        "Andrew Dagg",
+        "Ben Womersley",
+        "Ceejay Green",
+        "Craig Taylor-Green",
+        "Dom Walker",
+        "Elliot Womersley",
+        "Gary Greenwood",
+        "Isaac McDonald",
+        "Josh Havis",
+        "Lee Mallinson",
+        "Marlon Cliff",
+        "Sam Hardcastle"
+      ],
+      "captain": "Craig Taylor-Green"
+    },
+    "46": {
+      "name": "Rack Caf\u00e9 'A'",
+      "players": [
+        "Chris Shaw",
+        "Matthew Chambers",
+        "Michael Pell",
+        "Mitchell Burke",
+        "Richard Terry",
+        "Robert Dolan",
+        "Ross Hawkyard"
+      ],
+      "captain": "Robert Dolan"
+    },
+    "43": {
+      "name": "Paddock C&BC Tigers",
+      "players": [
+        "Amir Ali",
+        "Asad Ali",
+        "George Witter",
+        "Gulfraz Ali",
+        "John Skidmore",
+        "Mohammed Asaf",
+        "Shahid Siddiq",
+        "Sher Afzal Nawaz",
+        "Suhaib Nawab"
+      ],
+      "captain": "Gulfraz Ali"
+    },
+    "63": {
+      "name": "Moldgreen Lib 'A'",
+      "players": [
+        "Andrew Whitaker",
+        "Billy Haigh",
+        "Daniel Donaghey",
+        "Darren Riley",
+        "E Horne",
+        "Karl Stubbs",
+        "Patrick Dunn",
+        "Richard Glithro",
+        "Richard McDonagh",
+        "Wayne Conroy"
+      ],
+      "captain": "Patrick Dunn"
+    },
+    "35": {
+      "name": "Four Sons Ballers",
+      "players": [
+        "Bradley Wallwork",
+        "Cameron Starkey",
+        "Chris Jagger",
+        "Denzo Denton",
+        "Gary Large",
+        "Liam Dyson",
+        "Nick Denton",
+        "Peter Shafi",
+        "Richard Beaumont",
+        "Rob Dyson",
+        "Tony Large"
+      ],
+      "captain": "Richard Beaumont"
+    },
+    "57": {
+      "name": "Underbank WMC",
+      "players": [
+        "Ben Visona",
+        "Chris Wain",
+        "Daniel Hanson",
+        "Hilary Frayne",
+        "Ian Pulford",
+        "James Lee",
+        "Jordan Visona",
+        "Kevin Hirst",
+        "Paul Halstead",
+        "Phil Asher",
+        "Rod Wright",
+        "Shane Parker"
+      ],
+      "captain": "Paul Halstead"
+    },
+    "54": {
+      "name": "Bradley & Colnebridge 'A'",
+      "players": [
+        "B Simpson",
+        "Callum Weir",
+        "Graham Sykes",
+        "Henroy Jerome",
+        "Jake McCullagh",
+        "Jimmy McDonagh",
+        "Karl Peters Junior",
+        "Mark Wilcock",
+        "Pete Dailly",
+        "Raith Binney",
+        "Rav Singh",
+        "Simon Douglas"
+      ],
+      "captain": "Callum Weir"
+    },
+    "33": {
+      "name": "Knowl Club",
+      "players": [
+        "Adam Willows",
+        "Andy Gaskin",
+        "Dave Jones",
+        "Jack Edmond",
+        "John Wilson",
+        "Lee Firth",
+        "Lisa Dunbar",
+        "Mick Zavros",
+        "P Sampson",
+        "Paul Haigh",
+        "Rob Butters",
+        "Russ Sykes",
+        "Si Beaumont",
+        "Stuart Hames"
+      ],
+      "captain": "Si Beaumont"
+    },
+    "44": {
+      "name": "Swan Lockwood 'A'",
+      "players": [
+        "B Farnsworth",
+        "C Maylett",
+        "J Bales",
+        "J Malett",
+        "J Taylor",
+        "James McDermott",
+        "Joe McDermott",
+        "K Chan",
+        "M Morris",
+        "P Hannan",
+        "Ray McDermott",
+        "Richard Clayton",
+        "S Chan",
+        "S Chapman",
+        "S Karash",
+        "S Morgan"
+      ],
+      "captain": "Richard Clayton"
+    },
+    "90": {
+      "name": "Rack Caf\u00e9 Cobras",
+      "players": [
+        "Brian Davis",
+        "Callum Dickinson",
+        "Jason Stout",
+        "Mark Bull",
+        "Nick Sweeney",
+        "Phil Hall",
+        "Stan Hussain",
+        "Steve Brooke",
+        "Stuart Dawson"
+      ],
+      "captain": "Stuart Dawson"
+    },
+    "45": {
+      "name": "Lockwood Con Nomads",
+      "players": [
+        "Andrew Pinder",
+        "Gary Rayner",
+        "Jonathan Leversidge",
+        "Kyle Crawford",
+        "Martyn Pinder",
+        "Matty Poulter",
+        "Micky Beckett",
+        "Stuart Mellor"
+      ],
+      "captain": "Stuart Mellor"
+    },
+    "17": {
+      "name": "Rack Caf\u00e9 Pirates",
+      "players": [
+        "Cid Jackson",
+        "Elizabeth Rowan",
+        "Hakim Sheard",
+        "Jon Smith",
+        "Luke Benson",
+        "Rashid Tunnacliffe",
+        "Steve Cozzy",
+        "Val Smith"
+      ],
+      "captain": "Val Smith"
+    },
+    "48": {
+      "name": "Hall Bower AC",
+      "players": [
+        "Chris Chadwick",
+        "Chris White",
+        "Dean Woodhead",
+        "Ian Strudwick",
+        "Jay McLaughlin",
+        "Neil Garraghan",
+        "Sean Kelly"
+      ],
+      "captain": "Chris White"
+    },
+    "115": {
+      "name": "Ashfield A Class",
+      "players": [
+        "Amjad Azhar",
+        "Andy Dunstan",
+        "Ashley Taylor",
+        "Billy Dyson",
+        "Callum Evans",
+        "Cav Joyce",
+        "Gabriel Ainley",
+        "Jack Firth",
+        "Jacob Zamir",
+        "Jake Noon",
+        "Lee Booth",
+        "Nial Joseph",
+        "Ricky Zamir",
+        "Sachin Sharma"
+      ],
+      "captain": "Ashley Taylor"
+    },
+    "69": {
+      "name": "Postcard 'B'",
+      "players": [
+        "Aaron Luke",
+        "Alan Marriott",
+        "Anthony Fawcett",
+        "Ben Sykes",
+        "Elliot Carr",
+        "Jack Redfearn",
+        "Kevin Marriott",
+        "Kiera Million",
+        "Lynn Marriott",
+        "Nathan Redfearn",
+        "Nick Bass-Woodcock",
+        "Rob Baxter",
+        "Rob Taylor",
+        "Tom Craggs"
+      ],
+      "captain": "Kevin Marriott"
+    },
+    "65": {
+      "name": "Rack Caf\u00e9 'D'",
+      "players": [
+        "Adam Roys",
+        "Alex Gibson",
+        "Brad Andrews",
+        "Cameron Stansfield",
+        "Chris Gamble",
+        "Danny Archer",
+        "Danny Robinson",
+        "Gaz Garside",
+        "Jacob Cullen",
+        "Jimmy Price",
+        "Kaydi Stansfield",
+        "Kieran Stansfield",
+        "Kristian Tattersfield",
+        "Liam Murphy",
+        "Paddy Madigan",
+        "Sam Maude",
+        "Stephen Vowles",
+        "Zayn Ashraf"
+      ],
+      "captain": "Kieran Stansfield"
+    },
+    "56": {
+      "name": "Almondbury Con",
+      "players": [
+        "Adam Linford",
+        "Barry Whitehead",
+        "Danny Morton",
+        "Jason Moorhouse",
+        "Jo Clarkson",
+        "John Midgeley",
+        "Karen Whitehead",
+        "Ken Tallis",
+        "Neil Shaw",
+        "Rob Tallis",
+        "Rob Young",
+        "Steven Green"
+      ],
+      "captain": "Steven Green"
+    },
+    "58": {
+      "name": "Foresters Honley",
+      "players": [
+        "Brook Morris",
+        "Carl Schorah",
+        "Chris Rhodes",
+        "Jake Proctor",
+        "Jamie Boylan",
+        "Jamie Spencer",
+        "Jovan Parojcic",
+        "Kyle Dearnley",
+        "Luke France",
+        "Nick Taylor",
+        "Scott Dearnley",
+        "Spencer Haseldine",
+        "Tom Haseldine"
+      ],
+      "captain": "Tom Haseldine"
+    },
+    "38": {
+      "name": "Marsh Lib",
+      "players": [
+        "Chrissie Warhurst",
+        "Clyde Darson",
+        "Colin Shackleton",
+        "D Hirst",
+        "Darren Firth",
+        "Dave Shackleton",
+        "Heath Bennett",
+        "Kyle Sutcliffe",
+        "Mark Rushworth",
+        "Rod Wood",
+        "Tony Sutcliffe Jnr",
+        "Tony Sutcliffe Snr"
+      ],
+      "captain": "Rod Wood"
+    },
+    "39": {
+      "name": "Longwood BC Tarts",
+      "players": [
+        "Andrea Hunsley",
+        "Craig Georghegan",
+        "Daniel Piercy",
+        "Jimmy Lee",
+        "John Hunsley",
+        "Lee Simpson",
+        "Mark Bray",
+        "Mark Green",
+        "Michael Hunsley",
+        "Nigel Bawn",
+        "Richard Hinchliffe",
+        "Richard Hirst"
+      ],
+      "captain": "John Hunsley"
+    },
+    "145": {
+      "name": "The Junk (Kirkburton)",
+      "players": [
+        "Adam Crum",
+        "Andrew Dunstan",
+        "Dan Browne",
+        "Dean Calcutt",
+        "Jordan Greig",
+        "Kyle Barnes",
+        "Lewis Shaw",
+        "Lucas Coates",
+        "Matthew Lockwood",
+        "Paul Bamford",
+        "Robert Barnes",
+        "Simon Lewis",
+        "Simon Lockwood"
+      ],
+      "captain": "Robert Barnes"
+    },
+    "101": {
+      "name": "Waterloo BC",
+      "players": [
+        "Aaron Wainwright",
+        "Brad Jones",
+        "Daniel Jones",
+        "Daniel Rushworth",
+        "David Dunne",
+        "Kyle Joyce",
+        "Lennie Jackson",
+        "Macauley Gamble",
+        "Michael Szyczak",
+        "Mick Cummings",
+        "Mick Wallace",
+        "Paul Making",
+        "Shaun Madden"
+      ],
+      "captain": "Brad Jones"
+    },
+    "37": {
+      "name": "Birchencliffe 'B'",
+      "players": [
+        "Alex Tattersley",
+        "Conor McDonald",
+        "Daniel Crines",
+        "Ethan Myers",
+        "Jack Ambler",
+        "Jack Pope",
+        "Jake Fenwick",
+        "Jay Senior",
+        "Kyle McManus",
+        "Lowell Bamforth",
+        "Oliver Roper",
+        "Oliver Starkey",
+        "Sam Macluskly",
+        "Steven Fenwick"
+      ],
+      "captain": "Lowell Bamforth"
+    },
+    "122": {
+      "name": "Milnsbridge Lib 'B'",
+      "players": [
+        "Adam Armstrong",
+        "Coby Vickerman",
+        "Daz Hale",
+        "Elliott Bray",
+        "Jordan Fernyhough",
+        "Martin Howarth",
+        "Matthew Evans",
+        "Morgan Calcutt",
+        "Ricky Evans",
+        "Scott Halliday",
+        "Simon Crosland"
+      ],
+      "captain": "Morgan Calcutt"
+    },
+    "73": {
+      "name": "Black Horse Bandits",
+      "players": [
+        "Ash Thompson",
+        "James Lindley",
+        "Les Hardy",
+        "Liam Carter",
+        "Michael Broadbent",
+        "Nelson Mukarakate",
+        "Phil Lindley"
+      ],
+      "captain": "Liam Carter"
+    },
+    "123": {
+      "name": "Swan Lockwood 'B'",
+      "players": [
+        "Adam Smith",
+        "Adele Karrasch",
+        "Anton Samms",
+        "Austin Brooksbank",
+        "Cameron M",
+        "Chris Cronje",
+        "Derrel Wells",
+        "Ellis Haigh",
+        "James Hutchingson",
+        "Katie Charlesworth",
+        "Micky Fox",
+        "Richard Middleton",
+        "Robin Townend",
+        "Shannan Regan",
+        "Shirleyann Karrasch",
+        "Stu Chapman"
+      ],
+      "captain": "Katie Charlesworth"
+    },
+    "60": {
+      "name": "Beaumont Arms (Netherton)",
+      "players": [
+        "Ben Hobson",
+        "Ben Jessop",
+        "Brian Moulds",
+        "Chris Keogh",
+        "Jake Lockwood",
+        "Jason Lockwood",
+        "Josh Elliott",
+        "Mark Brook",
+        "Rob Wimpenny",
+        "Simon Burluraux"
+      ],
+      "captain": "Simon Burluraux"
+    },
+    "152": {
+      "name": "Royal B",
+      "players": [
+        "Adam Chadwick",
+        "Andy Boothroyd",
+        "Ben Wagstaff",
+        "George Kelly",
+        "Harry Ditchfield",
+        "Jesse Pearce",
+        "Joe Hulme",
+        "Lee McCabe",
+        "Luke Boothroyd",
+        "Tom Brook",
+        "Tom Milner"
+      ],
+      "captain": "Lee McCabe"
+    },
+    "61": {
+      "name": "Ashfield Massive",
+      "players": [
+        "Bailey Singh",
+        "Brady Kavanagh",
+        "D France",
+        "Damien Ely",
+        "Darrell Smith",
+        "Jason Hall",
+        "Joshua Ely",
+        "Matthew Moylan",
+        "Paul St Hilaire"
+      ],
+      "captain": "Brady Kavanagh"
+    },
+    "91": {
+      "name": "Milnsbridge Lib 'A'",
+      "players": [
+        "Aimi Baziliauskas",
+        "Ashton Beal",
+        "Dalton Burhouse",
+        "Demzi Bell",
+        "Jack Allen",
+        "James Higgins",
+        "John Reynolds",
+        "Joshua Gelder",
+        "Kieran Moran",
+        "Liam Morran",
+        "Mason Hale",
+        "Paul Beal",
+        "Rhys Traverse-Reynolds",
+        "Ryan Baziliauskas",
+        "Shaun Hale",
+        "Wayne Reynolds"
+      ],
+      "captain": "Aimi Baziliauskas"
+    },
+    "82": {
+      "name": "Traveller's Rest",
+      "players": [
+        "Chris Wood",
+        "Costa Kolokotrone",
+        "Jack Morrison",
+        "Jacob Henton",
+        "Jason Wood",
+        "Kieran Wood",
+        "Lee Henton",
+        "Luke Oldham",
+        "Phil Headey",
+        "Ryan Silvester",
+        "Ryan Steel",
+        "Stuart Morrison"
+      ],
+      "captain": "Jacob Henton"
+    },
+    "76": {
+      "name": "Royal Oak 'A'",
+      "players": [
+        "Ade Carlton",
+        "Andrew Casson",
+        "Andy Lindsay",
+        "Charlie Robinson",
+        "Chris Shaw",
+        "Gary Abbott",
+        "Gavin Skaczkowski",
+        "Mark Stockdale",
+        "Mick Heeley",
+        "Scott Given"
+      ],
+      "captain": "Gavin Skaczkowski"
+    },
+    "79": {
+      "name": "Allied",
+      "players": [
+        "Darrel Horsley",
+        "Dave Stead",
+        "Dean Puleikis",
+        "Kevin Ingermells",
+        "Mick Shaw",
+        "Rob Shaw",
+        "Robert Parkin",
+        "Shannon Marshall"
+      ],
+      "captain": "Mick Shaw"
+    },
+    "102": {
+      "name": "Railway 'B'",
+      "players": [
+        "Carl Whittle",
+        "Connor Taylor",
+        "Jimmy Dolan",
+        "Kieron Dixon",
+        "Marshall Powell",
+        "Nathan Milner",
+        "Rashid Aka",
+        "Steve Smith"
+      ],
+      "captain": "Carl Whittle"
+    },
+    "97": {
+      "name": "Radcliffe Arms 'A'",
+      "players": [
+        "Allan Conarchy",
+        "Anthony Docherty",
+        "Bradley Ramsden",
+        "Joey Breslin",
+        "Lewis McCloud",
+        "Malcolm Smith",
+        "Mark Bentley",
+        "Nick Rhodes",
+        "Paul Bentley",
+        "Paul Shufflebotham",
+        "Phil Bermingham",
+        "Shane Lockwood",
+        "Steve Batty",
+        "Steven Hepton"
+      ],
+      "captain": "Anthony Docherty"
+    },
+    "108": {
+      "name": "Lamb 'A'",
+      "players": [
+        "Andrew Cyrus",
+        "Benny Masih",
+        "Benny Singh",
+        "David Rose",
+        "Harminder Singh",
+        "Karl Bell",
+        "Oscar Cyrus",
+        "Pav Singh",
+        "Taj Singh",
+        "Taljit Singh"
+      ],
+      "captain": "Benny Masih"
+    },
+    "67": {
+      "name": "Railway 'A'",
+      "players": [
+        "Darren Woodhouse",
+        "David Slater",
+        "Helen Cawley",
+        "Levi Hardy",
+        "Lynnette Swift",
+        "Marcus Akeroyd",
+        "Micky Walton",
+        "Richard Rudd",
+        "Richard Saville",
+        "Steven Walsh",
+        "Wayne McInnis"
+      ],
+      "captain": "Darren Woodhouse"
+    },
+    "77": {
+      "name": "Longwood BC",
+      "players": [
+        "Adam Biddle",
+        "Barry Tinker",
+        "Bob Taylor",
+        "Craig Turner",
+        "Danny Doyle",
+        "Dave Biddle",
+        "Steve Higgins"
+      ],
+      "captain": "Craig Turner"
+    },
+    "29": {
+      "name": "The Plough Go On",
+      "players": [
+        "AJ Senior",
+        "Anthony Phillips",
+        "Brian Newton",
+        "Chris Hardcastle",
+        "Chris Poyner",
+        "Josh Driver",
+        "Keith Barrowcliffe",
+        "Kody Williams",
+        "Paul Hatfield",
+        "Peter Harkin"
+      ],
+      "captain": "Peter Harkin"
+    },
+    "98": {
+      "name": "The Dalton 'A'",
+      "players": [
+        "Alfie Caton",
+        "Carol Sloan",
+        "Darryl Holdsworth",
+        "John Bryan",
+        "John Carmody",
+        "John Senior",
+        "Mark Haigh",
+        "Mick Senior",
+        "Pete Sloan",
+        "Ryan Walton",
+        "Shane Amato"
+      ],
+      "captain": "Darryl Holdsworth"
+    },
+    "80": {
+      "name": "Hart 'A'",
+      "players": [
+        "Edgar Akins",
+        "Gary Macfarlane",
+        "Joe McCartney",
+        "Johnny Koulouris",
+        "Mikey Bedeau",
+        "Tony Kassim"
+      ],
+      "captain": "Joe McCartney"
+    },
+    "136": {
+      "name": "The Dalton 'B'",
+      "players": [
+        "Christian Killeen",
+        "Haydon Sutcliffe",
+        "Jack Boyle",
+        "Joel Elliott",
+        "John Hoyer",
+        "John Paul Flynn",
+        "Kevin Hartley",
+        "Lewis Wild",
+        "Logan Oliver",
+        "Malcolm Boyle",
+        "Omar Saeed"
+      ],
+      "captain": "Shane Amato"
+    },
+    "75": {
+      "name": "Albert 'A'",
+      "players": [
+        "Adam Valentine",
+        "Andy Martin",
+        "Bryan McCallion",
+        "Chris Brown",
+        "Darren Broster",
+        "Matty Tootill",
+        "Neil Lesley",
+        "Scott Morgan",
+        "Sophie Calvert"
+      ],
+      "captain": "Bryan McCallion"
+    },
+    "68": {
+      "name": "Lockwood Lib Lions",
+      "players": [
+        "Brandon Boltwood",
+        "Darren Thorley",
+        "David Billington",
+        "Jamie Atkinson",
+        "Jon Thorley",
+        "Mark Wood",
+        "Nigel Heaton",
+        "Rob Clarke",
+        "Tom Berry"
+      ],
+      "captain": "Jon Thorley"
+    },
+    "83": {
+      "name": "Lockwood Lib 'A'",
+      "players": [
+        "Alan Sykes",
+        "Anita Whitwam",
+        "Ben Tsingas",
+        "Brent Peters",
+        "Chris Lenihan",
+        "Danny Carter",
+        "Jamie Lenihan",
+        "L Franklin",
+        "Liz O'Neill",
+        "Mark Oakes",
+        "Richard Whitwam",
+        "Shane Murphy",
+        "Skye Turner",
+        "Steve Morgan",
+        "Tom Farrier"
+      ],
+      "captain": "Tom Farrier"
+    },
+    "92": {
+      "name": "Harp 'B'",
+      "players": [
+        "Akisha Duncan",
+        "Barrington Thomas",
+        "Bobby Weaver",
+        "Chris Cyrus",
+        "Chris Lennon",
+        "Ciaran Conroy",
+        "D Lancaster",
+        "George Crooks",
+        "Hal Lee",
+        "K Sherry",
+        "Lee Sherry",
+        "Michael Pascal",
+        "Paul Bickerdike",
+        "Paul James Bickerdike",
+        "Paul Simpson",
+        "Rory Donegan",
+        "Roy Johnson",
+        "Tyler Sherry",
+        "Wayne Watson"
+      ],
+      "captain": "Chris Lennon"
+    },
+    "74": {
+      "name": "Peacock 'A'",
+      "players": [
+        "Aidan Lumb",
+        "Alan Nicholls",
+        "Dannon Nicholls",
+        "Ian McDonald",
+        "James Egan",
+        "Jeremy Sherburn",
+        "Joe Sherburn",
+        "John Wilkins",
+        "Paul Webster",
+        "Ray Winters",
+        "Richard Wagler",
+        "Ryan Johnson",
+        "Tony Booker"
+      ],
+      "captain": "Richard Wagler"
+    },
+    "64": {
+      "name": "Fieldhead 'B'",
+      "players": [
+        "Andy Mckinley",
+        "Anton Ivankiv",
+        "Bob Tunnacliffe",
+        "Fran Cockin",
+        "Ian Brown",
+        "Ivan Smith",
+        "Luke Hughes",
+        "Nathan Price",
+        "Paul Heaton",
+        "Pete Moxon",
+        "Richard Taylor"
+      ],
+      "captain": "Ian Brown"
+    },
+    "66": {
+      "name": "Birchencliffe 'A'",
+      "players": [
+        "Andrew Clarkson",
+        "Andy Dyson",
+        "Callum Perrin",
+        "Dave Mitton",
+        "David Richardson",
+        "Gary Turner",
+        "Geoff Steel",
+        "Graham Turner",
+        "Kevin Richardson",
+        "Rob Paeglis"
+      ],
+      "captain": "Dave Mitton"
+    },
+    "1": {
+      "name": "Bye",
+      "players": [],
+      "captain": null
+    },
+    "88": {
+      "name": "Black Horse Unbearables",
+      "players": [
+        "Affy Singh",
+        "Chris Allen",
+        "Chris Corley",
+        "Daniel Hardcastle",
+        "James Casson",
+        "James Newsome",
+        "John Bell",
+        "Johnny Eastwood",
+        "Mark Moylan",
+        "Mason Spence",
+        "Shaun Deakin",
+        "Stephen Milner",
+        "Tom Bell",
+        "Tommy Heaton"
+      ],
+      "captain": "Johnny Eastwood"
+    },
+    "85": {
+      "name": "Jules Verne",
+      "players": [
+        "Andrew Lawrence",
+        "Courtney Milner",
+        "Cyril Thompkin",
+        "Graham Holroyd",
+        "J Whittle",
+        "James Gill",
+        "Ken Wenzel",
+        "Kieran Payne"
+      ],
+      "captain": "Graham Holroyd"
+    },
+    "78": {
+      "name": "Commercial (Golcar)",
+      "players": [
+        "Anthony Pearson",
+        "Ashley Whittaker",
+        "Ashton Vlahovic",
+        "Charlotte Jorgensen",
+        "Connor Maxwell",
+        "Dominic Brook",
+        "Dominic Chajdas",
+        "Gary Haigh",
+        "Gavin Liversedge",
+        "Jacob Watson",
+        "Jake Peel",
+        "James Watson",
+        "Jason Firth",
+        "Jordan Barker",
+        "Jordan Wood",
+        "Korey Dunston",
+        "Matthew Raper",
+        "Michael Sill",
+        "Richard Maxwell",
+        "Stephen Whitwam",
+        "Tony Clifford",
+        "Wayne Sanderson"
+      ],
+      "captain": "Michael Sill"
+    },
+    "103": {
+      "name": "Lamb 'B'",
+      "players": [
+        "Adam Bradbury",
+        "Amanda Rose",
+        "Andre Willox",
+        "Blair Maitland",
+        "Carl Robinson",
+        "Cassie Rose",
+        "Courtney McKenzie",
+        "Danny Mancini",
+        "Duncan Angus",
+        "John Corley",
+        "Jonjon Corley",
+        "Jordan Glover",
+        "Joshua Greenan",
+        "Joshua Max Kinder",
+        "Liam Burke",
+        "Max Mallinson",
+        "Miles Maitland",
+        "Paddy Singh"
+      ],
+      "captain": "Amanda Rose"
+    },
+    "106": {
+      "name": "Junction 'B'",
+      "players": [
+        "David Platt",
+        "Ian Falck",
+        "Ian Ollivier",
+        "Ian Wiles",
+        "Lee Beckwith",
+        "Lee Cartwright",
+        "Mark Blenkin",
+        "Neil Sinclaire",
+        "Paul Clancy",
+        "Scott L'Anson",
+        "Tony Whitwam"
+      ],
+      "captain": "Tony Whitwam"
+    },
+    "113": {
+      "name": "Swan (Meltham)",
+      "players": [
+        "Andy Lyons",
+        "Ben Parkin",
+        "Connor Batty",
+        "Dan Waddington",
+        "Harrison Mellor",
+        "Iwan Ptycia",
+        "Jake Lockwood",
+        "Jordan Porter",
+        "Josh Dyson",
+        "Joshua Elam",
+        "Liam Parker-Mills",
+        "Louis Carmody",
+        "Luke Jones",
+        "Peter Wilson",
+        "Reece Mcenery",
+        "Sam Cartwright",
+        "Zach Lyons"
+      ],
+      "captain": "Iwan Ptycia"
+    },
+    "99": {
+      "name": "Peacock Old Codgers",
+      "players": [
+        "Brian Haigh",
+        "Chris Cartmell",
+        "Chris Egan",
+        "Cliff Barker",
+        "Darren Bonds",
+        "Gary Kinder",
+        "James Pardon",
+        "Vic Edwards"
+      ],
+      "captain": "Vic Edwards"
+    },
+    "109": {
+      "name": "Fieldhead 'A'",
+      "players": [
+        "Andrew Watson",
+        "Daniel Martin",
+        "George Kinder",
+        "Joe Heaume",
+        "Marcus Kinder",
+        "Michael Martin",
+        "Phil Taylor",
+        "Richard Lane",
+        "Rick O'Neill",
+        "Roger Taylor",
+        "Steve Halligan"
+      ],
+      "captain": "Marcus Kinder"
+    },
+    "70": {
+      "name": "Deighton WMC 'A'",
+      "players": [
+        "Curtis Salmon",
+        "David Jones",
+        "Dillon Cassidy",
+        "Gavin Dennis",
+        "Joel Pusey",
+        "Kyle Pearson",
+        "M O'Neil",
+        "N Ahmad",
+        "N Mateus",
+        "Nathan Harriott",
+        "Shae Ahmad",
+        "Steven Liburd"
+      ],
+      "captain": "David Jones"
+    },
+    "95": {
+      "name": "The Crown",
+      "players": [
+        "Callum Phillips",
+        "Chloe Fallon",
+        "Chris Senior",
+        "Danny Shaw",
+        "Gareth Horne",
+        "James Milner",
+        "Jamie Lomax",
+        "Jay Edwards",
+        "Kacper Prybylshlki",
+        "Keith Fuller",
+        "Keith Ramsden",
+        "Kev Power",
+        "Marcus Conroy",
+        "Marcus St Hilaire",
+        "Martin Heath",
+        "Matty Coupland",
+        "P Crockshank",
+        "Richard Power",
+        "Robin Bennett",
+        "Shawn Fallon",
+        "Sukhdev Singh",
+        "Wayne Dymowski"
+      ],
+      "captain": "Danny Shaw"
+    },
+    "132": {
+      "name": "White Cross",
+      "players": [
+        "Bobby Davidson",
+        "Brian Clarke",
+        "John Hughes",
+        "Kevin Brennan",
+        "Martyn Taylor",
+        "Matty Grimshaw",
+        "Nigel Green",
+        "Ross Dailly",
+        "Steve Jackson"
+      ],
+      "captain": "Ross Dailly"
+    },
+    "138": {
+      "name": "Hall Bower CC",
+      "players": [
+        "B Balicki",
+        "Craig Forsey",
+        "Harry Walker",
+        "Lee Turner",
+        "Lewis Boothroyd",
+        "Mark Beaumont",
+        "Marlon Balicki",
+        "Michael King",
+        "Nikki Hellawell",
+        "Ray Bottomley",
+        "Simon Skinner",
+        "Tom Barker"
+      ],
+      "captain": "Mark Beaumont"
+    },
+    "133": {
+      "name": "Bay Horse",
+      "players": [
+        "Adam Stafford",
+        "Andrew McDonagh",
+        "Ben Raddy",
+        "Carl Hurst",
+        "Craig Brook",
+        "Daniel Massey",
+        "Derek Smyth",
+        "Ethan Lowe",
+        "Felicity Adamson",
+        "Freddie Havercan",
+        "Jacob Buchanan",
+        "James Adamson",
+        "Jaymi O'Kane",
+        "Jonathan Adamson",
+        "Melissa Morgan",
+        "Nathan Hurst",
+        "Oscar Adamson",
+        "Paul Henessey",
+        "Paul Lowe",
+        "Paul Metcalfe",
+        "Tom Keen",
+        "Tom Kelly"
+      ],
+      "captain": "Nathan Hurst"
+    },
+    "72": {
+      "name": "Victoria Park 'A'",
+      "players": [
+        "Harrison Saville",
+        "Lee Jackson",
+        "Lee Southern",
+        "Richard Wood",
+        "Riley Jackson",
+        "Rob Mellor",
+        "Ryan Holt",
+        "Tommy Staite",
+        "Tyler Jackson",
+        "Wayne Lambert"
+      ],
+      "captain": "Rowan Worrall"
+    },
+    "94": {
+      "name": "Moldgreen Con",
+      "players": [
+        "Aaron Loftus",
+        "Andy Jarvis",
+        "Andy Matthews",
+        "Craig Wood",
+        "Craig Yates",
+        "Daniel Davis",
+        "Dave Stawman",
+        "Jake Williams",
+        "Lauren Bramley",
+        "Mizan Rahman",
+        "Ollie Myers",
+        "Phill Shaw",
+        "Richard Holloway",
+        "Ryan Boothroyd",
+        "Sean Reynolds",
+        "Stuart Smart",
+        "Trevor Blackburn"
+      ],
+      "captain": "Ollie Myers"
+    },
+    "119": {
+      "name": "Honley Lib 'B'",
+      "players": [
+        "Adam Thomas",
+        "Alex Haigh",
+        "Ben Preston",
+        "Elliott Lees",
+        "Ethan Denton",
+        "Jack Wheatley",
+        "Lucio Spencer",
+        "Luke McLoughlin",
+        "Shane Brook",
+        "Shea Hudson-Foster",
+        "Zak Roberts"
+      ],
+      "captain": "Luke McLoughlin"
+    },
+    "120": {
+      "name": "Almondbury CC",
+      "players": [
+        "Adam Brook",
+        "Andy Livsey",
+        "Ben Taylor",
+        "Callum Biro",
+        "Chris Buck",
+        "Dave Burns",
+        "James Greene",
+        "James Spencer",
+        "John Woods",
+        "Liam Hanson",
+        "Paul Biro",
+        "Peter Branston",
+        "Philippa Spencer",
+        "Ronnie Spencer",
+        "Roy Gay",
+        "Shane Evans",
+        "Stephen Dronfield",
+        "William Evans"
+      ],
+      "captain": "Paul Biro"
+    },
+    "100": {
+      "name": "Albert Sunshine Squad",
+      "players": [
+        "Adam Gabanski",
+        "Chris Haigh",
+        "Darryl Murphy",
+        "Gary Baxter",
+        "J Butler",
+        "J Sharland",
+        "Jimmy Singh",
+        "John Line",
+        "Kaitlyn Wood",
+        "R Midwood",
+        "Richard Kirk",
+        "Ricky Singh",
+        "Sarah Calvert",
+        "Steven Hall"
+      ],
+      "captain": "Sarah Calvert"
+    },
+    "93": {
+      "name": "Junction Massive",
+      "players": [
+        "Addy Cuni",
+        "Alan Augustine",
+        "Callum Phillips",
+        "Carl Divers",
+        "Charlie Andrews",
+        "Daniel Brougham",
+        "David Platt",
+        "Glynn Martin",
+        "Jack Bingham",
+        "Jack Dixon",
+        "Joanne Marsden",
+        "John McGarth",
+        "John Morrison",
+        "Martin Davies",
+        "Robert Midwood",
+        "S Wadsworth",
+        "Shaun Gallagher",
+        "Vicky Brook"
+      ],
+      "captain": "John Morrison"
+    },
+    "143": {
+      "name": "Deighton WMC 'B'",
+      "players": [
+        "Ashley Wilkinson",
+        "Ciaran Gledhill",
+        "Glenn Foster",
+        "Graham Lloyd",
+        "Joe Bottomley",
+        "Mark Parker",
+        "Mocco McCartney",
+        "Nathan Morgan",
+        "Nelson Mateus",
+        "Sammy McCartney",
+        "Steve Day",
+        "Wayne Booth"
+      ],
+      "captain": null
+    },
+    "131": {
+      "name": "Waggon & Horses",
+      "players": [
+        "B Digman",
+        "Bill Bailey",
+        "Brendan Mosley",
+        "D Levay",
+        "Jacob Bailey",
+        "Joe Phillips",
+        "M Cox",
+        "Morgan Levay",
+        "P Levay"
+      ],
+      "captain": "Bill Bailey"
+    },
+    "137": {
+      "name": "Rack Caf\u00e9 Utd",
+      "players": [
+        "Andrew Newsome",
+        "Brandon Dannatt",
+        "Chris Shearon",
+        "Jemma Winn",
+        "Martin Walker",
+        "Michael Farrell",
+        "Terry Dannatt",
+        "Tom Hayes-Smith"
+      ],
+      "captain": "Martin Walker"
+    },
+    "134": {
+      "name": "Postcard 'A'",
+      "players": [
+        "Andrew Brook",
+        "Andy Lloyd",
+        "Angie Young",
+        "Connor Brian",
+        "Connor Smith",
+        "Dan Petty",
+        "David Pickles",
+        "Emmanuel Charles",
+        "Ian O'Grady",
+        "Joe Lloyd",
+        "Johnathan Riley",
+        "Kieran Folan",
+        "Paul Grant",
+        "Rory Marshall",
+        "Ryan Brooksbank",
+        "Ryan Shaw",
+        "Scott Marshall",
+        "Steve Folan",
+        "Thomas Trayte"
+      ],
+      "captain": "Angie Young"
+    },
+    "127": {
+      "name": "Four Horseshoes",
+      "players": [
+        "Aaron Roberts",
+        "Adam Roberts",
+        "Ben Whitehouse",
+        "Connor Burhouse",
+        "Elliot Smith",
+        "Josh Robinson",
+        "Lara Hoyle",
+        "Marcus Gilroy",
+        "Nile Sykes",
+        "Quinten Storm"
+      ],
+      "captain": "Lara Hoyle"
+    },
+    "105": {
+      "name": "Pip Hill Lib 'A'",
+      "players": [
+        "A Edwards",
+        "Asher Masih",
+        "Ethan Tatler",
+        "Gareth Tatler",
+        "Louis Morgan",
+        "Mackenzie Clark",
+        "Martin Shaw",
+        "Mick Atkinson",
+        "Oliver Hellawell",
+        "R Whitwam",
+        "Richard King",
+        "Rushpal Singh Aujla",
+        "Sam Ingleby",
+        "Steve North",
+        "Steve Siswick",
+        "T Broadbent"
+      ],
+      "captain": "Mackenzie Clark"
+    },
+    "110": {
+      "name": "Pip Hill Lib 'B'",
+      "players": [
+        "A Lumb",
+        "Alex Hellawell",
+        "Craig D'Arcy",
+        "Damon Hellawell",
+        "Keith Shaw",
+        "Micky Hellawell",
+        "Richard Brooke",
+        "Ryan Hellawell",
+        "Sean Hellawell",
+        "Tom Broadbent",
+        "William Hellawell"
+      ],
+      "captain": "Sean Hellawell"
+    },
+    "114": {
+      "name": "Ashfield 'B'",
+      "players": [
+        "Benjamin Lodge",
+        "Brodie Harris",
+        "Chloe Hirst",
+        "Dean Butterworth",
+        "Jak Hanks",
+        "Steven Williams"
+      ],
+      "captain": "Ryan Nind"
+    },
+    "130": {
+      "name": "Lockwood 'B'",
+      "players": [
+        "Alex Dawson",
+        "Andrew Boltwood",
+        "Ben Taylor",
+        "Chris Wilson",
+        "Darren Hemingway",
+        "Dean Shaw",
+        "Dean Williams",
+        "Johnny Cahill",
+        "Louise Henderson",
+        "Mick Coonan",
+        "Nigel Coonan",
+        "Nigel Singh",
+        "Paul Dyson",
+        "Richard Midwood",
+        "Rowland Day"
+      ],
+      "captain": "Darren Hemingway"
+    },
+    "22": {
+      "name": "Shelley S&SC 'C'",
+      "players": [
+        "Brian Mccabe",
+        "Chris Gowing",
+        "Damian Taylor",
+        "Darren Norris",
+        "Ethan Waller",
+        "Garry Macdonald",
+        "Joe Drake",
+        "Kevin Nicholson",
+        "Kit Carruthers",
+        "Lee Armitage",
+        "Matt Hayes",
+        "Rob Ramsden",
+        "Ryan Goddard",
+        "Scott Croucher",
+        "Will Brough"
+      ],
+      "captain": "Darren Norris"
+    },
+    "141": {
+      "name": "Almondbury Liberal Club",
+      "players": [
+        "Andy Augustine",
+        "Chris Dyson",
+        "Darrel Murphy",
+        "Daz Shaw",
+        "Eddie Sobitard",
+        "Gary Ashwell",
+        "Geoff Martin",
+        "Jack Senior",
+        "Jamie Shaw",
+        "Jason Shaw",
+        "Joe Docherty",
+        "Philip Land",
+        "Sharon Shaw",
+        "Steve Augustine"
+      ],
+      "captain": "Andy Augustine"
+    },
+    "104": {
+      "name": "Vulcan 'A'",
+      "players": [
+        "Ali Akmal",
+        "Andrew Marshall",
+        "Bobby Boyle",
+        "Charlene Dawkins",
+        "David Gardner",
+        "Derrin Turnbull",
+        "Elliese Roberts",
+        "Gareth Brooke",
+        "Gary Dunne",
+        "Howard Medcalf",
+        "Jay Lomax",
+        "John Lenihan",
+        "Julie Lenihan",
+        "Kane Lomax",
+        "Lauren Jackson",
+        "Lucas Stroud",
+        "Maxine Beaumont",
+        "Mia Jones",
+        "Ryan Spence",
+        "Ryan Taylor",
+        "Shannon Tunnacliffe"
+      ],
+      "captain": "Stacy Jones"
+    },
+    "140": {
+      "name": "Royal Oak 'B'",
+      "players": [
+        "Andy Tyas",
+        "Jack Hemingway",
+        "Jamie Goddard",
+        "Martyn Goddard",
+        "Ray Tyas",
+        "Sean Goddard",
+        "Steve Hemingway"
+      ],
+      "captain": "Andy Tyas"
+    },
+    "139": {
+      "name": "Golaccio 'B'",
+      "players": [
+        "Caitlin Swanton",
+        "Curtis Witter",
+        "Danny McDonald",
+        "David Wood",
+        "Gavin Conroy",
+        "Jordan Cross",
+        "Julie Langford",
+        "Kev Walker",
+        "Nigel Hunt",
+        "Ryan Stott",
+        "Shane Shaw",
+        "Simon Ellum",
+        "Stacy Jones"
+      ],
+      "captain": "Simon Ellum"
+    },
+    "146": {
+      "name": "The Stag",
+      "players": [
+        "Chris Pearce",
+        "Jon Power",
+        "Lee Cooper",
+        "Matthew Webster",
+        "Michael Madden",
+        "Mick Lumb",
+        "Paige Knapton",
+        "Pawel Szpulecki",
+        "Richard George",
+        "Sam Sykes",
+        "Sean Jeffreys",
+        "Stuart Ferridge"
+      ],
+      "captain": "Richard George"
+    },
+    "84": {
+      "name": "Cavalry Arms Jaegers",
+      "players": [
+        "Alice Farrar",
+        "Bob Steer",
+        "Callum Dyson",
+        "Craig Beaumont",
+        "Dave Marriot",
+        "Harrison Marfitt",
+        "Harvey Ellis",
+        "Minah Taylor",
+        "Neil Beaumont",
+        "Neil Robinson",
+        "Rab Colliar",
+        "Steve Bates",
+        "Tony Brice",
+        "Warren Kafanke"
+      ],
+      "captain": "Bob Steer"
+    },
+    "86": {
+      "name": "Slip Inn",
+      "players": [
+        "Abbie Porter",
+        "Ben Sharp",
+        "Daniel Kilby",
+        "Iva Noeva",
+        "James Bradshaw",
+        "Jamie Stringer",
+        "Mariyan Noev",
+        "Matt Brock",
+        "Michael Kilby",
+        "Michael Senior",
+        "Naomi Bamford",
+        "Roger Mitchinson",
+        "Rowan Bell",
+        "Ryan Gray",
+        "Steven Peacock",
+        "Tony Woodroffe"
+      ],
+      "captain": "Daniel Kilby"
+    },
+    "128": {
+      "name": "Hart 'B'",
+      "players": [
+        "Adam Cliffe",
+        "Alex Smith",
+        "Andy Van Loon",
+        "Anthony Johnson",
+        "Cameron Dye",
+        "Colin Ramsden",
+        "John Michael",
+        "Julie Badeu",
+        "Matthew Brown",
+        "Mel Moore",
+        "Michelle McCartney",
+        "Pinda Dhanoya",
+        "Rob Cooper",
+        "Silas Cong",
+        "Simon Waterhouse"
+      ],
+      "captain": "Simon Waterhouse"
+    },
+    "142": {
+      "name": "Bradley & Colnebridge Aces",
+      "players": [
+        "Anthony Knight",
+        "Callum Lickess",
+        "Damien Lickess",
+        "Ian Butler",
+        "Luckas-Hussain King",
+        "Paul Fleetwood"
+      ],
+      "captain": null
+    },
+    "151": {
+      "name": "Golaccio 'A'",
+      "players": [
+        "Bailey McClaren",
+        "Gavin Brand",
+        "Josh Robinson",
+        "Leslie Shade",
+        "Luke Quinn Millane",
+        "Mark Johnson",
+        "Nigel Greene",
+        "Paul Asgill",
+        "Roy Charlotte-Horne",
+        "Shane Shaw",
+        "Tim McTigue"
+      ],
+      "captain": "Tim McTigue"
+    },
+    "147": {
+      "name": "Ivy Green",
+      "players": [
+        "Amanda Flaherty",
+        "Andrew Clark",
+        "Chris Bland",
+        "Chris Lockwood",
+        "Chris Stanger",
+        "Dean Butterworth",
+        "Ellis Horne",
+        "Graham Ainley",
+        "Jame Allott",
+        "Joe Docherty",
+        "John Keane",
+        "Jordan Smith",
+        "Paul Murphy",
+        "Ryan Nind"
+      ],
+      "captain": "Ellis Horne"
+    },
+    "59": {
+      "name": "Golcar Legion 'B'",
+      "players": [
+        "Dominic Swift",
+        "John Lightowlers",
+        "Kevin Senior",
+        "Lee Harrop",
+        "Nick Porter",
+        "Peter Hodgson",
+        "Ronny Walker",
+        "Tracy Porter",
+        "Tracy Stocks"
+      ],
+      "captain": "Ronny Walker"
+    },
+    "149": {
+      "name": "Moldgreen Con 'B'",
+      "players": [
+        "Aaron McDermott",
+        "Aiden White",
+        "Chris Broadbent",
+        "Jai Doody",
+        "Jonathon Sutcliffe",
+        "Jordan Ramsden",
+        "Kieron Doody",
+        "Lewis Macleod",
+        "Lyon Booth",
+        "Mathew Maylett",
+        "TJ Smyth"
+      ],
+      "captain": null
+    },
+    "148": {
+      "name": "Thorpe Green BC",
+      "players": [
+        "Adam Turner",
+        "Amanda Houtby",
+        "Chris Taylor",
+        "Danielle Houtby",
+        "Graham Milnes",
+        "Heather Wood",
+        "Mark Ellis",
+        "Martin Hyde",
+        "Paul Hallas"
+      ],
+      "captain": "Danielle Houtby"
+    },
+    "150": {
+      "name": "Wireworks",
+      "players": [
+        "Ben Durrans",
+        "Ciaran Radcliffe",
+        "Cody Rushworth",
+        "David Radcliffe",
+        "Eoin Radcliffe",
+        "Holly Shaw",
+        "Jay Mistry",
+        "John McCluskey",
+        "Lewis Milne",
+        "Michael Allen",
+        "Riley Rushworth",
+        "Ryan Elsworth",
+        "Thomas Henderson",
+        "Tracy Radcliffe",
+        "William Atkin"
+      ],
+      "captain": null
+    },
+    "135": {
+      "name": "Moldgreen Lib 'B'",
+      "players": [
+        "A Wimpenny",
+        "Ash Booth",
+        "Ashley Booth",
+        "Brandon Cawley",
+        "D Jones",
+        "D Moorhouse",
+        "J Ellam",
+        "Kelvin Sykes",
+        "Lisa Hawksford",
+        "Mark Odams",
+        "O Turner",
+        "Richard Sykes"
+      ],
+      "captain": "Ash Booth"
+    },
+    "112": {
+      "name": "White Swan",
+      "players": [
+        "Adam Coldwell",
+        "Alex Cavanagh",
+        "Corey Taylor",
+        "Denver Evans",
+        "Emily McCluskey",
+        "Geoff Ward",
+        "Kasey Hall",
+        "Kevin Walker",
+        "Kyle Barron",
+        "Matthew Roberts",
+        "Michael James",
+        "Ryan Sims",
+        "Tammy Walker",
+        "TJ Hughes"
+      ],
+      "captain": "Kevin Walker"
+    }
+  }
+}

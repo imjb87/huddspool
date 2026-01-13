@@ -140,7 +140,7 @@ class EditKnockout extends EditRecord
 
         $schema[] = $this->makePlayerSelect('player_two_id', 'Player 2')
             ->visible($isDoubles)
-            ->required($isDoubles);
+            ->helperText('Optional. Leave blank to mark as TBC.');
 
         return $schema;
     }
@@ -296,20 +296,23 @@ class EditKnockout extends EditRecord
             $playerOne = $participant['player_one_id'] ?? null;
             $playerTwo = $participant['player_two_id'] ?? null;
 
-            if (! $playerOne || ! $playerTwo) {
+            if (! $playerOne) {
                 throw ValidationException::withMessages([
-                    "participants.{$index}.player_one_id" => 'Select both players for this pairing.',
+                    "participants.{$index}.player_one_id" => 'Select player 1 for this pairing.',
                 ]);
             }
 
-            if ($playerOne === $playerTwo) {
+            if ($playerTwo && $playerOne === $playerTwo) {
                 throw ValidationException::withMessages([
                     "participants.{$index}.player_two_id" => 'Player 1 and Player 2 must be different.',
                 ]);
             }
 
             $payload['player_one_id'] = $playerOne;
-            $payload['player_two_id'] = $playerTwo;
+
+            if ($playerTwo) {
+                $payload['player_two_id'] = $playerTwo;
+            }
         }
 
         return $payload;
