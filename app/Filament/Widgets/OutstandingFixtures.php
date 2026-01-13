@@ -26,6 +26,8 @@ class OutstandingFixtures extends BaseWidget
                     })
                     ->where('home_team_id', '!=', 1)
                     ->where('away_team_id', '!=', 1)
+                    ->whereHas('homeTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
+                    ->whereHas('awayTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
                     ->where('fixture_date', '<', now())
                     ->orderBy('fixture_date', 'asc')
             )
