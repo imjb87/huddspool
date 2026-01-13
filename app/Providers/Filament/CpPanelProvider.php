@@ -35,7 +35,7 @@ class CpPanelProvider extends PanelProvider
                 'primary' => 'rgb(21, 128, 61)',
             ])
             ->assets([
-                Css::make('filament-overrides')
+                Css::make('filament-overrides', public_path('css/filament-overrides.css'))
                     ->relativePublicPath('css/filament-overrides.css'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
