@@ -40,6 +40,8 @@ class TeamResource extends Resource
                         Forms\Components\Select::make('venue_id')
                             ->label('Venue')
                             ->relationship('venue', 'name')
+                            ->searchable()
+                            ->preload()
                             ->placeholder('Select a venue')
                             ->required(),
                         Forms\Components\Select::make('captain_id')
