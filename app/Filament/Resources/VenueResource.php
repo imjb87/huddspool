@@ -74,7 +74,7 @@ class VenueResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->size(Tables\Columns\TextColumn\TextColumnSize::ExtraSmall)
+                    ->wrap()
             ])
             ->filters([
                 //
