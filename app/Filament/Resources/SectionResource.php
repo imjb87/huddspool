@@ -2,34 +2,33 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Section;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
 use App\Models\Season;
 
 class SectionResource extends Resource
 {
-    use NestedResource;
-
     protected static ?string $model = Section::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $parentResource = SeasonResource::class;
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Section information')
+                \Filament\Schemas\Components\Section::make('Section information')
+                ->columnSpanFull()
                     ->description('Enter the basic information for the section.')
                     ->columns(2)
                     ->schema([
@@ -46,9 +45,11 @@ class SectionResource extends Resource
                         Forms\Components\Select::make('season_id')
                             ->label('Season')
                             ->relationship('season', 'name')
-                            ->default(fn () => Season::query()
-                                ->where('slug', request()->route('record'))
-                                ->first()?->id)
+                            ->default(fn ($livewire) => method_exists($livewire, 'getParentRecord')
+                                ? $livewire->getParentRecord()?->getKey()
+                                : Season::query()
+                                    ->where('slug', request()->route('record'))
+                                    ->first()?->id)
                             ->searchable()
                             ->preload()
                             ->required()
@@ -67,7 +68,7 @@ class SectionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
             ]);
@@ -90,12 +91,4 @@ class SectionResource extends Resource
         ];
     }
 
-    public static function getAncestor() : ?\Guava\FilamentNestedResources\Ancestor
-    {
-        // Configure the ancestor (parent) relationship here
-        return \Guava\FilamentNestedResources\Ancestor::make(
-            'sections', // Relationship name
-            'season', // Inverse relationship name
-        );
-    }
 }

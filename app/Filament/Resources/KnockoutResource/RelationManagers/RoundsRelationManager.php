@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use Filament\Actions;
 use App\KnockoutType;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -13,9 +14,9 @@ class RoundsRelationManager extends RelationManager
 {
     protected static string $relationship = 'rounds';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
@@ -61,11 +62,11 @@ class RoundsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('position');
     }

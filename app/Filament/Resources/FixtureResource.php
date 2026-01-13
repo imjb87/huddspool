@@ -2,38 +2,35 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\FixtureResource\Pages;
 use App\Filament\Resources\FixtureResource\RelationManagers;
 use App\Models\Fixture;
 use App\Models\Season;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Request;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
-use Illuminate\Database\Eloquent\Model;
 
 class FixtureResource extends Resource
 {
-    use NestedResource;
-
     protected static ?string $model = Fixture::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $parentResource = SectionResource::class;
 
-    protected static ?string $navigationGroup = 'Competitions';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Competitions';
 
     protected static bool $shouldRegisterNavigation = false;
     
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Fixture Information')
+                \Filament\Schemas\Components\Section::make('Fixture Information')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('home_team_id')
@@ -90,14 +87,13 @@ class FixtureResource extends Resource
             ])
             ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make()->slideOver(),
+                Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('section_id', Request::route('record')))
             ->defaultSort('week', 'asc');
     }
 
@@ -116,12 +112,4 @@ class FixtureResource extends Resource
         ];
     }
 
-    public static function getAncestor() : ?\Guava\FilamentNestedResources\Ancestor
-    {
-        // Configure the ancestor (parent) relationship here
-        return \Guava\FilamentNestedResources\Ancestor::make(
-            'fixtures', // Relationship name
-            'section', // Inverse relationship name
-        );
-    }        
 }

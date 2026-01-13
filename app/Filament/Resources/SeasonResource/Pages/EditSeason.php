@@ -9,19 +9,16 @@ use App\Models\Venue;
 use App\Support\SectionSheetParser;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class EditSeason extends EditRecord
 {
-    use NestedPage;
-    
     protected static string $resource = SeasonResource::class;
 
     protected function getHeaderActions(): array
@@ -47,7 +44,8 @@ class EditSeason extends EditRecord
     protected function getSectionImportFormSchema(): array
     {
         return [
-            Forms\Components\Section::make('Source data')
+            \Filament\Schemas\Components\Section::make('Source data')
+                ->columnSpanFull()
                 ->description('Paste the CSV export for the section you want to import.')
                 ->schema([
                     Forms\Components\TextInput::make('section_name')
@@ -68,7 +66,8 @@ class EditSeason extends EditRecord
                         ->required()
                         ->afterStateUpdated(fn (Set $set, ?string $state) => $this->hydrateTeamsFromCsv($set, $state)),
                 ]),
-            Forms\Components\Section::make('Teams')
+            \Filament\Schemas\Components\Section::make('Teams')
+                ->columnSpanFull()
                 ->description('Match imported names to existing teams or create new ones.')
                 ->visible(fn (Get $get) => filled($get('teams')))
                 ->schema([

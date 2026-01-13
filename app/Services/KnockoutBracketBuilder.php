@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -43,8 +44,14 @@ class KnockoutBracketBuilder
             $bracketSize,
             $firstRoundMatchCount,
             $firstRoundParticipants,
-            $byeParticipants
+            $byeParticipants,
+            $participants,
+            $shuffle
         ) {
+            if ($shuffle) {
+                $this->persistRandomSeeds($participants);
+            }
+
             $this->knockout->matches()->delete();
             $rounds = $this->ensureRounds($roundCount, $bracketSize);
             $matchesByRound = [];
@@ -182,6 +189,15 @@ class KnockoutBracketBuilder
         }
 
         return $rounds->all();
+    }
+
+    private function persistRandomSeeds(Collection $participants): void
+    {
+        foreach ($participants->values() as $index => $participant) {
+            $participant->forceFill([
+                'seed' => $index + 1,
+            ])->save();
+        }
     }
 
     private function defaultRoundName(int $roundIndex, int $remainingPlayers): string

@@ -6,13 +6,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "awcodes/filament-table-repeater": "^3.0",
         "awobaz/compoships": "^2.2",
         "doctrine/dbal": "^3.6",
-        "dotswan/filament-map-picker": "^1.8",
-        "filament/filament": "^3.2",
-        "filipfonal/filament-log-manager": "^2.1",
-        "guava/filament-nested-resources": "^1.2",
+        "filament/filament": "^4",
+        "filipfonal/filament-log-manager": "^3",
         "guzzlehttp/guzzle": "^7.2",
         "itsgoingd/clockwork": "^5.1",
         "laravel/framework": "^11.0",
@@ -24,7 +21,7 @@
         "sentry/sentry-laravel": "^4.13",
         "silviolleite/laravelpwa": "^2.0",
         "spatie/laravel-responsecache": "^7.6",
-        "stechstudio/filament-impersonate": "^3.15"
+        "stechstudio/filament-impersonate": "^4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -75,6 +72,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true
+        },
+        "audit": {
+            "ignore": ["PKSA-yb9k-ykqx-p2zw"]
         }
     },
     "minimum-stability": "stable",

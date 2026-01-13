@@ -2,24 +2,25 @@
 
 namespace App\Filament\Resources\SeasonResource\RelationManagers;
 
+use Filament\Actions;
+use App\Filament\Resources\KnockoutResource;
 use App\KnockoutType;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class KnockoutsRelationManager extends RelationManager
 {
-    use NestedRelationManager;
-
     protected static string $relationship = 'knockouts';
 
-    public function form(Form $form): Form
+    protected static ?string $relatedResource = KnockoutResource::class;
+
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
@@ -55,11 +56,11 @@ class KnockoutsRelationManager extends RelationManager
                     ->placeholder('-'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('name');
     }

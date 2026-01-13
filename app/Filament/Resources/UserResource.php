@@ -2,33 +2,33 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\Frame;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Information')
+                \Filament\Schemas\Components\Section::make('Information')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -55,53 +55,6 @@ class UserResource extends Resource
                             ])
                             ->required(),
                     ]),
-                Forms\Components\Section::make('Previously played frames')
-                    ->schema([
-                        Forms\Components\Repeater::make('frames')
-                            ->label('Recent frames')
-                            ->columns(2)
-                            ->relationship('frames', fn ($query) => $query
-                                ->latest('id')
-                                ->with([
-                                    'result.fixture',
-                                    'homePlayer',
-                                    'awayPlayer',
-                                ])
-                                ->limit(10))
-                            ->dehydrated(false)
-                            ->disabled()
-                            ->schema([
-                                Forms\Components\TextInput::make('fixture_date_display')
-                                    ->label('Fixture date')
-                                    ->disabled()
-                                    ->dehydrated(false)
-                                    ->formatStateUsing(fn ($state, Frame $frame) => optional($frame->result?->fixture?->fixture_date)?->format('d M Y') ?? 'TBC'),
-                                Forms\Components\TextInput::make('opponent_display')
-                                    ->label('Opponent')
-                                    ->disabled()
-                                    ->dehydrated(false)
-                                    ->formatStateUsing(function ($state, Frame $frame, Component $component) {
-                                        $user = method_exists($component->getLivewire(), 'getRecord')
-                                            ? $component->getLivewire()->getRecord()
-                                            : null;
-
-                                        if (! $user instanceof User) {
-                                            return $frame->awayPlayer?->name ?? $frame->homePlayer?->name ?? 'Unknown';
-                                        }
-
-                                        if ((int) $frame->home_player_id === (int) $user->id) {
-                                            return $frame->awayPlayer?->name ?? 'Unknown opponent';
-                                        }
-
-                                        return $frame->homePlayer?->name ?? 'Unknown opponent';
-                                    }),
-                            ])
-                            ->disableItemCreation()
-                            ->disableItemDeletion()
-                            ->disableItemMovement(),
-                    ])
-                    ->visible(fn (?User $record) => filled($record))
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -141,7 +94,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Impersonate::make(),
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
             ]);
@@ -150,7 +103,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\FramesRelationManager::class,
         ];
     }
 

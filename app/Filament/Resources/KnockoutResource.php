@@ -2,35 +2,35 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\KnockoutResource\Pages;
 use App\Filament\Resources\KnockoutResource\RelationManagers;
 use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\Season;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Guava\FilamentNestedResources\Ancestor;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
 
 class KnockoutResource extends Resource
 {
-    use NestedResource;
-
     protected static ?string $model = Knockout::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-trophy';
+    protected static ?string $parentResource = SeasonResource::class;
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
 
-    public static function form(Form $form): Form
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
+
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Knockout details')
+                \Filament\Schemas\Components\Section::make('Knockout details')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -45,8 +45,8 @@ class KnockoutResource extends Resource
                                     return $record->season_id;
                                 }
 
-                                if (method_exists($livewire, 'getOwnerRecord')) {
-                                    return $livewire->getOwnerRecord()?->getKey();
+                                if (method_exists($livewire, 'getParentRecord')) {
+                                    return $livewire->getParentRecord()?->getKey();
                                 }
 
                                 return static::getContextSeasonId();
@@ -84,7 +84,7 @@ class KnockoutResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->defaultSort('name');
     }
@@ -105,14 +105,6 @@ class KnockoutResource extends Resource
             'create' => Pages\CreateKnockout::route('/create'),
             'edit' => Pages\EditKnockout::route('/{record}/edit'),
         ];
-    }
-
-    public static function getAncestor(): ?Ancestor
-    {
-        return Ancestor::make(
-            'knockouts',
-            'season',
-        );
     }
 
     protected static function getContextSeasonId(): ?int

@@ -2,25 +2,26 @@
 
 namespace App\Filament\Resources\SectionResource\RelationManagers;
 
+use Filament\Actions;
+use App\Filament\Resources\FixtureResource;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class FixturesRelationManager extends RelationManager
 {
-    use NestedRelationManager;
-
     protected static ?string $title = 'Fixtures & Results';
 
     protected static string $relationship = 'fixtures';
 
-    public function form(Form $form): Form
+    protected static ?string $relatedResource = FixtureResource::class;
+
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('fixture_date')
                     ->required()
@@ -40,7 +41,7 @@ class FixturesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('DeleteAllFixtures')
+                Actions\Action::make('DeleteAllFixtures')
                     ->action(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->fixtures()->delete())
                     ->label('Delete all fixtures')
                     ->modalIcon('heroicon-o-trash')
@@ -53,10 +54,14 @@ class FixturesRelationManager extends RelationManager
             ->paginated(5)
             ->defaultPaginationPageOption(5)
             ->recordUrl(
-                fn (Model $record): string => route('filament.admin.resources.fixtures.edit', $record),
+                fn (Model $record): string => FixtureResource::getUrl(
+                    'edit',
+                    ['record' => $record],
+                    shouldGuessMissingParameters: true
+                ),
             )
             ->emptyStateActions([
-                Tables\Actions\Action::make('GenerateFixtures')
+                Actions\Action::make('GenerateFixtures')
                     ->action(function (RelationManager $livewire) {
                         $livewire->getOwnerRecord()->generateFixtures();
                     })

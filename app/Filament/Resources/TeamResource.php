@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\TeamResource\Pages;
 use App\Filament\Resources\TeamResource\RelationManagers;
 use App\Models\Team;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,17 +16,18 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Information')
+                \Filament\Schemas\Components\Section::make('Information')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -40,17 +42,16 @@ class TeamResource extends Resource
                             ->relationship('venue', 'name')
                             ->placeholder('Select a venue')
                             ->required(),
-                            Forms\Components\Select::make('captain_id')
+                        Forms\Components\Select::make('captain_id')
                             ->label('Captain')
                             ->searchable()
-                            ->options(
-                                \App\Models\User::query()
-                                ->where('team_id', $form->getLivewire()->record?->getKey())
-                                ->get()
-                                ->mapWithKeys(fn ($user) => [
-                                    $user->id => $user->name,
-                                ])                            
-                            )
+                            ->options(fn (?Team $record) => $record
+                                ? \App\Models\User::query()
+                                    ->where('team_id', $record->getKey())
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->toArray()
+                                : [])
                             ->placeholder('Select a captain'),
                         
                     ]),
@@ -88,7 +89,7 @@ class TeamResource extends Resource
                     ->nullable(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
             ]);
@@ -97,6 +98,7 @@ class TeamResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\MatchesRelationManager::class,
             RelationManagers\PlayersRelationManager::class,
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use Filament\Actions;
 use App\KnockoutType;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
@@ -9,7 +10,7 @@ use App\Models\KnockoutRound;
 use App\Models\Venue;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,9 +21,9 @@ class MatchesRelationManager extends RelationManager
 {
     protected static string $relationship = 'matches';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema(function (RelationManager $livewire) {
+        return $schema->schema(function (RelationManager $livewire) {
             $knockout = $livewire->getOwnerRecord();
 
             $participantSelect = function (string $column, string $relationship, string $label) use ($knockout) {
@@ -492,11 +493,11 @@ class MatchesRelationManager extends RelationManager
             ])
             ->modifyQueryUsing(fn ($query) => $query->orderBy('knockout_round_id')->orderBy('position'))
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('clear_result')
+                Actions\EditAction::make(),
+                Actions\Action::make('clear_result')
                     ->label('Clear result')
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('warning')
@@ -504,7 +505,7 @@ class MatchesRelationManager extends RelationManager
                     ->visible(fn (KnockoutMatch $record) => $record->home_score !== null || $record->away_score !== null || $record->forfeit_participant_id)
                     ->action(fn (KnockoutMatch $record) => $record->clearResult())
                     ->successNotificationTitle('Result cleared'),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ]);
     }
 }

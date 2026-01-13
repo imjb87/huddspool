@@ -128,6 +128,15 @@ class Team extends Model
     }
 
     /**
+     * Get all matches (home and away) for the team.
+     */
+    public function matches()
+    {
+        return $this->hasMany(Result::class, 'home_team_id')
+            ->orWhere('results.away_team_id', $this->id);
+    }
+
+    /**
      * Get the results where the team played at home.
      */
     public function homeResults()

@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\RulesetResource\Pages;
 use App\Models\Ruleset;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,15 +17,16 @@ class RulesetResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Information')
+                \Filament\Schemas\Components\Section::make('Information')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('Name')
@@ -50,7 +52,7 @@ class RulesetResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
                 //

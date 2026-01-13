@@ -2,24 +2,23 @@
 
 namespace App\Filament\Resources\SeasonResource\RelationManagers;
 
+use Filament\Actions;
+use App\Filament\Resources\SectionResource;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class SectionsRelationManager extends RelationManager
 {
-    use NestedRelationManager;
-
     protected static string $relationship = 'sections';
 
-    public function form(Form $form): Form
+    protected static ?string $relatedResource = SectionResource::class;
+
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -45,10 +44,10 @@ class SectionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->paginated(false);
     }

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use Filament\Actions;
 use App\KnockoutType;
+use App\Models\KnockoutParticipant;
 use App\Models\User;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,9 +18,9 @@ class ParticipantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'participants';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema(function (Manager $livewire) {
+        return $schema->schema(function (Manager $livewire) {
             $knockout = $livewire->getOwnerRecord();
             $type = $knockout->type;
             $formatPlayerOption = fn (?User $player) => trim(
@@ -106,18 +108,68 @@ class ParticipantsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('display_name')
+            ->recordTitleAttribute('id')
             ->columns([
                 Tables\Columns\TextColumn::make('seed')->label('Seed')->sortable(),
-                Tables\Columns\TextColumn::make('display_name')->label('Name')->searchable(),
+                Tables\Columns\TextColumn::make('participant_name')
+                    ->label('Name')
+                    ->state(fn (KnockoutParticipant $record): string => $this->getParticipantName($record))
+                    ->searchable(query: function ($query, string $search): void {
+                        $query->where(function ($query) use ($search) {
+                            $query->whereHas('team', fn ($teamQuery) => $teamQuery->where('name', 'like', "%{$search}%"))
+                                ->orWhereHas('playerOne', fn ($playerQuery) => $playerQuery->where('name', 'like', "%{$search}%"))
+                                ->orWhereHas('playerTwo', fn ($playerQuery) => $playerQuery->where('name', 'like', "%{$search}%"));
+                        });
+                    })
+                    ->sortable(query: function ($query, string $direction): void {
+                        $query->leftJoin('teams', 'knockout_participants.team_id', '=', 'teams.id')
+                            ->leftJoin('users as player_one', 'knockout_participants.player_one_id', '=', 'player_one.id')
+                            ->leftJoin('users as player_two', 'knockout_participants.player_two_id', '=', 'player_two.id')
+                            ->orderByRaw(sprintf(
+                                'COALESCE(teams.name, player_one.name, player_two.name, \'\') %s',
+                                $direction === 'asc' ? 'asc' : 'desc'
+                            ))
+                            ->select('knockout_participants.*');
+                    }),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('seed');
+    }
+
+    private function getParticipantName(KnockoutParticipant $participant): string
+    {
+        $type = $participant->knockout?->type ?? KnockoutType::Singles;
+
+        return match ($type) {
+            KnockoutType::Singles => $participant->playerOne?->name ?? 'TBC',
+            KnockoutType::Doubles => $this->formatDoublesName($participant),
+            KnockoutType::Team => $participant->team?->name ?? 'TBC',
+        };
+    }
+
+    private function formatDoublesName(KnockoutParticipant $participant): string
+    {
+        $playerOne = $participant->playerOne?->name;
+        $playerTwo = $participant->playerTwo?->name;
+
+        if (! $playerOne && ! $playerTwo) {
+            return 'TBC';
+        }
+
+        if ($playerOne && ! $playerTwo) {
+            return "{$playerOne} & TBC";
+        }
+
+        if (! $playerOne && $playerTwo) {
+            return "TBC & {$playerTwo}";
+        }
+
+        return "{$playerOne} & {$playerTwo}";
     }
 }

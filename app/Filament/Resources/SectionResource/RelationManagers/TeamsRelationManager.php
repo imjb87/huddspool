@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\SectionResource\RelationManagers;
 
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,9 +17,9 @@ class TeamsRelationManager extends RelationManager
 
     protected static string $relationship = 'teams';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -40,18 +41,18 @@ class TeamsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                Actions\AttachAction::make()
                     ->label('Add an existing team'),
-                Tables\Actions\CreateAction::make()
+                Actions\CreateAction::make()
                     ->label('Create a new team')
                     ->slideOver(true)
                     ->modalHeading('Create a new team')
             ])
             ->actions([
-                Tables\Actions\DetachAction::make()
+                Actions\DetachAction::make()
                     ->label('Remove team')
                     ->visible(fn(RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() == 0),
-                Tables\Actions\Action::make('DeductPoints')
+                Actions\Action::make('DeductPoints')
                     ->label('Deduct points')
                     ->modalHeading('Deduct points')
                     ->modalDescription('Deduct points from the team')
@@ -95,7 +96,7 @@ class TeamsRelationManager extends RelationManager
                     })
                     ->color('warning')
                     ->icon('heroicon-o-arrow-down'),
-                Tables\Actions\Action::make('Withdraw')
+                Actions\Action::make('Withdraw')
                     ->label('Withdraw')
                     ->visible(fn(RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() > 0)
                     ->color('danger')

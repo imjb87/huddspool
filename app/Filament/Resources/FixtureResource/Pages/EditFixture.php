@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\FixtureResource\Pages;
 
+use Filament\Actions;
 use App\Filament\Resources\FixtureResource;
 use Filament\Resources\Pages\EditRecord;
-use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Filament\Forms;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -13,8 +13,6 @@ use Filament\Support\Enums\MaxWidth;
 
 class EditFixture extends EditRecord
 {
-    use NestedPage;
-
     protected static string $resource = FixtureResource::class;
 
     protected function getHeaderActions(): array
@@ -26,7 +24,8 @@ class EditFixture extends EditRecord
                 ->modalHeading('Result & Frames')
                 ->modalSubmitActionLabel(fn() => $this->record->result ? 'Update Result' : 'Save Result')
                 ->form([
-                    Forms\Components\Section::make('Result Totals')
+                    \Filament\Schemas\Components\Section::make('Result Totals')
+                ->columnSpanFull()
                         ->columns(2)
                         ->schema([
                             Forms\Components\TextInput::make('home_score')
@@ -42,7 +41,8 @@ class EditFixture extends EditRecord
                                 ->required(),
                         ]),
 
-                    Forms\Components\Section::make('Frames')
+                    \Filament\Schemas\Components\Section::make('Frames')
+                ->columnSpanFull()
                         ->schema([
                             Forms\Components\Repeater::make('frames')
                                 ->label('Frames')

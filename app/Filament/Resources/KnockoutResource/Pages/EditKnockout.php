@@ -10,8 +10,8 @@ use App\Services\KnockoutBracketBuilder;
 use App\Support\KnockoutParticipantSheetParser;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +40,7 @@ class EditKnockout extends EditRecord
             ->form([
                 Forms\Components\Toggle::make('shuffle')
                     ->label('Shuffle participants')
-                    ->helperText('Randomly shuffle seeds before pairing participants.'),
+                    ->helperText('Randomly assign seeds before pairing participants (overwrites existing seeds).'),
             ])
             ->action(function (array $data) {
                 $builder = new KnockoutBracketBuilder($this->record);
@@ -79,7 +79,8 @@ class EditKnockout extends EditRecord
     protected function getParticipantImportFormSchema(): array
     {
         return [
-            Forms\Components\Section::make('Source data')
+            \Filament\Schemas\Components\Section::make('Source data')
+                ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('raw_csv')
                         ->label('CSV data')
@@ -94,7 +95,8 @@ class EditKnockout extends EditRecord
                         ->default(true),
                 ])
                 ->columns(1),
-            Forms\Components\Section::make('Participants')
+            \Filament\Schemas\Components\Section::make('Participants')
+                ->columnSpanFull()
                 ->visible(fn (Get $get) => filled($get('participants')))
                 ->schema([
                     Forms\Components\Repeater::make('participants')

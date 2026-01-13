@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\SeasonResource\RelationManagers;
 
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +16,9 @@ class ExpulsionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'expulsions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
             ->schema([
                 MorphToSelect::make('expellable')
@@ -44,11 +45,11 @@ class ExpulsionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ]);
     }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,17 +18,18 @@ class VenueResource extends Resource
 {
     protected static ?string $model = Venue::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-home-modern';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('Information')
+                \Filament\Schemas\Components\Section::make('Information')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -44,7 +46,8 @@ class VenueResource extends Resource
                             ->placeholder('Venue address')
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Location')
+                \Filament\Schemas\Components\Section::make('Location')
+                ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('latitude')
@@ -77,7 +80,7 @@ class VenueResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
             ]);

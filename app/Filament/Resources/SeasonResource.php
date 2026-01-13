@@ -2,37 +2,33 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Actions;
 use App\Filament\Resources\SeasonResource\Pages;
 use App\Filament\Resources\SeasonResource\RelationManagers;
 use App\Models\Season;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Guava\FilamentNestedResources\Ancestor;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
 
 class SeasonResource extends Resource
 {
-    use NestedResource;
-
     protected static ?string $model = Season::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-europe-africa';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-globe-europe-africa';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'League Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'League Management';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 // Main section spanning 2 columns
-                Forms\Components\Section::make('Season information')
+                \Filament\Schemas\Components\Section::make('Season information')
+                ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Name')
@@ -41,7 +37,8 @@ class SeasonResource extends Resource
                     ]),
 
                 // Dates on the right in a smaller section spanning 1 column
-                Forms\Components\Section::make('Schedule')
+                \Filament\Schemas\Components\Section::make('Schedule')
+                ->columnSpanFull()
                     ->columnSpan(2)
                     ->schema([
                         Forms\Components\Repeater::make('dates')
@@ -84,7 +81,7 @@ class SeasonResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([]);
     }
@@ -104,19 +101,6 @@ class SeasonResource extends Resource
             'index' => Pages\ListSeasons::route('/'),
             'create' => Pages\CreateSeason::route('/create'),
             'edit' => Pages\EditSeason::route('/{record}/edit'),
-
-            'sections.create' => Pages\CreateSeasonSection::route('/{record}/sections/create'),
-            'knockouts.create' => Pages\CreateSeasonKnockout::route('/{record}/knockouts/create'),
         ];
-    }
-
-    public static function getAncestor(): ?Ancestor
-    {
-        return null;
-    }
-
-    public static function getBreadcrumbRecordLabel($record): string
-    {
-        return $record->name;
     }
 }
