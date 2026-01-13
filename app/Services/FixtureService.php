@@ -58,6 +58,13 @@ class FixtureService
                     ->pluck('id')
                     ->toArray();
 
+        $teams = array_values($teams);
+        if (count($teams) > 10) {
+            $teams = array_slice($teams, 0, 10);
+        } elseif (count($teams) < 10) {
+            $teams = array_pad($teams, 10, null);
+        }
+
         // pop the last team from the array and add it to the beginning
         array_unshift($teams, array_pop($teams));
         $fullSchedule = [];
