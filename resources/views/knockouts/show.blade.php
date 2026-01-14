@@ -68,15 +68,20 @@
                                                 @php
                                                     $homeParticipant = $match->homeParticipant;
                                                 @endphp
-                                                @if ($homeParticipant)
+                                                    @if ($homeParticipant)
                                                     @if ($knockout->type === \App\KnockoutType::Doubles)
+                                                        @php
+                                                            $homePlayers = [$homeParticipant->playerOne, $homeParticipant->playerTwo];
+                                                        @endphp
                                                         <div class="flex flex-col gap-0.5">
-                                                            @foreach ([$homeParticipant->playerOne, $homeParticipant->playerTwo] as $player)
+                                                            @foreach ($homePlayers as $player)
                                                                 @if ($player)
                                                                     <a href="{{ route('player.show', $player) }}"
                                                                         class="hover:text-gray-500 transition">
                                                                         {{ $player->name }}
                                                                     </a>
+                                                                @else
+                                                                    <span class="text-gray-500">TBC</span>
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -117,13 +122,18 @@
                                                 @endphp
                                                 @if ($awayParticipant)
                                                     @if ($knockout->type === \App\KnockoutType::Doubles)
+                                                        @php
+                                                            $awayPlayers = [$awayParticipant->playerOne, $awayParticipant->playerTwo];
+                                                        @endphp
                                                         <div class="flex flex-col gap-0.5">
-                                                            @foreach ([$awayParticipant->playerOne, $awayParticipant->playerTwo] as $player)
+                                                            @foreach ($awayPlayers as $player)
                                                                 @if ($player)
                                                                     <a href="{{ route('player.show', $player) }}"
                                                                         class="hover:text-gray-500 transition">
                                                                         {{ $player->name }}
                                                                     </a>
+                                                                @else
+                                                                    <span class="text-gray-500">TBC</span>
                                                                 @endif
                                                             @endforeach
                                                         </div>
