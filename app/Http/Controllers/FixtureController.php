@@ -6,6 +6,7 @@ use App\Models\Ruleset;
 use App\Models\Fixture;
 use App\Models\Section;
 use App\Queries\GetTeamPlayers;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 
 class FixtureController extends Controller
@@ -56,6 +57,10 @@ class FixtureController extends Controller
             $homeTeam = $section->teams->find($home_team_id);
             $awayTeam = $section->teams->find($away_team_id);
 
+            if (!$homeTeam || !$awayTeam) {
+                continue;
+            }
+
             if (!isset($grid[$homeTeam->name])) {
                 $grid[$homeTeam->name] = [];
             }
@@ -71,6 +76,10 @@ class FixtureController extends Controller
             $grid[$awayTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort . 'v' . $awayTeamSort;
         }        
 
-        return view('fixture.download', compact('grid', 'dates', 'section'));
+        $pdf = Pdf::loadView('fixture.print', compact('grid', 'dates', 'section'))
+            ->setPaper('a4', 'landscape')
+            ->setOption('defaultFont', 'DejaVu Sans');
+
+        return $pdf->stream(sprintf('%s-fixtures.pdf', str_replace(' ', '-', strtolower($section->name))));
     }
 }
