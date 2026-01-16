@@ -10,7 +10,7 @@
         .page { padding: 6px; }
         .header { text-align: center; margin-bottom: 16px; }
         .logo { width: 108px; margin: 0 auto 12px; display: block; }
-        h1 { font-family: DejaVu Serif, "Times New Roman", serif; font-size: 32px; font-weight: 700; margin: 0 0 4px; }
+        h1 { font-family: DejaVu Serif, "Times New Roman", serif; font-size: 32px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.75px; }
         .season { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
         .table-wrap { border: 1px solid #e5e7eb; }
         table { width: 100%; border-collapse: collapse; }
