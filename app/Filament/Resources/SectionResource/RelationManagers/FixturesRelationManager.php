@@ -220,54 +220,33 @@ class FixturesRelationManager extends RelationManager
             }
         }
 
-        $grouped = [];
         foreach ($fixtures as $index => $preview) {
             if (empty($preview['date_raw']) || empty($preview['venue_id'])) {
                 continue;
             }
 
-            $dateKey = (string) $preview['date_raw'];
-            $venueKey = (string) $preview['venue_id'];
-            $grouped[$dateKey . '|' . $venueKey][] = $index;
-        }
-
-        foreach ($grouped as $key => $indexes) {
-            $conflictList = [];
+            $key = (string) $preview['date_raw'] . '|' . (string) $preview['venue_id'];
             $existing = $existingFixturesByKey[$key] ?? [];
 
-            foreach ($indexes as $index) {
-                $others = array_filter($indexes, fn (int $i): bool => $i !== $index);
-                foreach ($others as $i) {
-                    $conflictList[] = [
-                        'date' => $fixtures[$i]['date'] ?? 'TBC',
-                        'section' => $section->name ?? 'Unknown section',
-                        'home_team' => $fixtures[$i]['home_team'] ?? 'TBC',
-                        'away_team' => $fixtures[$i]['away_team'] ?? 'TBC',
-                    ];
-                }
+            if (empty($existing)) {
+                continue;
             }
 
-            foreach ($existing as $existingFixture) {
-                $conflictList[] = [
+            $conflictList = array_map(static function (array $existingFixture): array {
+                return [
                     'date' => $existingFixture['date'] ?? 'TBC',
                     'section' => $existingFixture['section'] ?? 'Unknown section',
                     'home_team' => $existingFixture['home_team'] ?? 'TBC',
                     'away_team' => $existingFixture['away_team'] ?? 'TBC',
                 ];
-            }
+            }, $existing);
 
             $conflictList = array_values(array_unique(array_map('serialize', $conflictList)));
             $conflictList = array_map('unserialize', $conflictList);
             $conflictList = array_slice($conflictList, 0, 5);
 
-            if (empty($conflictList)) {
-                continue;
-            }
-
-            foreach ($indexes as $index) {
-                $fixtures[$index]['conflicts'] = $conflictList;
-                $fixtures[$index]['has_conflict'] = true;
-            }
+            $fixtures[$index]['conflicts'] = $conflictList;
+            $fixtures[$index]['has_conflict'] = true;
         }
 
         foreach ($fixtures as &$preview) {
