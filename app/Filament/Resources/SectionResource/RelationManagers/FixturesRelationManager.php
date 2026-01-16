@@ -103,11 +103,16 @@ class FixturesRelationManager extends RelationManager
                                     ->visible(fn (Get $get): bool => (bool) $get('has_conflict'))
                                     ->defaultItems(0)
                                     ->generateUuidUsing(false)
-                                    ->columns(3)
+                                    ->columns(4)
                                     ->disableItemCreation()
                                     ->disableItemDeletion()
                                     ->disableItemMovement()
                                     ->schema([
+                                        Forms\Components\TextInput::make('date')
+                                            ->hiddenLabel()
+                                            ->extraFieldWrapperAttributes(['class' => 'border border-red-300 bg-red-50 rounded-lg'], merge: true)
+                                            ->disabled()
+                                            ->dehydrated(false),
                                         Forms\Components\TextInput::make('section')
                                             ->hiddenLabel()
                                             ->extraFieldWrapperAttributes(['class' => 'border border-red-300 bg-red-50 rounded-lg'], merge: true)
@@ -143,7 +148,7 @@ class FixturesRelationManager extends RelationManager
     }
 
     /**
-     * @return array<int, array{date:string,home_team:string,away_team:string,venue:string,conflicts:array<int,array{section:string,home_team:string,away_team:string}>,has_conflict:bool}>
+     * @return array<int, array{date:string,home_team:string,away_team:string,venue:string,conflicts:array<int,array{date:string,section:string,home_team:string,away_team:string}>,has_conflict:bool}>
      */
     private function buildFixturePreview(): array
     {
@@ -207,6 +212,7 @@ class FixturesRelationManager extends RelationManager
 
                 $key = $existingFixture->fixture_date->toDateString() . '|' . $existingFixture->venue_id;
                 $existingFixturesByKey[$key][] = [
+                    'date' => $existingFixture->fixture_date?->format('d M Y') ?? 'TBC',
                     'home_team' => $existingFixture->homeTeam?->name ?? 'TBC',
                     'away_team' => $existingFixture->awayTeam?->name ?? 'TBC',
                     'section' => $existingFixture->section?->name ?? 'Unknown section',
@@ -233,6 +239,7 @@ class FixturesRelationManager extends RelationManager
                 $others = array_filter($indexes, fn (int $i): bool => $i !== $index);
                 foreach ($others as $i) {
                     $conflictList[] = [
+                        'date' => $fixtures[$i]['date'] ?? 'TBC',
                         'section' => $section->name ?? 'Unknown section',
                         'home_team' => $fixtures[$i]['home_team'] ?? 'TBC',
                         'away_team' => $fixtures[$i]['away_team'] ?? 'TBC',
@@ -242,6 +249,7 @@ class FixturesRelationManager extends RelationManager
 
             foreach ($existing as $existingFixture) {
                 $conflictList[] = [
+                    'date' => $existingFixture['date'] ?? 'TBC',
                     'section' => $existingFixture['section'] ?? 'Unknown section',
                     'home_team' => $existingFixture['home_team'] ?? 'TBC',
                     'away_team' => $existingFixture['away_team'] ?? 'TBC',
