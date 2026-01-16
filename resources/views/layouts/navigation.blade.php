@@ -169,6 +169,9 @@
                     @endforeach
                 </div>
             </div>
+            <a href="/knockout-dates" class="text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700">
+                Knockout dates
+            </a>
             @if ($active_knockouts->isNotEmpty())
                 <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
                     <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
@@ -347,6 +350,10 @@
                                     @endforeach
                             </div>
                         </div>
+                        <a href="/knockout-dates"
+                            class="block rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                            Knockout dates
+                        </a>
                         @if ($active_knockouts->isNotEmpty())
                             <div class="-mx-3" x-data="{ open: false }">
                                 <button type="button"

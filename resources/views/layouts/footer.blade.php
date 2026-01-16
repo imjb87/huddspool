@@ -64,7 +64,12 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold leading-6 text-white">Knockouts</h3>
-                    <ul role="list" class="mt-6 grid md:grid-cols-2 grid-rows-{{ ceil($active_knockouts->count() / 2) }} gap-4 items-start">
+                    <ul role="list" class="mt-6 grid md:grid-cols-2 grid-rows-{{ ceil(($active_knockouts->count() + 1) / 2) }} gap-4 items-start">
+                        <li>
+                            <a href="/knockout-dates" class="text-sm leading-6 text-gray-300 hover:text-white">
+                                Knockout dates
+                            </a>
+                        </li>
                         @forelse ($active_knockouts as $knockout)
                             <li>
                                 <a href="{{ route('knockout.show', $knockout) }}"
