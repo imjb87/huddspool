@@ -90,7 +90,7 @@ class EditSeason extends EditRecord
                                 ]),
                             Forms\Components\Select::make('team_id')
                                 ->label('Existing team')
-                                ->options(fn () => Team::query()->withTrashed()->orderBy('name')->pluck('name', 'id')->toArray())
+                                ->options(fn () => Team::query()->orderBy('name')->pluck('name', 'id')->toArray())
                                 ->searchable()
                                 ->preload()
                                 ->native(false)
@@ -214,7 +214,7 @@ class EditSeason extends EditRecord
         $teamId = $teamData['team_id'] ?? null;
 
         if ($teamId) {
-            $team = Team::query()->withTrashed()->find($teamId);
+            $team = Team::query()->find($teamId);
 
             if ($team) {
                 return $team;
@@ -266,7 +266,6 @@ class EditSeason extends EditRecord
         }
 
         return Team::query()
-            ->withTrashed()
             ->where(function ($query) use ($normalized) {
                 $query->whereRaw('LOWER(name) = ?', [$normalized])
                     ->orWhereRaw('LOWER(shortname) = ?', [$normalized]);
