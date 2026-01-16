@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\KnockoutMatchController;
+use App\Http\Controllers\SupportTicketController;
 
 
 /*
@@ -41,5 +42,9 @@ Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.i
 Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
 Route::middleware('auth')->group(function () {
     Route::get('/knockout-matches/{match}/submit', [KnockoutMatchController::class, 'submit'])->name('knockout.matches.submit');
+    Route::middleware('throttle:support-tickets')->group(function () {
+        Route::get('/support/tickets', [SupportTicketController::class, 'create'])->name('support.tickets');
+        Route::post('/support/tickets', [SupportTicketController::class, 'store'])->name('support.tickets.store');
+    });
 });
 Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');

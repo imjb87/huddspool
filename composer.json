@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "awobaz/compoships": "^2.2",
         "barryvdh/laravel-dompdf": "^2.0",
+        "daacreators/creators-ticketing": "^1.1.8",
         "doctrine/dbal": "^3.6",
         "filament/filament": "^4",
         "filipfonal/filament-log-manager": "^3",

@@ -58,6 +58,7 @@ class Frame extends Model
     protected function flushAnalyticsCaches(): void
     {
         Cache::forget('stats:open-season');
+        Cache::forget('stats:season-series');
         Cache::forget('history:index');
         Cache::forget('nav:past-seasons');
 

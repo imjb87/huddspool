@@ -169,39 +169,40 @@
                     @endforeach
                 </div>
             </div>
-            <a href="/knockout-dates" class="text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700">
-                Knockout dates
-            </a>
-            @if ($active_knockouts->isNotEmpty())
-                <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                    <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                        aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                        Knockouts
-                        <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                            aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    <div class="absolute -left-8 top-full z-10 mt-3 w-72 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                        x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0 translate-y-1"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                        @foreach ($active_knockouts as $knockout)
-                            <div class="py-1">
-                                <a href="{{ route('knockout.show', $knockout) }}"
-                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                                    {{ $knockout->name }}
-                                </a>
-                            </div>
-                        @endforeach
+            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
+                    Knockouts
+                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                        aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div class="absolute -left-8 top-full z-10 mt-3 w-72 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
+                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 translate-y-1"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
+                    <div class="py-1">
+                        <a href="/knockout-dates"
+                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                            Knockout dates
+                        </a>
                     </div>
+                    @foreach ($active_knockouts as $knockout)
+                        <div class="py-1">
+                            <a href="{{ route('knockout.show', $knockout) }}"
+                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                                {{ $knockout->name }}
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
-            @endif
+            </div>
             <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
                 <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
                     aria-expanded="false" @click="open = !open" :aria-expanded="open">
@@ -274,6 +275,10 @@
                                     team</a>
                             </div>
                         @endif
+                        <div class="py-1">
+                            <a href="{{ route('support.tickets') }}"
+                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Submit a request</a>
+                        </div>
                         @if (auth()->user()->is_admin)
                             <div class="py-1">
                                 <a href="{{ route('filament.admin.pages.dashboard') }}"
@@ -350,38 +355,36 @@
                                     @endforeach
                             </div>
                         </div>
-                        <a href="/knockout-dates"
-                            class="block rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            Knockout dates
-                        </a>
-                        @if ($active_knockouts->isNotEmpty())
-                            <div class="-mx-3" x-data="{ open: false }">
-                                <button type="button"
-                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-knockouts" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    Knockouts
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <div class="mt-2 space-y-2" id="disclosure-knockouts" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($active_knockouts as $knockout)
-                                        <a href="{{ route('knockout.show', $knockout) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                            {{ $knockout->name }}
-                                        </a>
-                                    @endforeach
-                                </div>
+                        <div class="-mx-3" x-data="{ open: false }">
+                            <button type="button"
+                                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                aria-controls="disclosure-knockouts" aria-expanded="false" @click="open = !open"
+                                :aria-expanded="open">
+                                Knockouts
+                                <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
+                                    aria-hidden="true" :class="{ 'rotate-180': open }">
+                                    <path fill-rule="evenodd"
+                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div class="mt-2 space-y-2" id="disclosure-knockouts" x-show="open"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                                <a href="/knockout-dates"
+                                    class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Knockout dates
+                                </a>
+                                @foreach ($active_knockouts as $knockout)
+                                    <a href="{{ route('knockout.show', $knockout) }}"
+                                        class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                        {{ $knockout->name }}
+                                    </a>
+                                @endforeach
                             </div>
-                        @endif
+                        </div>
                         <div class="-mx-3" x-data="{ open: false }">
                             <button type="button"
                                 class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -525,6 +528,8 @@
                                         class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
                                         team</a>
                                 @endif
+                                <a href="{{ route('support.tickets') }}"
+                                    class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Submit a request</a>
                                 @if (auth()->user()->is_admin)
                                     <a href="{{ route('filament.admin.pages.dashboard') }}"
                                         class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Admin</a>

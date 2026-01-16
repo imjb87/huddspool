@@ -23,6 +23,7 @@ class Result extends Model
                 }
             }
 
+            Cache::forget('stats:season-series');
             $result->loadMissing('section', 'fixture');
 
             $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;

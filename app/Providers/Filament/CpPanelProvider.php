@@ -19,6 +19,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Http\Middleware\IsAdmin;
+use daacreators\CreatorsTicketing\TicketingPlugin;
 
 class CpPanelProvider extends PanelProvider
 {
@@ -61,6 +62,7 @@ class CpPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
+                TicketingPlugin::make(),
             ])
             ->login();
     }
