@@ -11,14 +11,14 @@
         .header { text-align: center; margin-bottom: 16px; }
         .logo { width: 108px; margin: 0 auto 12px; display: block; }
         h1 { font-family: DejaVu Serif, "Times New Roman", serif; font-size: 32px; font-weight: 700; margin: 0 0 4px; }
-        .season { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
+        .season { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
         .table-wrap { border: 1px solid #e5e7eb; }
         table { width: 100%; border-collapse: collapse; }
-        thead th { background: #166534; color: #ffffff; font-size: 11px; padding: 4px 8px; }
-        tbody td { border: 1px solid #e5e7eb; padding: 4px 8px; font-size: 11px; text-align: center; }
-        .index-cell { width: 32px; }
+        thead th { background: #166534; color: #ffffff; font-size: 9px; padding: 4px 8px; }
+        tbody td { border: 1px solid #e5e7eb; padding: 4px 8px; font-size: 9px; text-align: center; }
+        .index-cell { width: 24px; }
         .team-cell { width: 128px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: DejaVu Sans, Arial, sans-serif; }
-        .date-cell { width: 32px; }
+        .date-cell { width: 24px; }
     </style>
 </head>
 <body>
