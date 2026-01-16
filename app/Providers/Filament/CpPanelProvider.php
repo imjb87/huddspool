@@ -19,7 +19,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Http\Middleware\IsAdmin;
-use daacreators\CreatorsTicketing\TicketingPlugin;
+use App\Filament\Resources\SupportTicketResource;
 
 class CpPanelProvider extends PanelProvider
 {
@@ -42,6 +42,9 @@ class CpPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->resources([
+                SupportTicketResource::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -62,7 +65,6 @@ class CpPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
-                TicketingPlugin::make(),
             ])
             ->login();
     }
