@@ -35,6 +35,35 @@ class MatchesRelationManager extends RelationManager
                         modifyQueryUsing: fn ($query) => $query->where('knockout_id', $knockout->id)
                     )
                     ->getOptionLabelFromRecordUsing(fn (KnockoutParticipant $record) => $record->display_name)
+                    ->getOptionLabelUsing(function ($value) use ($knockout) {
+                        if (! $value) {
+                            return null;
+                        }
+
+                        $participant = KnockoutParticipant::query()->find($value);
+
+                        if (! $participant) {
+                            return null;
+                        }
+
+                        $participant->setRelation('knockout', $knockout);
+
+                        return $participant->display_name;
+                    })
+                    ->getSearchResultsUsing(function (string $search) use ($knockout) {
+                        return KnockoutParticipant::query()
+                            ->searchForKnockout($knockout, $search)
+                            ->orderBy('knockout_participants.seed')
+                            ->orderBy('knockout_participants.label')
+                            ->limit(50)
+                            ->get()
+                            ->mapWithKeys(function (KnockoutParticipant $participant) use ($knockout) {
+                                $participant->setRelation('knockout', $knockout);
+
+                                return [$participant->id => $participant->display_name];
+                            })
+                            ->toArray();
+                    })
                     ->searchable();
             };
 
@@ -367,6 +396,10 @@ class MatchesRelationManager extends RelationManager
                                 return;
                             }
 
+                            if ($get('override_home_venue')) {
+                                return;
+                            }
+
                             $participantIds = collect([
                                 $get('home_participant_id'),
                                 $get('away_participant_id'),
@@ -396,6 +429,11 @@ class MatchesRelationManager extends RelationManager
                             }
                         };
                     }),
+                Forms\Components\Toggle::make('override_home_venue')
+                    ->label('Allow participant venue')
+                    ->helperText('Enable to allow assigning a participant venue for team knockouts.')
+                    ->visible(fn () => $knockout->type === \App\KnockoutType::Team)
+                    ->default(false),
                 Forms\Components\TextInput::make('referee')
                     ->maxLength(255)
                     ->label('Referee')

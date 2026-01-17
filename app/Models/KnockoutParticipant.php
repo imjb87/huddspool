@@ -6,6 +6,7 @@ use App\KnockoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class KnockoutParticipant extends Model
 {
@@ -50,17 +51,47 @@ class KnockoutParticipant extends Model
             ->orderBy('label');
     }
 
+    public function scopeSearchForKnockout(Builder $query, Knockout $knockout, string $search): Builder
+    {
+        return $query
+            ->where('knockout_id', $knockout->id)
+            ->leftJoin('teams', 'knockout_participants.team_id', '=', 'teams.id')
+            ->leftJoin('users as player_one', 'knockout_participants.player_one_id', '=', 'player_one.id')
+            ->leftJoin('users as player_two', 'knockout_participants.player_two_id', '=', 'player_two.id')
+            ->where(function (Builder $query) use ($search) {
+                $query->where('knockout_participants.label', 'like', '%' . $search . '%')
+                    ->orWhere('teams.name', 'like', '%' . $search . '%')
+                    ->orWhere('player_one.name', 'like', '%' . $search . '%')
+                    ->orWhere('player_two.name', 'like', '%' . $search . '%');
+            })
+            ->select('knockout_participants.*');
+    }
+
     public function getDisplayNameAttribute(): string
     {
+        $type = $this->knockout?->type ?? KnockoutType::Singles;
+
+        if ($type === KnockoutType::Doubles) {
+            $playerOne = $this->playerOne?->name;
+            $playerTwo = $this->playerTwo?->name;
+
+            if (($playerOne && ! $playerTwo) || (! $playerOne && $playerTwo)) {
+                return $this->formatDoublesName();
+            }
+
+            if ($this->label) {
+                return $this->label;
+            }
+
+            return $this->formatDoublesName();
+        }
+
         if ($this->label) {
             return $this->label;
         }
 
-        $type = $this->knockout?->type ?? KnockoutType::Singles;
-
         return match ($type) {
             KnockoutType::Singles => $this->playerOne?->name ?? 'TBC',
-            KnockoutType::Doubles => $this->formatDoublesName(),
             KnockoutType::Team => $this->team?->name ?? 'TBC',
         };
     }
