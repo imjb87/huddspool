@@ -158,7 +158,7 @@
                                             </div>
                                         </div>
                                         <div class="w-full sm:w-3/12 text-[11px] font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-right mt-2 sm:mt-0">
-                                            @if (!($knockout->type === \App\KnockoutType::Team && $hasBye))
+                                            @if (! $hasBye)
                                                 <div>
                                                     @if ($match->venue)
                                                         <a href="{{ route('venue.show', $match->venue) }}"
