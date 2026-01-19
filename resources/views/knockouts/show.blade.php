@@ -56,7 +56,8 @@
                                         $homeLabel = $slotLabel($match, 'home');
                                         $awayLabel = $slotLabel($match, 'away');
                                         $hasBothParticipants = $match->home_participant_id && $match->away_participant_id;
-                                        $hasBye = $homeLabel === 'Bye' || $awayLabel === 'Bye';
+                                        $hasBye = ($match->home_participant_id && ! $match->away_participant_id)
+                                            || ($match->away_participant_id && ! $match->home_participant_id);
                                     @endphp
                                     <div class="relative flex flex-wrap items-center justify-between px-4 py-4 text-sm text-gray-900 border-t border-gray-200 first:border-t-0">
                                         @if ($matchLabel)
