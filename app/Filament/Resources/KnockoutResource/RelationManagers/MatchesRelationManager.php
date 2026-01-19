@@ -390,50 +390,47 @@ class MatchesRelationManager extends RelationManager
                         }
                         return null;
                     })
-                    ->rule(function (callable $get) use ($knockout) {
-                        return function (string $attribute, $value, Closure $fail) use ($get, $knockout) {
+                    ->rule(function (callable $get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
                             if (! $value) {
                                 return;
                             }
 
-                            if ($knockout->type === KnockoutType::Team && $get('override_home_venue')) {
+                            if ($get('override_home_venue')) {
                                 return;
                             }
 
                             $participantIds = collect([
                                 $get('home_participant_id'),
-                                $get('away_participant_id'),
                             ])->filter();
 
                             if ($participantIds->isEmpty()) {
                                 return;
                             }
 
-                            $participants = KnockoutParticipant::query()
+                            $participant = KnockoutParticipant::query()
                                 ->with(['team', 'playerOne.team', 'playerTwo.team'])
                                 ->whereIn('id', $participantIds)
-                                ->get();
+                                ->first();
 
-                            $conflict = $participants->contains(function (KnockoutParticipant $participant) use ($value) {
-                                return collect([
+                            $conflict = $participant
+                                ? collect([
                                     $participant->team?->venue_id,
                                     $participant->playerOne?->team?->venue_id,
                                     $participant->playerTwo?->team?->venue_id,
                                 ])
                                     ->filter()
-                                    ->contains(fn ($id) => (int) $id === (int) $value);
-                            });
+                                    ->contains(fn ($id) => (int) $id === (int) $value)
+                                : false;
 
                             if ($conflict) {
-                                $fail('A match cannot be assigned to a venue that belongs to one of the participants involved.');
+                                $fail('A match cannot be assigned to the home participant\'s venue.');
                             }
                         };
                     }),
                 Forms\Components\Toggle::make('override_home_venue')
                     ->label('Allow participant venue')
-                    ->helperText('Enable to allow assigning a participant venue for team knockouts.')
-                    ->dehydrated(false)
-                    ->visible(fn () => $knockout->type === \App\KnockoutType::Team)
+                    ->helperText('Enable to allow assigning a participant venue for this match.')
                     ->default(false),
                 Forms\Components\TextInput::make('referee')
                     ->maxLength(255)
