@@ -390,8 +390,8 @@ class MatchesRelationManager extends RelationManager
                         }
                         return null;
                     })
-                    ->rule(function (callable $get) {
-                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                    ->rule(function (callable $get) use ($knockout) {
+                        return function (string $attribute, $value, Closure $fail) use ($get, $knockout) {
                             if (! $value) {
                                 return;
                             }
