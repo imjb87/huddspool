@@ -396,7 +396,7 @@ class MatchesRelationManager extends RelationManager
                                 return;
                             }
 
-                            if ($get('override_home_venue')) {
+                            if ($knockout->type === KnockoutType::Team && $get('override_home_venue')) {
                                 return;
                             }
 
@@ -432,6 +432,7 @@ class MatchesRelationManager extends RelationManager
                 Forms\Components\Toggle::make('override_home_venue')
                     ->label('Allow participant venue')
                     ->helperText('Enable to allow assigning a participant venue for team knockouts.')
+                    ->dehydrated(false)
                     ->visible(fn () => $knockout->type === \App\KnockoutType::Team)
                     ->default(false),
                 Forms\Components\TextInput::make('referee')

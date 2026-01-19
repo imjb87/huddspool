@@ -56,6 +56,7 @@
                                         $homeLabel = $slotLabel($match, 'home');
                                         $awayLabel = $slotLabel($match, 'away');
                                         $hasBothParticipants = $match->home_participant_id && $match->away_participant_id;
+                                        $hasBye = $homeLabel === 'Bye' || $awayLabel === 'Bye';
                                     @endphp
                                     <div class="relative flex flex-wrap items-center justify-between px-4 py-4 text-sm text-gray-900 border-t border-gray-200 first:border-t-0">
                                         @if ($matchLabel)
@@ -156,16 +157,18 @@
                                             </div>
                                         </div>
                                         <div class="w-full sm:w-3/12 text-[11px] font-semibold uppercase tracking-wide text-gray-400 text-center sm:text-right mt-2 sm:mt-0">
-                                            <div>
-                                                @if ($match->venue)
-                                                    <a href="{{ route('venue.show', $match->venue) }}"
-                                                        class="hover:text-gray-500 transition">
-                                                        {{ $match->venue->name }}
-                                                    </a>
-                                                @else
-                                                    Venue TBC
-                                                @endif
-                                            </div>
+                                            @if (!($knockout->type === \App\KnockoutType::Team && $hasBye))
+                                                <div>
+                                                    @if ($match->venue)
+                                                        <a href="{{ route('venue.show', $match->venue) }}"
+                                                            class="hover:text-gray-500 transition">
+                                                            {{ $match->venue->name }}
+                                                        </a>
+                                                    @else
+                                                        Venue TBC
+                                                    @endif
+                                                </div>
+                                            @endif
                                             @if ($match->referee)
                                                 <div class="text-[11px]">
                                                     Referee: <span class="font-semibold">{{ $match->referee }}</span>
