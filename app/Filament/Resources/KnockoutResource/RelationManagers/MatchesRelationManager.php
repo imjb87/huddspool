@@ -390,8 +390,8 @@ class MatchesRelationManager extends RelationManager
                         }
                         return null;
                     })
-                    ->rule(function (callable $get) {
-                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                    ->rule(function (callable $get) use ($livewire, $knockout) {
+                        return function (string $attribute, $value, Closure $fail) use ($get, $livewire, $knockout) {
                             if (! $value) {
                                 return;
                             }
@@ -400,31 +400,46 @@ class MatchesRelationManager extends RelationManager
                                 return;
                             }
 
-                            $participantIds = collect([
-                                $get('home_participant_id'),
-                            ])->filter();
+                            $record = $livewire->getMountedTableActionRecord();
+                            $homeParticipantId = $get('home_participant_id') ?: $record?->home_participant_id;
+                            $awayParticipantId = $get('away_participant_id') ?: $record?->away_participant_id;
+                            $participantIds = collect([$homeParticipantId, $awayParticipantId])->filter();
 
                             if ($participantIds->isEmpty()) {
                                 return;
                             }
 
-                            $participant = KnockoutParticipant::query()
+                            $participants = KnockoutParticipant::query()
                                 ->with(['team', 'playerOne.team', 'playerTwo.team'])
                                 ->whereIn('id', $participantIds)
-                                ->first();
+                                ->get();
 
-                            $conflict = $participant
-                                ? collect([
+                            $conflict = $participants->contains(function (KnockoutParticipant $participant) use ($value) {
+                                return collect([
                                     $participant->team?->venue_id,
                                     $participant->playerOne?->team?->venue_id,
                                     $participant->playerTwo?->team?->venue_id,
                                 ])
                                     ->filter()
-                                    ->contains(fn ($id) => (int) $id === (int) $value)
-                                : false;
+                                    ->contains(fn ($id) => (int) $id === (int) $value);
+                            });
 
                             if ($conflict) {
-                                $fail('A match cannot be assigned to the home participant\'s venue.');
+                                $roundId = $get('knockout_round_id') ?: $record?->knockout_round_id;
+                                $round = $roundId ? KnockoutRound::find($roundId) : null;
+                                $homeVenueId = $participants
+                                    ->firstWhere('id', $homeParticipantId)
+                                    ?->team?->venue_id;
+                                $roundName = strtolower((string) $round?->name);
+                                $homeVenueAllowed = $knockout->type === \App\KnockoutType::Team
+                                    && $homeVenueId
+                                    && (int) $homeVenueId === (int) $value
+                                    && ! str_contains($roundName, 'semi')
+                                    && ! str_contains($roundName, 'final');
+
+                                if (! $homeVenueAllowed) {
+                                    $fail('A match cannot be assigned to a participant\'s venue.');
+                                }
                             }
                         };
                     }),

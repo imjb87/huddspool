@@ -53,14 +53,24 @@ class KnockoutMatch extends Model
 
             // Only enforce venue conflict for non-team knockouts
             $type = $match->knockout?->type;
+            $homeVenueAllowed = false;
+            if ($type === \App\KnockoutType::Team && $match->venue_id) {
+                $roundName = strtolower((string) $match->round?->name);
+                $homeVenueId = $match->homeParticipant?->team?->venue_id;
+                $homeVenueAllowed = $homeVenueId
+                    && $match->venue_id === $homeVenueId
+                    && ! str_contains($roundName, 'semi')
+                    && ! str_contains($roundName, 'final');
+            }
+
             if (
                 ! $match->override_home_venue
-                && $type !== \App\KnockoutType::Team
                 && $match->venue_id
                 && $match->venueConflictsWithParticipants()
+                && ! $homeVenueAllowed
             ) {
                 throw ValidationException::withMessages([
-                    'venue_id' => 'A match cannot be assigned to the home participant\'s venue.',
+                    'venue_id' => 'A match cannot be assigned to a participant\'s venue.',
                 ]);
             }
 
@@ -306,25 +316,23 @@ class KnockoutMatch extends Model
 
         $venueId = $this->venue_id;
 
-        $participant = $this->homeParticipant;
+        return collect([$this->homeParticipant, $this->awayParticipant])
+            ->filter()
+            ->contains(function (KnockoutParticipant $participant) use ($venueId) {
+                $participant->loadMissing('team', 'playerOne.team', 'playerTwo.team');
 
-        if (! $participant) {
-            return false;
-        }
+                $teamVenueIds = collect([
+                    $participant->team?->venue_id,
+                    $participant->playerOne?->team?->venue_id,
+                    $participant->playerTwo?->team?->venue_id,
+                ])->filter();
 
-        $participant->loadMissing('team', 'playerOne.team', 'playerTwo.team');
+                if ($teamVenueIds->isEmpty()) {
+                    return false;
+                }
 
-        $teamVenueIds = collect([
-            $participant->team?->venue_id,
-            $participant->playerOne?->team?->venue_id,
-            $participant->playerTwo?->team?->venue_id,
-        ])->filter();
-
-        if ($teamVenueIds->isEmpty()) {
-            return false;
-        }
-
-        return $teamVenueIds->contains(fn ($id) => (int) $id === (int) $venueId);
+                return $teamVenueIds->contains(fn ($id) => (int) $id === (int) $venueId);
+            });
     }
 
     private function decideWinner(): ?int
