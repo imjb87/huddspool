@@ -31,6 +31,7 @@ class TeamsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
+            ->allowDuplicates()
             ->columns([
                 Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
                     ->formatStateUsing(fn(string $state): string => $state == 10 ? '0' : $state),
@@ -42,7 +43,24 @@ class TeamsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Actions\AttachAction::make()
-                    ->label('Add an existing team'),
+                    ->label('Add an existing team')
+                    ->recordSelectOptionsQuery(function ($query, RelationManager $livewire) {
+                        $section = $livewire->getOwnerRecord();
+
+                        $existingTeamIds = $section->teams()->pluck('teams.id')->all();
+                        $byeTeamId = 1;
+
+                        $excludedTeamIds = array_values(array_filter(
+                            $existingTeamIds,
+                            fn (int $teamId): bool => $teamId !== $byeTeamId
+                        ));
+
+                        if ($excludedTeamIds === []) {
+                            return $query;
+                        }
+
+                        return $query->whereNotIn('teams.id', $excludedTeamIds);
+                    }),
                 Actions\CreateAction::make()
                     ->label('Create a new team')
                     ->slideOver(true)
@@ -98,7 +116,9 @@ class TeamsRelationManager extends RelationManager
                     ->icon('heroicon-o-arrow-down'),
                 Actions\Action::make('Withdraw')
                     ->label('Withdraw')
-                    ->visible(fn(RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() > 0)
+                    ->visible(function (RelationManager $livewire, Model $record): bool {
+                        return is_null($record->pivot?->withdrawn_at ?? null);
+                    })
                     ->color('danger')
                     ->icon('heroicon-o-trash')
                     ->requiresConfirmation()
@@ -152,5 +172,23 @@ class TeamsRelationManager extends RelationManager
             ->paginated(false)
             ->defaultSort('sort')
             ->reorderable('sort');
+    }
+
+    public function getTableRecordKey(Model | array $record): string
+    {
+        if (is_array($record)) {
+            return (string) ($record['id'] ?? '');
+        }
+
+        $relationship = $this->getTable()->getRelationship();
+        $pivotAccessor = $relationship?->getPivotAccessor();
+
+        $pivot = $pivotAccessor ? $record->getRelationValue($pivotAccessor) : null;
+
+        if ($pivot?->getKey()) {
+            return (string) $pivot->getKey();
+        }
+
+        return (string) $record->getKey();
     }
 }

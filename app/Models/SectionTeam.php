@@ -9,6 +9,7 @@ use App\Models\Section;
 class SectionTeam extends Pivot
 {
     protected $table = 'section_team';
+    public $incrementing = true;
 
     protected static function booted()
     {

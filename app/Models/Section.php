@@ -56,7 +56,7 @@ class Section extends Model
         return $this->belongsToMany(Team::class, 'section_team', 'section_id', 'team_id')
             ->using(SectionTeam::class) // Reference the custom pivot model
             ->withTimestamps()
-            ->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
+            ->withPivot(['id', 'sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
     }
     
     public function players()
