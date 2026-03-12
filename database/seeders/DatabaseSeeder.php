@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(HuddspoolSeeder::class);
+        $this->call(PageSeeder::class);
 
         \App\Models\User::factory()->create([
             'name' => 'John Bell',

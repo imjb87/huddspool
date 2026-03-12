@@ -87,3 +87,41 @@
   visibility: visible;
   opacity: 1;
 }
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  header,
+  footer,
+  [aria-live="assertive"],
+  [wire\:id] .fixed,
+  .page-body + * {
+    display: none !important;
+  }
+
+  body,
+  .min-h-screen {
+    background: #fff !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .page-hero {
+    padding-top: 0 !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .page-body {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .page-content {
+    max-width: none !important;
+  }
+}
