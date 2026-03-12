@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\KnockoutType;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,11 +36,14 @@ class KnockoutMatch extends Model
         'next_slot',
         'completed_at',
         'reported_by_id',
+        'reported_at',
+        'report_reason',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'completed_at' => 'datetime',
+        'reported_at' => 'datetime',
         'override_home_venue' => 'boolean',
     ];
 
@@ -86,6 +90,7 @@ class KnockoutMatch extends Model
             }
 
             if ($match->forfeit_participant_id) {
+                $match->captureReporterMetadata();
                 $winner = $match->determineWinnerFromForfeit();
                 $match->winner_participant_id = $winner;
                 $match->completed_at = $winner ? now() : null;
@@ -103,6 +108,7 @@ class KnockoutMatch extends Model
             }
 
             $match->ensureScoresAreValid($match->home_score, $match->away_score);
+            $match->captureReporterMetadata();
 
             $winner = $match->decideWinner();
             $match->winner_participant_id = $winner;
@@ -179,14 +185,16 @@ class KnockoutMatch extends Model
         return $this->knockout?->type;
     }
 
-    public function recordResult(int $homeScore, int $awayScore, User $user): void
+    public function recordResult(int $homeScore, int $awayScore, User $user, ?string $reason = null): void
     {
         $this->ensureScoresAreValid($homeScore, $awayScore);
 
         $this->fill([
             'home_score' => $homeScore,
             'away_score' => $awayScore,
-            'reported_by_id' => $user->id,
+            'reported_by_id' => $this->reported_by_id ?: $user->id,
+            'reported_at' => $this->reported_at ?: now(),
+            'report_reason' => $this->report_reason ?: ($reason ?: 'Submitted via frontend.'),
             'forfeit_participant_id' => null,
             'forfeit_reason' => null,
         ]);
@@ -200,6 +208,8 @@ class KnockoutMatch extends Model
             'home_score' => null,
             'away_score' => null,
             'reported_by_id' => null,
+            'reported_at' => null,
+            'report_reason' => null,
             'completed_at' => null,
             'winner_participant_id' => null,
             'forfeit_participant_id' => null,
@@ -365,6 +375,21 @@ class KnockoutMatch extends Model
         }
 
         return null;
+    }
+
+    private function captureReporterMetadata(): void
+    {
+        if (! $this->reported_by_id && Auth::id()) {
+            $this->reported_by_id = Auth::id();
+        }
+
+        if (! $this->reported_at && ($this->reported_by_id || Auth::id())) {
+            $this->reported_at = now();
+        }
+
+        if (! $this->report_reason && $this->reported_by_id) {
+            $this->report_reason = 'Updated in admin.';
+        }
     }
 
     private function syncNextMatchSlot(): void

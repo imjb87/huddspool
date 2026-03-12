@@ -505,6 +505,14 @@ class MatchesRelationManager extends RelationManager
                     ->visible(fn (callable $get) => filled($get('forfeit_participant_id')))
                     ->required(fn (callable $get) => filled($get('forfeit_participant_id')))
                     ->columnSpanFull(),
+                Forms\Components\Textarea::make('report_reason')
+                    ->label('Why was this result submitted or changed?')
+                    ->rows(2)
+                    ->maxLength(1000)
+                    ->helperText('Required in admin when entering or editing a result.')
+                    ->visible(fn (callable $get) => filled($get('home_score')) || filled($get('away_score')) || filled($get('forfeit_participant_id')))
+                    ->required(fn (callable $get) => filled($get('home_score')) || filled($get('away_score')) || filled($get('forfeit_participant_id')))
+                    ->columnSpanFull(),
             ];
         });
     }
@@ -532,6 +540,17 @@ class MatchesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('awayParticipant.display_name')->label('Away'),
                 Tables\Columns\TextColumn::make('starts_at')->label('Scheduled')->dateTime(),
                 Tables\Columns\TextColumn::make('venue.name')->label('Venue')->wrap(),
+                Tables\Columns\TextColumn::make('reporter.name')
+                    ->label('Reported by')
+                    ->placeholder('Not recorded'),
+                Tables\Columns\TextColumn::make('reported_at')
+                    ->label('Submitted')
+                    ->dateTime()
+                    ->placeholder('Not submitted'),
+                Tables\Columns\TextColumn::make('report_reason')
+                    ->label('Why')
+                    ->wrap()
+                    ->placeholder('No reason recorded'),
             ])
             ->filters([
                 SelectFilter::make('round')
