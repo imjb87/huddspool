@@ -77,6 +77,10 @@ class GetSectionAverages
                 $homeId = $frame->home_player_id;
                 $awayId = $frame->away_player_id;
 
+                if ($homeId === 0 || $awayId === 0) {
+                    continue;
+                }
+
                 if ($homeId !== null) {
                     $ensurePlayer($homeId, $frame->homePlayer?->name);
                     $trackTeam(
