@@ -563,10 +563,16 @@ class MatchesRelationManager extends RelationManager
             ])
             ->modifyQueryUsing(fn ($query) => $query->orderBy('knockout_round_id')->orderBy('position'))
             ->headerActions([
-                Actions\CreateAction::make(),
+                Actions\CreateAction::make()
+                    ->slideOver()
+                    ->stickyModalHeader()
+                    ->stickyModalFooter(),
             ])
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()
+                    ->slideOver()
+                    ->stickyModalHeader()
+                    ->stickyModalFooter(),
                 Actions\Action::make('clear_result')
                     ->label('Clear result')
                     ->icon('heroicon-o-arrow-uturn-left')
