@@ -31,6 +31,8 @@ class LatestResults extends BaseWidget
                 }),
                 Tables\Columns\TextColumn::make('away_team_name')->label('Away team')->alignLeft()->searchable(),
             ])
+            ->recordUrl(fn (Model $record): string => route('result.show', $record))
+            ->openRecordUrlInNewTab()
             ->paginated(5)
             ->searchable(false)
             ->defaultPaginationPageOption(5)
