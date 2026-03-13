@@ -5,36 +5,35 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.2",
         "awobaz/compoships": "^2.2",
-        "barryvdh/laravel-dompdf": "^2.0",
+        "barryvdh/laravel-dompdf": "^3.1",
         "daacreators/creators-ticketing": "^1.1.8",
-        "doctrine/dbal": "^3.6",
-        "filament/filament": "^4",
-        "filipfonal/filament-log-manager": "^3",
+        "doctrine/dbal": "^4.4",
+        "filament/filament": "^5.0",
         "guzzlehttp/guzzle": "^7.2",
         "itsgoingd/clockwork": "^5.1",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.7",
-        "livewire/livewire": "^3.4",
+        "livewire/livewire": "^4.0",
         "sentry/sentry-laravel": "^4.13",
         "silviolleite/laravelpwa": "^2.0",
-        "spatie/laravel-responsecache": "^7.6",
-        "stechstudio/filament-impersonate": "^4"
+        "spatie/laravel-responsecache": "^8.3",
+        "stechstudio/filament-impersonate": "^5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "laravel/boost": "^1.8",
+        "laravel/boost": "^2.3",
         "laravel/breeze": "^2.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "*",
-        "spatie/laravel-ignition": "*"
+        "phpunit/phpunit": "^13.0",
+        "spatie/laravel-ignition": "^2.11"
     },
     "autoload": {
         "psr-4": {
@@ -74,7 +73,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         },
         "audit": {
             "ignore": ["PKSA-yb9k-ykqx-p2zw"]

@@ -10,6 +10,9 @@ use App\Observers\KnockoutRoundObserver;
 use App\Observers\NewsObserver;
 use App\Observers\SeasonObserver;
 use App\Observers\VenueObserver;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pulse\Facades\Pulse;
@@ -30,6 +33,20 @@ class AppServiceProvider extends ServiceProvider
         News::observe(NewsObserver::class);
         Season::observe(SeasonObserver::class);
         Venue::observe(VenueObserver::class);
+
+        RateLimiter::for('api', function (Request $request): Limit {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('support-tickets', function (Request $request): array {
+            $email = strtolower((string) $request->input('email'));
+            $key = $email ? $email.'|'.$request->ip() : $request->ip();
+
+            return [
+                Limit::perMinute(3)->by($key),
+                Limit::perHour(15)->by($key),
+            ];
+        });
 
         Vite::useScriptTagAttributes([
             'defer' => true,

@@ -6,6 +6,7 @@ use App\Filament\Resources\SupportTicketResource;
 use App\Http\Middleware\AdminMiddleware;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
@@ -54,13 +55,10 @@ class CpPanelProvider extends PanelProvider
                 AdminMiddleware::class,
             ])
             ->navigationItems([
-                \Filament\Navigation\NavigationItem::make('Pulse')
+                NavigationItem::make('Pulse')
                     ->url('/pulse')
                     ->icon('heroicon-o-chart-pie')
                     ->group('System'),
-            ])
-            ->plugins([
-                \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
             ])
             ->login();
     }
