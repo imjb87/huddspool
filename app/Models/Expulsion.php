@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use App\Models\Section;
 
 class Expulsion extends Model
 {
     use HasFactory;
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        $flush = fn (Expulsion $expulsion) => $expulsion->flushCaches();
+        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $flush = function (Expulsion $expulsion) use ($cacheInvalidator): void {
+            $cacheInvalidator->forgetForExpulsion($expulsion);
+        };
 
         static::saved($flush);
         static::deleted($flush);
@@ -55,31 +57,5 @@ class Expulsion extends Model
     public function season()
     {
         return $this->belongsTo(Season::class);
-    }
-
-    protected function flushCaches(): void
-    {
-        Cache::forget('stats:open-season');
-        Cache::forget('history:index');
-        Cache::forget('nav:past-seasons');
-
-        if (! $this->season_id) {
-            return;
-        }
-
-        Cache::forget(sprintf('history:season:%d', $this->season_id));
-
-        $sections = Section::query()
-            ->where('season_id', $this->season_id)
-            ->get(['id', 'ruleset_id']);
-
-        foreach ($sections as $section) {
-            Cache::forget(sprintf('section:%d:averages', $section->id));
-            Cache::forget(sprintf('section:%d:standings', $section->id));
-
-            if ($section->ruleset_id) {
-                Cache::forget(sprintf('history:sections:%d:%d', $this->season_id, $section->ruleset_id));
-            }
-        }
     }
 }

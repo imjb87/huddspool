@@ -2,45 +2,29 @@
 
 namespace App\Models;
 
+use App\Support\CompetitionCacheInvalidator;
 use App\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 class Result extends Model
 {
     use ClearsResponseCache, HasFactory, SoftDeletes;
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        $flush = function (Result $result): void {
-            foreach ([$result->home_team_id, $result->away_team_id] as $teamId) {
-                if ($teamId) {
-                    Cache::forget("team:season-history:{$teamId}");
-                }
-            }
-
-            Cache::forget('stats:season-series');
-            Cache::forget('stats:season-series-chart');
-            $result->loadMissing('section', 'fixture');
-
-            $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;
-            $rulesetId = $result->fixture?->ruleset_id ?? $result->section?->ruleset_id;
-
-            if ($seasonId) {
-                Cache::forget(sprintf('history:season:%d', $seasonId));
-            }
-
-            if ($seasonId && $rulesetId) {
-                Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
-            }
+        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $flush = function (Result $result) use ($cacheInvalidator): void {
+            $cacheInvalidator->forgetForResult($result);
         };
 
         static::saved($flush);
         static::deleted($flush);
+        static::restored($flush);
+        static::forceDeleted($flush);
     }
 
     /**

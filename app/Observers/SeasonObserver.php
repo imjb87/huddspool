@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Season;
-use Illuminate\Support\Facades\Cache;
+use App\Support\CompetitionCacheInvalidator;
 
 class SeasonObserver
 {
@@ -24,21 +24,6 @@ class SeasonObserver
 
     protected function flushCaches(Season $season): void
     {
-        Cache::forget('stats:open-season');
-        Cache::forget('stats:season-series');
-        Cache::forget('stats:season-series-chart');
-        Cache::forget('nav:past-seasons');
-        Cache::forget('history:index');
-        Cache::forget(sprintf('history:season:%d', $season->id));
-
-        $season->loadMissing('sections');
-        foreach ($season->sections as $section) {
-            Cache::forget(sprintf('section:%d:averages', $section->id));
-            Cache::forget(sprintf('section:%d:standings', $section->id));
-
-            if ($section->ruleset_id) {
-                Cache::forget(sprintf('history:sections:%d:%d', $season->id, $section->ruleset_id));
-            }
-        }
+        app(CompetitionCacheInvalidator::class)->forgetForSeason($season);
     }
 }

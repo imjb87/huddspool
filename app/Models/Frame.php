@@ -2,21 +2,26 @@
 
 namespace App\Models;
 
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 
 class Frame extends Model
 {
     use \Awobaz\Compoships\Compoships, HasFactory, SoftDeletes;
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        $flush = fn (Frame $frame) => $frame->flushAnalyticsCaches();
+        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $flush = function (Frame $frame) use ($cacheInvalidator): void {
+            $cacheInvalidator->forgetForFrame($frame);
+        };
 
         static::saved($flush);
         static::deleted($flush);
+        static::restored($flush);
+        static::forceDeleted($flush);
     }
 
     /**
@@ -54,45 +59,5 @@ class Frame extends Model
     public function awayPlayer()
     {
         return $this->belongsTo(User::class, 'away_player_id')->withTrashed();
-    }
-
-    protected function flushAnalyticsCaches(): void
-    {
-        Cache::forget('stats:open-season');
-        Cache::forget('stats:season-series');
-        Cache::forget('stats:season-series-chart');
-        Cache::forget('history:index');
-        Cache::forget('nav:past-seasons');
-
-        $this->loadMissing('result.section', 'result.fixture');
-
-        $sectionId = $this->result?->section_id ?? $this->result?->section?->id;
-        if ($sectionId) {
-            Cache::forget(sprintf('section:%d:averages', $sectionId));
-            Cache::forget(sprintf('section:%d:standings', $sectionId));
-        }
-
-        $seasonId = $this->result?->fixture?->season_id ?? $this->result?->section?->season_id;
-        $rulesetId = $this->result?->fixture?->ruleset_id ?? $this->result?->section?->ruleset_id;
-
-        if ($seasonId) {
-            Cache::forget(sprintf('history:season:%d', $seasonId));
-        }
-
-        if ($seasonId && $rulesetId) {
-            Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
-        }
-
-        foreach ([$this->home_player_id, $this->away_player_id] as $playerId) {
-            if ($playerId) {
-                Cache::forget("player:season-history:{$playerId}");
-            }
-        }
-
-        foreach ([$this->result?->home_team_id, $this->result?->away_team_id] as $teamId) {
-            if ($teamId) {
-                Cache::forget("team:season-history:{$teamId}");
-            }
-        }
     }
 }

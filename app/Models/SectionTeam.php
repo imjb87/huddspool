@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\Cache;
-use App\Models\Section;
 
 class SectionTeam extends Pivot
 {
     protected $table = 'section_team';
+
     public $incrementing = true;
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        $flush = fn (SectionTeam $pivot) => $pivot->flushSectionCaches();
+        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $flush = function (SectionTeam $pivot) use ($cacheInvalidator): void {
+            $cacheInvalidator->forgetForSectionTeam($pivot);
+        };
 
         static::saved($flush);
         static::deleted($flush);
@@ -30,36 +33,12 @@ class SectionTeam extends Pivot
         'sort' => 'integer',
     ];
 
-    protected function flushSectionCaches(): void
-    {
-        if (! $this->section_id) {
-            return;
-        }
-
-        Cache::forget(sprintf('section:%d:averages', $this->section_id));
-        Cache::forget(sprintf('section:%d:standings', $this->section_id));
-        Cache::forget('nav:past-seasons');
-        Cache::forget('history:index');
-        Cache::forget("team:season-history:{$this->team_id}");
-
-        if ($section = Section::query()->select('season_id', 'ruleset_id')->find($this->section_id)) {
-            if ($section->season_id) {
-                Cache::forget(sprintf('history:season:%d', $section->season_id));
-            }
-
-            if ($section->season_id && $section->ruleset_id) {
-                Cache::forget(sprintf('history:sections:%d:%d', $section->season_id, $section->ruleset_id));
-            }
-        }
-
-    }
-
     public function results()
     {
         return $this->hasManyThrough(Result::class, Fixture::class, 'section_id', 'fixture_id', 'section_id', 'id')
             ->where(function ($query) {
                 $query->where('fixtures.home_team_id', $this->team_id) // Reference the team_id directly
-                      ->orWhere('fixtures.away_team_id', $this->team_id);
+                    ->orWhere('fixtures.away_team_id', $this->team_id);
             });
     }
 
@@ -100,7 +79,7 @@ class SectionTeam extends Pivot
                 ? $result->home_score
                 : $result->away_score;
         });
-    
+
         // Subtract the deducted points (default to 0 if null)
         return max(0, $totalPoints - ($this->deducted ?? 0));
     }

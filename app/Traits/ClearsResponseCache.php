@@ -2,21 +2,20 @@
 
 namespace App\Traits;
 
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
-use Spatie\ResponseCache\Facades\ResponseCache;
 
 trait ClearsResponseCache
 {
-    public static function bootClearsResponseCache()
+    public static function bootClearsResponseCache(): void
     {
         $flush = function (Model $model): void {
             $model->flushRulesetCaches();
         };
 
         static::created($flush);
-       static::updated($flush);
+        static::updated($flush);
         static::deleted($flush);
 
         if (in_array(SoftDeletes::class, class_uses_recursive(static::class), true)) {
@@ -27,30 +26,12 @@ trait ClearsResponseCache
 
     protected function flushRulesetCaches(): void
     {
-        $slug = $this->resolveRulesetSlug();
-
-        if ($slug) {
-            foreach ($this->rulesetCachePaths($slug) as $path) {
-                ResponseCache::forget($path);
-            }
-        }
-
-        Cache::forget('stats:open-season');
-        Cache::forget('nav:past-seasons');
-        Cache::forget('history:index');
-
-        if ($sectionId = $this->resolveSectionId()) {
-            Cache::forget(sprintf('section:%d:averages', $sectionId));
-            Cache::forget(sprintf('section:%d:standings', $sectionId));
-        }
-
-        $seasonId = $this->resolveSeasonId();
-        $rulesetId = $this->resolveRulesetId();
-
-        if ($seasonId && $rulesetId) {
-            Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
-        }
-
+        app(CompetitionCacheInvalidator::class)->forgetForRulesetContent(
+            $this->resolveRulesetSlug(),
+            $this->resolveSectionId(),
+            $this->resolveSeasonId(),
+            $this->resolveRulesetId(),
+        );
     }
 
     protected function resolveRulesetSlug(): ?string
@@ -183,14 +164,5 @@ trait ClearsResponseCache
         }
 
         return null;
-    }
-
-    protected function rulesetCachePaths(string $slug): array
-    {
-        return [
-            "/tables/{$slug}/",
-            "/fixtures-and-results/{$slug}/",
-            "/players/averages/{$slug}/",
-        ];
     }
 }

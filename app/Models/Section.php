@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,24 +19,16 @@ class Section extends Model
 
     protected static function booted(): void
     {
+        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+
         static::deleting(function (Section $section) {
             if ($section->hasRecordedResults()) {
                 return false;
             }
         });
 
-        $flush = function (Section $section): void {
-            Cache::forget('history:index');
-            Cache::forget('nav:past-seasons');
-            Cache::forget(sprintf('section:%d:averages', $section->id));
-            Cache::forget(sprintf('section:%d:standings', $section->id));
-            if ($section->season_id) {
-                Cache::forget(sprintf('history:season:%d', $section->season_id));
-            }
-
-            if ($section->season_id && $section->ruleset_id) {
-                Cache::forget(sprintf('history:sections:%d:%d', $section->season_id, $section->ruleset_id));
-            }
+        $flush = function (Section $section) use ($cacheInvalidator): void {
+            $cacheInvalidator->forgetForSection($section);
         };
 
         static::saved($flush);
