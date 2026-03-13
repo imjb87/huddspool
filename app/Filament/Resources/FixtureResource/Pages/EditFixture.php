@@ -2,13 +2,12 @@
 
 namespace App\Filament\Resources\FixtureResource\Pages;
 
-use Filament\Actions;
 use App\Filament\Resources\FixtureResource;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Forms;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
 
 class EditFixture extends EditRecord
 {
@@ -18,13 +17,13 @@ class EditFixture extends EditRecord
     {
         return [
             Action::make('enterOrEditResult')
-                ->label(fn() => $this->record->result ? 'Edit Result' : 'Enter Result')
-                ->icon(fn() => $this->record->result ? 'heroicon-o-pencil' : 'heroicon-o-pencil-square')
+                ->label(fn () => $this->record->result ? 'Edit Result' : 'Enter Result')
+                ->icon(fn () => $this->record->result ? 'heroicon-o-pencil' : 'heroicon-o-pencil-square')
                 ->modalHeading('Result & Frames')
-                ->modalSubmitActionLabel(fn() => $this->record->result ? 'Update Result' : 'Save Result')
+                ->modalSubmitActionLabel(fn () => $this->record->result ? 'Update Result' : 'Save Result')
                 ->form([
                     \Filament\Schemas\Components\Section::make('Result Totals')
-                ->columnSpanFull()
+                        ->columnSpanFull()
                         ->columns(2)
                         ->schema([
                             Forms\Components\TextInput::make('home_score')
@@ -41,7 +40,7 @@ class EditFixture extends EditRecord
                         ]),
 
                     \Filament\Schemas\Components\Section::make('Frames')
-                ->columnSpanFull()
+                        ->columnSpanFull()
                         ->schema([
                             Forms\Components\Repeater::make('frames')
                                 ->label('Frames')
@@ -53,12 +52,11 @@ class EditFixture extends EditRecord
                                     Forms\Components\Select::make('home_player_id')
                                         ->label('Home Player')
                                         ->options(
-                                            fn() =>
-                                            [0 => 'Awarded']
+                                            fn () => [0 => 'Awarded']
                                                 + User::where('team_id', $this->record->home_team_id)
-                                                ->orderBy('name')
-                                                ->pluck('name', 'id')
-                                                ->toArray()
+                                                    ->orderBy('name')
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
                                         )
                                         ->searchable()
                                         ->required(),
@@ -80,12 +78,11 @@ class EditFixture extends EditRecord
                                     Forms\Components\Select::make('away_player_id')
                                         ->label('Away Player')
                                         ->options(
-                                            fn() =>
-                                            [0 => 'Awarded']
+                                            fn () => [0 => 'Awarded']
                                                 + User::where('team_id', $this->record->away_team_id)
-                                                ->orderBy('name')
-                                                ->pluck('name', 'id')
-                                                ->toArray()
+                                                    ->orderBy('name')
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
                                         )
                                         ->searchable()
                                         ->required(),
@@ -103,10 +100,10 @@ class EditFixture extends EditRecord
                         'home_score' => $result->home_score,
                         'away_score' => $result->away_score,
                         'frames' => $result->frames
-                            ->map(fn($f) => [
+                            ->map(fn ($f) => [
                                 'home_player_id' => $f->home_player_id,
-                                'home_score'     => $f->home_score,
-                                'away_score'     => $f->away_score,
+                                'home_score' => $f->home_score,
+                                'away_score' => $f->away_score,
                                 'away_player_id' => $f->away_player_id,
                             ])
                             ->values()
@@ -119,10 +116,11 @@ class EditFixture extends EditRecord
                     if ($existing) {
                         // Update existing result
                         $existing->update([
-                            'home_score'    => $data['home_score'],
-                            'away_score'    => $data['away_score'],
-                            'submitted_by'  => auth()->id(),
-                            'is_confirmed'  => true,
+                            'home_score' => $data['home_score'],
+                            'away_score' => $data['away_score'],
+                            'submitted_by' => auth()->id(),
+                            'submitted_at' => now(),
+                            'is_confirmed' => true,
                         ]);
 
                         // Nuke & repopulate frames (simple + reliable)
@@ -131,8 +129,8 @@ class EditFixture extends EditRecord
                             $existing->frames()->create([
                                 'home_player_id' => $frame['home_player_id'],
                                 'away_player_id' => $frame['away_player_id'],
-                                'home_score'     => $frame['home_score'],
-                                'away_score'     => $frame['away_score'],
+                                'home_score' => $frame['home_score'],
+                                'away_score' => $frame['away_score'],
                             ]);
                         }
 
@@ -146,23 +144,24 @@ class EditFixture extends EditRecord
 
                     // Create new result
                     $result = $this->record->result()->create([
-                        'home_score'     => $data['home_score'],
-                        'away_score'     => $data['away_score'],
-                        'home_team_id'   => $this->record->home_team_id,
-                        'away_team_id'   => $this->record->away_team_id,
-                        'section_id'     => $this->record->section_id,
+                        'home_score' => $data['home_score'],
+                        'away_score' => $data['away_score'],
+                        'home_team_id' => $this->record->home_team_id,
+                        'away_team_id' => $this->record->away_team_id,
+                        'section_id' => $this->record->section_id,
                         'home_team_name' => $this->record->homeTeam->name,
                         'away_team_name' => $this->record->awayTeam->name,
-                        'submitted_by'   => auth()->id(),
-                        'is_confirmed'   => true,
+                        'submitted_by' => auth()->id(),
+                        'submitted_at' => now(),
+                        'is_confirmed' => true,
                     ]);
 
                     foreach ($data['frames'] ?? [] as $frame) {
                         $result->frames()->create([
                             'home_player_id' => $frame['home_player_id'],
                             'away_player_id' => $frame['away_player_id'],
-                            'home_score'     => $frame['home_score'],
-                            'away_score'     => $frame['away_score'],
+                            'home_score' => $frame['home_score'],
+                            'away_score' => $frame['away_score'],
                         ]);
                     }
 

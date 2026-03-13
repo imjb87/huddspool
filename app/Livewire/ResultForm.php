@@ -11,24 +11,36 @@ use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\PlayerLimit;
 use App\Rules\TotalScoresAddUpToTen;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class ResultForm extends Component
 {
     public Fixture $fixture;
+
     public ?Result $result = null;
+
     public array $frames = [];
+
     public int $homeScore = 0;
+
     public int $awayScore = 0;
+
     public int $totalScore = 0;
+
     public bool $isLocked = false;
+
     public bool $canEdit = false;
+
     public bool $lockedByAnother = false;
+
     public ?string $lockOwnerName = null;
+
     public ?string $lockExpiresAtHuman = null;
 
     protected ?FixtureResultLock $lock = null;
+
     protected int $lockTimeoutMinutes = 10;
 
     public function mount(Fixture $fixture): void
@@ -87,19 +99,7 @@ class ResultForm extends Component
             abort(404);
         }
 
-        $user = auth()->user();
-
-        if (! $user) {
-            abort(403);
-        }
-
-        if ($user->team?->id !== $this->fixture->homeTeam?->id && $user->team?->id !== $this->fixture->awayTeam?->id) {
-            abort(403);
-        }
-
-        if (! $user->isTeamAdmin() && ! $user->isAdmin()) {
-            abort(403);
-        }
+        Gate::authorize('submitResult', $this->fixture);
 
         if ($this->fixture->fixture_date->gte(now())) {
             abort(404);
@@ -223,7 +223,7 @@ class ResultForm extends Component
 
         $lockRules = [
             new FrameScoresAddUpToTen($frames),
-            new TotalScoresAddUpToTen(),
+            new TotalScoresAddUpToTen,
         ];
 
         foreach ($lockRules as $rule) {
@@ -257,6 +257,7 @@ class ResultForm extends Component
 
             if ($lock) {
                 $attributes['submitted_by'] = auth()->id();
+                $attributes['submitted_at'] = now();
             }
 
             if (! $this->result) {
@@ -364,6 +365,7 @@ class ResultForm extends Component
     {
         if ($this->isLocked) {
             $this->canEdit = false;
+
             return;
         }
 

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Result;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use App\Models\Result;
 use Illuminate\Database\Eloquent\Model;
 
 class LatestResults extends BaseWidget
@@ -21,13 +21,13 @@ class LatestResults extends BaseWidget
                     ->whereHas('fixture.season', function ($query) {
                         $query->where('is_open', true);
                     })
-                    ->orderBy('created_at', 'desc')
+                    ->orderByRaw('COALESCE(submitted_at, created_at) desc')
                     ->limit(5)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('home_team_name')->label('Home team')->alignRight()->searchable(),
                 Tables\Columns\TextColumn::make('score')->label(false)->alignCenter()->state(function (Model $record) {
-                    return $record->home_score . ' - ' . $record->away_score;
+                    return $record->home_score.' - '.$record->away_score;
                 }),
                 Tables\Columns\TextColumn::make('away_team_name')->label('Away team')->alignLeft()->searchable(),
             ])

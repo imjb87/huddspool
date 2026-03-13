@@ -12,16 +12,16 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="w-full lg:w-1/3">
-                        @if (! $result->is_confirmed && (Auth::user()?->isTeamAdmin() || Auth::user()?->isAdmin()))
-                            @if (Auth::user()?->team?->id === $result->home_team_id || Auth::user()?->team?->id === $result->away_team_id || Auth::user()?->isAdmin())
-                                <div class="flex mb-4">
-                                    <a href="{{ route('result.create', $result->fixture_id) }}"
-                                        class="block w-full text-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
-                                        Continue submitting result
-                                    </a>
-                                </div>
-                            @endif
-                        @endif                          
+                    @if (! $result->is_confirmed)
+                        @can('resumeSubmission', $result)
+                            <div class="flex mb-4">
+                                <a href="{{ route('result.create', $result->fixture_id) }}"
+                                    class="block w-full text-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+                                    Continue submitting result
+                                </a>
+                            </div>
+                        @endcan
+                    @endif
                     <div class="overflow-hidden bg-white shadow rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                             <div class="flex items-start space-x-5">
@@ -178,15 +178,17 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- submitted by -->
-                        @if ($result->submittedBy) 
-                        <div class="my-3 px-4">
-                            <p class="italic text-sm text-center mx-auto">This result was submitted by
-                                {{ $result->submittedBy->name }} on
-                                {{ $result->created_at->format('l jS F Y') }} at
-                                {{ $result->created_at->format('H:i') }}.
-                            </p>
-                        </div>
+                        @if ($result->is_confirmed && $result->submittedBy)
+                            @php
+                                $submittedAt = $result->submitted_at ?? $result->created_at;
+                            @endphp
+                            <div class="my-3 px-4">
+                                <p class="italic text-sm text-center mx-auto">This result was submitted by
+                                    {{ $result->submittedBy->name }} on
+                                    {{ $submittedAt->format('l jS F Y') }} at
+                                    {{ $submittedAt->format('H:i') }}.
+                                </p>
+                            </div>
                         @endif
                     </div>
                 </div>

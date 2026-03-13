@@ -168,12 +168,88 @@ class AdminWidgetsTest extends TestCase
         $latestResults = Result::query()
             ->where('is_confirmed', true)
             ->whereHas('fixture.season', fn ($query) => $query->where('is_open', true))
-            ->orderBy('created_at', 'desc')
+            ->orderByRaw('COALESCE(submitted_at, created_at) desc')
             ->limit(5)
             ->pluck('id');
 
         $this->assertTrue($latestResults->contains($confirmed->id));
         $this->assertFalse($latestResults->contains($partial->id));
     }
-}
 
+    public function test_latest_results_widget_orders_by_submission_time(): void
+    {
+        [
+            'season' => $season,
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'homeTeam' => $homeTeam,
+            'awayTeam' => $awayTeam,
+        ] = $this->makeSeasonContext();
+
+        $earlierCreatedFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => Carbon::now(),
+        ]);
+
+        $laterCreatedFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $awayTeam->id,
+            'away_team_id' => $homeTeam->id,
+            'fixture_date' => Carbon::now(),
+        ]);
+
+        $createdFirstLockedLast = Result::factory()->create([
+            'fixture_id' => $earlierCreatedFixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'home_score' => 6,
+            'away_score' => 4,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $createdFirstLockedLast->forceFill([
+            'created_at' => Carbon::parse('2026-03-13 18:00:00'),
+            'submitted_at' => Carbon::parse('2026-03-13 20:30:00'),
+        ])->saveQuietly();
+
+        $createdLastLockedEarlier = Result::factory()->create([
+            'fixture_id' => $laterCreatedFixture->id,
+            'home_team_id' => $awayTeam->id,
+            'home_team_name' => $awayTeam->name,
+            'away_team_id' => $homeTeam->id,
+            'away_team_name' => $homeTeam->name,
+            'home_score' => 5,
+            'away_score' => 5,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $createdLastLockedEarlier->forceFill([
+            'created_at' => Carbon::parse('2026-03-13 19:00:00'),
+            'submitted_at' => Carbon::parse('2026-03-13 20:00:00'),
+        ])->saveQuietly();
+
+        $latestResults = Result::query()
+            ->where('is_confirmed', true)
+            ->whereHas('fixture.season', fn ($query) => $query->where('is_open', true))
+            ->orderByRaw('COALESCE(submitted_at, created_at) desc')
+            ->limit(5)
+            ->pluck('id');
+
+        $this->assertSame(
+            [$createdFirstLockedLast->id, $createdLastLockedEarlier->id],
+            $latestResults->take(2)->all()
+        );
+    }
+}

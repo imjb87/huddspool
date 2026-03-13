@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\ClearsResponseCache;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class Result extends Model
 {
-    use HasFactory, ClearsResponseCache, SoftDeletes;
+    use ClearsResponseCache, HasFactory, SoftDeletes;
 
     protected static function booted()
     {
@@ -58,6 +58,7 @@ class Result extends Model
         'is_confirmed',
         'is_overridden',
         'submitted_by',
+        'submitted_at',
         'section_id',
         'ruleset_id',
     ];
@@ -70,6 +71,7 @@ class Result extends Model
     protected $casts = [
         'is_confirmed' => 'boolean',
         'is_overridden' => 'boolean',
+        'submitted_at' => 'datetime',
     ];
 
     /**
@@ -130,5 +132,4 @@ class Result extends Model
             $builder->where('is_open', true);
         });
     }
-    
 }

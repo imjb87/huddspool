@@ -12,6 +12,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -21,6 +22,8 @@ class ResultSubmissionTest extends TestCase
 
     public function test_team_admin_can_save_partial_frames(): void
     {
+        Carbon::setTestNow('2026-03-13 19:00:00');
+
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
         $section = Section::factory()->create([
@@ -77,16 +80,21 @@ class ResultSubmissionTest extends TestCase
         $this->assertFalse($result->is_confirmed);
         $this->assertSame(1, $result->home_score);
         $this->assertSame(0, $result->away_score);
-        $this->assertSame($teamAdmin->id, $result->submitted_by);
+        $this->assertSame(0, $result->submitted_by);
+        $this->assertNull($result->submitted_at);
         $this->assertCount(1, $result->frames);
         $this->assertEquals((int) $homePlayers[0]->id, $result->frames->first()->home_player_id);
 
         $component->assertSet('homeScore', 1);
         $component->assertSet('awayScore', 0);
+
+        Carbon::setTestNow();
     }
 
     public function test_locking_result_requires_all_frames_and_confirms_result(): void
     {
+        Carbon::setTestNow('2026-03-13 19:00:00');
+
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
         $section = Section::factory()->create([
@@ -133,7 +141,15 @@ class ResultSubmissionTest extends TestCase
 
         $component = Livewire::test(ResultForm::class, ['fixture' => $fixture]);
 
-        for ($i = 1; $i <= 10; $i++) {
+        $component->set('frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('frames.1.home_score', 1);
+
+        $draftCreatedAt = Result::firstOrFail()->created_at;
+
+        Carbon::setTestNow('2026-03-13 21:15:00');
+
+        for ($i = 2; $i <= 10; $i++) {
             $homePlayer = $homePlayers[intdiv($i - 1, 2)];
             $awayPlayer = $awayPlayers[intdiv($i - 1, 2)];
 
@@ -157,9 +173,21 @@ class ResultSubmissionTest extends TestCase
         $this->assertTrue($result->is_confirmed);
         $this->assertSame(5, $result->home_score);
         $this->assertSame(5, $result->away_score);
+        $this->assertSame($teamAdmin->id, $result->submitted_by);
+        $this->assertNotNull($result->submitted_at);
+        $this->assertTrue($result->submitted_at->equalTo(Carbon::now()));
+        $this->assertTrue($result->created_at->equalTo($draftCreatedAt));
+        $this->assertFalse($result->submitted_at->equalTo($result->created_at));
         $this->assertSame(10, $result->frames()->count());
 
         $component->assertRedirect(route('result.show', $result));
+
+        $response = $this->get(route('result.show', $result));
+        $response->assertOk();
+        $response->assertSeeText('21:15');
+        $response->assertDontSeeText('19:00');
+
+        Carbon::setTestNow();
     }
 
     public function test_result_create_route_redirects_when_result_is_locked(): void
