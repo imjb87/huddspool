@@ -2,78 +2,114 @@
 
 namespace App\Livewire;
 
+use App\Models\Team;
+use App\Models\User;
+use App\Models\Venue;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Search extends Component
 {
-    public $isOpen = false;
+    public bool $isOpen = false;
 
-    public $searchTerm;
-
-    public $searchResults = [];
+    public mixed $searchTerm = '';
 
     protected $listeners = ['openSearch'];
 
-    public function openSearch()
+    public function openSearch(): void
     {
         $this->isOpen = true;
         $this->searchTerm = '';
-        $this->searchResults = [];
     }
 
-    public function closeSearch()
+    public function closeSearch(): void
     {
         $this->isOpen = false;
         $this->searchTerm = '';
-        $this->searchResults = [];
     }
 
-    public function search()
+    public function render(): View
     {
-        $this->searchResults = [];
+        return view('livewire.search');
+    }
 
-        if (strlen($this->searchTerm) < 3) {
-            return;
+    /**
+     * @return array<string, array{heading: string, badge: string, route: string, results: Collection}>
+     */
+    #[Computed]
+    public function resultGroups(): array
+    {
+        $searchTerm = $this->normalizedSearchTerm();
+
+        if (strlen($searchTerm) < 3) {
+            return [];
         }
 
-        $players = \App\Models\User::where(function ($query) {
-            $query->where('name', 'like', '%'.$this->searchTerm.'%')
-                ->orWhereHas('team', function ($query) {
-                    $query->where('name', 'like', '%'.$this->searchTerm.'%')
-                        ->where('folded_at', null);
-                });
-        })->whereHas('team.sections.season', function ($query) {
-            $query->where('is_open', 1);
-        })->orderBy('name')->get();
+        return collect([
+            'players' => [
+                'heading' => 'Players',
+                'badge' => 'Player',
+                'route' => 'player',
+                'results' => $this->searchPlayers($searchTerm),
+            ],
+            'teams' => [
+                'heading' => 'Teams',
+                'badge' => 'Team',
+                'route' => 'team',
+                'results' => $this->searchTeams($searchTerm),
+            ],
+            'venues' => [
+                'heading' => 'Venues',
+                'badge' => 'Venue',
+                'route' => 'venue',
+                'results' => $this->searchVenues($searchTerm),
+            ],
+        ])
+            ->filter(fn (array $group): bool => $group['results']->isNotEmpty())
+            ->all();
+    }
 
-        $teams = \App\Models\Team::with('openSections')
-            ->where('name', 'like', '%'.$this->searchTerm.'%')
-            ->where('folded_at', null)
-            ->whereHas('sections', function ($query) {
-                $query->whereHas('season', function ($query) {
-                    $query->where('is_open', 1);
-                });
+    private function normalizedSearchTerm(): string
+    {
+        if (! is_string($this->searchTerm)) {
+            return '';
+        }
+
+        return trim($this->searchTerm);
+    }
+
+    private function searchPlayers(string $searchTerm): Collection
+    {
+        return User::query()
+            ->with('team')
+            ->where('name', 'like', '%'.$searchTerm.'%')
+            ->whereHas('team.sections.season', function ($query) {
+                $query->where('is_open', 1);
             })
             ->orderBy('name')
             ->get();
-
-        $venues = \App\Models\Venue::where('name', 'like', '%'.$this->searchTerm.'%')->orderBy('name')->get();
-
-        if ($players->count() > 0) {
-            $this->searchResults['players'] = $players;
-        }
-
-        if ($teams->count() > 0) {
-            $this->searchResults['teams'] = $teams;
-        }
-
-        if ($venues->count() > 0) {
-            $this->searchResults['venues'] = $venues;
-        }
     }
 
-    public function render()
+    private function searchTeams(string $searchTerm): Collection
     {
-        return view('livewire.search');
+        return Team::query()
+            ->with('openSections')
+            ->where('name', 'like', '%'.$searchTerm.'%')
+            ->where('folded_at', null)
+            ->whereHas('sections.season', function ($query) {
+                $query->where('is_open', 1);
+            })
+            ->orderBy('name')
+            ->get();
+    }
+
+    private function searchVenues(string $searchTerm): Collection
+    {
+        return Venue::query()
+            ->where('name', 'like', '%'.$searchTerm.'%')
+            ->orderBy('name')
+            ->get();
     }
 }

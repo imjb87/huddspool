@@ -1,15 +1,15 @@
-<header class="bg-white fixed top-0 w-full z-50 duration-500 transition-all" x-data="{ open: false, scroll: false }"
+<header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500" x-data="{ open: false, scroll: false }"
     @scroll.window="scroll = (window.pageYOffset > 0) ? true : false" :class="{ 'shadow-lg': scroll || open }">
     <nav class="mx-auto flex max-w-7xl items-center justify-between py-5 px-4 lg:px-8" aria-label="Global">
         <div class="flex lg:flex-1">
-            <a href="#" class="-m-1.5 p-1.5">
+            <a href="/" class="-m-1.5 p-1.5">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
                 <x-application-logo />
             </a>
         </div>
         <div class="flex lg:hidden gap-x-4">
-            <button class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-                id="searchIcon">
+            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                data-site-search-trigger aria-label="Open search">
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd"
                         d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
@@ -235,8 +235,8 @@
             </div>      
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
-            <button class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-                id="searchIcon">
+            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                data-site-search-trigger aria-label="Open search">
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd"
                         d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
@@ -311,7 +311,7 @@
     <div class="lg:hidden relative z-99" role="dialog" aria-modal="true" @click.away="open = false"
         @close.stop="open = false" @keydown.escape="open = false" x-cloak x-show="open">
         <!-- Background backdrop, show/hide based on slide-over state. -->
-        <div class="fixed inset-0 z-20 bg-gray-500 bg-opacity-50 transition-opacity" x-show="open"
+        <div class="fixed inset-0 z-20 bg-gray-500/50 transition-opacity" x-show="open"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
@@ -320,7 +320,7 @@
             x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-1">
-            <div class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all px-6 py-4"
+            <div class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all px-6 py-4"
                 @click.away="open = false">
                 <div class="flow-root">
                     <div class="-my-4 divide-y divide-gray-500/10">
@@ -554,13 +554,36 @@
         </div>
     </div>
     <script>
-        document.querySelectorAll('#searchIcon').forEach(item => {
-            item.addEventListener('click', event => {
-                Livewire.dispatch('openSearch'); // Emit the event to the Livewire component
-                setTimeout(function() {
-                    document.getElementById('searchInput').focus();
-                }, 300);
-            })
-        })
+        document.addEventListener('livewire:initialized', () => {
+            if (window.siteSearchBindingsRegistered) {
+                return;
+            }
+
+            window.siteSearchBindingsRegistered = true;
+
+            const openSiteSearch = (event = null) => {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                Livewire.dispatch('openSearch');
+            };
+
+            document.querySelectorAll('[data-site-search-trigger]').forEach((trigger) => {
+                trigger.addEventListener('click', openSiteSearch);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (! (event.metaKey || event.ctrlKey)) {
+                    return;
+                }
+
+                if (event.key.toLowerCase() !== 'k') {
+                    return;
+                }
+
+                openSiteSearch(event);
+            });
+        });
     </script>
 </header>

@@ -30,6 +30,13 @@
   }
 }
 
+@layer components {
+  .site-header a,
+  .site-header button {
+    cursor: pointer;
+  }
+}
+
 .tooltip {
   position: relative;
   cursor: pointer;

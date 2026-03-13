@@ -1,19 +1,38 @@
-<div class="relative z-99 duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
-    aria-modal="true" x-data="{ open: @entangle('isOpen').live }">
+@php
+    $normalizedSearchTerm = is_string($searchTerm) ? trim($searchTerm) : '';
+    $searchTermLength = strlen($normalizedSearchTerm);
+    $resultGroups = $this->resultGroups;
+@endphp
 
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" x-show="open"
+<div class="relative z-99 duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
+    aria-modal="true"
+    x-data="{
+        open: @entangle('isOpen').live,
+        close() {
+            this.open = false
+            this.$wire.closeSearch()
+        },
+        focusInput() {
+            this.$nextTick(() => this.$refs.searchInput?.focus())
+        },
+    }"
+    x-on:focus-first-search-result.stop="$el.querySelector('[data-search-result-link]')?.focus()"
+    x-effect="if (open) { focusInput() }"
+    x-on:keydown.escape.window="if (open) { close() }">
+
+    <div class="fixed inset-0 bg-gray-500/25 transition-opacity" x-show="open"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" aria-hidden="true"
-        @click="open = false"
+        @click="close()"
     ></div>
 
     <div class="fixed inset-0 z-10 overflow-y-auto px-4 py-[12px] sm:p-6 md:p-20" x-show="open"
         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1"
         x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1">
-        <div @click.outside="open = false"
-            class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+        <div @click.outside="close()"
+            class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all">
             <div class="relative">
                 <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20"
                     fill="currentColor" aria-hidden="true">
@@ -21,20 +40,28 @@
                         d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
                         clip-rule="evenodd" />
                 </svg>
-                <input type="text" wire:model.live.debounce.300ms="searchTerm" wire:keyup.debounce.300ms="search" id="searchInput"
-                    class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                    placeholder="Search..." role="combobox" aria-expanded="false" aria-controls="options">
+                <input type="search" id="searchInput" x-ref="searchInput" autocomplete="off"
+                    wire:model.live.debounce.300ms="searchTerm"
+                    x-on:keydown.down.prevent.stop="$dispatch('focus-first-search-result')"
+                    class="h-12 w-full border-0 bg-transparent pl-11 pr-24 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    placeholder="Search players, teams and venues..." role="combobox"
+                    aria-expanded="{{ ! empty($resultGroups) ? 'true' : 'false' }}" aria-controls="options">
+                <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
+                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400">
+                        Ctrl K
+                    </span>
+                </div>
             </div>
 
             <!-- Loading Spinner -->
-            <div class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14 w-full" wire:loading wire:target="search">
-                <i class="fa-duotone fa-spinner-third fa-lg fa-spin text-gray-500"></i>                
+            <div class="w-full border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14" wire:loading wire:target="searchTerm">
+                <i class="fa-duotone fa-spinner-third fa-lg fa-spin text-gray-500"></i>
                 <p class="mt-4 font-semibold text-gray-900">Searching...</p>
             </div>
 
             <!-- Default state, show/hide based on command palette state -->
-            <div wire:loading.remove wire:target="search">
-                @if (strlen($searchTerm) < 3)
+            <div wire:loading.remove wire:target="searchTerm">
+                @if ($searchTermLength < 3)
                     <div class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14">
                         <svg class="mx-auto h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" aria-hidden="true">
@@ -46,28 +73,43 @@
                     </div>
                 @else
                     <!-- Results, show/hide based on command palette state -->
-                    @if (!empty($searchResults))
-                        <ul class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2" id="options"
+                    @if (!empty($resultGroups))
+                        <ul class="max-h-96 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto p-2" id="options"
+                            x-on:keydown.up.prevent="$focus.wrap().previous()"
+                            x-on:keydown.down.prevent="$focus.wrap().next()"
                             role="listbox">
-                            @foreach ($searchResults as $name => $items)
-                                @if (count($items) > 0)
-                                    <li>
-                                        <h2 class="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 capitalize">
-                                            {{ $name }}</h2>
+                            @foreach ($resultGroups as $name => $group)
+                                @if ($group['results']->isNotEmpty())
+                                    <li wire:key="search-group-{{ $name }}">
+                                        <h2 class="rounded-lg bg-gray-100 px-4 py-2.5 text-xs font-semibold tracking-wide text-gray-900 uppercase">
+                                            {{ $group['heading'] }}</h2>
                                         <div class="mt-2 text-sm text-gray-800">
-                                            @foreach ($items as $item)
+                                            @foreach ($group['results'] as $item)
                                                 @if (is_object($item))
-                                                    <a class="flex justify-between px-4 py-2 whitespace-nowrap truncate hover:bg-gray-100 duration-300"
-                                                        href="{{ route(Str::singular($name) . '.show', $item->id) }}">
-                                                        <span>{{ $item->name }}</span>
-                                                        @if ($name == 'players')
-                                                            <span
-                                                                class="text-xs text-gray-500">{{ $item->team?->name }}</span>
-                                                        @endif
-                                                        @if ($name == 'teams')
-                                                            <span
-                                                                class="text-xs text-gray-500">{{ $item->openSection()?->name ?? '' }}</span>
-                                                        @endif
+                                                    <a class="flex items-start justify-between gap-4 rounded-lg px-4 py-3 transition duration-200 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                                                        href="{{ route($group['route'] . '.show', $item->id) }}"
+                                                        data-search-result-link
+                                                        wire:key="search-result-{{ $name }}-{{ $item->id }}"
+                                                        x-on:click="close()">
+                                                        <div class="min-w-0">
+                                                            <p class="truncate font-semibold text-gray-900">{{ $item->name }}</p>
+                                                            @if ($name === 'players')
+                                                                <p class="mt-1 truncate text-xs text-gray-500">
+                                                                    {{ $item->team?->name ?? 'No team assigned' }}
+                                                                </p>
+                                                            @elseif ($name === 'teams')
+                                                                <p class="mt-1 truncate text-xs text-gray-500">
+                                                                    {{ $item->openSection()?->name ?? 'Open section unavailable' }}
+                                                                </p>
+                                                            @elseif ($name === 'venues')
+                                                                <p class="mt-1 truncate text-xs text-gray-500">
+                                                                    {{ $item->address }}
+                                                                </p>
+                                                            @endif
+                                                        </div>
+                                                        <span class="shrink-0 rounded-full bg-gray-100 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-500">
+                                                            {{ $group['badge'] }}
+                                                        </span>
                                                     </a>
                                                 @endif
                                             @endforeach
@@ -78,7 +120,7 @@
                         </ul>
                     @else
                         <!-- Empty state, show/hide based on command palette state -->
-                        <div class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14" wire:loading.remove wire:target="search">
+                        <div class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14" wire:loading.remove wire:target="searchTerm">
                             <svg class="mx-auto h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round"
