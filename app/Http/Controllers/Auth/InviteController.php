@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreInviteRegistrationRequest;
 use App\Models\User;
 use App\Notifications\InviteNotification;
 use Illuminate\Http\Request;
@@ -13,8 +14,8 @@ class InviteController extends Controller
 {
     public static function send(User $user)
     {
-        $invitation_token = hash('sha256', $user->email . time());
-        
+        $invitation_token = hash('sha256', $user->email.time());
+
         $user->invitation_token = $invitation_token;
         $user->save();
 
@@ -24,6 +25,7 @@ class InviteController extends Controller
     public function register($token)
     {
         $user = User::where('invitation_token', $token)->firstOrFail();
+
         return view('auth.register', ['user' => $user]);
     }
 
@@ -31,16 +33,17 @@ class InviteController extends Controller
     {
         $user = User::where('invitation_token', $token)->firstOrFail();
 
-        $validator = Validator::make($request->all(), [
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $registrationRequest = new StoreInviteRegistrationRequest;
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator->errors());
-        }
+        $data = Validator::make(
+            $request->all(),
+            $registrationRequest->rules(),
+            $registrationRequest->messages(),
+            $registrationRequest->attributes(),
+        )->validate();
 
         $user->update([
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($data['password']),
             'email_verified_at' => now(),
             'invitation_token' => null,
         ]);

@@ -1,0 +1,80 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class PlayerAvatarUpdateTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_player_can_update_their_own_avatar(): void
+    {
+        Storage::fake('public');
+
+        $player = User::factory()->create([
+            'avatar_path' => 'avatars/old-avatar.jpg',
+        ]);
+
+        Storage::disk('public')->put('avatars/old-avatar.jpg', 'old-avatar');
+
+        $response = $this
+            ->actingAs($player)
+            ->post(route('player.avatar', $player), [
+                'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+            ]);
+
+        $response
+            ->assertRedirect(route('player.show', $player))
+            ->assertSessionHas('status', 'Avatar updated');
+
+        $player->refresh();
+
+        $this->assertNotSame('avatars/old-avatar.jpg', $player->avatar_path);
+        $this->assertStringStartsWith('avatars/', $player->avatar_path);
+        Storage::disk('public')->assertMissing('avatars/old-avatar.jpg');
+        Storage::disk('public')->assertExists($player->avatar_path);
+    }
+
+    public function test_avatar_upload_requires_an_image_file(): void
+    {
+        Storage::fake('public');
+
+        $player = User::factory()->create();
+
+        $response = $this
+            ->actingAs($player)
+            ->from(route('player.show', $player))
+            ->post(route('player.avatar', $player), []);
+
+        $response
+            ->assertRedirect(route('player.show', $player))
+            ->assertSessionHasErrors(['avatar']);
+
+        $this->assertNull($player->fresh()->avatar_path);
+        $this->assertSame([], Storage::disk('public')->allFiles());
+    }
+
+    public function test_non_admin_can_not_update_another_players_avatar(): void
+    {
+        Storage::fake('public');
+
+        $player = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $response = $this
+            ->actingAs($otherUser)
+            ->post(route('player.avatar', $player), [
+                'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+            ]);
+
+        $response->assertForbidden();
+
+        $this->assertNull($player->fresh()->avatar_path);
+        $this->assertSame([], Storage::disk('public')->allFiles());
+    }
+}

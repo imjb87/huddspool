@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdatePlayerAvatarRequest;
 use App\Models\KnockoutMatch;
 use App\Models\Ruleset;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
@@ -18,7 +18,7 @@ class PlayerController extends Controller
         $sections = $ruleset->sections()
             ->whereHas('season', function ($query) {
                 $query->whereIsOpen(true);
-            })->get(); 
+            })->get();
 
         return view('player.index', compact('ruleset', 'sections'));
     }
@@ -61,12 +61,8 @@ class PlayerController extends Controller
         return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
     }
 
-    public function updateAvatar(Request $request, User $player)
+    public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player)
     {
-        $request->validate([
-            'avatar' => ['required', 'image', 'max:5120'], // allow images up to 5MB
-        ]);
-
         $user = $request->user();
 
         abort_unless(

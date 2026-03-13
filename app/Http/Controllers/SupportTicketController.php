@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreSupportTicketRequest;
 use daacreators\CreatorsTicketing\Models\Department;
 use daacreators\CreatorsTicketing\Models\Form;
 use daacreators\CreatorsTicketing\Models\FormField;
 use daacreators\CreatorsTicketing\Models\Ticket;
 use daacreators\CreatorsTicketing\Models\TicketReply;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SupportTicketController extends Controller
 {
@@ -34,11 +36,14 @@ class SupportTicketController extends Controller
                 ->with('success', 'Thanks! Your support ticket has been submitted.');
         }
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'message' => ['required', 'string', 'max:5000'],
-        ]);
+        $supportTicketRequest = new StoreSupportTicketRequest;
+
+        $data = Validator::make(
+            $request->all(),
+            $supportTicketRequest->rules(),
+            $supportTicketRequest->messages(),
+            $supportTicketRequest->attributes(),
+        )->validate();
 
         [$department, $form] = $this->ensureSupportForm();
 
