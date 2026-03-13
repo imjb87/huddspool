@@ -192,4 +192,46 @@ class FixtureResultScopesTest extends TestCase
         $this->assertTrue($resultIds->contains($openResult->id));
         $this->assertFalse($resultIds->contains($closedResult->id));
     }
+
+    public function test_team_open_section_returns_open_season_section(): void
+    {
+        $team = Team::factory()->create();
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $closedSeason = Season::factory()->create(['is_open' => false]);
+        $ruleset = Ruleset::factory()->create();
+        $openSection = Section::factory()->create([
+            'season_id' => $openSeason->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $closedSection = Section::factory()->create([
+            'season_id' => $closedSeason->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team->sections()->attach($closedSection->id);
+        $team->sections()->attach($openSection->id);
+
+        $this->assertTrue($team->openSection()?->is($openSection));
+    }
+
+    public function test_section_players_relationship_returns_players_for_attached_teams(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $team = Team::factory()->create();
+        $otherTeam = Team::factory()->create();
+        $attachedPlayer = User::factory()->create(['team_id' => $team->id]);
+        $otherPlayer = User::factory()->create(['team_id' => $otherTeam->id]);
+
+        $section->teams()->attach($team->id);
+
+        $playerIds = $section->players()->pluck('users.id');
+
+        $this->assertTrue($playerIds->contains($attachedPlayer->id));
+        $this->assertFalse($playerIds->contains($otherPlayer->id));
+    }
 }

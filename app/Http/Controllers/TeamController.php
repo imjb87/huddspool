@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Team;
 use App\Queries\GetTeamFixtures;
-use App\Queries\GetTeamSeasonHistory;
 use App\Queries\GetTeamPlayers;
+use App\Queries\GetTeamSeasonHistory;
 
 class TeamController extends Controller
 {
@@ -15,7 +15,7 @@ class TeamController extends Controller
             abort(404);
         }
 
-        $section = $team->section();
+        $section = $team->openSection();
 
         if (! $section) {
             abort(404);

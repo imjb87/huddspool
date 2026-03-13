@@ -3,8 +3,9 @@
 namespace App\Queries;
 
 use App\Data\TeamFixtureData;
-use App\Models\Team;
+use App\Models\Fixture;
 use App\Models\Section;
+use App\Models\Team;
 
 class GetTeamFixtures
 {
@@ -15,7 +16,9 @@ class GetTeamFixtures
 
     public function __invoke()
     {
-        return $this->team->fixtures()
+        return Fixture::query()
+            ->forTeam($this->team)
+            ->inOpenSeason()
             ->where('section_id', $this->section->id)
             ->with([
                 'homeTeam' => fn ($query) => $query->withTrashed(),

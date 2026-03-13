@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -12,7 +16,7 @@ class Section extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::deleting(function (Section $section) {
             if ($section->hasRecordedResults()) {
@@ -54,7 +58,7 @@ class Section extends Model
         'ruleset_id',
     ];
 
-    public function teams()
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'section_team', 'section_id', 'team_id')
             ->using(SectionTeam::class) // Reference the custom pivot model
@@ -62,15 +66,16 @@ class Section extends Model
             ->withPivot(['id', 'sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
     }
 
-    public function players()
+    public function players(): BelongsToMany
     {
-        return User::whereIn('team_id', $this->teams()->pluck('teams.id'))->get();
+        return $this->belongsToMany(User::class, 'section_team', 'section_id', 'team_id', 'id', 'team_id')
+            ->whereHas('team');
     }
 
     /**
      * Get the season that owns the section.
      */
-    public function season()
+    public function season(): BelongsTo
     {
         return $this->belongsTo(Season::class);
     }
@@ -78,7 +83,7 @@ class Section extends Model
     /**
      * Get the ruleset that owns the section.
      */
-    public function ruleset()
+    public function ruleset(): BelongsTo
     {
         return $this->belongsTo(Ruleset::class);
     }
@@ -86,12 +91,12 @@ class Section extends Model
     /**
      * Get the fixtures for the section.
      */
-    public function fixtures()
+    public function fixtures(): HasMany
     {
         return $this->hasMany(Fixture::class);
     }
 
-    public function generateFixtures()
+    public function generateFixtures(): void
     {
         $fixture_service = new \App\Services\FixtureService($this);
         $schedule = $fixture_service->generate($this);
@@ -106,7 +111,7 @@ class Section extends Model
     /**
      * Get the results for the section through fixtures.
      */
-    public function results()
+    public function results(): HasManyThrough
     {
         return $this->hasManyThrough(Result::class, Fixture::class);
     }

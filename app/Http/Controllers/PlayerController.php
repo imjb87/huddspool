@@ -26,8 +26,9 @@ class PlayerController extends Controller
 
     public function show(User $player)
     {
-        $averages = $player->team ? (new GetPlayerAverages($player, $player->team?->section()))() : null;
-        $frames = $player->team ? (new GetPlayerFrames($player, $player->team?->section()))() : null;
+        $section = $player->team?->openSection();
+        $averages = $player->team ? (new GetPlayerAverages($player, $section))() : null;
+        $frames = $player->team ? (new GetPlayerFrames($player, $section))() : null;
         $history = (new GetPlayerSeasonHistory($player))();
 
         $participantQuery = function ($query) use ($player) {

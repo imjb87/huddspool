@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Team extends Model
 {
@@ -35,7 +40,7 @@ class Team extends Model
     /**
      * Get the venue associated with the team.
      */
-    public function venue()
+    public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
     }
@@ -43,7 +48,7 @@ class Team extends Model
     /**
      * Get the players associated with the team.
      */
-    public function players()
+    public function players(): HasMany
     {
         return $this->hasMany(User::class);
     }
@@ -61,44 +66,46 @@ class Team extends Model
     /**
      * Get the sections the team belongs to.
      */
-    public function sections()
+    public function sections(): BelongsToMany
     {
         return $this->belongsToMany(Section::class, 'section_team', 'team_id', 'section_id')
             ->withTimestamps();
     }
 
     /**
-     * Get the active section for the team.
+     * Get the sections the team belongs to in the currently open season.
      */
-    public function section()
+    public function openSections(): BelongsToMany
     {
-        return $this->sections()->whereHas('season', function ($query) {
+        return $this->sections()->whereHas('season', function (Builder $query) {
             $query->where('is_open', true);
-        })->first();
+        });
+    }
+
+    /**
+     * Get the first open-season section for the team.
+     */
+    public function openSection(): ?Section
+    {
+        if ($this->relationLoaded('openSections')) {
+            return $this->getRelation('openSections')->first();
+        }
+
+        return $this->openSections()->first();
     }
 
     /**
      * Get the captain of the team from roles.
      */
-    public function captain()
+    public function captain(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'captain_id');
     }
 
     /**
-     * Get all fixtures (home and away) for the team.
-     */
-    public function fixtures(): Builder
-    {
-        return Fixture::query()
-            ->forTeam($this)
-            ->inOpenSeason();
-    }
-
-    /**
      * Get the home fixtures for the team.
      */
-    public function homeFixtures()
+    public function homeFixtures(): HasMany
     {
         return $this->hasMany(Fixture::class, 'home_team_id')
             ->whereHas('season', function ($query) {
@@ -109,7 +116,7 @@ class Team extends Model
     /**
      * Get the away fixtures for the team.
      */
-    public function awayFixtures()
+    public function awayFixtures(): HasMany
     {
         return $this->hasMany(Fixture::class, 'away_team_id')
             ->whereHas('season', function ($query) {
@@ -118,19 +125,9 @@ class Team extends Model
     }
 
     /**
-     * Get the results for the team.
-     */
-    public function results(): Builder
-    {
-        return Result::query()
-            ->forTeam($this)
-            ->inOpenSeason();
-    }
-
-    /**
      * Get all matches (home and away) for the team.
      */
-    public function matches()
+    public function matches(): HasMany
     {
         return $this->hasMany(Result::class, 'home_team_id')
             ->orWhere('results.away_team_id', $this->id);
@@ -139,7 +136,7 @@ class Team extends Model
     /**
      * Get the results where the team played at home.
      */
-    public function homeResults()
+    public function homeResults(): HasMany
     {
         return $this->hasMany(Result::class, 'home_team_id')
             ->whereHas('fixture.season', function ($query) {
@@ -150,7 +147,7 @@ class Team extends Model
     /**
      * Get the results where the team played away.
      */
-    public function awayResults()
+    public function awayResults(): HasMany
     {
         return $this->hasMany(Result::class, 'away_team_id')
             ->whereHas('fixture.season', function ($query) {
@@ -161,12 +158,12 @@ class Team extends Model
     /**
      * Get the expulsions for the team.
      */
-    public function expulsions()
+    public function expulsions(): MorphMany
     {
         return $this->morphMany(Expulsion::class, 'expellable');
     }
 
-    public function sectionTeams()
+    public function sectionTeams(): HasMany
     {
         return $this->hasMany(SectionTeam::class);
     }

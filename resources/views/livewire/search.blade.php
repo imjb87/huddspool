@@ -66,7 +66,7 @@
                                                         @endif
                                                         @if ($name == 'teams')
                                                             <span
-                                                                class="text-xs text-gray-500">{{ $item->section()->name ?? '' }}</span>
+                                                                class="text-xs text-gray-500">{{ $item->openSection()?->name ?? '' }}</span>
                                                         @endif
                                                     </a>
                                                 @endif
