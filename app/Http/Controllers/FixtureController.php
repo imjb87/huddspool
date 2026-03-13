@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ruleset;
 use App\Models\Fixture;
+use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetTeamPlayers;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,8 +27,16 @@ class FixtureController extends Controller
             abort(404);
         }
 
-        $home_team_players = new GetTeamPlayers($fixture->homeTeam, $fixture->section)();
-        $away_team_players = new GetTeamPlayers($fixture->awayTeam, $fixture->section)();
+        $homeTeam = $fixture->homeTeam;
+        $awayTeam = $fixture->awayTeam;
+        $section = $fixture->section;
+
+        if (! $homeTeam || ! $awayTeam || ! $section) {
+            abort(404);
+        }
+
+        $home_team_players = new GetTeamPlayers($homeTeam, $section)();
+        $away_team_players = new GetTeamPlayers($awayTeam, $section)();
 
         return view('fixture.show', compact('fixture', 'home_team_players', 'away_team_players'));
     }
@@ -57,24 +65,24 @@ class FixtureController extends Controller
             $homeTeam = $section->teams->find($home_team_id);
             $awayTeam = $section->teams->find($away_team_id);
 
-            if (!$homeTeam || !$awayTeam) {
+            if (! $homeTeam || ! $awayTeam) {
                 continue;
             }
 
-            if (!isset($grid[$homeTeam->name])) {
+            if (! isset($grid[$homeTeam->name])) {
                 $grid[$homeTeam->name] = [];
             }
 
-            if (!isset($grid[$awayTeam->name])) {
+            if (! isset($grid[$awayTeam->name])) {
                 $grid[$awayTeam->name] = [];
             }
 
             $homeTeamSort = $homeTeam->pivot->sort == 10 ? 0 : $homeTeam->pivot->sort;
             $awayTeamSort = $awayTeam->pivot->sort == 10 ? 0 : $awayTeam->pivot->sort;
 
-            $grid[$homeTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort . 'v' . $awayTeamSort;
-            $grid[$awayTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort . 'v' . $awayTeamSort;
-        }        
+            $grid[$homeTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort.'v'.$awayTeamSort;
+            $grid[$awayTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort.'v'.$awayTeamSort;
+        }
 
         $pdf = Pdf::loadView('fixture.print', compact('grid', 'dates', 'section'))
             ->setPaper('a4', 'landscape')

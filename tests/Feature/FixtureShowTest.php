@@ -25,6 +25,8 @@ class FixtureShowTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
+        Team::factory()->create();
+
         $homeTeam = Team::factory()->create();
         $awayTeam = Team::factory()->create();
 
@@ -62,5 +64,32 @@ class FixtureShowTest extends TestCase
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
         $response->assertSeeText($homePlayer->name);
         $response->assertSeeText($awayPlayer->name);
+    }
+
+    public function test_fixture_show_returns_not_found_when_a_team_relation_is_missing(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        Team::factory()->create();
+
+        $homeTeam = Team::factory()->create();
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => 999999,
+            'venue_id' => $homeTeam->venue_id,
+        ]);
+
+        $response = $this->get(route('fixture.show', $fixture));
+
+        $response->assertNotFound();
     }
 }
