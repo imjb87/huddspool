@@ -2,9 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
-use App\Models\Ruleset;
 use Illuminate\Support\Str;
 
 return new class extends Migration
@@ -21,11 +20,14 @@ return new class extends Migration
             $table->string('slug')->after('name');
         });
 
-        $rulesets = Ruleset::all();
+        $rulesets = DB::table('rulesets')
+            ->select('id', 'name')
+            ->get();
 
         foreach ($rulesets as $ruleset) {
-            $ruleset->slug = Str::slug($ruleset->name);
-            $ruleset->save();
+            DB::table('rulesets')
+                ->where('id', $ruleset->id)
+                ->update(['slug' => Str::slug($ruleset->name)]);
         }
     }
 
