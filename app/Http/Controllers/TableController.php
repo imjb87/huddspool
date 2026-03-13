@@ -16,7 +16,9 @@ class TableController extends Controller
             })
             ->with([
                 'results',
-                'season.expulsions',
+                'season' => function ($query) {
+                    $query->with('expulsions');
+                },
                 'teams' => function (BelongsToMany $query) {
                     $query->withTrashed()->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
                 },

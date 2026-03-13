@@ -59,4 +59,22 @@ class TablePageTest extends TestCase
             ->assertSeeText($homeTeam->name)
             ->assertSeeText($awayTeam->name);
     }
+
+    public function test_table_page_eager_loads_season_expulsions_for_sections(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $this->get(route('table.index', $ruleset))
+            ->assertOk()
+            ->assertViewHas('sections', function ($sections): bool {
+                return $sections->isNotEmpty()
+                    && $sections->every(fn (Section $section): bool => $section->relationLoaded('season'))
+                    && $sections->every(fn (Section $section): bool => $section->season->relationLoaded('expulsions'));
+            });
+    }
 }
