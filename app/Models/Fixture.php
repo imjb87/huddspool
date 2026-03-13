@@ -2,23 +2,31 @@
 
 namespace App\Models;
 
+use App\Traits\ClearsResponseCache;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use App\Traits\ClearsResponseCache;
 
 class Fixture extends Model
 {
-    use HasFactory, ClearsResponseCache;
+    use ClearsResponseCache, HasFactory;
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Fixture $fixture) {
+            if ($fixture->hasRecordedResults()) {
+                return false;
+            }
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-
     protected $fillable = [
         'week',
         'fixture_date',
@@ -27,7 +35,7 @@ class Fixture extends Model
         'season_id',
         'section_id',
         'venue_id',
-        'ruleset_id'
+        'ruleset_id',
     ];
 
     protected $casts = [
@@ -67,6 +75,11 @@ class Fixture extends Model
     public function result()
     {
         return $this->hasOne(Result::class);
+    }
+
+    public function hasRecordedResults(): bool
+    {
+        return $this->result()->exists();
     }
 
     /**

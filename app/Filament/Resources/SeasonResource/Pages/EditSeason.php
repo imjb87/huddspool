@@ -9,10 +9,10 @@ use App\Models\Venue;
 use App\Support\SectionSheetParser;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -25,7 +25,21 @@ class EditSeason extends EditRecord
     {
         return [
             $this->getSectionImportAction(),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (): bool => $this->getRecord()->hasRecordedResults())
+                ->before(function (Actions\DeleteAction $action): void {
+                    if (! $this->getRecord()->hasRecordedResults()) {
+                        return;
+                    }
+
+                    Notification::make()
+                        ->warning()
+                        ->title('Season cannot be deleted')
+                        ->body('Seasons with recorded results or frames cannot be deleted.')
+                        ->send();
+
+                    $action->halt();
+                }),
         ];
     }
 
@@ -126,6 +140,7 @@ class EditSeason extends EditRecord
     {
         if (blank($state)) {
             $set('teams', []);
+
             return;
         }
 

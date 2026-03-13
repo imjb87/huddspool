@@ -2,16 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\FixtureResource\Pages;
-use App\Filament\Resources\FixtureResource\RelationManagers;
 use App\Models\Fixture;
-use App\Models\Season;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class FixtureResource extends Resource
 {
@@ -24,13 +23,13 @@ class FixtureResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Competitions';
 
     protected static bool $shouldRegisterNavigation = false;
-    
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 \Filament\Schemas\Components\Section::make('Fixture Information')
-                ->columnSpanFull()
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('home_team_id')
@@ -94,6 +93,9 @@ class FixtureResource extends Resource
                     Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            ->checkIfRecordIsSelectableUsing(
+                fn (Model $record): bool => ! $record->hasRecordedResults(),
+            )
             ->defaultSort('week', 'asc');
     }
 
@@ -111,5 +113,4 @@ class FixtureResource extends Resource
             'edit' => Pages\EditFixture::route('/{record}/edit'),
         ];
     }
-
 }

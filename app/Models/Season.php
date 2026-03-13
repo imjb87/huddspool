@@ -13,6 +13,12 @@ class Season extends Model
 
     protected static function booted(): void
     {
+        static::deleting(function (Season $season) {
+            if ($season->hasRecordedResults()) {
+                return false;
+            }
+        });
+
         static::saving(function (Season $season) {
             if ($season->isDirty('name') || blank($season->slug)) {
                 $season->slug = $season->generateSlug($season->name, $season->id);
@@ -53,6 +59,11 @@ class Season extends Model
     public function sections()
     {
         return $this->hasMany(Section::class);
+    }
+
+    public function fixtures()
+    {
+        return $this->hasMany(Fixture::class);
     }
 
     /**
@@ -137,5 +148,10 @@ class Season extends Model
     public function expulsions()
     {
         return $this->hasMany(Expulsion::class);
+    }
+
+    public function hasRecordedResults(): bool
+    {
+        return $this->fixtures()->whereHas('result')->exists();
     }
 }

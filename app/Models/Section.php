@@ -14,6 +14,12 @@ class Section extends Model
 
     protected static function booted()
     {
+        static::deleting(function (Section $section) {
+            if ($section->hasRecordedResults()) {
+                return false;
+            }
+        });
+
         $flush = function (Section $section): void {
             Cache::forget('history:index');
             Cache::forget('nav:past-seasons');
@@ -103,6 +109,11 @@ class Section extends Model
     public function results()
     {
         return $this->hasManyThrough(Result::class, Fixture::class);
+    }
+
+    public function hasRecordedResults(): bool
+    {
+        return $this->results()->exists();
     }
 
     public function standings(): Collection

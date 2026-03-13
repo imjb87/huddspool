@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources\SectionResource\RelationManagers;
 
-use Filament\Actions;
 use App\Filament\Resources\FixtureResource;
-use Filament\Forms;
 use App\Models\Fixture;
 use App\Services\FixtureService;
-use Illuminate\Support\Carbon;
+use Filament\Actions;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class FixturesRelationManager extends RelationManager
 {
@@ -40,13 +41,33 @@ class FixturesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('homeTeam.name')->label('Home team')->alignRight()->searchable(),
                 Tables\Columns\TextColumn::make('fixture_date')->label(false)->state(function (Model $record) {
-                    return $record->result ? $record->result->home_score . ' - ' . $record->result->away_score : $record->fixture_date->format('d/m');
+                    return $record->result ? $record->result->home_score.' - '.$record->result->away_score : $record->fixture_date->format('d/m');
                 })->alignCenter(),
                 Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),
             ])
             ->headerActions([
                 Actions\Action::make('DeleteAllFixtures')
-                    ->action(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->fixtures()->delete())
+                    ->disabled(fn (RelationManager $livewire): bool => $livewire->getOwnerRecord()->hasRecordedResults())
+                    ->before(function (Actions\Action $action, RelationManager $livewire): void {
+                        if (! $livewire->getOwnerRecord()->hasRecordedResults()) {
+                            return;
+                        }
+
+                        Notification::make()
+                            ->warning()
+                            ->title('Fixtures cannot be deleted')
+                            ->body('Fixtures cannot be deleted once results or frames have been recorded for this section.')
+                            ->send();
+
+                        $action->halt();
+                    })
+                    ->action(function (RelationManager $livewire): void {
+                        $livewire->getOwnerRecord()
+                            ->fixtures()
+                            ->get()
+                            ->each
+                            ->delete();
+                    })
                     ->label('Delete all fixtures')
                     ->modalIcon('heroicon-o-trash')
                     ->modalHeading('Delete all fixtures')
@@ -54,7 +75,7 @@ class FixturesRelationManager extends RelationManager
                     ->modalSubmitActionLabel('Yes, delete them')
                     ->visible(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->fixtures()->exists())
                     ->color('danger'),
-            ])            
+            ])
             ->paginated(5)
             ->defaultPaginationPageOption(5)
             ->recordUrl(
@@ -143,7 +164,7 @@ class FixturesRelationManager extends RelationManager
                         $livewire->getOwnerRecord()->generateFixtures();
                     })
                     ->label('Generate fixtures')
-                    ->icon('heroicon-o-arrow-path')
+                    ->icon('heroicon-o-arrow-path'),
             ]);
     }
 
@@ -210,7 +231,7 @@ class FixturesRelationManager extends RelationManager
                     continue;
                 }
 
-                $key = $existingFixture->fixture_date->toDateString() . '|' . $existingFixture->venue_id;
+                $key = $existingFixture->fixture_date->toDateString().'|'.$existingFixture->venue_id;
                 $existingFixturesByKey[$key][] = [
                     'date' => $existingFixture->fixture_date?->format('d M Y') ?? 'TBC',
                     'home_team' => $existingFixture->homeTeam?->name ?? 'TBC',
@@ -225,7 +246,7 @@ class FixturesRelationManager extends RelationManager
                 continue;
             }
 
-            $key = (string) $preview['date_raw'] . '|' . (string) $preview['venue_id'];
+            $key = (string) $preview['date_raw'].'|'.(string) $preview['venue_id'];
             $existing = $existingFixturesByKey[$key] ?? [];
 
             if (empty($existing)) {
@@ -256,5 +277,4 @@ class FixturesRelationManager extends RelationManager
 
         return $fixtures;
     }
-
 }
