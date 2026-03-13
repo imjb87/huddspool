@@ -3,8 +3,9 @@
 namespace App\Livewire\Knockout;
 
 use App\Models\KnockoutMatch;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -20,9 +21,7 @@ class SubmitResult extends Component
     {
         $this->match = $match->load('homeParticipant', 'awayParticipant', 'round.knockout');
 
-        if (! $this->match->userCanSubmit(Auth::user())) {
-            abort(403);
-        }
+        Gate::authorize('submitResult', $this->match);
 
         $this->homeScore = $match->home_score ?? 0;
         $this->awayScore = $match->away_score ?? 0;
@@ -30,9 +29,7 @@ class SubmitResult extends Component
 
     public function submit(): RedirectResponse|Redirector
     {
-        if (! $this->match->userCanSubmit(Auth::user())) {
-            abort(403);
-        }
+        Gate::authorize('submitResult', $this->match);
 
         $validated = $this->validate([
             'homeScore' => ['required', 'integer', 'min:0'],

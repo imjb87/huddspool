@@ -3,11 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Fixture;
+use App\Models\KnockoutMatch;
 use App\Models\Result;
 use App\Models\User;
 use App\Policies\FixturePolicy;
+use App\Policies\KnockoutMatchPolicy;
 use App\Policies\ResultPolicy;
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -20,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Fixture::class => FixturePolicy::class,
+        KnockoutMatch::class => KnockoutMatchPolicy::class,
         Result::class => ResultPolicy::class,
     ];
 

@@ -233,11 +233,13 @@
                                                 @endif
                                             @endif
                                         </div>
-                                        @if ($match->starts_at && $match->userCanSubmit(auth()->user()) && $match->home_participant_id && $match->away_participant_id)
-                                            <a href="{{ route('knockout.matches.submit', $match) }}"
-                                                class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-800">
-                                                Submit result
-                                            </a>
+                                        @if ($match->starts_at && $match->home_participant_id && $match->away_participant_id)
+                                            @can('submitResult', $match)
+                                                <a href="{{ route('knockout.matches.submit', $match) }}"
+                                                    class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-800">
+                                                    Submit result
+                                                </a>
+                                            @endcan
                                         @endif
                                     </div>
                                 </div>

@@ -114,6 +114,43 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertSet('awayScore', 1);
     }
 
+    public function test_team_captain_sees_submit_link_on_player_profile(): void
+    {
+        ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
+
+        $captain = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+        ]);
+
+        $homeTeam->update(['captain_id' => $captain->id]);
+        $match->update(['starts_at' => now()->addDay()]);
+
+        $this->actingAs($captain)
+            ->get(route('player.show', $captain))
+            ->assertOk()
+            ->assertSeeText('Submit result');
+    }
+
+    public function test_regular_team_member_does_not_see_submit_link_on_player_profile(): void
+    {
+        ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
+
+        $player = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+        ]);
+
+        $match->update(['starts_at' => now()->addDay()]);
+
+        $this->actingAs($player)
+            ->get(route('player.show', $player))
+            ->assertOk()
+            ->assertDontSeeText('Submit result');
+    }
+
     /**
      * @return array{match: KnockoutMatch, homePlayer: User, awayPlayer: User}
      */

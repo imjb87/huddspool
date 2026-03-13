@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
@@ -55,7 +56,7 @@ class PlayerController extends Controller
             ->orderBy('starts_at')
             ->orderBy('id')
             ->get()
-            ->filter(fn (KnockoutMatch $match) => $match->userCanSubmit($player))
+            ->filter(fn (KnockoutMatch $match) => Gate::forUser($player)->allows('submitResult', $match))
             ->values();
 
         return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
