@@ -2,9 +2,10 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Section;
 use App\Models\Fixture;
+use App\Models\Section;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class SectionFixtures extends Component
@@ -12,9 +13,10 @@ class SectionFixtures extends Component
     use WithPagination;
 
     public Section $section;
-    public $week = 1;
 
-    public function mount(Section $section)
+    public int $week = 1;
+
+    public function mount(Section $section): void
     {
         $this->section = $section;
 
@@ -26,24 +28,27 @@ class SectionFixtures extends Component
         }
     }
 
-    public function previousWeek()
+    public function previousWeek(): void
     {
         $this->week--;
     }
 
-    public function nextWeek()
+    public function nextWeek(): void
     {
         $this->week++;
     }
 
-    public function render()
+    public function render(): View
     {
         return view(
             'livewire.section-fixtures',
             [
-                'fixtures' => Fixture::where('section_id', $this->section->id)
+                'fixtures' => Fixture::query()
+                    ->with(['result', 'homeTeam', 'awayTeam'])
+                    ->where('section_id', $this->section->id)
                     ->where('week', $this->week)
-                    ->get()
+                    ->orderBy('fixture_date')
+                    ->get(),
             ]
         );
     }

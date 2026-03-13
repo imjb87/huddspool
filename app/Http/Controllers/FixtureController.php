@@ -14,9 +14,11 @@ class FixtureController extends Controller
     public function index(Ruleset $ruleset)
     {
         $sections = $ruleset->sections()
+            ->with('season')
             ->whereHas('season', function ($query) {
                 $query->whereIsOpen(true);
-            })->get();
+            })
+            ->get();
 
         return view('fixture.index', compact('ruleset', 'sections'));
     }
