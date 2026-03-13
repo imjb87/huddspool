@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
 class Frame extends Model
 {
-    use HasFactory, \Awobaz\Compoships\Compoships;
+    use \Awobaz\Compoships\Compoships, HasFactory, SoftDeletes;
 
     protected static function booted()
     {
@@ -59,6 +60,7 @@ class Frame extends Model
     {
         Cache::forget('stats:open-season');
         Cache::forget('stats:season-series');
+        Cache::forget('stats:season-series-chart');
         Cache::forget('history:index');
         Cache::forget('nav:past-seasons');
 

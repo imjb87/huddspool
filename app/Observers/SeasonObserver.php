@@ -25,6 +25,8 @@ class SeasonObserver
     protected function flushCaches(Season $season): void
     {
         Cache::forget('stats:open-season');
+        Cache::forget('stats:season-series');
+        Cache::forget('stats:season-series-chart');
         Cache::forget('nav:past-seasons');
         Cache::forget('history:index');
         Cache::forget(sprintf('history:season:%d', $season->id));
@@ -38,6 +40,5 @@ class SeasonObserver
                 Cache::forget(sprintf('history:sections:%d:%d', $season->id, $section->ruleset_id));
             }
         }
-
     }
 }
