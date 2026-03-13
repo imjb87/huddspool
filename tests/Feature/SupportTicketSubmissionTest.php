@@ -16,6 +16,29 @@ class SupportTicketSubmissionTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_support_ticket_page_prefills_authenticated_user_details_and_provisions_form(): void
+    {
+        $this->seed(TicketStatusSeeder::class);
+
+        $user = User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'support@example.com',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('support.tickets'));
+
+        $response
+            ->assertOk()
+            ->assertSee('value="Test User"', false)
+            ->assertSee('value="support@example.com"', false);
+
+        $this->assertSame(1, Department::query()->count());
+        $this->assertSame(1, Form::query()->count());
+        $this->assertSame(3, FormField::query()->count());
+    }
+
     public function test_authenticated_user_can_submit_a_support_ticket(): void
     {
         $this->seed(TicketStatusSeeder::class);
