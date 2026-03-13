@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Policies\FixturePolicy;
 use App\Policies\KnockoutMatchPolicy;
 use App\Policies\ResultPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         Fixture::class => FixturePolicy::class,
         KnockoutMatch::class => KnockoutMatchPolicy::class,
         Result::class => ResultPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**

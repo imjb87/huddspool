@@ -64,12 +64,7 @@ class PlayerController extends Controller
 
     public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player)
     {
-        $user = $request->user();
-
-        abort_unless(
-            $user && ($user->is($player) || $user->isAdmin()),
-            403
-        );
+        $this->authorize('updateAvatar', $player);
 
         $newPath = $request->file('avatar')->store('avatars', 'public');
 

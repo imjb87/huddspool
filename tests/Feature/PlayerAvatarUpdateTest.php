@@ -59,6 +59,27 @@ class PlayerAvatarUpdateTest extends TestCase
         $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
+    public function test_player_profile_shows_avatar_upload_for_the_player(): void
+    {
+        $player = User::factory()->create();
+
+        $this->actingAs($player)
+            ->get(route('player.show', $player))
+            ->assertOk()
+            ->assertSee('avatar-upload-'.$player->id, false);
+    }
+
+    public function test_player_profile_hides_avatar_upload_for_other_non_admin_users(): void
+    {
+        $player = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $this->actingAs($otherUser)
+            ->get(route('player.show', $player))
+            ->assertOk()
+            ->assertDontSee('avatar-upload-'.$player->id, false);
+    }
+
     public function test_non_admin_can_not_update_another_players_avatar(): void
     {
         Storage::fake('public');
@@ -99,5 +120,18 @@ class PlayerAvatarUpdateTest extends TestCase
 
         $this->assertStringStartsWith('avatars/', $player->fresh()->avatar_path);
         Storage::disk('public')->assertExists($player->fresh()->avatar_path);
+    }
+
+    public function test_player_profile_shows_avatar_upload_for_admin_viewing_another_player(): void
+    {
+        $player = User::factory()->create();
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('player.show', $player))
+            ->assertOk()
+            ->assertSee('avatar-upload-'.$player->id, false);
     }
 }

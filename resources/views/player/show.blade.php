@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@php
-    $canUpdateAvatar = auth()->check() && (auth()->user()->is($player) || auth()->user()->isAdmin());
-@endphp
 <div class="pt-[80px]">
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
@@ -17,7 +14,7 @@
                     <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                         <div class="flex items-start space-x-5">
                             <div class="flex-shrink-0">
-                                @if ($canUpdateAvatar)
+                                @can('updateAvatar', $player)
                                     <form method="POST" action="{{ route('player.avatar', $player) }}"
                                         enctype="multipart/form-data" class="relative group">
                                         @csrf
@@ -42,7 +39,7 @@
                                         <span class="absolute inset-0 rounded-full shadow-inner"
                                             aria-hidden="true"></span>
                                     </div>
-                                @endif
+                                @endcan
                             </div>
                             <!--
                             Use vertical padding to simulate center alignment when both lines of text are one line,
