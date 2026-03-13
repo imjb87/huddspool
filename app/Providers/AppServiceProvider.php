@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\KnockoutRound;
+use App\Models\News;
 use App\Models\Season;
 use App\Models\Venue;
+use App\Observers\KnockoutRoundObserver;
+use App\Observers\NewsObserver;
 use App\Observers\SeasonObserver;
 use App\Observers\VenueObserver;
 use Illuminate\Support\Facades\Vite;
@@ -22,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        KnockoutRound::observe(KnockoutRoundObserver::class);
+        News::observe(NewsObserver::class);
         Season::observe(SeasonObserver::class);
         Venue::observe(VenueObserver::class);
 
