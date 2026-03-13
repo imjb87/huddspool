@@ -4,13 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="Huddersfield & District Tuesday Night Pool League" />
-    <meta property="og:description"
-        content="Every Tuesday night, teams from across Huddersfield and the surrounding areas compete in the Huddersfield & District Tuesday Night Pool League. Check here for the latest tables, fixtures, results and averages." />
+    <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
+    <meta property="og:description" content="{{ config('app.description') }}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.huddspool.co.uk" />
+    <meta property="og:url" content="{{ config('app.frontend_url') }}" />
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
-    <title>{{ $section->name }} Fixtures | Huddersfield &amp; District Tuesday Night Pool League</title>
+    <title>{{ $section->name }} Fixtures | {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 

@@ -58,6 +58,10 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'frontend_url' => env('APP_FRONTEND_URL', 'https://www.huddspool.co.uk'),
+
+    'description' => 'Every Tuesday night, teams from across Huddersfield and the surrounding areas compete in the Huddersfield & District Tuesday Night Pool League. Check here for the latest tables, fixtures, results and averages.',
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -195,6 +199,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\CpPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\ViewServiceProvider::class,
 
     ],
 

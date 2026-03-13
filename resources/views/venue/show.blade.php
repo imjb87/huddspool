@@ -87,7 +87,7 @@
                 </div>
                 <section class="w-full lg:w-2/3">
                     <iframe class="w-full shadow-md sm:rounded-lg"
-                        src="https://www.google.com/maps/embed/v1/place?q={{ $venue->address }}&key=AIzaSyChqGQscjoMavQG46mrE3j2oz26pedhXFU"
+                        src="https://www.google.com/maps/embed/v1/place?q={{ urlencode($venue->address) }}&key={{ config('services.google_maps.embed_key') }}"
                         width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </section>

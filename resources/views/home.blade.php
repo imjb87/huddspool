@@ -4,19 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="Huddersfield & District Tuesday Night Pool League" />
-    <meta property="og:description"
-        content="Every Tuesday night, teams from across Huddersfield and the surrounding areas compete in the Huddersfield & District Tuesday Night Pool League. Check here for the latest tables, fixtures, results and averages." />
+    <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
+    <meta property="og:description" content="{{ config('app.description') }}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.huddspool.co.uk" />
+    <meta property="og:url" content="{{ config('app.frontend_url') }}" />
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
 
-    <title>Home | Huddersfield &amp; District Tuesday Night Pool League</title>
+    <title>Home | {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-620MNWY15S"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -25,7 +24,7 @@
         }
         gtag('js', new Date());
 
-        gtag('config', 'G-620MNWY15S');
+        gtag('config', @js(config('services.google_analytics.measurement_id')));
     </script>
 
     <!-- Hotjar Tracking Code for https://huddspool.co.uk -->
@@ -35,8 +34,8 @@
                 (h.hj.q = h.hj.q || []).push(arguments)
             };
             h._hjSettings = {
-                hjid: 3651301,
-                hjsv: 6
+                hjid: @js(config('services.hotjar.site_id')),
+                hjsv: @js(config('services.hotjar.snippet_version'))
             };
             a = o.getElementsByTagName('head')[0];
             r = o.createElement('script');
