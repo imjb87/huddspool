@@ -2,15 +2,16 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
+use App\Models\Fixture;
+use App\Models\Frame;
+use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
-use App\Models\Fixture;
-use App\Models\Result;
-use App\Models\Frame;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,7 @@ class HuddspoolSeeder extends Seeder
 
         if (! is_file($dataPath)) {
             $this->command?->warn("Huddspool seed data not found at {$dataPath}.");
+
             return;
         }
 
@@ -34,6 +36,7 @@ class HuddspoolSeeder extends Seeder
 
         if (! is_array($payload)) {
             $this->command?->warn('Huddspool seed data is not valid JSON.');
+
             return;
         }
 
@@ -238,11 +241,11 @@ class HuddspoolSeeder extends Seeder
 
             $user = User::query()->firstOrCreate(
                 ['name' => $playerName, 'team_id' => $team->id],
-                ['role' => '1'],
+                ['role' => UserRole::Player->value],
             );
 
             if ($captainName && $playerName === $captainName) {
-                $user->role = '2';
+                $user->role = UserRole::TeamAdmin->value;
                 $user->save();
                 $captainUser = $user;
             }
@@ -251,7 +254,7 @@ class HuddspoolSeeder extends Seeder
         if ($captainName && ! $captainUser) {
             $captainUser = User::query()->firstOrCreate(
                 ['name' => $captainName, 'team_id' => $team->id],
-                ['role' => '2'],
+                ['role' => UserRole::TeamAdmin->value],
             );
         }
 
@@ -271,6 +274,7 @@ class HuddspoolSeeder extends Seeder
             foreach ($words as $word) {
                 $initials .= strtoupper($word[0]);
             }
+
             return strtoupper(substr($initials, 0, 6));
         }
 
@@ -291,7 +295,7 @@ class HuddspoolSeeder extends Seeder
     {
         return User::query()->firstOrCreate(
             ['name' => $playerName, 'team_id' => $team->id],
-            ['role' => '1'],
+            ['role' => UserRole::Player->value],
         );
     }
 }

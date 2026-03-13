@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,6 +51,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     /**
@@ -64,7 +66,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->is_admin;
+        return $this->isAdmin();
     }
 
     public function getRedirectRoute()
@@ -165,12 +167,12 @@ class User extends Authenticatable implements FilamentUser
 
     public function isTeamAdmin()
     {
-        return $this->role == 2;
+        return $this->roleEnum() === UserRole::TeamAdmin;
     }
 
     public function isAdmin()
     {
-        return $this->is_admin;
+        return (bool) $this->is_admin;
     }
 
     public function isCaptain()
@@ -184,11 +186,16 @@ class User extends Authenticatable implements FilamentUser
             return 'Captain';
         }
 
-        if ($this->isTeamAdmin()) {
-            return 'Team Admin';
+        return $this->roleEnum()?->label() ?? UserRole::Player->label();
+    }
+
+    public function roleEnum(): ?UserRole
+    {
+        if ($this->role === null) {
+            return null;
         }
 
-        return 'Player';
+        return UserRole::tryFrom((string) $this->role);
     }
 
     public function getAvatarUrlAttribute(): string

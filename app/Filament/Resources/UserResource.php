@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
+use App\Enums\UserRole;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use STS\FilamentImpersonate\Actions\Impersonate;
@@ -28,7 +29,7 @@ class UserResource extends Resource
         return $schema
             ->schema([
                 \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -49,10 +50,7 @@ class UserResource extends Resource
                             ->tel(),
                         Forms\Components\Select::make('role')
                             ->label('Role')
-                            ->options([
-                                '1' => 'Player',
-                                '2' => 'Team Admin',
-                            ])
+                            ->options(UserRole::options())
                             ->required(),
                     ]),
             ]);
@@ -84,10 +82,8 @@ class UserResource extends Resource
                     ->label('Role')
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        '1' => 'Player',
-                        '2' => 'Team Admin',
-                    })->badge(),
+                    ->formatStateUsing(fn (string|int|null $state): string => UserRole::labelFor($state))
+                    ->badge(),
             ])
             ->filters([
                 //

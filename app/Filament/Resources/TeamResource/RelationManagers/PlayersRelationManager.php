@@ -2,14 +2,13 @@
 
 namespace App\Filament\Resources\TeamResource\RelationManagers;
 
+use App\Enums\UserRole;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PlayersRelationManager extends RelationManager
 {
@@ -28,10 +27,7 @@ class PlayersRelationManager extends RelationManager
                 // Role
                 Forms\Components\Select::make('role')
                     ->required()
-                    ->options([
-                        '1' => 'Player',
-                        '2' => 'Team Admin',
-                    ]),
+                    ->options(UserRole::options()),
                 Forms\Components\TextInput::make('telephone')
                     ->tel()
                     ->maxLength(255),
@@ -45,10 +41,8 @@ class PlayersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('role')
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        '1' => 'Player',
-                        '2' => 'Team Admin',
-                    })->badge()
+                    ->formatStateUsing(fn (string|int|null $state): string => UserRole::labelFor($state))
+                    ->badge(),
             ])
             ->filters([
                 //
