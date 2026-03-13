@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use App\Models\User;
-use App\Models\Team;
-use App\Models\Expulsion;
 
 class Section extends Model
 {
@@ -58,7 +55,7 @@ class Section extends Model
             ->withTimestamps()
             ->withPivot(['id', 'sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
     }
-    
+
     public function players()
     {
         return User::whereIn('team_id', $this->teams()->pluck('teams.id'))->get();
@@ -111,20 +108,28 @@ class Section extends Model
     public function standings(): Collection
     {
         return Cache::remember($this->standingsCacheKey(), now()->addMinutes(2), function () {
-            $results = $this->results()
-                ->where('is_confirmed', true)
-                ->get();
+            $results = $this->relationLoaded('results')
+                ? $this->results->where('is_confirmed', true)->values()
+                : $this->results()
+                    ->where('is_confirmed', true)
+                    ->get();
 
-            $teamExpulsions = Expulsion::query()
-                ->where('season_id', $this->season_id)
-                ->where('expellable_type', Team::class)
-                ->get()
-                ->groupBy('expellable_id');
+            $teamExpulsions = $this->relationLoaded('season') && $this->season?->relationLoaded('expulsions')
+                ? $this->season->expulsions
+                    ->where('expellable_type', Team::class)
+                    ->groupBy('expellable_id')
+                : Expulsion::query()
+                    ->where('season_id', $this->season_id)
+                    ->where('expellable_type', Team::class)
+                    ->get()
+                    ->groupBy('expellable_id');
 
-            $teams = $this->teams()
-                ->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at'])
-                ->withTrashed()
-                ->get()
+            $teams = ($this->relationLoaded('teams')
+                ? $this->teams
+                : $this->teams()
+                    ->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at'])
+                    ->withTrashed()
+                    ->get())
                 ->map(function ($team) use ($results, $teamExpulsions) {
                     // Check if the team is expelled
                     $expelled = $teamExpulsions->has($team->id);
@@ -180,6 +185,7 @@ class Section extends Model
                 ->values()
                 ->map(function ($team) {
                     unset($team->sort_score);
+
                     return $team;
                 });
 
