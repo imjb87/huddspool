@@ -46,7 +46,7 @@
     </script>
 
     <!-- Fonts -->
-    <script src="https://kit.fontawesome.com/b12bfcfdee.js" crossorigin="anonymous"></script>
+    <script src="{{ config('services.font_awesome.kit_url') }}" crossorigin="anonymous"></script>
 
     <!-- Styles -->
     <style>

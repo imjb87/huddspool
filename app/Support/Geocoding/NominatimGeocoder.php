@@ -41,9 +41,9 @@ class NominatimGeocoder
         try {
             $response = Http::timeout(10)
                 ->withHeaders([
-                    'User-Agent' => config('app.name', 'HuddsPool') . ' geocoder',
+                    'User-Agent' => config('services.nominatim.user_agent'),
                 ])
-                ->get('https://nominatim.openstreetmap.org/search', $query);
+                ->get(config('services.nominatim.search_url'), $query);
 
             if (! $response->successful()) {
                 Log::warning('Geocoding request failed', [
