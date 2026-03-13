@@ -26,8 +26,11 @@ class User extends Authenticatable implements FilamentUser
         'telephone',
         'avatar_path',
         'password',
+        'role',
         'team_id',
-        'is_admin', 
+        'is_admin',
+        'email_verified_at',
+        'invitation_token',
     ];
 
     /**
@@ -57,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
     protected $appends = [
         'confirmed',
         'avatar_url',
-    ];                            
+    ];
 
     public function canAccessPanel(Panel $panel): bool
     {

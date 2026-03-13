@@ -6,7 +6,6 @@ use App\Models\Season;
 use App\Models\Venue;
 use App\Observers\SeasonObserver;
 use App\Observers\VenueObserver;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pulse\Facades\Pulse;
@@ -23,8 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Model::unguard();
-
         Season::observe(SeasonObserver::class);
         Venue::observe(VenueObserver::class);
 

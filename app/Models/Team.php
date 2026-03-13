@@ -25,6 +25,7 @@ class Team extends Model
         'name',
         'shortname',
         'venue_id',
+        'captain_id',
         'folded_at',
     ];
 
