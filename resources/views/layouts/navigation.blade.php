@@ -268,9 +268,9 @@
                             <a href="{{ route('player.show', auth()->user()->id) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your profile</a>
                         </div>
-                        @if (auth()->user()->team)
+                        @if (auth()->user()->team_id)
                             <div class="py-1">
-                                <a href="{{ route('team.show', auth()->user()->team->id) }}"
+                                <a href="{{ route('team.show', auth()->user()->team_id) }}"
                                     class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your
                                     team</a>
                             </div>
@@ -523,8 +523,8 @@
                                 <a href="{{ route('player.show', auth()->user()->id) }}"
                                     class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
                                     profile</a> 
-                                @if (auth()->user()->team)
-                                    <a href="{{ route('team.show', auth()->user()->team->id) }}"
+                                @if (auth()->user()->team_id)
+                                    <a href="{{ route('team.show', auth()->user()->team_id) }}"
                                         class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
                                         team</a>
                                 @endif
