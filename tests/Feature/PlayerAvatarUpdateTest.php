@@ -77,4 +77,27 @@ class PlayerAvatarUpdateTest extends TestCase
         $this->assertNull($player->fresh()->avatar_path);
         $this->assertSame([], Storage::disk('public')->allFiles());
     }
+
+    public function test_admin_can_update_another_players_avatar(): void
+    {
+        Storage::fake('public');
+
+        $player = User::factory()->create();
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $response = $this
+            ->actingAs($admin)
+            ->post(route('player.avatar', $player), [
+                'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+            ]);
+
+        $response
+            ->assertRedirect(route('player.show', $player))
+            ->assertSessionHas('status', 'Avatar updated');
+
+        $this->assertStringStartsWith('avatars/', $player->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($player->fresh()->avatar_path);
+    }
 }
