@@ -98,8 +98,8 @@ class Section extends Model
 
     public function generateFixtures(): void
     {
-        $fixture_service = new \App\Services\FixtureService($this);
-        $schedule = $fixture_service->generate($this);
+        $fixtureService = new \App\Services\FixtureService($this);
+        $schedule = $fixtureService->generate();
 
         foreach ($schedule as $fixtures) {
             foreach ($fixtures as $fixture) {

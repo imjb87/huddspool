@@ -16,7 +16,7 @@
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
                                 <li>
-                                    <a href="{{ route('table.index', $ruleset->id) }}"
+                                    <a href="{{ route('table.index', $ruleset) }}"
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach
@@ -27,7 +27,7 @@
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
                                 <li>
-                                    <a href="{{ route('fixture.index', $ruleset->id) }}"
+                                    <a href="{{ route('fixture.index', $ruleset) }}"
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach
@@ -40,7 +40,7 @@
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
                                 <li>
-                                    <a href="{{ route('player.index', $ruleset->id) }}"
+                                    <a href="{{ route('player.index', $ruleset) }}"
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach
@@ -51,7 +51,7 @@
                         <ul role="list" class="mt-6 space-y-4">
                             @foreach ($rulesets as $ruleset)
                                 <li>
-                                    <a href="{{ route('ruleset.show', $ruleset->id) }}"
+                                    <a href="{{ route('ruleset.show', $ruleset) }}"
                                         class="text-sm leading-6 text-gray-300 hover:text-white">{{ $ruleset->name }}</a>
                                 </li>
                             @endforeach

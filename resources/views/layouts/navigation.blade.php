@@ -47,7 +47,7 @@
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
                     @foreach ($rulesets as $ruleset)
                         <div class="py-1">
-                            <a href="{{ route('table.index', $ruleset->slug) }}"
+                            <a href="{{ route('table.index', $ruleset) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
@@ -73,7 +73,7 @@
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
                     @foreach ($rulesets as $ruleset)
                         <div class="py-1">
-                            <a href="{{ route('fixture.index', $ruleset->slug) }}"
+                            <a href="{{ route('fixture.index', $ruleset) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
@@ -99,7 +99,7 @@
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
                     @foreach ($rulesets as $ruleset)
                         <div class="py-1">
-                            <a href="{{ route('player.index', $ruleset->slug) }}"
+                            <a href="{{ route('player.index', $ruleset) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
@@ -223,7 +223,7 @@
                     x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
                     @foreach ($rulesets as $ruleset)
                         <div class="py-1">
-                            <a href="{{ route('ruleset.show', $ruleset->slug) }}"
+                            <a href="{{ route('ruleset.show', $ruleset) }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                         </div>
                     @endforeach
@@ -350,7 +350,7 @@
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                                     @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('table.index', $ruleset->slug) }}"
+                                        <a href="{{ route('table.index', $ruleset) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
                             </div>
@@ -410,7 +410,7 @@
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                                     @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('fixture.index', $ruleset->slug) }}"
+                                        <a href="{{ route('fixture.index', $ruleset) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
                                 </div>
@@ -440,7 +440,7 @@
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                                     @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('player.index', $ruleset->slug) }}"
+                                        <a href="{{ route('player.index', $ruleset) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
                                 </div>
@@ -508,7 +508,7 @@
                                     x-transition:leave="transition ease-in duration-150"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                                     @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('ruleset.show', $ruleset->slug) }}"
+                                        <a href="{{ route('ruleset.show', $ruleset) }}"
                                             class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
                                     @endforeach
                                     <a href="{{ route('page.show', 'handbook') }}"
