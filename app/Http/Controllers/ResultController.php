@@ -9,6 +9,14 @@ class ResultController extends Controller
 {
     public function show(Result $result)
     {
+        $result->load([
+            'fixture.section.ruleset',
+            'fixture.venue',
+            'frames.homePlayer',
+            'frames.awayPlayer',
+            'submittedBy',
+        ]);
+
         return view('result.show', compact('result'));
     }
 
