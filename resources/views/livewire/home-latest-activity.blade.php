@@ -2,7 +2,7 @@
     use Illuminate\Support\Str;
 @endphp
 
-<section class="bg-white shadow sm:rounded-lg overflow-hidden -mx-4 sm:mx-0" wire:poll.{{ $pollInterval }}s>
+<section class="bg-white shadow-sm sm:rounded-lg overflow-hidden -mx-4 sm:mx-0" wire:poll.{{ $pollInterval }}s>
     <div class="px-4 py-4 sm:px-6 bg-green-700 flex flex-wrap items-center gap-3 text-white">
         <h2 class="text-sm font-medium leading-6 uppercase tracking-wide">Latest activity</h2>
         <span class="ml-auto text-xs font-semibold text-green-50">Auto refresh · {{ $pollInterval }}s</span>
@@ -49,7 +49,7 @@
                     <div class="w-full px-3 pb-4 md:pb-0 md:px-3 md:w-auto md:ml-auto flex justify-end gap-3">
                         @if ($update['canResume'])
                             <a href="{{ route('result.create', $item->fixture_id) }}"
-                                class="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-md text-white bg-green-700 hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+                                class="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-md text-white bg-green-700 hover:bg-green-600 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
                                 Resume
                             </a>
                         @endif

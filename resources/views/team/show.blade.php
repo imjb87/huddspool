@@ -11,7 +11,7 @@
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
                 <div class="sm:self-start w-full lg:w-1/3 gap-y-6 flex flex-col">
-                    <div class="overflow-hidden bg-white shadow rounded-lg">
+                    <div class="overflow-hidden bg-white shadow-sm rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                             <div class="flex items-start space-x-5">
                                 <div class="pt-1.5">
@@ -47,7 +47,7 @@
                             </dl>
                         </div>
                     </div>
-                    <div class="bg-green-700 shadow rounded-md sm:rounded-lg overflow-hidden">
+                    <div class="bg-green-700 shadow-sm rounded-md sm:rounded-lg overflow-hidden">
                         <div class="px-4 sm:px-6 py-4">
                             <h2 class="text-sm font-medium leading-6 text-white">Players</h2>
                         </div>
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <section class="w-full lg:w-2/3">
-                    <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
+                    <div class="bg-white shadow-sm rounded-lg flex flex-col overflow-hidden">
                         <div class="px-4 py-4 sm:px-6 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Fixtures &amp; Results</h2>
                         </div>
@@ -183,7 +183,7 @@
         <div class="py-8 sm:py-16">
             <div class="mx-auto max-w-7xl px-4 lg:px-8">
                 <section>
-                    <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
+                    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
                         <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
                             <h2 class="text-sm font-medium leading-6 text-white">History</h2>
                         </div>

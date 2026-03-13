@@ -16,13 +16,13 @@
                         @can('resumeSubmission', $result)
                             <div class="flex mb-4">
                                 <a href="{{ route('result.create', $result->fixture_id) }}"
-                                    class="block w-full text-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+                                    class="block w-full text-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
                                     Continue submitting result
                                 </a>
                             </div>
                         @endcan
                     @endif
-                    <div class="overflow-hidden bg-white shadow rounded-lg">
+                    <div class="overflow-hidden bg-white shadow-sm rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                             <div class="flex items-start space-x-5">
                                 <div class="pt-1.5">
@@ -67,7 +67,7 @@
                     </div>
                     @endif
                     <div>
-                        <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+                        <div class="overflow-hidden shadow-sm rounded-lg divide-y divide-gray-200">
                             <div class="bg-green-700 hidden sm:flex">
                                 <div class="flex-1 leading-6 py-2 px-4 text-right font-semibold text-white text-sm">
                                     Home
@@ -81,7 +81,7 @@
                             @if ($result->is_overridden)
                             <div class="px-6 py-4">
                                 <div
-                                    class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     <span class="mt-2 block text-sm font-semibold text-gray-900">This match was
                                         overridden by an admin.</span>
                                 </div>

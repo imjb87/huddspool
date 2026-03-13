@@ -16,12 +16,12 @@
                         @if (! $fixture->result || ! $fixture->result->is_confirmed)
                             @if ($fixture->fixture_date->lte(now()))
                                 <a href="{{ route('result.create', $fixture->id) }}"
-                                    class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
+                                    class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-xs text-white bg-green-700 hover:bg-green-800 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
                                     {{ $fixture->result ? 'Update Result' : 'Submit Result' }}
                                 </a>
                             @else
                                 <button disabled
-                                    class="tooltip w-full mb-4 block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
+                                    class="tooltip w-full mb-4 block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-xs text-white bg-gray-500 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
                                     <div class="tooltip-text">Oops! You're a bit early! Come back to submit a result from
                                         {{ $fixture->fixture_date->format('l jS F Y') }}
                                     </div>
@@ -30,7 +30,7 @@
                             @endif
                         @endif
                     @endcan
-                    <div class="overflow-hidden bg-white shadow rounded-lg">
+                    <div class="overflow-hidden bg-white shadow-sm rounded-lg">
                         <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                             <div class="flex items-start space-x-5">
                                 <div class="pt-1.5">
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
-                    <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
+                    <div class="bg-white shadow-sm rounded-md sm:rounded-lg overflow-hidden">
                         <div class="px-4 py-4 sm:px-6 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Head to head</h2>
                         </div>
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-green-700 shadow rounded-md sm:rounded-lg overflow-hidden">
+                    <div class="bg-green-700 shadow-sm rounded-md sm:rounded-lg overflow-hidden">
                         <div class="px-4 sm:px-6 py-4">
                             <h2 class="text-sm font-medium leading-6 text-white">{{ $fixture->homeTeam->name }}
                             </h2>
@@ -198,7 +198,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-green-700 shadow rounded-md sm:rounded-lg overflow-hidden">
+                    <div class="bg-green-700 shadow-sm rounded-md sm:rounded-lg overflow-hidden">
                         <div class="px-4 sm:px-6 py-4">
                             <h2 class="text-sm font-medium leading-6 text-white">
                                 {{ $fixture->awayTeam->name }}

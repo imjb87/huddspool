@@ -10,7 +10,7 @@
             </div>
 
             @forelse ($seasonGroups as $group)
-                <section class="mb-8 bg-white shadow sm:rounded-lg overflow-hidden">
+                <section class="mb-8 bg-white shadow-sm sm:rounded-lg overflow-hidden">
                     <div class="px-4 sm:px-6 py-4 bg-green-700">
                         <div class="flex items-center justify-between gap-4">
                             <div>

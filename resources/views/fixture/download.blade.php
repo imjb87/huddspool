@@ -23,7 +23,7 @@
             <h1 class="text-4xl font-bold tracking-tight text-gray-900 font-serif mb-1">{{ $section->name }}</h1>
             <p class="text-sm uppercase tracking-widest">{{ $section->season->name }}</p>
         </div>
-        <div class="bg-white shadow overflow-hidden -mx-4 sm:mx-0">
+        <div class="bg-white shadow-sm overflow-hidden -mx-4 sm:mx-0">
             <table class="min-w-full divide-y divide-gray-300 table-fixed">
                 <thead>
                     <tr class="bg-green-700 text-white">

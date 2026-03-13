@@ -17,7 +17,7 @@
                         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             @foreach ($seasonKnockouts as $knockout)
                                 <a href="{{ route('knockout.show', $knockout) }}"
-                                    class="rounded-lg border border-gray-200 bg-white px-4 py-4 shadow-sm transition hover:border-green-600 hover:shadow-md">
+                                    class="rounded-lg border border-gray-200 bg-white px-4 py-4 shadow-xs transition hover:border-green-600 hover:shadow-md">
                                     <p class="text-base font-semibold text-gray-900">{{ $knockout->name }}</p>
                                     <p class="text-sm text-gray-500">{{ $knockout->type?->getLabel() }}</p>
                                 </a>

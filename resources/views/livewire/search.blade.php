@@ -1,4 +1,4 @@
-<div class="relative z-[99] duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
+<div class="relative z-99 duration-300 {{ $isOpen ? 'visible opacity-100' : 'invisible opacity-0' }}" role="dialog"
     aria-modal="true" x-data="{ open: @entangle('isOpen').live }">
 
     <div class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" x-show="open"

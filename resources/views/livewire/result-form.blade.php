@@ -9,7 +9,7 @@
         </div>
     @endif
 
-    <div class="overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+    <div class="overflow-hidden shadow-sm rounded-lg divide-y divide-gray-200">
         <div class="bg-green-700 hidden sm:flex">
             <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
                 {{ $fixture->homeTeam->name }}
@@ -109,7 +109,7 @@
     <div class="flex gap-x-3 pt-8 justify-end">
         <a
             href="{{ route('fixture.show', $fixture->id) }}"
-            class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+            class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
         >
             Cancel
         </a>
@@ -117,7 +117,7 @@
         @if (! $isLocked && $canEdit)
             <button
                 type="submit"
-                class="inline-flex justify-center rounded-md bg-green-700 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+                class="inline-flex justify-center rounded-md bg-green-700 py-2 px-3 text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
                 wire:loading.attr="disabled"
                 wire:target="submit"
             >

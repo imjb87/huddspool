@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Section;
+
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
-        return view('home');
+        return view('home', [
+            'title' => 'Home',
+        ]);
     }
 }

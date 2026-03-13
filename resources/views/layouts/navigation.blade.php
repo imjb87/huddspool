@@ -308,7 +308,7 @@
         </div>
     </nav>
     <!-- Mobile menu, show/hide based on menu open state. -->
-    <div class="lg:hidden relative z-[99]" role="dialog" aria-modal="true" @click.away="open = false"
+    <div class="lg:hidden relative z-99" role="dialog" aria-modal="true" @click.away="open = false"
         @close.stop="open = false" @keydown.escape="open = false" x-cloak x-show="open">
         <!-- Background backdrop, show/hide based on slide-over state. -->
         <div class="fixed inset-0 z-20 bg-gray-500 bg-opacity-50 transition-opacity" x-show="open"

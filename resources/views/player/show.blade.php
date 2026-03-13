@@ -10,10 +10,10 @@
                 </div>
             </div>
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
-                <div class="overflow-hidden bg-white shadow rounded-lg sm:self-start w-full lg:w-1/3">
+                <div class="overflow-hidden bg-white shadow-sm rounded-lg sm:self-start w-full lg:w-1/3">
                     <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
                         <div class="flex items-start space-x-5">
-                            <div class="flex-shrink-0">
+                            <div class="shrink-0">
                                 @can('updateAvatar', $player)
                                     <form method="POST" action="{{ route('player.avatar', $player) }}"
                                         enctype="multipart/form-data" class="relative group">
@@ -101,7 +101,7 @@
 
                 <section class="w-full lg:w-2/3">
                     <dl
-                        class="mb-5 grid grid-cols-3 divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:grid-cols-3 divide-x">
+                        class="mb-5 grid grid-cols-3 divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm md:grid-cols-3 divide-x">
                         <div class="px-4 py-5 sm:p-6">
                             <dt class="text-base font-normal text-gray-900">Played</dt>
                             <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
@@ -134,7 +134,7 @@
                         </div>
                     </dl>
 
-                    <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden">
+                    <div class="bg-white shadow-sm rounded-lg flex flex-col overflow-hidden">
                         <div class="px-4 py-4 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Frames</h2>
                         </div>
@@ -173,7 +173,7 @@
                                                             @endif
                                                         @endif
                                                     </div>
-                                                    <div class="flex flex-col flex-grow">
+                                                    <div class="flex flex-col grow">
                                                         <div>
                                                         {{ $frame->home_player_id == $player->id ? $frame->away_player_name : $frame->home_player_name }}
                                                         </div>
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white shadow rounded-lg flex flex-col overflow-hidden mt-6">
+                    <div class="bg-white shadow-sm rounded-lg flex flex-col overflow-hidden mt-6">
                         <div class="px-4 py-4 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Knockout matches</h2>
                         </div>
@@ -233,7 +233,7 @@
                                         @if ($match->starts_at && $match->home_participant_id && $match->away_participant_id)
                                             @can('submitResult', $match)
                                                 <a href="{{ route('knockout.matches.submit', $match) }}"
-                                                    class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-800">
+                                                    class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-green-800">
                                                     Submit result
                                                 </a>
                                             @endcan
@@ -255,7 +255,7 @@
         <div class="py-8 sm:py-16">
             <div class="mx-auto max-w-7xl px-4 lg:px-8">
                 <section>
-                    <div class="bg-white shadow sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
+                    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
                         <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
                             <h2 class="text-sm font-medium leading-6 text-white">History</h2>
                         </div>

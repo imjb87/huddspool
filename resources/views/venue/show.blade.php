@@ -13,7 +13,7 @@
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-4">
                 <div class="w-full lg:w-1/3 flex flex-col gap-4">
-                    <div class="rounded-lg bg-white shadow-sm ring-1 ring-gray-900/5">
+                    <div class="rounded-lg bg-white shadow-xs ring-1 ring-gray-900/5">
                         <dl class="flex flex-wrap">
                             <div class="flex-auto pl-6 pt-6">
                                 <dt class="text-sm font-semibold leading-6 text-gray-900">Address</dt>
@@ -37,7 +37,7 @@
                             </div>
                         </dl>
                     </div>
-                    <div class="bg-white shadow rounded-md sm:rounded-lg overflow-hidden">
+                    <div class="bg-white shadow-sm rounded-md sm:rounded-lg overflow-hidden">
                         <div class="px-4 py-4 lg:px-6 bg-green-700">
                             <h2 class="text-sm font-medium leading-6 text-white">Teams</h2>
                         </div>
