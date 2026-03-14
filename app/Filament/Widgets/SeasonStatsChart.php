@@ -2,9 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Frame;
-use App\Models\Result;
-use App\Models\Season;
+use App\Queries\GetSeasonSeriesStats;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Cache;
 
@@ -79,60 +77,6 @@ class SeasonStatsChart extends ChartWidget
 
     private function getSeasonSeries(): array
     {
-        return Cache::remember('stats:season-series-chart', now()->addMinutes(10), function () {
-            $seasons = Season::query()
-                ->orderByDesc('id')
-                ->limit(6)
-                ->get()
-                ->reverse();
-
-            $labels = [];
-            $players = [];
-            $results = [];
-            $frames = [];
-
-            foreach ($seasons as $season) {
-                $labels[] = $season->name ?: 'Season '.$season->id;
-                $seasonId = $season->id;
-
-                $frameBase = Frame::query()
-                    ->whereHas('result', function ($query) use ($seasonId) {
-                        $query->whereHas('fixture', fn ($q) => $q->where('season_id', $seasonId))
-                            ->orWhereHas('section', fn ($q) => $q->where('season_id', $seasonId));
-                    });
-
-                $homePlayerIds = (clone $frameBase)
-                    ->whereNotNull('home_player_id')
-                    ->distinct()
-                    ->pluck('home_player_id');
-
-                $awayPlayerIds = (clone $frameBase)
-                    ->whereNotNull('away_player_id')
-                    ->distinct()
-                    ->pluck('away_player_id');
-
-                $players[] = $homePlayerIds
-                    ->merge($awayPlayerIds)
-                    ->filter()
-                    ->unique()
-                    ->count();
-
-                $frames[] = (clone $frameBase)->count();
-
-                $results[] = Result::query()
-                    ->where(function ($query) use ($seasonId) {
-                        $query->whereHas('fixture', fn ($q) => $q->where('season_id', $seasonId))
-                            ->orWhereHas('section', fn ($q) => $q->where('season_id', $seasonId));
-                    })
-                    ->count();
-            }
-
-            return [
-                'labels' => $labels,
-                'players' => $players,
-                'results' => $results,
-                'frames' => $frames,
-            ];
-        });
+        return Cache::remember('stats:season-series-chart', now()->addMinutes(10), fn (): array => (new GetSeasonSeriesStats)());
     }
 }
