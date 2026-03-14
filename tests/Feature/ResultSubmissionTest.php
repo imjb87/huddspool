@@ -72,9 +72,9 @@ class ResultSubmissionTest extends TestCase
 
         $component = Livewire::test(ResultForm::class, ['fixture' => $fixture]);
 
-        $component->set('frames.1.home_player_id', (string) $homePlayers[0]->id);
-        $component->set('frames.1.away_player_id', (string) $awayPlayers[0]->id);
-        $component->set('frames.1.home_score', 1);
+        $component->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('form.frames.1.home_score', 1);
 
         $result = Result::first();
 
@@ -87,8 +87,8 @@ class ResultSubmissionTest extends TestCase
         $this->assertCount(1, $result->frames);
         $this->assertEquals((int) $homePlayers[0]->id, $result->frames->first()->home_player_id);
 
-        $component->assertSet('homeScore', 1);
-        $component->assertSet('awayScore', 0);
+        $component->assertSet('form.homeScore', 1);
+        $component->assertSet('form.awayScore', 0);
 
         Carbon::setTestNow();
     }
@@ -143,9 +143,9 @@ class ResultSubmissionTest extends TestCase
 
         $component = Livewire::test(ResultForm::class, ['fixture' => $fixture]);
 
-        $component->set('frames.1.home_player_id', (string) $homePlayers[0]->id);
-        $component->set('frames.1.away_player_id', (string) $awayPlayers[0]->id);
-        $component->set('frames.1.home_score', 1);
+        $component->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('form.frames.1.home_score', 1);
 
         $draftCreatedAt = Result::firstOrFail()->created_at;
 
@@ -155,15 +155,15 @@ class ResultSubmissionTest extends TestCase
             $homePlayer = $homePlayers[intdiv($i - 1, 2)];
             $awayPlayer = $awayPlayers[intdiv($i - 1, 2)];
 
-            $component->set("frames.$i.home_player_id", (string) $homePlayer->id);
-            $component->set("frames.$i.away_player_id", (string) $awayPlayer->id);
+            $component->set("form.frames.$i.home_player_id", (string) $homePlayer->id);
+            $component->set("form.frames.$i.away_player_id", (string) $awayPlayer->id);
 
             if ($i % 2 === 1) {
-                $component->set("frames.$i.home_score", 1);
-                $component->set("frames.$i.away_score", 0);
+                $component->set("form.frames.$i.home_score", 1);
+                $component->set("form.frames.$i.away_score", 0);
             } else {
-                $component->set("frames.$i.home_score", 0);
-                $component->set("frames.$i.away_score", 1);
+                $component->set("form.frames.$i.home_score", 0);
+                $component->set("form.frames.$i.away_score", 1);
             }
         }
 
@@ -204,23 +204,23 @@ class ResultSubmissionTest extends TestCase
         $component = Livewire::actingAs($teamAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture]);
 
-        $component->set('frames.1.home_player_id', (string) $homePlayers[0]->id);
-        $component->set('frames.1.away_player_id', (string) $awayPlayers[0]->id);
-        $component->set('frames.1.home_score', 1);
+        $component->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('form.frames.1.home_score', 1);
 
         $result = Result::firstOrFail()->load(['frames' => fn ($query) => $query->orderBy('id')]);
         $firstFrameId = $result->frames[0]->id;
 
-        $component->set('frames.2.home_player_id', (string) $homePlayers[1]->id);
-        $component->set('frames.2.away_player_id', (string) $awayPlayers[1]->id);
-        $component->set('frames.2.home_score', 1);
+        $component->set('form.frames.2.home_player_id', (string) $homePlayers[1]->id);
+        $component->set('form.frames.2.away_player_id', (string) $awayPlayers[1]->id);
+        $component->set('form.frames.2.home_score', 1);
 
         $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
 
         $this->assertCount(2, $result->frames);
         $this->assertSame($firstFrameId, $result->frames[0]->id);
 
-        $component->set('frames.2.home_score', 0);
+        $component->set('form.frames.2.home_score', 0);
 
         $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
 
@@ -328,9 +328,9 @@ class ResultSubmissionTest extends TestCase
         $this->actingAs($teamAdmin);
 
         Livewire::test(ResultForm::class, ['fixture' => $fixture])
-            ->set('frames.1.home_player_id', (string) $homePlayer->id)
-            ->set('frames.1.away_player_id', (string) $awayPlayer->id)
-            ->set('frames.1.home_score', 1);
+            ->set('form.frames.1.home_player_id', (string) $homePlayer->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayer->id)
+            ->set('form.frames.1.home_score', 1);
 
         $result = Result::first();
 
@@ -579,7 +579,7 @@ class ResultSubmissionTest extends TestCase
 
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->set('canEdit', false);
+            ->set('form.homeScore', 999);
     }
 
     /**
@@ -654,15 +654,15 @@ class ResultSubmissionTest extends TestCase
             $homePlayer = $homePlayers[intdiv($i - 1, 2)];
             $awayPlayer = $awayPlayers[intdiv($i - 1, 2)];
 
-            $component->set("frames.$i.home_player_id", (string) $homePlayer->id);
-            $component->set("frames.$i.away_player_id", (string) $awayPlayer->id);
+            $component->set("form.frames.$i.home_player_id", (string) $homePlayer->id);
+            $component->set("form.frames.$i.away_player_id", (string) $awayPlayer->id);
 
             if ($i % 2 === 1) {
-                $component->set("frames.$i.home_score", 1);
-                $component->set("frames.$i.away_score", 0);
+                $component->set("form.frames.$i.home_score", 1);
+                $component->set("form.frames.$i.away_score", 0);
             } else {
-                $component->set("frames.$i.home_score", 0);
-                $component->set("frames.$i.away_score", 1);
+                $component->set("form.frames.$i.home_score", 0);
+                $component->set("form.frames.$i.away_score", 1);
             }
         }
     }

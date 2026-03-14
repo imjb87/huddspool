@@ -25,7 +25,7 @@
             <div class="flex flex-wrap" wire:key="result-frame-{{ $i }}">
                 <div class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
                     <select
-                        wire:model.live="frames.{{ $i }}.home_player_id"
+                        wire:model.live="form.frames.{{ $i }}.home_player_id"
                         class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0"
                         @disabled($isLocked || ! $canEdit)
                     >
@@ -37,8 +37,8 @@
                     </select>
                     <div class="w-10 sm:w-12 border-x border-gray-200">
                         <select
-                            wire:model.live="frames.{{ $i }}.home_score"
-                            name="frames.{{ $i }}.home_score"
+                            wire:model.live="form.frames.{{ $i }}.home_score"
+                            name="form.frames.{{ $i }}.home_score"
                             class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                             placeholder="0"
                             @disabled($isLocked || ! $canEdit)
@@ -57,8 +57,8 @@
                 <div class="w-full sm:w-auto flex sm:flex-1 order-last">
                     <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
                         <select
-                        wire:model.live="frames.{{ $i }}.away_score"
-                        name="frames.{{ $i }}.away_score"
+                        wire:model.live="form.frames.{{ $i }}.away_score"
+                        name="form.frames.{{ $i }}.away_score"
                         class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
                         placeholder="0"
                         @disabled($isLocked || ! $canEdit)
@@ -68,7 +68,7 @@
                     </select>
                 </div>
                 <select
-                    wire:model.live="frames.{{ $i }}.away_player_id"
+                    wire:model.live="form.frames.{{ $i }}.away_player_id"
                     class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0"
                     @disabled($isLocked || ! $canEdit)
                 >
@@ -86,14 +86,14 @@
                 <div class="flex-1 leading-6 py-2 px-4 sm:text-right">
                     Home total
                 </div>
-                <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200">
-                    {{ $this->homeScore }}
+                    <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200">
+                    {{ $form->homeScore }}
+                    </div>
                 </div>
-            </div>
             <div class="w-10 sm:w-12 bg-gray-50"></div>
             <div class="w-full sm:w-auto flex sm:flex-1">
                 <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200 order-last sm:order-first">
-                    {{ $this->awayScore }}
+                    {{ $form->awayScore }}
                 </div>
                 <div class="flex-1 leading-6 py-2 px-4 order-first sm:order-last">
                     Away total

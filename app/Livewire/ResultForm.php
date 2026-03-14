@@ -2,16 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\FixtureResultForm;
 use App\Models\Fixture;
 use App\Models\FixtureResultLock;
 use App\Models\Frame;
 use App\Models\Result;
-use App\Rules\BothPlayersAwardedIfOneIs;
-use App\Rules\FrameScoreEqualsOne;
-use App\Rules\FrameScoresAddUpToTen;
-use App\Rules\PlayerLimit;
-use App\Rules\TotalScoresAddUpToTen;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -22,18 +17,9 @@ class ResultForm extends Component
 {
     public Fixture $fixture;
 
+    public FixtureResultForm $form;
+
     public ?Result $result = null;
-
-    public array $frames = [];
-
-    #[Locked]
-    public int $homeScore = 0;
-
-    #[Locked]
-    public int $awayScore = 0;
-
-    #[Locked]
-    public int $totalScore = 0;
 
     #[Locked]
     public bool $isLocked = false;
@@ -63,9 +49,11 @@ class ResultForm extends Component
         $this->initializeLock();
     }
 
-    public function updatedFrames($value, $key): void
+    public function updated($propertyName, $value): void
     {
-        $this->handleFrameUpdate();
+        if (str_starts_with($propertyName, 'form.frames.')) {
+            $this->handleFrameUpdate();
+        }
     }
 
     public function submit()
@@ -80,7 +68,7 @@ class ResultForm extends Component
             return $this->redirectToFixtureOrResult();
         }
 
-        $frames = $this->prepareFrames(requireComplete: true);
+        $frames = $this->form->prepareFrames(requireComplete: true);
         $result = $this->persistFrames($frames, lock: true);
 
         $this->syncComponentState($result);
@@ -161,17 +149,18 @@ class ResultForm extends Component
 
     private function hydrateResultState(): void
     {
-        $this->syncResultState($this->fixture->result);
+        $this->syncComponentState($this->fixture->result);
     }
 
-    private function syncComponentState(Result $result): void
+    private function syncComponentState(?Result $result): void
     {
-        $this->syncResultState($result->load(['frames' => fn ($query) => $query->orderBy('id')]));
+        $this->result = $result?->load(['frames' => fn ($query) => $query->orderBy('id')]);
+        $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
+        $this->form->syncFromResult($this->result);
     }
 
-    private function handleFrameUpdate(): void
+    public function handleFrameUpdate(): void
     {
-        $this->recalculateScores();
         $this->refreshActionState();
 
         if ($this->isLocked || ! $this->canEdit) {
@@ -179,7 +168,7 @@ class ResultForm extends Component
         }
 
         try {
-            $frames = $this->prepareFrames(requireComplete: false, allowEmpty: true);
+            $frames = $this->form->prepareFrames(requireComplete: false, allowEmpty: true);
         } catch (ValidationException $exception) {
             throw $exception;
         }
@@ -188,67 +177,23 @@ class ResultForm extends Component
             return;
         }
 
-        if ($this->framesMatchExisting($frames)) {
+        if ($this->form->matchesExistingFrames($this->result, $frames)) {
             return;
         }
 
         $result = $this->persistFrames($frames, lock: false);
 
-        $this->result = $result;
-        $this->isLocked = (bool) $result->is_confirmed;
-    }
-
-    private function validateSharedRules(array $frames): void
-    {
-        $rules = [
-            new BothPlayersAwardedIfOneIs($frames),
-            new FrameScoreEqualsOne($frames),
-            new PlayerLimit($frames),
-        ];
-
-        foreach ($rules as $rule) {
-            if (! $rule->passes('frames', $frames)) {
-                throw ValidationException::withMessages([
-                    'frames' => $rule->message(),
-                ]);
-            }
-        }
-    }
-
-    private function validateLockSpecificRules(array $frames): void
-    {
-        $totalFramesScore = array_reduce($frames, function ($total, $frame) {
-            return $total + $frame['home_score'] + $frame['away_score'];
-        }, 0);
-
-        $lockRules = [
-            new FrameScoresAddUpToTen($frames),
-            new TotalScoresAddUpToTen,
-        ];
-
-        foreach ($lockRules as $rule) {
-            $attribute = $rule instanceof TotalScoresAddUpToTen ? 'totalScore' : 'frames';
-            $value = $rule instanceof TotalScoresAddUpToTen ? $totalFramesScore : $frames;
-
-            if (! $rule->passes($attribute, $value)) {
-                throw ValidationException::withMessages([
-                    $attribute === 'totalScore' ? 'frames' : $attribute => $rule->message(),
-                ]);
-            }
-        }
+        $this->syncComponentState($result);
     }
 
     private function persistFrames(array $frames, bool $lock): Result
     {
-        $homeScore = array_sum(array_column($frames, 'home_score'));
-        $awayScore = array_sum(array_column($frames, 'away_score'));
-
         $isOverridden = $this->result?->is_overridden ?? 0;
 
-        return DB::transaction(function () use ($frames, $homeScore, $awayScore, $lock, $isOverridden) {
+        return DB::transaction(function () use ($frames, $lock, $isOverridden) {
             $attributes = [
-                'home_score' => $homeScore,
-                'away_score' => $awayScore,
+                'home_score' => $this->form->homeScore,
+                'away_score' => $this->form->awayScore,
                 'is_confirmed' => $lock,
                 'is_overridden' => $isOverridden,
                 'section_id' => $this->fixture->section_id,
@@ -278,20 +223,6 @@ class ResultForm extends Component
         });
     }
 
-    private function normalizePlayerId($value): ?int
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    private function normalizeScore($value): int
-    {
-        return (int) $value;
-    }
-
     /**
      * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
      */
@@ -319,113 +250,9 @@ class ResultForm extends Component
             ->delete();
     }
 
-    private function syncResultState(?Result $result): void
-    {
-        $this->result = $result;
-        $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
-
-        if (! $this->result) {
-            $this->frames = $this->emptyFrames();
-            $this->homeScore = 0;
-            $this->awayScore = 0;
-            $this->totalScore = 0;
-
-            return;
-        }
-
-        $frames = $this->result->frames->sortBy('id')->values();
-
-        $this->frames = $this->mapFramesToState($frames);
-        $this->homeScore = (int) $this->result->home_score;
-        $this->awayScore = (int) $this->result->away_score;
-        $this->totalScore = $this->homeScore + $this->awayScore;
-    }
-
-    /**
-     * @param  Collection<int, Frame>  $frames
-     * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
-     */
-    private function mapFramesToState(Collection $frames): array
-    {
-        $state = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $frames[$i - 1] ?? null;
-
-            $state[$i] = [
-                'home_player_id' => $frame?->home_player_id,
-                'away_player_id' => $frame?->away_player_id,
-                'home_score' => $frame?->home_score ?? 0,
-                'away_score' => $frame?->away_score ?? 0,
-            ];
-        }
-
-        return $state;
-    }
-
-    private function emptyFrames(): array
-    {
-        $frames = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frames[$i] = [
-                'home_player_id' => null,
-                'away_player_id' => null,
-                'home_score' => 0,
-                'away_score' => 0,
-            ];
-        }
-
-        return $frames;
-    }
-
     private function isHomeOrAwayTeam(int $teamId): bool
     {
         return $this->fixture->homeTeam->id === $teamId || $this->fixture->awayTeam->id === $teamId;
-    }
-
-    private function recalculateScores(): void
-    {
-        $this->homeScore = array_sum(array_column($this->frames, 'home_score'));
-        $this->awayScore = array_sum(array_column($this->frames, 'away_score'));
-        $this->totalScore = $this->homeScore + $this->awayScore;
-    }
-
-    private function framesMatchExisting(array $frames): bool
-    {
-        if (! $this->result) {
-            return empty($frames);
-        }
-
-        $existing = $this->result->relationLoaded('frames')
-            ? $this->result->frames
-            : $this->result->frames()->orderBy('id')->get();
-
-        $existing = $existing->values();
-        $payload = array_values($frames);
-
-        if ($existing->count() !== count($payload)) {
-            return false;
-        }
-
-        foreach ($payload as $index => $frame) {
-            $existingFrame = $existing[$index] ?? null;
-
-            if (! $existingFrame) {
-                return false;
-            }
-
-            if (
-                (int) $existingFrame->home_player_id !== $frame['home_player_id'] ||
-                (int) $existingFrame->away_player_id !== $frame['away_player_id'] ||
-                (int) $existingFrame->home_score !== $frame['home_score'] ||
-                (int) $existingFrame->away_score !== $frame['away_score']
-            ) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private function initializeLock(): void
@@ -487,70 +314,5 @@ class ResultForm extends Component
         }
 
         return redirect()->route('fixture.show', $this->fixture);
-    }
-
-    private function prepareFrames(bool $requireComplete, bool $allowEmpty = false): array
-    {
-        $frames = [];
-        $errors = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $this->frames[$i] ?? [
-                'home_player_id' => null,
-                'away_player_id' => null,
-                'home_score' => 0,
-                'away_score' => 0,
-            ];
-
-            $homePlayer = $this->normalizePlayerId($frame['home_player_id'] ?? null);
-            $awayPlayer = $this->normalizePlayerId($frame['away_player_id'] ?? null);
-            $homeScore = $this->normalizeScore($frame['home_score'] ?? 0);
-            $awayScore = $this->normalizeScore($frame['away_score'] ?? 0);
-
-            $hasAnyInput = $homePlayer !== null || $awayPlayer !== null || $homeScore > 0 || $awayScore > 0;
-            $scoresAreValid = in_array($homeScore, [0, 1], true) && in_array($awayScore, [0, 1], true);
-            $isComplete = $homePlayer !== null && $awayPlayer !== null && $scoresAreValid && ($homeScore + $awayScore) === 1;
-
-            if (! $isComplete) {
-                if ($requireComplete && $hasAnyInput) {
-                    $errors["frames.$i"] = 'Complete every frame before submitting.';
-                }
-
-                continue;
-            }
-
-            $frames[$i] = [
-                'home_player_id' => $homePlayer,
-                'away_player_id' => $awayPlayer,
-                'home_score' => $homeScore,
-                'away_score' => $awayScore,
-            ];
-        }
-
-        if (! empty($errors)) {
-            throw ValidationException::withMessages($errors);
-        }
-
-        if (empty($frames) && ! $allowEmpty) {
-            throw ValidationException::withMessages([
-                'frames' => 'Add at least one completed frame before saving.',
-            ]);
-        }
-
-        if (! empty($frames)) {
-            $this->validateSharedRules($frames);
-        }
-
-        if ($requireComplete) {
-            if (count($frames) !== 10) {
-                throw ValidationException::withMessages([
-                    'frames' => 'All 10 frames must be completed before submitting.',
-                ]);
-            }
-
-            $this->validateLockSpecificRules($frames);
-        }
-
-        return $frames;
     }
 }
