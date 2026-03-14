@@ -6,12 +6,9 @@ use App\Models\Fixture;
 use App\Models\Section;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class SectionFixtures extends Component
 {
-    use WithPagination;
-
     public Section $section;
 
     public int $week = 1;
