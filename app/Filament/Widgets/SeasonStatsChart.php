@@ -11,9 +11,9 @@ class SeasonStatsChart extends ChartWidget
 {
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $heading = '6 season trend';
+    protected ?string $heading = '3 season trend';
 
-    protected ?string $description = 'Players, matches, and frames shown side by side across the last 6 seasons.';
+    protected ?string $description = 'Players, matches, and frames shown side by side across the last 3 seasons.';
 
     protected ?string $maxHeight = '320px';
 

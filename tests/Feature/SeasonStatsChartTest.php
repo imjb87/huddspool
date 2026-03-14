@@ -35,8 +35,8 @@ class SeasonStatsChartTest extends TestCase
         Livewire::actingAs($admin)
             ->test(SeasonStatsChart::class)
             ->assertStatus(200)
-            ->assertSee('6 season trend')
-            ->assertSee('Players, matches, and frames shown side by side across the last 6 seasons.')
+            ->assertSee('3 season trend')
+            ->assertSee('Players, matches, and frames shown side by side across the last 3 seasons.')
             ->assertSee('Players')
             ->assertSee('Matches')
             ->assertSee('Frames');

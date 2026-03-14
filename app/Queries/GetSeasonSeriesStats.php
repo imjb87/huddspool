@@ -22,7 +22,7 @@ class GetSeasonSeriesStats
      *     frames: array<int, int>
      * }
      */
-    public function __invoke(int $limit = 6): array
+    public function __invoke(int $limit = 3): array
     {
         $seasons = Season::query()
             ->orderByDesc('id')

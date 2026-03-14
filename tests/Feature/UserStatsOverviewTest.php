@@ -72,6 +72,29 @@ class UserStatsOverviewTest extends TestCase
         $this->assertFalse($queries->contains(fn (string $query): bool => str_contains($query, 'select distinct `away_player_id`')));
     }
 
+    public function test_season_series_stats_default_to_last_three_seasons(): void
+    {
+        Cache::flush();
+
+        $ruleset = Ruleset::factory()->create();
+        $seasons = Season::factory()->count(4)->create()->all();
+
+        foreach ($seasons as $index => $season) {
+            $this->createSeasonResultWithFrames($season, $ruleset, 6 + $index, 4);
+        }
+
+        $series = (new GetSeasonSeriesStats)();
+
+        $this->assertSame([
+            $seasons[1]->name,
+            $seasons[2]->name,
+            $seasons[3]->name,
+        ], $series['labels']);
+        $this->assertCount(3, $series['players']);
+        $this->assertCount(3, $series['results']);
+        $this->assertCount(3, $series['frames']);
+    }
+
     private function createSeasonResultWithFrames(Season $season, Ruleset $ruleset, int $homeScore, int $awayScore): void
     {
         $section = Section::factory()->create([
