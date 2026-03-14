@@ -21,6 +21,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-site-search-trigger', false);
         $response->assertSee('focus-first-search-result', false);
         $response->assertSee('Ctrl K', false);
+        $response->assertSee('placeholder="Search players, teams, venues..."', false);
+        $response->assertSee('pl-11 pr-4', false);
+        $response->assertSee('sm:pr-24', false);
         $response->assertSee('<a href="/" class="-m-1.5 p-1.5">', false);
         $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);

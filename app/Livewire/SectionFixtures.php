@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Fixture;
 use App\Models\Section;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class SectionFixtures extends Component
@@ -25,6 +27,17 @@ class SectionFixtures extends Component
         }
     }
 
+    #[Computed]
+    public function fixtures(): Collection
+    {
+        return Fixture::query()
+            ->with(['result', 'homeTeam', 'awayTeam'])
+            ->where('section_id', $this->section->id)
+            ->where('week', $this->week)
+            ->orderBy('fixture_date')
+            ->get();
+    }
+
     public function previousWeek(): void
     {
         $this->week--;
@@ -40,12 +53,7 @@ class SectionFixtures extends Component
         return view(
             'livewire.section-fixtures',
             [
-                'fixtures' => Fixture::query()
-                    ->with(['result', 'homeTeam', 'awayTeam'])
-                    ->where('section_id', $this->section->id)
-                    ->where('week', $this->week)
-                    ->orderBy('fixture_date')
-                    ->get(),
+                'fixtures' => $this->fixtures,
             ]
         );
     }

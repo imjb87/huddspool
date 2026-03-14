@@ -4,13 +4,19 @@ namespace App\Livewire\Player;
 
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class SectionShow extends Component
 {
     public Section $section;
+
     public bool $history = false;
+
     public int $page = 1;
+
     public int $perPage = 10;
 
     public function mount(Section $section): void
@@ -37,13 +43,17 @@ class SectionShow extends Component
         }
     }
 
-    public function render()
+    #[Computed]
+    public function players(): Collection
     {
-        $players = (new GetSectionAverages($this->section, $this->page, $this->perPage))();
+        return (new GetSectionAverages($this->section, $this->page, $this->perPage))();
+    }
 
+    public function render(): View
+    {
         return view('livewire.player.section-show', [
             'section' => $this->section,
-            'players' => $players,
+            'players' => $this->players,
             'history' => $this->history,
             'page' => $this->page,
             'perPage' => $this->perPage,

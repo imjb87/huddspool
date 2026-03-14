@@ -43,8 +43,8 @@
                 <input type="search" id="searchInput" x-ref="searchInput" autocomplete="off"
                     wire:model.live.debounce.300ms="searchTerm"
                     x-on:keydown.down.prevent.stop="$dispatch('focus-first-search-result')"
-                    class="h-12 w-full border-0 bg-transparent pl-11 pr-24 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                    placeholder="Search players, teams and venues..." role="combobox"
+                    class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:pr-24 sm:text-sm"
+                    placeholder="Search players, teams, venues..." role="combobox"
                     aria-expanded="{{ ! empty($resultGroups) ? 'true' : 'false' }}" aria-controls="options">
                 <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
                     <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400">

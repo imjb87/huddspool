@@ -25,6 +25,15 @@ class SearchComponentTest extends TestCase
             ->assertSeeText('Search for players, teams and venues');
     }
 
+    public function test_component_opens_when_search_event_is_dispatched(): void
+    {
+        Livewire::test(Search::class)
+            ->set('searchTerm', 'Imperial')
+            ->dispatch('openSearch')
+            ->assertSet('isOpen', true)
+            ->assertSet('searchTerm', '');
+    }
+
     public function test_component_searches_with_a_trimmed_live_query(): void
     {
         Venue::withoutEvents(function (): void {

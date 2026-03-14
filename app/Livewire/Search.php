@@ -8,6 +8,7 @@ use App\Models\Venue;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Search extends Component
@@ -16,8 +17,7 @@ class Search extends Component
 
     public mixed $searchTerm = '';
 
-    protected $listeners = ['openSearch'];
-
+    #[On('openSearch')]
     public function openSearch(): void
     {
         $this->isOpen = true;
