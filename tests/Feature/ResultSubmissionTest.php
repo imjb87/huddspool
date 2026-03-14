@@ -11,8 +11,10 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -188,6 +190,42 @@ class ResultSubmissionTest extends TestCase
         $response->assertDontSeeText('19:00');
 
         Carbon::setTestNow();
+    }
+
+    public function test_partial_autosave_preserves_existing_frame_ids_when_later_frames_change(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $component = Livewire::actingAs($teamAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        $component->set('frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('frames.1.home_score', 1);
+
+        $result = Result::firstOrFail()->load(['frames' => fn ($query) => $query->orderBy('id')]);
+        $firstFrameId = $result->frames[0]->id;
+
+        $component->set('frames.2.home_player_id', (string) $homePlayers[1]->id);
+        $component->set('frames.2.away_player_id', (string) $awayPlayers[1]->id);
+        $component->set('frames.2.home_score', 1);
+
+        $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
+
+        $this->assertCount(2, $result->frames);
+        $this->assertSame($firstFrameId, $result->frames[0]->id);
+
+        $component->set('frames.2.home_score', 0);
+
+        $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
+
+        $this->assertCount(1, $result->frames);
+        $this->assertSame($firstFrameId, $result->frames[0]->id);
     }
 
     public function test_result_create_route_redirects_when_result_is_locked(): void
@@ -424,5 +462,208 @@ class ResultSubmissionTest extends TestCase
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->assertSet('canEdit', true)
             ->assertSet('lockedByAnother', false);
+    }
+
+    public function test_keep_lock_alive_detects_when_another_team_admin_takes_over_after_lock_expiry(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+        ] = $this->createResultFormLockContext();
+
+        $primaryComponent = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->assertSet('canEdit', true)
+            ->assertSet('lockedByAnother', false);
+
+        FixtureResultLock::query()->update(['locked_until' => now()->subMinute()]);
+
+        Livewire::actingAs($secondaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->assertSet('canEdit', true)
+            ->assertSet('lockedByAnother', false);
+
+        $this->actingAs($primaryAdmin);
+
+        $primaryComponent
+            ->call('keepLockAlive')
+            ->assertSet('canEdit', false)
+            ->assertSet('lockedByAnother', true)
+            ->assertSet('lockOwnerName', $secondaryAdmin->name);
+
+        $this->assertDatabaseHas('fixture_result_locks', [
+            'fixture_id' => $fixture->id,
+            'locked_by' => $secondaryAdmin->id,
+        ]);
+    }
+
+    public function test_submit_rechecks_edit_lock_before_confirming_result(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $primaryComponent = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        $this->fillCompletedFrames($primaryComponent, $homePlayers, $awayPlayers);
+
+        $draftResult = Result::firstOrFail();
+
+        FixtureResultLock::query()->update(['locked_until' => now()->subMinute()]);
+
+        Livewire::actingAs($secondaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->assertSet('canEdit', true)
+            ->assertSet('lockedByAnother', false);
+
+        $this->actingAs($primaryAdmin);
+
+        $primaryComponent
+            ->call('submit')
+            ->assertRedirect(route('result.show', $draftResult));
+
+        $draftResult->refresh();
+
+        $this->assertFalse($draftResult->is_confirmed);
+        $this->assertSame(0, $draftResult->submitted_by);
+        $this->assertNull($draftResult->submitted_at);
+    }
+
+    public function test_submit_detects_when_result_has_been_confirmed_by_another_admin(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $primaryComponent = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        $this->fillCompletedFrames($primaryComponent, $homePlayers, $awayPlayers);
+
+        $draftResult = Result::firstOrFail();
+        $draftResult->update([
+            'is_confirmed' => true,
+            'submitted_by' => $secondaryAdmin->id,
+            'submitted_at' => now(),
+        ]);
+
+        $primaryComponent
+            ->call('submit')
+            ->assertRedirect(route('result.show', $draftResult));
+
+        $draftResult->refresh();
+
+        $this->assertTrue($draftResult->is_confirmed);
+        $this->assertSame($secondaryAdmin->id, $draftResult->submitted_by);
+        $this->assertNotNull($draftResult->submitted_at);
+    }
+
+    public function test_derived_result_form_state_properties_are_locked_from_client_updates(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+        ] = $this->createResultFormLockContext();
+
+        $this->expectException(CannotUpdateLockedPropertyException::class);
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('canEdit', false);
+    }
+
+    /**
+     * @return array{
+     *     fixture: Fixture,
+     *     primaryAdmin: User,
+     *     secondaryAdmin: User,
+     *     homePlayers: Collection<int, User>,
+     *     awayPlayers: Collection<int, User>
+     * }
+     */
+    private function createResultFormLockContext(): array
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        Team::factory()->create();
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $primaryAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+        ]);
+
+        $secondaryAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+        ]);
+
+        $homePlayers = User::factory()->count(5)->create([
+            'team_id' => $homeTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+        ]);
+
+        $awayPlayers = User::factory()->count(5)->create([
+            'team_id' => $awayTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+        ]);
+
+        return compact('fixture', 'primaryAdmin', 'secondaryAdmin', 'homePlayers', 'awayPlayers');
+    }
+
+    /**
+     * @param  Collection<int, User>  $homePlayers
+     * @param  Collection<int, User>  $awayPlayers
+     */
+    private function fillCompletedFrames($component, $homePlayers, $awayPlayers): void
+    {
+        for ($i = 1; $i <= 10; $i++) {
+            $homePlayer = $homePlayers[intdiv($i - 1, 2)];
+            $awayPlayer = $awayPlayers[intdiv($i - 1, 2)];
+
+            $component->set("frames.$i.home_player_id", (string) $homePlayer->id);
+            $component->set("frames.$i.away_player_id", (string) $awayPlayer->id);
+
+            if ($i % 2 === 1) {
+                $component->set("frames.$i.home_score", 1);
+                $component->set("frames.$i.away_score", 0);
+            } else {
+                $component->set("frames.$i.home_score", 0);
+                $component->set("frames.$i.away_score", 1);
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@
             </div>
         </div>
         @for ($i = 1; $i <= 10; $i++)
-            <div class="flex flex-wrap">
+            <div class="flex flex-wrap" wire:key="result-frame-{{ $i }}">
                 <div class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
                     <select
                         wire:model.live="frames.{{ $i }}.home_player_id"

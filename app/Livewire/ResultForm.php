@@ -4,15 +4,18 @@ namespace App\Livewire;
 
 use App\Models\Fixture;
 use App\Models\FixtureResultLock;
+use App\Models\Frame;
 use App\Models\Result;
 use App\Rules\BothPlayersAwardedIfOneIs;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\PlayerLimit;
 use App\Rules\TotalScoresAddUpToTen;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ResultForm extends Component
@@ -23,20 +26,28 @@ class ResultForm extends Component
 
     public array $frames = [];
 
+    #[Locked]
     public int $homeScore = 0;
 
+    #[Locked]
     public int $awayScore = 0;
 
+    #[Locked]
     public int $totalScore = 0;
 
+    #[Locked]
     public bool $isLocked = false;
 
+    #[Locked]
     public bool $canEdit = false;
 
+    #[Locked]
     public bool $lockedByAnother = false;
 
+    #[Locked]
     public ?string $lockOwnerName = null;
 
+    #[Locked]
     public ?string $lockExpiresAtHuman = null;
 
     protected ?FixtureResultLock $lock = null;
@@ -45,27 +56,28 @@ class ResultForm extends Component
 
     public function mount(Fixture $fixture): void
     {
-        $this->fixture = $fixture->load(['result.frames' => fn ($query) => $query->orderBy('id')]);
+        $this->fixture = $this->loadFixture($fixture);
 
         $this->guardAccess();
         $this->hydrateResultState();
         $this->initializeLock();
     }
 
-    public function updated($propertyName, $value): void
+    public function updatedFrames($value, $key): void
     {
-        if (str_starts_with($propertyName, 'frames.')) {
-            $this->handleFrameUpdate();
-        }
+        $this->handleFrameUpdate();
     }
 
     public function submit()
     {
+        $this->refreshActionState();
+
         if ($this->isLocked) {
             return redirect()->route('result.show', $this->result);
         }
+
         if (! $this->canEdit) {
-            return redirect()->route('result.show', $this->result ?? $this->fixture->result);
+            return $this->redirectToFixtureOrResult();
         }
 
         $frames = $this->prepareFrames(requireComplete: true);
@@ -81,11 +93,7 @@ class ResultForm extends Component
 
     public function keepLockAlive(): void
     {
-        if ($this->isLocked || ! $this->canEdit) {
-            return;
-        }
-
-        $this->renewLock();
+        $this->refreshActionState();
     }
 
     public function render()
@@ -112,68 +120,61 @@ class ResultForm extends Component
         }
     }
 
-    private function hydrateResultState(): void
+    private function loadFixture(Fixture $fixture): Fixture
     {
+        return Fixture::query()
+            ->with([
+                'section',
+                'venue',
+                'homeTeam.players',
+                'awayTeam.players',
+                'result.frames' => fn ($query) => $query->orderBy('id'),
+            ])
+            ->findOrFail($fixture->getKey());
+    }
+
+    private function refreshActionState(): void
+    {
+        $this->fixture = $this->loadFixture($this->fixture);
+
+        if ($this->isHomeOrAwayTeam(1)) {
+            abort(404);
+        }
+
+        Gate::authorize('submitResult', $this->fixture);
+
+        if ($this->fixture->fixture_date->gte(now())) {
+            abort(404);
+        }
+
         $this->result = $this->fixture->result;
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
 
-        if (! $this->result) {
-            $this->frames = $this->emptyFrames();
-            $this->homeScore = 0;
-            $this->awayScore = 0;
-            $this->totalScore = 0;
+        if ($this->isLocked) {
+            $this->clearLockState();
 
             return;
         }
 
-        $frames = $this->result->frames->sortBy('id')->values();
+        $this->initializeLock();
+    }
 
-        $this->frames = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $frames[$i - 1] ?? null;
-
-            $this->frames[$i] = [
-                'home_player_id' => $frame?->home_player_id,
-                'away_player_id' => $frame?->away_player_id,
-                'home_score' => $frame?->home_score ?? 0,
-                'away_score' => $frame?->away_score ?? 0,
-            ];
-        }
-
-        $this->homeScore = (int) $this->result->home_score;
-        $this->awayScore = (int) $this->result->away_score;
-        $this->totalScore = $this->homeScore + $this->awayScore;
+    private function hydrateResultState(): void
+    {
+        $this->syncResultState($this->fixture->result);
     }
 
     private function syncComponentState(Result $result): void
     {
-        $this->result = $result->load(['frames' => fn ($query) => $query->orderBy('id')]);
-        $this->isLocked = (bool) $this->result->is_confirmed;
-
-        $this->frames = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $this->result->frames[$i - 1] ?? null;
-
-            $this->frames[$i] = [
-                'home_player_id' => $frame?->home_player_id,
-                'away_player_id' => $frame?->away_player_id,
-                'home_score' => $frame?->home_score ?? 0,
-                'away_score' => $frame?->away_score ?? 0,
-            ];
-        }
-
-        $this->homeScore = (int) $this->result->home_score;
-        $this->awayScore = (int) $this->result->away_score;
-        $this->totalScore = $this->homeScore + $this->awayScore;
+        $this->syncResultState($result->load(['frames' => fn ($query) => $query->orderBy('id')]));
     }
 
     private function handleFrameUpdate(): void
     {
         $this->recalculateScores();
+        $this->refreshActionState();
 
-        if ($this->isLocked) {
+        if ($this->isLocked || ! $this->canEdit) {
             return;
         }
 
@@ -195,7 +196,6 @@ class ResultForm extends Component
 
         $this->result = $result;
         $this->isLocked = (bool) $result->is_confirmed;
-        $this->renewLock();
     }
 
     private function validateSharedRules(array $frames): void
@@ -272,11 +272,7 @@ class ResultForm extends Component
                 $this->result->update($attributes);
             }
 
-            $this->result->frames()->delete();
-
-            foreach ($frames as $frame) {
-                $this->result->frames()->create($frame);
-            }
+            $this->syncPersistedFrames(array_values($frames));
 
             return $this->result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
         });
@@ -294,6 +290,77 @@ class ResultForm extends Component
     private function normalizeScore($value): int
     {
         return (int) $value;
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
+     */
+    private function syncPersistedFrames(array $frames): void
+    {
+        $existingFrames = $this->result
+            ? $this->result->frames()->orderBy('id')->get()->values()
+            : collect();
+
+        foreach ($frames as $index => $frame) {
+            $existingFrame = $existingFrames[$index] ?? null;
+
+            if ($existingFrame instanceof Frame) {
+                $existingFrame->update($frame);
+
+                continue;
+            }
+
+            $this->result->frames()->create($frame);
+        }
+
+        $existingFrames
+            ->slice(count($frames))
+            ->each
+            ->delete();
+    }
+
+    private function syncResultState(?Result $result): void
+    {
+        $this->result = $result;
+        $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
+
+        if (! $this->result) {
+            $this->frames = $this->emptyFrames();
+            $this->homeScore = 0;
+            $this->awayScore = 0;
+            $this->totalScore = 0;
+
+            return;
+        }
+
+        $frames = $this->result->frames->sortBy('id')->values();
+
+        $this->frames = $this->mapFramesToState($frames);
+        $this->homeScore = (int) $this->result->home_score;
+        $this->awayScore = (int) $this->result->away_score;
+        $this->totalScore = $this->homeScore + $this->awayScore;
+    }
+
+    /**
+     * @param  Collection<int, Frame>  $frames
+     * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
+     */
+    private function mapFramesToState(Collection $frames): array
+    {
+        $state = [];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $frame = $frames[$i - 1] ?? null;
+
+            $state[$i] = [
+                'home_player_id' => $frame?->home_player_id,
+                'away_player_id' => $frame?->away_player_id,
+                'home_score' => $frame?->home_score ?? 0,
+                'away_score' => $frame?->away_score ?? 0,
+            ];
+        }
+
+        return $state;
     }
 
     private function emptyFrames(): array
@@ -364,7 +431,7 @@ class ResultForm extends Component
     private function initializeLock(): void
     {
         if ($this->isLocked) {
-            $this->canEdit = false;
+            $this->clearLockState();
 
             return;
         }
@@ -393,16 +460,13 @@ class ResultForm extends Component
         $this->lockExpiresAtHuman = optional($this->lock->locked_until)?->diffForHumans();
     }
 
-    private function renewLock(): void
+    private function clearLockState(): void
     {
-        if (! $this->lock || ! $this->canEdit) {
-            return;
-        }
-
-        $this->lock->locked_until = now()->addMinutes($this->lockTimeoutMinutes);
-        $this->lock->save();
-
-        $this->lockExpiresAtHuman = optional($this->lock->locked_until)?->diffForHumans();
+        $this->lock = null;
+        $this->canEdit = false;
+        $this->lockedByAnother = false;
+        $this->lockOwnerName = null;
+        $this->lockExpiresAtHuman = null;
     }
 
     private function releaseLock(): void
@@ -411,11 +475,18 @@ class ResultForm extends Component
             $this->lock->delete();
         }
 
-        $this->lock = null;
-        $this->canEdit = false;
-        $this->lockedByAnother = false;
-        $this->lockOwnerName = null;
-        $this->lockExpiresAtHuman = null;
+        $this->clearLockState();
+    }
+
+    private function redirectToFixtureOrResult()
+    {
+        $result = $this->result ?? $this->fixture->result;
+
+        if ($result) {
+            return redirect()->route('result.show', $result);
+        }
+
+        return redirect()->route('fixture.show', $this->fixture);
     }
 
     private function prepareFrames(bool $requireComplete, bool $allowEmpty = false): array

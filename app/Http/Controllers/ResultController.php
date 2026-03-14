@@ -22,7 +22,13 @@ class ResultController extends Controller
 
     public function create(Fixture $fixture)
     {
-        $fixture->load('result');
+        $fixture->load([
+            'section',
+            'venue',
+            'homeTeam.players',
+            'awayTeam.players',
+            'result',
+        ]);
 
         if ($fixture->result && $fixture->result->is_confirmed) {
             return redirect()->route('result.show', $fixture->result);
