@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Ruleset;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class TableController extends Controller
 {
@@ -14,15 +13,7 @@ class TableController extends Controller
             ->whereHas('season', function (Builder $query) {
                 $query->whereIsOpen(true);
             })
-            ->with([
-                'results',
-                'season' => function ($query) {
-                    $query->with('expulsions');
-                },
-                'teams' => function (BelongsToMany $query) {
-                    $query->withTrashed()->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
-                },
-            ])
+            ->withStandingsRelations()
             ->get();
 
         return view('table.index', compact('ruleset', 'sections'));

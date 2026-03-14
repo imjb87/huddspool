@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\FixtureService;
 use App\Support\CompetitionCacheInvalidator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -91,7 +93,7 @@ class Section extends Model
 
     public function generateFixtures(): void
     {
-        $fixtureService = new \App\Services\FixtureService($this);
+        $fixtureService = new FixtureService($this);
         $schedule = $fixtureService->generate();
 
         foreach ($schedule as $fixtures) {
@@ -107,6 +109,15 @@ class Section extends Model
     public function results(): HasManyThrough
     {
         return $this->hasManyThrough(Result::class, Fixture::class);
+    }
+
+    public function scopeWithStandingsRelations(Builder $query): Builder
+    {
+        return $query->with([
+            'results' => fn (HasManyThrough $query) => $query->where('is_confirmed', true),
+            'season' => fn (BelongsTo $query) => $query->with('expulsions'),
+            'teams' => fn (BelongsToMany $query) => $query->withTrashed()->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']),
+        ]);
     }
 
     public function hasRecordedResults(): bool
