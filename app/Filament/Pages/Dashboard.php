@@ -10,6 +10,14 @@ use daacreators\CreatorsTicketing\Filament\Widgets\TicketStatsWidget;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
+    public function getColumns(): int|array
+    {
+        return [
+            'md' => 2,
+            'xl' => 2,
+        ];
+    }
+
     public function getWidgets(): array
     {
         return [

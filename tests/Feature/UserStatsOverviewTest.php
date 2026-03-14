@@ -36,9 +36,13 @@ class UserStatsOverviewTest extends TestCase
         Livewire::actingAs($admin)
             ->test(UserStatsOverview::class)
             ->assertStatus(200)
+            ->assertSee('Open season totals')
             ->assertSee('Active Players')
             ->assertSee('Matches Played')
-            ->assertSee('Frames Played');
+            ->assertSee('Frames Played')
+            ->assertSee('Players with recorded frames')
+            ->assertSee('Results recorded in the open season')
+            ->assertSee('Frames recorded in the open season');
     }
 
     public function test_season_series_stats_use_grouped_queries(): void
