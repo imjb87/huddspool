@@ -5,19 +5,55 @@
 <div class="pt-[72px] {{ $contentPadding }}">
     <section class="sticky top-[72px] z-30 bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl"
         data-section-tabs
-        data-active-section-tab="{{ $activeTab }}">
+        data-active-section-tab="{{ $activeTab }}"
+        x-data="{
+            activeTab: @js($activeTab),
+            indicatorStyle: '',
+            indicatorVisible: false,
+            syncIndicator(tabKey = null) {
+                if (tabKey) {
+                    this.activeTab = tabKey;
+                }
+
+                this.$nextTick(() => {
+                    const activeItem = this.$refs.track?.querySelector(`[data-section-tab-item='${this.activeTab}']`);
+
+                    if (! activeItem || ! this.$refs.track) {
+                        return;
+                    }
+
+                    this.indicatorStyle = `width: ${activeItem.offsetWidth}px; transform: translateX(${activeItem.offsetLeft}px);`;
+                    this.indicatorVisible = true;
+                });
+            },
+        }"
+        x-init="syncIndicator()"
+        @resize.window="syncIndicator()">
         <div class="mx-auto max-w-7xl px-4 py-3 lg:px-8">
-            <div class="mx-auto flex items-center justify-center gap-2" data-section-tabs-scroll>
-                @foreach ($this->tabs() as $tabKey => $tabLabel)
-                    <a href="{{ $this->tabUrl($tabKey) }}"
-                        wire:click.prevent="setActiveTab('{{ $tabKey }}')"
-                        wire:key="section-tab-{{ $tabKey }}"
-                        data-section-tab="{{ $tabKey }}"
-                        @if ($activeTab === $tabKey) aria-current="page" @endif
-                        class="inline-flex items-center justify-center rounded-full px-4 py-2 text-center text-sm font-semibold tracking-wide whitespace-nowrap transition sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'bg-linear-to-b from-white/90 via-white/70 to-white/50 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_0_rgba(255,255,255,0.2),0_12px_28px_rgba(5,46,22,0.22)]' : 'text-white hover:bg-white/16 active:bg-white/20' }}">
-                        <span class="leading-tight {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30 text-green-900' : '' }}">{{ $tabLabel }}</span>
-                    </a>
+            @php($tabs = $this->tabs())
+            <div class="mx-auto w-full max-w-2xl rounded-full bg-black/15 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(5,46,22,0.35)]"
+                data-section-tabs-scroll
+                data-section-tabs-track>
+                <div class="relative grid w-full grid-cols-3 gap-2" x-ref="track">
+                    <div class="absolute inset-y-0 left-0 rounded-full bg-linear-to-b from-white/90 via-white/70 to-white/50 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_0_rgba(255,255,255,0.2),0_12px_28px_rgba(5,46,22,0.22)] transition-transform duration-300 ease-out"
+                        data-section-tab-indicator
+                        x-cloak
+                        x-show="indicatorVisible"
+                        :style="indicatorStyle"></div>
+                @foreach ($tabs as $tabKey => $tabLabel)
+                    <div class="relative z-10 min-w-0" data-section-tab-item="{{ $tabKey }}">
+                        <a href="{{ $this->tabUrl($tabKey) }}"
+                            wire:click.prevent="setActiveTab('{{ $tabKey }}')"
+                            @click="syncIndicator('{{ $tabKey }}')"
+                            wire:key="section-tab-{{ $tabKey }}"
+                            data-section-tab="{{ $tabKey }}"
+                            @if ($activeTab === $tabKey) aria-current="page" @endif
+                            class="inline-flex min-w-0 w-full items-center justify-center rounded-full px-3 py-2 text-center text-[13px] font-semibold whitespace-nowrap transition sm:px-4 sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'text-green-900' : 'text-white hover:bg-white/16 active:bg-white/20' }}">
+                            <span class="leading-tight {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30' : '' }}">{{ $tabLabel }}</span>
+                        </a>
+                    </div>
                 @endforeach
+                </div>
             </div>
         </div>
     </section>

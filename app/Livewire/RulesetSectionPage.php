@@ -149,7 +149,7 @@ class RulesetSectionPage extends Component
     {
         return [
             'tables' => 'Tables',
-            'fixtures-results' => 'Fixtures & Results',
+            'fixtures-results' => 'Fixtures/Results',
             'averages' => 'Averages',
         ];
     }
