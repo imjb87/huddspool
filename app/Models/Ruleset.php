@@ -27,14 +27,16 @@ class Ruleset extends Model
 
     public function openSections(): HasMany
     {
-        return $this->sections()->whereHas('season', fn ($query) => $query->where('is_open', true));
+        return $this->sections()
+            ->whereHas('season', fn ($query) => $query->where('is_open', true))
+            ->orderBy('sections.id');
     }
 
     public function defaultOpenSection(?User $user = null): ?Section
     {
         $teamSectionId = $user?->team?->openSections()
             ->where('ruleset_id', $this->id)
-            ->orderBy('sections.name')
+            ->orderBy('sections.id')
             ->value('sections.id');
 
         if ($teamSectionId) {
@@ -45,14 +47,11 @@ class Ruleset extends Model
         }
 
         if ($this->relationLoaded('openSections')) {
-            return $this->getRelation('openSections')
-                ->sortBy('name')
-                ->first();
+            return $this->getRelation('openSections')->first();
         }
 
         return $this->openSections()
             ->with('season')
-            ->orderBy('name')
             ->first();
     }
 

@@ -62,7 +62,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Knockouts');
         $response->assertSeeText('Handbook');
+        $response->assertSeeText('Home');
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
+        $response->assertSee('href="'.route('home').'"', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
         $response->assertSee('data-knockouts-nav', false);
@@ -124,5 +126,40 @@ class NavigationAndSearchUiTest extends TestCase
         $response = $this->get(route('knockout.index'));
 
         $response->assertRedirect(route('page.show', 'knockout-dates'));
+    }
+
+    public function test_home_page_lists_sections_in_navigation_using_section_record_order(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create([
+            'name' => 'International Rules',
+        ]);
+
+        Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'International Section Two',
+        ]);
+
+        Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'International Premier',
+        ]);
+
+        Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'International Section One',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSeeInOrder([
+            'International Section Two',
+            'International Premier',
+            'International Section One',
+        ]);
     }
 }

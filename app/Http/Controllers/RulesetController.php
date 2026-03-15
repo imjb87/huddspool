@@ -65,8 +65,7 @@ class RulesetController extends Controller
 
         $ruleset->loadMissing([
             'openSections' => fn ($query) => $query
-                ->with('season')
-                ->orderBy('name'),
+                ->with('season'),
         ]);
 
         return view('ruleset.section', [

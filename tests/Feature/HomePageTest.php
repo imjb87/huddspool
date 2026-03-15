@@ -238,7 +238,7 @@ class HomePageTest extends TestCase
             ])
             ->findOrFail($ruleset->id);
 
-        Cache::put('nav:rulesets:v3', collect([$invalidCachedRuleset]), now()->addMinutes(10));
+        Cache::put('nav:rulesets:v4', collect([$invalidCachedRuleset]), now()->addMinutes(10));
 
         $response = $this->get(route('home'));
 

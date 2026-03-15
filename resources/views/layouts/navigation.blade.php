@@ -230,6 +230,13 @@
             x-transition:leave-end="opacity-0 translate-y-1">
             <div class="mx-auto max-w-xl overflow-hidden rounded-xl bg-white px-6 py-4 shadow-2xl ring-1 ring-black/5 transition-all">
                 <div class="space-y-6">
+                    <div class="space-y-2 border-b border-gray-200 pb-4">
+                        <a href="{{ route('home') }}"
+                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                            Home
+                        </a>
+                    </div>
+
                     <div class="space-y-3">
                         @foreach ($rulesets as $ruleset)
                             @php

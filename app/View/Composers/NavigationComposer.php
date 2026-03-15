@@ -12,7 +12,7 @@ use Illuminate\View\View;
 
 class NavigationComposer
 {
-    private const RULESETS_CACHE_KEY = 'nav:rulesets:v3';
+    private const RULESETS_CACHE_KEY = 'nav:rulesets:v4';
 
     private const ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:active-knockouts:v2';
 
@@ -41,8 +41,7 @@ class NavigationComposer
                     'openSections' => fn ($query) => $query
                         ->whereNotNull('slug')
                         ->where('slug', '!=', '')
-                        ->with('season')
-                        ->orderBy('name'),
+                        ->with('season'),
                 ])
                 ->orderBy('id')
                 ->get();
