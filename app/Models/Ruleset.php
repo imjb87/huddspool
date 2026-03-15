@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ruleset extends Model
 {
@@ -19,12 +20,43 @@ class Ruleset extends Model
         'content',
     ];
 
-    public function sections()
+    public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
     }
 
-    public function getRouteKeyName()
+    public function openSections(): HasMany
+    {
+        return $this->sections()->whereHas('season', fn ($query) => $query->where('is_open', true));
+    }
+
+    public function defaultOpenSection(?User $user = null): ?Section
+    {
+        $teamSectionId = $user?->team?->openSections()
+            ->where('ruleset_id', $this->id)
+            ->orderBy('sections.name')
+            ->value('sections.id');
+
+        if ($teamSectionId) {
+            return $this->openSections()
+                ->with('season')
+                ->whereKey($teamSectionId)
+                ->first();
+        }
+
+        if ($this->relationLoaded('openSections')) {
+            return $this->getRelation('openSections')
+                ->sortBy('name')
+                ->first();
+        }
+
+        return $this->openSections()
+            ->with('season')
+            ->orderBy('name')
+            ->first();
+    }
+
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }

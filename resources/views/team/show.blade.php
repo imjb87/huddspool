@@ -18,7 +18,7 @@
                                     <h1 class="text-2xl font-bold text-gray-900">{{ $team->name }}</h1>
                                     <p class="text-sm font-medium text-gray-500">
                                         @if ($section)
-                                            <a href="{{ route('table.index', $section->ruleset) }}">
+                                            <a href="{{ route('ruleset.section.show', ['ruleset' => $section->ruleset, 'section' => $section]) }}">
                                                 {{ $section->name }}
                                             </a>
                                         @endif

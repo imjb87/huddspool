@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class Section extends Model
 {
@@ -26,6 +27,12 @@ class Section extends Model
         static::deleting(function (Section $section) {
             if ($section->hasRecordedResults()) {
                 return false;
+            }
+        });
+
+        static::saving(function (Section $section): void {
+            if ($section->isDirty('name') || blank($section->slug)) {
+                $section->slug = $section->generateSlug($section->name, $section->id);
             }
         });
 
@@ -49,9 +56,15 @@ class Section extends Model
      */
     protected $fillable = [
         'name',
+        'slug',
         'season_id',
         'ruleset_id',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     public function teams(): BelongsToMany
     {
@@ -216,6 +229,23 @@ class Section extends Model
     public function forgetStandingsCache(): void
     {
         Cache::forget($this->standingsCacheKey());
+    }
+
+    private function generateSlug(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name) ?: 'section';
+        $original = $slug;
+        $suffix = 1;
+
+        while (self::withTrashed()
+            ->when($ignoreId, fn (Builder $query) => $query->where('id', '!=', $ignoreId))
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = "{$original}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 
     protected function standingsCacheKey(): string

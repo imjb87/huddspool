@@ -52,7 +52,10 @@ class TablePageTest extends TestCase
             'is_confirmed' => true,
         ]);
 
-        $this->get(route('table.index', $ruleset))
+        $this->get(route('ruleset.section.show', [
+            'ruleset' => $ruleset,
+            'section' => $section,
+        ]))
             ->assertOk()
             ->assertSeeText('Tables')
             ->assertSeeText($ruleset->name)
@@ -61,23 +64,20 @@ class TablePageTest extends TestCase
             ->assertSeeText($awayTeam->name);
     }
 
-    public function test_table_page_eager_loads_season_expulsions_for_sections(): void
+    public function test_legacy_table_page_redirects_to_the_canonical_ruleset_hub(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
-        Section::factory()->create([
+        $section = Section::factory()->create([
             'season_id' => $season->id,
             'ruleset_id' => $ruleset->id,
         ]);
 
         $this->get(route('table.index', $ruleset))
-            ->assertOk()
-            ->assertViewHas('sections', function ($sections): bool {
-                return $sections->isNotEmpty()
-                    && $sections->every(fn (Section $section): bool => $section->relationLoaded('results'))
-                    && $sections->every(fn (Section $section): bool => $section->relationLoaded('season'))
-                    && $sections->every(fn (Section $section): bool => $section->season->relationLoaded('expulsions'));
-            });
+            ->assertRedirect(route('ruleset.section.show', [
+                'ruleset' => $ruleset,
+                'section' => $section,
+            ]));
     }
 
     public function test_table_page_does_not_issue_per_section_result_queries_when_building_standings(): void
@@ -122,7 +122,12 @@ class TablePageTest extends TestCase
         DB::flushQueryLog();
         DB::enableQueryLog();
 
-        $this->get(route('table.index', $ruleset))
+        $targetSection = Section::query()->where('ruleset_id', $ruleset->id)->orderBy('name')->first();
+
+        $this->get(route('ruleset.section.show', [
+            'ruleset' => $ruleset,
+            'section' => $targetSection,
+        ]))
             ->assertOk();
 
         $fallbackQueries = collect(DB::getQueryLog())

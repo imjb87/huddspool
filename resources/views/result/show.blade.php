@@ -40,7 +40,7 @@
                                         <date>{{ $result->fixture->fixture_date->format('l jS F Y') }}</date>
                                     </dd>
                                 </div>
-                                <a href="{{ route('ruleset.show', $result->fixture->section->ruleset) }}"
+                                <a href="{{ route('ruleset.section.show', ['ruleset' => $result->fixture->section->ruleset, 'section' => $result->fixture->section, 'tab' => 'fixtures-results']) }}"
                                     class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium leading-6 text-gray-900">Ruleset</dt>
                                     <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">

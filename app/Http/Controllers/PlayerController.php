@@ -9,19 +9,32 @@ use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
 {
-    public function index(Ruleset $ruleset)
+    public function index(Request $request, Ruleset $ruleset): RedirectResponse
     {
-        $sections = $ruleset->sections()
-            ->whereHas('season', function ($query) {
-                $query->whereIsOpen(true);
-            })->get();
+        $section = $request->filled('section')
+            ? $ruleset->openSections()->whereKey($request->integer('section'))->firstOrFail()
+            : $ruleset->defaultOpenSection($request->user());
 
-        return view('player.index', compact('ruleset', 'sections'));
+        abort_unless($section, 404);
+
+        $parameters = [
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'tab' => 'averages',
+        ];
+
+        if ($request->filled('page')) {
+            $parameters['page'] = $request->integer('page');
+        }
+
+        return redirect()->route('ruleset.section.show', $parameters);
     }
 
     public function show(User $player)

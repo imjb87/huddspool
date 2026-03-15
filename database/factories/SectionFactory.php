@@ -2,10 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Ruleset;
+use App\Models\Season;
+use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Section>
+ * @extends Factory<Section>
  */
 class SectionFactory extends Factory
 {
@@ -14,12 +17,12 @@ class SectionFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'name' => $this->faker->name,
-            'season_id' => \App\Models\Season::factory(),
-            'ruleset_id' => \App\Models\Ruleset::factory(),
+            'season_id' => Season::factory(),
+            'ruleset_id' => Ruleset::factory(),
         ];
     }
 }

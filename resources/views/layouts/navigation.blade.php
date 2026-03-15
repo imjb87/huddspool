@@ -1,13 +1,78 @@
-<header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500" x-data="{ open: false, scroll: false }"
-    @scroll.window="scroll = (window.pageYOffset > 0) ? true : false" :class="{ 'shadow-lg': scroll || open }">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between py-5 px-4 lg:px-8" aria-label="Global">
-        <div class="flex lg:flex-1">
+@php
+    $currentRuleset = request()->route('ruleset');
+    $isRulesetRoute = request()->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
+@endphp
+
+<header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500"
+    x-data="{ open: false, scroll: false }"
+    @scroll.window="scroll = (window.pageYOffset > 0) ? true : false"
+    :class="{ 'shadow-lg': scroll || open }">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
+        <div class="flex flex-1">
             <a href="/" class="-m-1.5 p-1.5">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
                 <x-application-logo />
             </a>
         </div>
-        <div class="flex lg:hidden gap-x-4">
+
+        <div class="hidden lg:flex lg:items-center lg:gap-x-6">
+            @foreach ($rulesets as $ruleset)
+                @php
+                    $navigableSections = $ruleset->openSections
+                        ->filter(fn ($section) => filled($section?->getRouteKey()))
+                        ->values();
+                    $isActiveRuleset = $isRulesetRoute && $currentRuleset instanceof \App\Models\Ruleset && $currentRuleset->is($ruleset);
+                @endphp
+                @continue($navigableSections->isEmpty())
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <button type="button"
+                        class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $isActiveRuleset ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}"
+                        @click="open = ! open" :aria-expanded="open">
+                        {{ $ruleset->name }}
+                        <svg class="h-4 w-4 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div class="absolute left-0 top-full z-10 mt-3 w-72 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
+                        x-show="open"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-1">
+                        @foreach ($navigableSections as $section)
+                            <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
+                                class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+                                {{ $section->name }}
+                            </a>
+                        @endforeach
+                        <div class="mx-2 my-1 border-t border-gray-200"></div>
+                        <a href="{{ route('ruleset.show', $ruleset) }}"
+                            class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+                            Ruleset
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+
+            <a href="{{ route('knockout.index') }}"
+                class="text-sm font-semibold leading-6 {{ request()->routeIs('knockout.*') ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}">
+                Knockouts
+            </a>
+            <a href="{{ route('history.index') }}"
+                class="text-sm font-semibold leading-6 {{ request()->routeIs('history.*') ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}">
+                History
+            </a>
+            <a href="{{ route('page.show', 'handbook') }}"
+                class="text-sm font-semibold leading-6 {{ request()->routeIs('page.show') && request()->route('page') === 'handbook' ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}">
+                Handbook
+            </a>
+        </div>
+
+        <div class="flex items-center gap-x-4 lg:hidden">
             <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
                 data-site-search-trigger aria-label="Open search">
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -26,214 +91,7 @@
                 </svg>
             </button>
         </div>
-        <div class="hidden lg:flex lg:gap-x-8">
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Tables
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    @foreach ($rulesets as $ruleset)
-                        <div class="py-1">
-                            <a href="{{ route('table.index', $ruleset) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Fixtures &amp; Results
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    @foreach ($rulesets as $ruleset)
-                        <div class="py-1">
-                            <a href="{{ route('fixture.index', $ruleset) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Averages
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    @foreach ($rulesets as $ruleset)
-                        <div class="py-1">
-                            <a href="{{ route('player.index', $ruleset) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    History
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-64 rounded-xl bg-white p-3 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1"
-                    @click="open = false">
-                    @foreach ($past_seasons as $season)
-                        @php
-                            $seasonRulesets = $season->sections->map(fn ($section) => $section->ruleset)->filter()->unique('id')->values();
-                        @endphp
-                        @if ($seasonRulesets->isNotEmpty())
-                            <div class="py-2 first:border-0" x-data="{ seasonOpen: false }">
-                                <button type="button"
-                                    class="flex w-full items-center justify-between px-1 pb-1 text-left text-sm font-semibold tracking-wide text-gray-900"
-                                    @click.stop="seasonOpen = !seasonOpen" :aria-expanded="seasonOpen"
-                                    aria-controls="history-season-{{ $season->id }}">
-                                    <span>{{ $season->name }}</span>
-                                    <svg class="h-4 w-4 text-gray-700 transition-transform duration-150"
-                                        :class="{ 'rotate-180': seasonOpen }" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <div class="mt-2 space-y-1" x-show="seasonOpen" x-cloak
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0"
-                                    x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100"
-                                    x-transition:leave-end="opacity-0"
-                                    id="history-season-{{ $season->id }}">
-                                    <a href="{{ route('history.season', $season) }}"
-                                        class="block rounded-md py-2 pl-4 pr-4 text-sm font-semibold tracking-wide text-gray-900 hover:bg-gray-50"
-                                        @click="open = false">
-                                        Overview
-                                    </a>
-                                    @foreach ($seasonRulesets as $ruleset)
-                                        <a href="{{ route('history.show', [$season, $ruleset]) }}"
-                                            class="block rounded-md py-2 pl-4 pr-4 text-sm leading-5 text-gray-900 hover:bg-gray-50 font-semibold"
-                                            @click="open = false">
-                                            {{ $ruleset->name }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            </div>
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Knockouts
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-72 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    <div class="py-1">
-                        <a href="/knockout-dates"
-                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                            Knockout dates
-                        </a>
-                    </div>
-                    @foreach ($active_knockouts as $knockout)
-                        <div class="py-1">
-                            <a href="{{ route('knockout.show', $knockout) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                                {{ $knockout->name }}
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-            <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                    aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                    Official
-                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                        aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
-                    x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
-                    @foreach ($rulesets as $ruleset)
-                        <div class="py-1">
-                            <a href="{{ route('ruleset.show', $ruleset) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                        </div>
-                    @endforeach
-                    <div class="py-1">
-                        <a href="{{ route('page.show', 'handbook') }}"
-                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Handbook</a>
-                    </div>
-                </div>
-            </div>      
-        </div>
+
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
             <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
                 data-site-search-trigger aria-label="Open search">
@@ -244,7 +102,6 @@
                 </svg>
             </button>
             @if (@auth()->user())
-
                 <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
                     <button type="button"
                         class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
@@ -263,296 +120,171 @@
                         x-transition:enter-end="opacity-100 translate-y-0"
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 translate-y-1" @click="open = false">
+                        x-transition:leave-end="opacity-0 translate-y-1"
+                        @click="open = false">
                         <div class="py-1">
-                            <a href="{{ route('player.show', auth()->user()->id) }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your profile</a>
+                            <a href="{{ route('player.show', auth()->user()) }}"
+                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                                Your profile
+                            </a>
                         </div>
                         @if (auth()->user()->team_id)
                             <div class="py-1">
                                 <a href="{{ route('team.show', auth()->user()->team_id) }}"
-                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Your
-                                    team</a>
+                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                                    Your team
+                                </a>
                             </div>
                         @endif
                         <div class="py-1">
                             <a href="{{ route('support.tickets') }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Submit a request</a>
+                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                                Submit a request
+                            </a>
                         </div>
                         @if (auth()->user()->is_admin)
                             <div class="py-1">
                                 <a href="{{ route('filament.admin.pages.dashboard') }}"
-                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">Admin</a>
+                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
+                                    Admin
+                                </a>
                             </div>
                         @endif
                         @if (app('impersonate')->isImpersonating())
                             <div class="py-1">
-                                <a class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50" href="{{ route('filament-impersonate.leave') }}">Stop impersonating</a>
+                                <a class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50"
+                                    href="{{ route('filament-impersonate.leave') }}">
+                                    Stop impersonating
+                                </a>
                             </div>
                         @endif
-                        
                         <div class="py-1">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <a href="{{ route('logout') }}"
                                     class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50"
-                                    onclick="event.preventDefault(); this.closest('form').submit();">Log out</a>
+                                    onclick="event.preventDefault(); this.closest('form').submit();">
+                                    Log out
+                                </a>
                             </form>
                         </div>
                     </div>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 text-gray-900">Log in <span
-                        aria-hidden="true">&rarr;</span></a>
+                <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 text-gray-900">
+                    Log in <span aria-hidden="true">&rarr;</span>
+                </a>
             @endif
         </div>
     </nav>
-    <!-- Mobile menu, show/hide based on menu open state. -->
-    <div class="lg:hidden relative z-99" role="dialog" aria-modal="true" @click.away="open = false"
+
+    <div class="lg:hidden relative z-50" role="dialog" aria-modal="true" @click.away="open = false"
         @close.stop="open = false" @keydown.escape="open = false" x-cloak x-show="open">
-        <!-- Background backdrop, show/hide based on slide-over state. -->
         <div class="fixed inset-0 z-20 bg-gray-500/50 transition-opacity" x-show="open"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-        <div class="fixed inset-y-0 right-0 z-30 w-full overflow-y-auto px-4 py-[12px] sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+        <div class="fixed inset-y-0 right-0 z-30 w-full overflow-y-auto px-4 py-3 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
             x-show="open" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-1">
-            <div class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all px-6 py-4"
-                @click.away="open = false">
-                <div class="flow-root">
-                    <div class="-my-4 divide-y divide-gray-500/10">
-                        <div class="space-y-2 py-4">
-                            <div class="-mx-3" x-data="{ open: false }">
+            <div class="mx-auto max-w-xl overflow-hidden rounded-xl bg-white px-6 py-4 shadow-2xl ring-1 ring-black/5 transition-all">
+                <div class="space-y-6">
+                    <div class="space-y-3">
+                        @foreach ($rulesets as $ruleset)
+                            @php
+                                $navigableSections = $ruleset->openSections
+                                    ->filter(fn ($section) => filled($section?->getRouteKey()))
+                                    ->values();
+                            @endphp
+                            @continue($navigableSections->isEmpty())
+                            <div x-data="{ sectionsOpen: {{ $currentRuleset instanceof \App\Models\Ruleset && $currentRuleset->is($ruleset) ? 'true' : 'false' }} }"
+                                data-mobile-ruleset-group>
                                 <button type="button"
-                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-1" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    Tables
-                                    <!--
-                  Expand/collapse icon, toggle classes based on menu open state.
-
-                  Open: "rotate-180", Closed: ""
-                -->
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
+                                    class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    data-mobile-ruleset-trigger
+                                    @click="sectionsOpen = ! sectionsOpen" :aria-expanded="sectionsOpen">
+                                    <span>{{ $ruleset->name }}</span>
+                                    <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': sectionsOpen }"
+                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <!-- 'Product' sub-menu, show/hide based on menu state. -->
-                                <div class="mt-2 space-y-2" id="disclosure-1" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('table.index', $ruleset) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
+                                <div class="mt-1 space-y-1 pl-3" x-show="sectionsOpen" x-cloak data-mobile-ruleset-sections>
+                                    @foreach ($navigableSections as $section)
+                                        <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
+                                            class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
+                                            {{ $section->name }}
+                                        </a>
                                     @endforeach
+                                    <a href="{{ route('ruleset.show', $ruleset) }}"
+                                        class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
+                                        Ruleset
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="-mx-3" x-data="{ open: false }">
-                            <button type="button"
-                                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                aria-controls="disclosure-knockouts" aria-expanded="false" @click="open = !open"
-                                :aria-expanded="open">
-                                Knockouts
-                                <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true" :class="{ 'rotate-180': open }">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <div class="mt-2 space-y-2" id="disclosure-knockouts" x-show="open"
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                <a href="/knockout-dates"
-                                    class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                    Knockout dates
+                        @endforeach
+                    </div>
+
+                    <div class="space-y-2 border-t border-gray-200 pt-4">
+                        <a href="{{ route('knockout.index') }}"
+                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                            Knockouts
+                        </a>
+                        <a href="{{ route('history.index') }}"
+                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                            History
+                        </a>
+                        <a href="{{ route('page.show', 'handbook') }}"
+                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                            Handbook
+                        </a>
+                    </div>
+
+                    <div class="space-y-2 border-t border-gray-200 pt-4">
+                        @if (@auth()->user())
+                            <span class="block px-3 text-sm font-semibold leading-7 text-gray-500">{{ auth()->user()->name }}</span>
+                            <a href="{{ route('player.show', auth()->user()) }}"
+                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                Your profile
+                            </a>
+                            @if (auth()->user()->team_id)
+                                <a href="{{ route('team.show', auth()->user()->team_id) }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Your team
                                 </a>
-                                @foreach ($active_knockouts as $knockout)
-                                    <a href="{{ route('knockout.show', $knockout) }}"
-                                        class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                        {{ $knockout->name }}
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="-mx-3" x-data="{ open: false }">
-                            <button type="button"
-                                class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-1" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    Fixtures &amp; Results
-                                    <!--
-                  Expand/collapse icon, toggle classes based on menu open state.
-
-                  Open: "rotate-180", Closed: ""
-                -->
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <!-- 'Product' sub-menu, show/hide based on menu state. -->
-                                <div class="mt-2 space-y-2" id="disclosure-1" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('fixture.index', $ruleset) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="-mx-3" x-data="{ open: false }">
-                                <button type="button"
-                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-1" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    Averages
-                                    <!--
-                  Expand/collapse icon, toggle classes based on menu open state.
-
-                  Open: "rotate-180", Closed: ""
-                -->
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <!-- 'Product' sub-menu, show/hide based on menu state. -->
-                                <div class="mt-2 space-y-2" id="disclosure-1" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('player.index', $ruleset) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="-mx-3" x-data="{ open: false }">
-                                <button type="button"
-                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-history" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    History
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <div class="mt-2 space-y-2" id="disclosure-history" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($past_seasons as $season)
-                                        @php
-                                            $seasonRulesets = $season->sections->map(fn ($section) => $section->ruleset)->filter()->unique('id')->values();
-                                        @endphp
-                                        @if ($seasonRulesets->isNotEmpty())
-                                            <div class="space-y-1">
-                                                <a href="{{ route('history.season', $season) }}" class="px-6 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                                    {{ $season->name }}
-                                                </a>                                                
-                                                @foreach ($seasonRulesets as $ruleset)
-                                                    <a href="{{ route('history.show', [$season, $ruleset]) }}"
-                                                        class="block rounded-lg py-2 pl-9 pr-3 text-sm leading-7 text-gray-900 hover:bg-gray-50 font-semibold">
-                                                        {{ $ruleset->name }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="-mx-3" x-data="{ open: false }">
-                                <button type="button"
-                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    aria-controls="disclosure-1" aria-expanded="false" @click="open = !open"
-                                    :aria-expanded="open">
-                                    Official
-                                    <!--
-                  Expand/collapse icon, toggle classes based on menu open state.
-
-                  Open: "rotate-180", Closed: ""
-                -->
-                                    <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true" :class="{ 'rotate-180': open }">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <!-- 'Product' sub-menu, show/hide based on menu state. -->
-                                <div class="mt-2 space-y-2" id="disclosure-1" x-show="open"
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    @foreach ($rulesets as $ruleset)
-                                        <a href="{{ route('ruleset.show', $ruleset) }}"
-                                            class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ $ruleset->name }}</a>
-                                    @endforeach
-                                    <a href="{{ route('page.show', 'handbook') }}"
-                                        class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Handbook</a>
-                                </div>
-                            </div>                         
-                        </div>
-                        <div class="py-4">
-                            @if (@auth()->user())
-                                <span
-                                    class="block rounded-lg py-1 -mx-3 px-3 text-sm font-semibold leading-7 text-gray-500 hover:bg-gray-50">{{ auth()->user()->name }}</span>
-                                <a href="{{ route('player.show', auth()->user()->id) }}"
-                                    class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
-                                    profile</a> 
-                                @if (auth()->user()->team_id)
-                                    <a href="{{ route('team.show', auth()->user()->team_id) }}"
-                                        class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Your
-                                        team</a>
-                                @endif
-                                <a href="{{ route('support.tickets') }}"
-                                    class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Submit a request</a>
-                                @if (auth()->user()->is_admin)
-                                    <a href="{{ route('filament.admin.pages.dashboard') }}"
-                                        class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Admin</a>
-                                @endif
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <a href="route('logout')"
-                                        class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                        onclick="event.preventDefault();
-                                  this.closest('form').submit();">
-                                        Log out
-                                    </a>
-                                </form>
-                            @else
-                                <a class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    href="{{ route('login') }}">Log in</a>
                             @endif
-                        </div>
+                            <a href="{{ route('support.tickets') }}"
+                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                Submit a request
+                            </a>
+                            @if (auth()->user()->is_admin)
+                                <a href="{{ route('filament.admin.pages.dashboard') }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Admin
+                                </a>
+                            @endif
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a href="{{ route('logout') }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    onclick="event.preventDefault(); this.closest('form').submit();">
+                                    Log out
+                                </a>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                Log in
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('livewire:initialized', () => {
             if (window.siteSearchBindingsRegistered) {

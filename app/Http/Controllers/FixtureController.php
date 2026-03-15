@@ -7,20 +7,31 @@ use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetTeamPlayers;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class FixtureController extends Controller
 {
-    public function index(Ruleset $ruleset)
+    public function index(Request $request, Ruleset $ruleset): RedirectResponse
     {
-        $sections = $ruleset->sections()
-            ->with('season')
-            ->whereHas('season', function ($query) {
-                $query->whereIsOpen(true);
-            })
-            ->get();
+        $section = $request->filled('section')
+            ? $ruleset->openSections()->whereKey($request->integer('section'))->firstOrFail()
+            : $ruleset->defaultOpenSection($request->user());
 
-        return view('fixture.index', compact('ruleset', 'sections'));
+        abort_unless($section, 404);
+
+        $parameters = [
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'tab' => 'fixtures-results',
+        ];
+
+        if ($request->filled('week')) {
+            $parameters['week'] = $request->integer('week');
+        }
+
+        return redirect()->route('ruleset.section.show', $parameters);
     }
 
     public function show(Fixture $fixture)

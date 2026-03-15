@@ -15,6 +15,7 @@ class CompetitionCacheInvalidator
 {
     public function forgetForRulesetContent(?string $slug, ?int $sectionId, ?int $seasonId, ?int $rulesetId): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetRulesetResponseCache($slug);
         $this->forgetKeys([
             'stats:open-season',
@@ -27,6 +28,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForResult(Result $result): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetTeamSeasonHistories([
             $result->home_team_id,
             $result->away_team_id,
@@ -47,6 +49,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForFrame(Frame $frame): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetKeys([
             'stats:open-season',
             'stats:season-series',
@@ -76,6 +79,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForSection(Section $section): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetKeys([
             'history:index',
             'nav:past-seasons',
@@ -87,6 +91,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForSectionTeam(SectionTeam $sectionTeam): void
     {
+        $this->forgetHomeResponseCache();
         if (! $sectionTeam->section_id) {
             return;
         }
@@ -108,6 +113,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForExpulsion(Expulsion $expulsion): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetKeys([
             'stats:open-season',
             'history:index',
@@ -132,6 +138,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForSeason(Season $season): void
     {
+        $this->forgetHomeResponseCache();
         $this->forgetKeys([
             'stats:open-season',
             'stats:season-series',
@@ -147,6 +154,16 @@ class CompetitionCacheInvalidator
             $this->forgetSectionCaches($section->id);
             $this->forgetSeasonRulesetHistory($season->id, $section->ruleset_id);
         }
+    }
+
+    public function forgetForNews(): void
+    {
+        $this->forgetHomeResponseCache();
+    }
+
+    private function forgetHomeResponseCache(): void
+    {
+        ResponseCache::forget('/');
     }
 
     private function forgetRulesetResponseCache(?string $slug): void

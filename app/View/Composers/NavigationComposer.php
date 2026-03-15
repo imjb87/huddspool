@@ -12,6 +12,8 @@ use Illuminate\View\View;
 
 class NavigationComposer
 {
+    private const RULESETS_CACHE_KEY = 'nav:rulesets:v3';
+
     public function compose(View $view): void
     {
         $view->with([
@@ -27,8 +29,21 @@ class NavigationComposer
             return [];
         }
 
-        return Cache::remember('nav:rulesets', now()->addMinutes(10), function () {
-            return Ruleset::all();
+        return Cache::remember(self::RULESETS_CACHE_KEY, now()->addMinutes(10), function () {
+            return Ruleset::query()
+                ->whereHas('sections', fn ($query) => $query
+                    ->whereNotNull('slug')
+                    ->where('slug', '!=', '')
+                    ->whereHas('season', fn ($seasonQuery) => $seasonQuery->where('is_open', true)))
+                ->with([
+                    'openSections' => fn ($query) => $query
+                        ->whereNotNull('slug')
+                        ->where('slug', '!=', '')
+                        ->with('season')
+                        ->orderBy('name'),
+                ])
+                ->orderBy('id')
+                ->get();
         });
     }
 

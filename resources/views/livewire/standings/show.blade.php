@@ -1,45 +1,46 @@
-<section>
-    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0 grow-0">
-        <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
-            <h2 class="text-sm font-medium leading-6 text-white">Standings</h2>
-            <span class="text-xs font-semibold uppercase tracking-wide text-green-100">{{ $section->name }}</span>
-        </div>
-        <div class="border-t border-gray-200 h-full flex flex-col">
-            <div class="min-w-full overflow-hidden">
-                <div class="bg-gray-50 flex">
-                    <div class="flex w-1/2 pl-4 sm:pl-6">
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-2/12">#</div>
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-10/12">Team</div>
+<section data-section-table-view class="mt-0">
+    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-section-table-shell>
+        <div class="min-w-full overflow-hidden">
+            <div class="bg-linear-to-b from-gray-50 to-gray-100">
+                <div class="mx-auto flex w-full max-w-4xl" data-section-table-band>
+                    <div class="flex w-[44%] pl-4 sm:w-1/2 sm:pl-6">
+                        <div scope="col" class="w-2/12 py-2 text-sm font-semibold text-gray-900">#</div>
+                        <div scope="col" class="w-10/12 py-2 text-sm font-semibold text-gray-900">Team</div>
                     </div>
-                    <div class="flex w-1/2">
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">Pl</div>
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">W</div>
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">D</div>
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">L</div>
-                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-1/5 text-center">Pts</div>
+                    <div class="flex w-[56%] pr-4 sm:w-1/2 sm:pr-0">
+                        <div scope="col" class="w-1/5 py-2 text-right text-sm font-semibold text-gray-900">Pl</div>
+                        <div scope="col" class="w-1/5 py-2 text-right text-sm font-semibold text-gray-900">W</div>
+                        <div scope="col" class="w-1/5 py-2 text-right text-sm font-semibold text-gray-900">D</div>
+                        <div scope="col" class="w-1/5 py-2 text-right text-sm font-semibold text-gray-900">L</div>
+                        <div scope="col" class="w-1/5 py-2 text-right text-sm font-semibold text-gray-900">Pts</div>
                     </div>
                 </div>
-                <div class="bg-white">
-                    @if ($standings->isEmpty())
-                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
-                            <h3 class="mt-2 text-sm font-semibold text-gray-900">No standings available for this section yet.</h3>
-                            <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">
+            </div>
+            <div class="bg-white">
+                @if ($standings->isEmpty())
+                    <div class="px-4 py-10 text-center sm:px-6">
+                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8">
+                            <h3 class="text-sm font-semibold text-gray-900">No standings available for this section yet.</h3>
+                            <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500">
                                 Standings will appear once results are entered for this section.
                             </p>
                         </div>
-                    @else
-                        @foreach ($standings as $index => $team)
-                            @php
-                                $withdrawn = (bool) ($team->pivot->withdrawn_at ?? false);
-                                $textClass = $withdrawn ? 'text-gray-400' : 'text-gray-900';
-                            @endphp
-                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 {{ $withdrawn ? 'line-through' : '' }}"
-                                href="{{ route('team.show', $team->id) }}">
-                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
-                                    <div class="whitespace-nowrap py-2 text-sm {{ $textClass }} w-2/12 font-semibold">
+                    </div>
+                @else
+                    @foreach ($standings as $index => $team)
+                        @php
+                            $withdrawn = (bool) ($team->pivot->withdrawn_at ?? false);
+                            $textClass = $withdrawn ? 'text-gray-400' : 'text-gray-900';
+                        @endphp
+                        <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 {{ $withdrawn ? 'line-through' : '' }}"
+                            wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
+                            href="{{ route('team.show', $team->id) }}">
+                            <div class="mx-auto flex w-full max-w-4xl" data-section-table-band>
+                                <div class="flex w-[44%] items-center pl-4 sm:w-1/2 sm:pl-6">
+                                    <div class="w-2/12 whitespace-nowrap py-2 text-sm font-semibold {{ $textClass }}">
                                         {{ $index + 1 }}
                                     </div>
-                                    <div class="whitespace-nowrap py-2 text-sm {{ $textClass }} w-10/12 flex flex-col">
+                                    <div class="flex w-10/12 flex-col whitespace-nowrap py-2 text-sm {{ $textClass }}">
                                         <span class="{{ $team->shortname ? 'hidden md:inline' : '' }}">
                                             {{ $team->name }}
                                         </span>
@@ -50,27 +51,27 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="flex w-1/2 items-center">
-                                    <div class="py-2 text-sm {{ $textClass }} w-1/5 text-center">
+                                <div class="flex w-[56%] items-center pr-4 sm:w-1/2 sm:pr-0">
+                                    <div class="w-1/5 py-2 text-right text-sm {{ $textClass }}">
                                         {{ $team->played }}
                                     </div>
-                                    <div class="py-2 text-sm {{ $textClass }} w-1/5 text-center">
+                                    <div class="w-1/5 py-2 text-right text-sm {{ $textClass }}">
                                         {{ $team->wins }}
                                     </div>
-                                    <div class="py-2 text-sm {{ $textClass }} w-1/5 text-center">
+                                    <div class="w-1/5 py-2 text-right text-sm {{ $textClass }}">
                                         {{ $team->draws }}
                                     </div>
-                                    <div class="py-2 text-sm {{ $textClass }} w-1/5 text-center">
+                                    <div class="w-1/5 py-2 text-right text-sm {{ $textClass }}">
                                         {{ $team->losses }}
                                     </div>
-                                    <div class="py-2 text-sm w-1/5 text-center font-semibold {{ $withdrawn ? 'text-gray-400' : 'text-green-700' }}">
+                                    <div class="w-1/5 py-2 text-right text-sm font-semibold {{ $withdrawn ? 'text-gray-400' : 'text-green-700' }}">
                                         {{ $team->points }}
                                     </div>
                                 </div>
-                            </a>
-                        @endforeach
-                    @endif
-                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>

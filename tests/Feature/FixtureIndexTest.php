@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\SectionFixtures;
+use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -21,28 +22,20 @@ class FixtureIndexTest extends TestCase
 
     public function test_fixture_index_eager_loads_section_seasons(): void
     {
+        $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
-        $openSeason = Season::factory()->create(['is_open' => true]);
-        $closedSeason = Season::factory()->create(['is_open' => false]);
-
-        Section::factory()->create([
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
             'ruleset_id' => $ruleset->id,
-            'season_id' => $openSeason->id,
-        ]);
-
-        Section::factory()->create([
-            'ruleset_id' => $ruleset->id,
-            'season_id' => $closedSeason->id,
         ]);
 
         $response = $this->get(route('fixture.index', $ruleset));
 
-        $response->assertOk();
-        $response->assertViewHas('sections', function ($sections) use ($openSeason): bool {
-            return $sections->count() === 1
-                && $sections->every(fn (Section $section): bool => $section->relationLoaded('season'))
-                && $sections->first()->season->is($openSeason);
-        });
+        $response->assertRedirect(route('ruleset.section.show', [
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'tab' => 'fixtures-results',
+        ]));
     }
 
     public function test_section_fixtures_eager_loads_fixture_relations(): void
@@ -138,7 +131,11 @@ class FixtureIndexTest extends TestCase
         DB::enableQueryLog();
 
         $this->actingAs($user)
-            ->get(route('fixture.index', $ruleset))
+            ->get(route('ruleset.section.show', [
+                'ruleset' => $ruleset,
+                'section' => $section,
+                'tab' => 'fixtures-results',
+            ]))
             ->assertOk();
 
         $teamQueries = collect(DB::getQueryLog())
@@ -150,5 +147,57 @@ class FixtureIndexTest extends TestCase
             $teamQueries->contains(fn (string $query): bool => str_contains($query, '`deleted_at` is null limit 1')),
             'The fixtures index route lazily loaded the authenticated user team relation.'
         );
+    }
+
+    public function test_fixtures_results_page_renders_fixed_width_gradient_score_pills(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [now()->toDateString()],
+        ]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $fixture = Fixture::factory()->create([
+            'week' => 1,
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => now(),
+        ]);
+
+        Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'home_score' => 10,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'away_score' => 8,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $this->get(route('ruleset.section.show', [
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'tab' => 'fixtures-results',
+        ]))
+            ->assertOk()
+            ->assertSee('data-section-fixtures-score-pill', false)
+            ->assertSee('h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700', false)
+            ->assertSee('justify-center tabular-nums', false)
+            ->assertSee('w-px bg-white/25', false)
+            ->assertSeeText('10')
+            ->assertSeeText('8');
     }
 }
