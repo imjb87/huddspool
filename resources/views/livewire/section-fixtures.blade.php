@@ -30,11 +30,11 @@
 
                     <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
                         <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
-                            <span class="{{ $fixture->homeTeam->shortname ? 'hidden md:inline' : '' }}">
+                            <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->homeTeam->name }}
                             </span>
                             @if ($fixture->homeTeam->shortname)
-                                <span class="md:hidden">
+                                <span class="block truncate whitespace-nowrap md:hidden">
                                     {{ $fixture->homeTeam->shortname }}
                                 </span>
                             @endif
@@ -60,11 +60,11 @@
                         </div>
 
                         <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
-                            <span class="{{ $fixture->awayTeam->shortname ? 'hidden md:inline' : '' }}">
+                            <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                 {{ $fixture->awayTeam->name }}
                             </span>
                             @if ($fixture->awayTeam->shortname)
-                                <span class="md:hidden">
+                                <span class="block truncate whitespace-nowrap md:hidden">
                                     {{ $fixture->awayTeam->shortname }}
                                 </span>
                             @endif
