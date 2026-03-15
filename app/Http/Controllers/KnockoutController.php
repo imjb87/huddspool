@@ -3,22 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Knockout;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class KnockoutController extends Controller
 {
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        $knockouts = Knockout::query()
-            ->with('season')
-            ->latest('season_id')
-            ->get()
-            ->groupBy(fn (Knockout $knockout) => $knockout->season->name)
-            ->sortKeysDesc();
-
-        return view('knockouts.index', [
-            'knockoutGroups' => $knockouts,
-        ]);
+        return to_route('page.show', 'knockout-dates');
     }
 
     public function show(Knockout $knockout): View

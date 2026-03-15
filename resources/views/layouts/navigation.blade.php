@@ -1,10 +1,16 @@
 @php
     $currentRuleset = request()->route('ruleset');
+    $currentPage = request()->route('page');
     $isRulesetRoute = request()->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
+    $navigableKnockouts = collect($active_knockouts ?? [])
+        ->filter(fn ($knockout) => filled($knockout?->slug))
+        ->values();
+    $isKnockoutRoute = request()->routeIs('knockout.*')
+        || (request()->routeIs('page.show') && $currentPage === 'knockout-dates');
 @endphp
 
 <header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500"
-    x-data="{ open: false, scroll: false }"
+    x-data="{ open: false, scroll: false, activeAccordion: null }"
     @scroll.window="scroll = (window.pageYOffset > 0) ? true : false"
     :class="{ 'shadow-lg': scroll || open }">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
@@ -58,10 +64,41 @@
                 </div>
             @endforeach
 
-            <a href="{{ route('knockout.index') }}"
-                class="text-sm font-semibold leading-6 {{ request()->routeIs('knockout.*') ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}">
-                Knockouts
-            </a>
+            <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                <button type="button"
+                    class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $isKnockoutRoute ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}"
+                    @click="open = ! open" :aria-expanded="open">
+                    Knockouts
+                    <svg class="h-4 w-4 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div class="absolute left-0 top-full z-10 mt-3 w-72 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5"
+                    x-show="open"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 translate-y-1"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 translate-y-1"
+                    data-knockouts-nav>
+                    @foreach ($navigableKnockouts as $knockout)
+                        <a href="{{ route('knockout.show', $knockout) }}"
+                            class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+                            {{ $knockout->name }}
+                        </a>
+                    @endforeach
+                    @if ($navigableKnockouts->isNotEmpty())
+                        <div class="mx-2 my-1 border-t border-gray-200"></div>
+                    @endif
+                    <a href="{{ route('page.show', 'knockout-dates') }}"
+                        class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+                        Knockout Dates
+                    </a>
+                </div>
+            </div>
             <a href="{{ route('history.index') }}"
                 class="text-sm font-semibold leading-6 {{ request()->routeIs('history.*') ? 'text-green-700' : 'text-gray-900 hover:text-green-700' }}">
                 History
@@ -82,7 +119,7 @@
                 </svg>
             </button>
             <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-                @click="open = !open" :aria-expanded="open">
+                @click="open = ! open; activeAccordion = null" :aria-expanded="open">
                 <span class="sr-only">Open main menu</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                     aria-hidden="true">
@@ -178,13 +215,15 @@
         </div>
     </nav>
 
-    <div class="lg:hidden relative z-50" role="dialog" aria-modal="true" @click.away="open = false"
-        @close.stop="open = false" @keydown.escape="open = false" x-cloak x-show="open">
+    <div class="lg:hidden relative z-50" role="dialog" aria-modal="true"
+        @close.stop="open = false; activeAccordion = null" @keydown.escape="open = false; activeAccordion = null" x-cloak x-show="open">
         <div class="fixed inset-0 z-20 bg-gray-500/50 transition-opacity" x-show="open"
+            @click="open = false; activeAccordion = null"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
         <div class="fixed inset-y-0 right-0 z-30 w-full overflow-y-auto px-4 py-3 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+            @click.stop
             x-show="open" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
@@ -199,19 +238,19 @@
                                     ->values();
                             @endphp
                             @continue($navigableSections->isEmpty())
-                            <div x-data="{ sectionsOpen: {{ $currentRuleset instanceof \App\Models\Ruleset && $currentRuleset->is($ruleset) ? 'true' : 'false' }} }"
-                                data-mobile-ruleset-group>
+                            <div data-mobile-ruleset-group>
                                 <button type="button"
                                     class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                     data-mobile-ruleset-trigger
-                                    @click="sectionsOpen = ! sectionsOpen" :aria-expanded="sectionsOpen">
+                                    @click="activeAccordion = activeAccordion === 'ruleset-{{ $ruleset->id }}' ? null : 'ruleset-{{ $ruleset->id }}'"
+                                    :aria-expanded="activeAccordion === 'ruleset-{{ $ruleset->id }}'">
                                     <span>{{ $ruleset->name }}</span>
-                                    <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': sectionsOpen }"
+                                    <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': activeAccordion === 'ruleset-{{ $ruleset->id }}' }"
                                         viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div class="mt-1 space-y-1 pl-3" x-show="sectionsOpen" x-cloak data-mobile-ruleset-sections>
+                                <div class="mt-1 space-y-1 pl-3" x-show="activeAccordion === 'ruleset-{{ $ruleset->id }}'" x-cloak data-mobile-ruleset-sections>
                                     @foreach ($navigableSections as $section)
                                         <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
                                             class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
@@ -228,10 +267,31 @@
                     </div>
 
                     <div class="space-y-2 border-t border-gray-200 pt-4">
-                        <a href="{{ route('knockout.index') }}"
-                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            Knockouts
-                        </a>
+                        <div data-mobile-knockouts-group>
+                            <button type="button"
+                                class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                data-mobile-knockouts-trigger
+                                @click="activeAccordion = activeAccordion === 'knockouts' ? null : 'knockouts'"
+                                :aria-expanded="activeAccordion === 'knockouts'">
+                                <span>Knockouts</span>
+                                <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': activeAccordion === 'knockouts' }"
+                                    viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div class="mt-1 space-y-1 pl-3" x-show="activeAccordion === 'knockouts'" x-cloak data-mobile-knockouts-links>
+                                @foreach ($navigableKnockouts as $knockout)
+                                    <a href="{{ route('knockout.show', $knockout) }}"
+                                        class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
+                                        {{ $knockout->name }}
+                                    </a>
+                                @endforeach
+                                <a href="{{ route('page.show', 'knockout-dates') }}"
+                                    class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
+                                    Knockout Dates
+                                </a>
+                            </div>
+                        </div>
                         <a href="{{ route('history.index') }}"
                             class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
                             History

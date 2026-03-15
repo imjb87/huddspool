@@ -2,15 +2,26 @@
 
 namespace Tests\Feature;
 
+use App\KnockoutType;
+use App\Models\Knockout;
+use App\Models\Page;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class NavigationAndSearchUiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+    }
 
     public function test_home_page_renders_header_and_search_with_tailwind_four_safe_markup(): void
     {
@@ -54,13 +65,64 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
+        $response->assertSee('data-knockouts-nav', false);
+        $response->assertSee('data-mobile-knockouts-trigger', false);
+        $response->assertSee('data-mobile-knockouts-links', false);
+        $response->assertSee('activeAccordion: null', false);
+        $response->assertSee('@click="open = false; activeAccordion = null"', false);
+        $response->assertSee('@click.stop', false);
         $response->assertSee('rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900', false);
         $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
         $response->assertDontSee('<a href="/" class="fa-stack -ml-1">', false);
         $response->assertDontSee('id="searchIcon"', false);
         $response->assertDontSee('ring-opacity-5', false);
+        $response->assertDontSee('sectionsOpen:', false);
+        $response->assertDontSee('knockoutsOpen:', false);
         $response->assertDontSee('href="'.route('ruleset.index').'"', false);
         $response->assertDontSee('aria-label="Primary mobile"', false);
+    }
+
+    public function test_home_page_lists_current_knockouts_and_knockout_dates_in_navigation(): void
+    {
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $closedSeason = Season::factory()->create(['is_open' => false]);
+
+        $activeKnockout = Knockout::query()->create([
+            'season_id' => $openSeason->id,
+            'name' => 'Champion of Champions',
+            'slug' => 'champion-of-champions',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
+        Knockout::query()->create([
+            'season_id' => $closedSeason->id,
+            'name' => 'Archived Knockout',
+            'slug' => 'archived-knockout',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
+        Page::query()->create([
+            'title' => 'Knockout Dates',
+            'slug' => 'knockout-dates',
+            'content' => '<p>Important knockout dates.</p>',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee(route('knockout.show', $activeKnockout), false);
+        $response->assertSeeText('Champion of Champions');
+        $response->assertSee('href="'.route('page.show', 'knockout-dates').'"', false);
+        $response->assertSeeText('Knockout Dates');
+        $response->assertDontSeeText('Archived Knockout');
+        $response->assertDontSee('href="'.route('knockout.index').'"', false);
+    }
+
+    public function test_knockout_index_redirects_to_knockout_dates_page(): void
+    {
+        $response = $this->get(route('knockout.index'));
+
+        $response->assertRedirect(route('page.show', 'knockout-dates'));
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Fixture;
+use App\Models\Frame;
+use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
-use App\Models\Fixture;
-use App\Models\Result;
-use App\Models\Frame;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -86,6 +86,8 @@ class HistoryPageTest extends TestCase
         $response = $this->get(route('history.show', [$season, $ruleset]));
 
         $response->assertOk();
+        $response->assertSee('data-history-standings-view', false);
+        $response->assertSeeText('Standings');
         $response->assertSeeText('Division A');
         $response->assertSeeText('Reds');
         $response->assertSeeText('Players');

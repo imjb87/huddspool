@@ -12,6 +12,8 @@ class Show extends Component
 {
     public Section $section;
 
+    public bool $history = false;
+
     #[Computed]
     public function standings(): Collection
     {
@@ -20,7 +22,7 @@ class Show extends Component
 
     public function render(): View
     {
-        return view('livewire.standings.show', [
+        return view($this->history ? 'livewire.standings.history' : 'livewire.standings.show', [
             'section' => $this->section,
             'standings' => $this->standings,
         ]);

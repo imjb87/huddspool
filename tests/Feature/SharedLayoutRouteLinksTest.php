@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\KnockoutType;
+use App\Models\Knockout;
+use App\Models\Page;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
@@ -42,5 +45,31 @@ class SharedLayoutRouteLinksTest extends TestCase
         $response->assertDontSee(route('fixture.index', $ruleset), false);
         $response->assertDontSee(route('player.index', $ruleset), false);
         $response->assertDontSee('href="'.route('ruleset.show', $ruleset->id).'"', false);
+    }
+
+    public function test_home_page_uses_knockout_show_and_knockout_dates_routes_in_shared_layouts(): void
+    {
+        Cache::flush();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Summer Singles',
+            'slug' => 'summer-singles',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
+        Page::query()->create([
+            'title' => 'Knockout Dates',
+            'slug' => 'knockout-dates',
+            'content' => '<p>Dates.</p>',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('knockout.show', $knockout).'"', false);
+        $response->assertSee('href="'.route('page.show', 'knockout-dates').'"', false);
+        $response->assertDontSee('href="'.route('knockout.index').'"', false);
     }
 }

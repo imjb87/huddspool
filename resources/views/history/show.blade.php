@@ -16,7 +16,7 @@
             </div>
             <div class="grid grid-cols-1 gap-x-6 gap-y-6 lg:grid-cols-2">
                 @forelse ($sections as $section)
-                    <livewire:standings.show :section="$section" :key="'standings-'.$section->id" />
+                    <livewire:standings.show :section="$section" :history="true" :key="'standings-'.$section->id" />
                     <livewire:player.section-show :section="$section" :history="true" :key="'players-'.$section->id" />
                 @empty
                     <div class="lg:col-span-2">

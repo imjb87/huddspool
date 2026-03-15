@@ -14,6 +14,8 @@ class NavigationComposer
 {
     private const RULESETS_CACHE_KEY = 'nav:rulesets:v3';
 
+    private const ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:active-knockouts:v2';
+
     public function compose(View $view): void
     {
         $view->with([
@@ -68,8 +70,11 @@ class NavigationComposer
             return collect();
         }
 
-        return Cache::remember('nav:active-knockouts', now()->addMinutes(10), function () {
+        return Cache::remember(self::ACTIVE_KNOCKOUTS_CACHE_KEY, now()->addMinutes(10), function () {
             return Knockout::query()
+                ->whereNotNull('slug')
+                ->where('slug', '!=', '')
+                ->whereHas('season', fn ($query) => $query->where('is_open', true))
                 ->orderByDesc('season_id')
                 ->orderBy('name')
                 ->get(['id', 'name', 'slug']);
