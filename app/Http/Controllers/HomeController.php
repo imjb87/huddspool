@@ -27,7 +27,6 @@ class HomeController extends Controller
             ->where('home_team_id', '!=', 1)
             ->where('away_team_id', '!=', 1)
             ->orderByDesc('updated_at')
-            ->limit(6)
             ->get();
     }
 

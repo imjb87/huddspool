@@ -59,30 +59,35 @@
                         </div>
                     </div>
 
-                    <div class="bg-white" data-home-live-scores-list>
+                    <div class="max-h-80 overflow-y-auto overscroll-contain bg-white" data-home-live-scores-list>
                         @foreach ($liveScores as $result)
                             <a href="{{ route('result.show', $result) }}"
-                                class="block w-full border-t border-gray-300 first:border-t-0 hover:bg-gray-50">
+                                class="block w-full border-t border-gray-300 first:border-t-0 hover:bg-gray-50"
+                                data-home-live-score-row>
                                 <div class="mx-auto flex w-full max-w-4xl" data-home-live-scores-band>
                                     <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
-                                        {{ $result->home_team_name }}
+                                        <span class="block truncate whitespace-nowrap">
+                                            {{ $result->home_team_name }}
+                                        </span>
                                     </div>
 
                                     <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
                                         <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
                                             data-home-live-score-pill>
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums">
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
                                                 {{ $result->home_score }}
                                             </div>
                                             <div class="w-px bg-white/25"></div>
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums">
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
                                                 {{ $result->away_score }}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="flex w-[40%] items-center justify-between gap-3 py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
-                                        <p class="min-w-0 truncate">{{ $result->away_team_name }}</p>
+                                    <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
+                                        <span class="block truncate whitespace-nowrap">
+                                            {{ $result->away_team_name }}
+                                        </span>
                                     </div>
                                 </div>
                             </a>

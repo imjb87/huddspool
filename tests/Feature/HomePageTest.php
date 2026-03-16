@@ -95,6 +95,8 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-live-scores-shell', false);
         $response->assertSee('data-home-live-scores-band', false);
         $response->assertSee('data-home-live-scores-list', false);
+        $response->assertSee('max-h-80 overflow-y-auto overscroll-contain bg-white', false);
+        $response->assertSee('data-home-live-score-row', false);
         $response->assertSee('data-home-live-score-pill', false);
         $response->assertSeeText('Break Masters');
         $response->assertSeeText('Cue Kings');
@@ -102,9 +104,60 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('No current matches in progress right now.');
     }
 
+    public function test_home_page_live_scores_list_keeps_all_in_progress_results_in_a_scrollable_five_row_container(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create([
+            'name' => 'EPA Rules',
+        ]);
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'EPA Section One',
+        ]);
+
+        Team::factory()->create();
+
+        for ($index = 1; $index <= 7; $index++) {
+            $homeTeam = Team::factory()->create(['name' => "Home Team {$index}"]);
+            $awayTeam = Team::factory()->create(['name' => "Away Team {$index}"]);
+
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $homeTeam->id,
+                'away_team_id' => $awayTeam->id,
+                'fixture_date' => now()->subMinutes($index),
+            ]);
+
+            Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $homeTeam->id,
+                'home_team_name' => $homeTeam->name,
+                'home_score' => 6,
+                'away_team_id' => $awayTeam->id,
+                'away_team_name' => $awayTeam->name,
+                'away_score' => 4,
+                'is_confirmed' => false,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+            ]);
+        }
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('max-h-80 overflow-y-auto overscroll-contain bg-white', false);
+        $this->assertSame(7, substr_count($response->getContent(), 'data-home-live-score-row'));
+        $response->assertSeeText('Home Team 1');
+        $response->assertSeeText('Away Team 7');
+    }
+
     public function test_home_page_shows_latest_news_in_a_featured_layout(): void
     {
         $author = User::factory()->create(['name' => 'John Bell']);
+        $expectedDate = now()->format('j F Y');
 
         News::withoutEvents(function () use ($author): void {
             News::query()->create([
@@ -130,7 +183,7 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-news-item', false);
         $response->assertSeeText('Fixture dates updated');
         $response->assertSeeText('Captains meeting');
-        $response->assertSeeText('15 March 2026');
+        $response->assertSeeText($expectedDate);
         $response->assertDontSee('data-home-news-empty', false);
     }
 
