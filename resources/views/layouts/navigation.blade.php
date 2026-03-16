@@ -58,7 +58,7 @@
                         <div class="mx-2 my-1 border-t border-gray-200"></div>
                         <a href="{{ route('ruleset.show', $ruleset) }}"
                             class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">
-                            Ruleset
+                            {{ $ruleset->name }}
                         </a>
                     </div>
                 </div>
@@ -278,7 +278,7 @@
                                     @endforeach
                                     <a href="{{ route('ruleset.show', $ruleset) }}"
                                         class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
-                                        Ruleset
+                                        {{ $ruleset->name }}
                                     </a>
                                 </div>
                             </div>

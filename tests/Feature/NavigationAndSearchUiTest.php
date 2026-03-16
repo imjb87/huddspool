@@ -62,6 +62,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Knockouts');
         $response->assertSeeText('Handbook');
+        $response->assertDontSeeText('Ruleset');
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
         $response->assertSee('href="'.route('home').'"', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
