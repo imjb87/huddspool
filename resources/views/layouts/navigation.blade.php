@@ -228,13 +228,25 @@
             x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-1">
-            <div class="mx-auto max-w-xl overflow-hidden rounded-xl bg-white px-6 py-4 shadow-2xl ring-1 ring-black/5 transition-all">
+            <div class="mx-auto max-w-xl overflow-hidden rounded-xl bg-white px-6 pt-6 pb-4 shadow-2xl ring-1 ring-black/5 transition-all">
                 <div class="space-y-6">
-                    <div class="space-y-2 border-b border-gray-200 pb-4">
-                        <a href="{{ route('home') }}"
-                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            Home
-                        </a>
+                    <div class="border-b border-gray-200 pb-4">
+                        <div class="flex items-start justify-between gap-4">
+                            <a href="{{ route('home') }}" class="-m-1.5 p-1.5" data-mobile-menu-home>
+                                <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
+                                <x-application-logo />
+                            </a>
+                            <button type="button"
+                                class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 hover:text-gray-900"
+                                @click="open = false; activeAccordion = null"
+                                aria-label="Close menu"
+                                data-mobile-menu-close>
+                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-3">

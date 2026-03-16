@@ -62,11 +62,12 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Knockouts');
         $response->assertSeeText('Handbook');
-        $response->assertSeeText('Home');
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
         $response->assertSee('href="'.route('home').'"', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
+        $response->assertSee('data-mobile-menu-home', false);
+        $response->assertSee('data-mobile-menu-close', false);
         $response->assertSee('data-knockouts-nav', false);
         $response->assertSee('data-mobile-knockouts-trigger', false);
         $response->assertSee('data-mobile-knockouts-links', false);
@@ -74,6 +75,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@click="open = false; activeAccordion = null"', false);
         $response->assertSee('@click.stop', false);
         $response->assertSee('rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900', false);
+        $response->assertSee('aria-label="Close menu"', false);
         $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
         $response->assertDontSee('<a href="/" class="fa-stack -ml-1">', false);
