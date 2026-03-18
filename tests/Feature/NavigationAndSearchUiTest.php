@@ -47,7 +47,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertOk();
         $response->assertSee('site-header', false);
         $response->assertSee('bg-gray-500/25', false);
-        $response->assertSee('bg-gray-500/50', false);
+        $response->assertSee('bg-gray-500/40', false);
         $response->assertSee('ring-black/5', false);
         $response->assertSee('data-site-search-trigger', false);
         $response->assertSee('focus-first-search-result', false);
@@ -64,19 +64,23 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('Handbook');
         $response->assertDontSeeText('Ruleset');
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
-        $response->assertSee('href="'.route('home').'"', false);
+        $response->assertSee('<a href="/" class="-m-1.5 p-1.5">', false);
+        $response->assertSee('data-mobile-menu-toggle', false);
+        $response->assertSee('data-mobile-menu-drawer', false);
+        $response->assertSee('data-mobile-menu-panel="root"', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
-        $response->assertSee('data-mobile-menu-home', false);
-        $response->assertSee('data-mobile-menu-close', false);
         $response->assertSee('data-knockouts-nav', false);
         $response->assertSee('data-mobile-knockouts-trigger', false);
         $response->assertSee('data-mobile-knockouts-links', false);
-        $response->assertSee('activeAccordion: null', false);
-        $response->assertSee('@click="open = false; activeAccordion = null"', false);
+        $response->assertSee("activeDrawer: 'root'", false);
+        $response->assertSee('open ? closeMenu() : openMenu()', false);
+        $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
         $response->assertSee('@click.stop', false);
+        $response->assertSee('translate-x-full', false);
+        $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
         $response->assertSee('rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900', false);
-        $response->assertSee('aria-label="Close menu"', false);
+        $response->assertSee('aria-label="Toggle main menu"', false);
         $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
         $response->assertDontSee('<a href="/" class="fa-stack -ml-1">', false);
@@ -84,6 +88,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('ring-opacity-5', false);
         $response->assertDontSee('sectionsOpen:', false);
         $response->assertDontSee('knockoutsOpen:', false);
+        $response->assertDontSee('activeAccordion', false);
+        $response->assertDontSee('data-mobile-menu-home', false);
+        $response->assertDontSee('data-mobile-menu-close', false);
         $response->assertDontSee('href="'.route('ruleset.index').'"', false);
         $response->assertDontSee('aria-label="Primary mobile"', false);
     }

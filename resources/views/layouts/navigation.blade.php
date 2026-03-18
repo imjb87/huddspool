@@ -10,10 +10,33 @@
 @endphp
 
 <header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500"
-    x-data="{ open: false, scroll: false, activeAccordion: null }"
+    x-data="{
+        open: false,
+        scroll: false,
+        activeDrawer: 'root',
+        headerHeight: 0,
+        updateHeaderHeight() {
+            this.headerHeight = this.$refs.header.offsetHeight;
+        },
+        openMenu() {
+            this.open = true;
+            this.activeDrawer = 'root';
+        },
+        closeMenu() {
+            this.open = false;
+            this.activeDrawer = 'root';
+        },
+        openDrawer(drawer) {
+            this.activeDrawer = drawer;
+        },
+        goBackToRoot() {
+            this.activeDrawer = 'root';
+        },
+    }"
+    x-init="updateHeaderHeight(); window.addEventListener('resize', () => updateHeaderHeight())"
     @scroll.window="scroll = (window.pageYOffset > 0) ? true : false"
     :class="{ 'shadow-lg': scroll || open }">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global" x-ref="header">
         <div class="flex flex-1">
             <a href="/" class="-m-1.5 p-1.5">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
@@ -118,14 +141,20 @@
                         clip-rule="evenodd" />
                 </svg>
             </button>
-            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-                @click="open = ! open; activeAccordion = null" :aria-expanded="open">
-                <span class="sr-only">Open main menu</span>
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                    aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+            <button type="button" class="-m-2.5 inline-flex p-2.5 items-center justify-center rounded-md p-2.5 text-gray-700"
+                @click="open ? closeMenu() : openMenu()" :aria-expanded="open" aria-label="Toggle main menu"
+                data-mobile-menu-toggle>
+                <span class="sr-only">Toggle main menu</span>
+                <span class="block h-6 w-6 flex items-center justify-center" aria-hidden="true">
+                    <span class="relative block h-[18px] w-[18px]">
+                        <span class="absolute left-0 top-[3px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
+                            :class="open ? '!top-[9px] -rotate-135' : ''"></span>
+                        <span class="absolute left-0 top-[8px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
+                            :class="open ? 'opacity-0' : 'opacity-100'"></span>
+                        <span class="absolute left-0 top-[13px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
+                            :class="open ? '!top-[9px] rotate-135' : ''"></span>
+                    </span>
+                </span>
             </button>
         </div>
 
@@ -215,149 +244,194 @@
         </div>
     </nav>
 
-    <div class="lg:hidden relative z-50" role="dialog" aria-modal="true"
-        @close.stop="open = false; activeAccordion = null" @keydown.escape="open = false; activeAccordion = null" x-cloak x-show="open">
-        <div class="fixed inset-0 z-20 bg-gray-500/50 transition-opacity" x-show="open"
-            @click="open = false; activeAccordion = null"
+    <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true"
+        @close.stop="closeMenu()" @keydown.escape.window="closeMenu()" x-cloak x-show="open">
+        <div class="fixed inset-x-0 bottom-0 z-20 bg-gray-500/40 transition-opacity" x-show="open"
+            @click="closeMenu()"
+            :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-        <div class="fixed inset-y-0 right-0 z-30 w-full overflow-y-auto px-4 py-3 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+        <div class="fixed inset-x-0 right-0 z-30 bg-white shadow-2xl ring-1 ring-black/5"
             @click.stop
-            x-show="open" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-1">
-            <div class="mx-auto max-w-xl overflow-hidden rounded-xl bg-white px-6 pt-6 pb-4 shadow-2xl ring-1 ring-black/5 transition-all">
-                <div class="space-y-6">
-                    <div class="border-b border-gray-200 pb-4">
-                        <div class="flex items-start justify-between gap-4">
-                            <a href="{{ route('home') }}" class="-m-1.5 p-1.5" data-mobile-menu-home>
-                                <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
-                                <x-application-logo />
-                            </a>
-                            <button type="button"
-                                class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 hover:text-gray-900"
-                                @click="open = false; activeAccordion = null"
-                                aria-label="Close menu"
-                                data-mobile-menu-close>
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        @foreach ($rulesets as $ruleset)
-                            @php
-                                $navigableSections = $ruleset->openSections
-                                    ->filter(fn ($section) => filled($section?->getRouteKey()))
-                                    ->values();
-                            @endphp
-                            @continue($navigableSections->isEmpty())
-                            <div data-mobile-ruleset-group>
+            :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
+            data-mobile-menu-drawer
+            x-show="open" x-transition:enter="transform transition ease-out duration-300"
+            x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transform transition ease-in duration-200"
+            x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+            <div class="relative h-full overflow-hidden bg-white">
+                <div class="absolute inset-0 overflow-y-auto px-4 py-5"
+                    x-show="activeDrawer === 'root'"
+                    x-cloak
+                    data-mobile-menu-panel="root"
+                    x-transition:enter="transform transition ease-out duration-300"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in duration-200"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="-translate-x-1/4 opacity-0">
+                    <div class="space-y-6">
+                        <div class="space-y-3">
+                            @foreach ($rulesets as $ruleset)
+                                @php
+                                    $navigableSections = $ruleset->openSections
+                                        ->filter(fn ($section) => filled($section?->getRouteKey()))
+                                        ->values();
+                                @endphp
+                                @continue($navigableSections->isEmpty())
                                 <button type="button"
                                     class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                     data-mobile-ruleset-trigger
-                                    @click="activeAccordion = activeAccordion === 'ruleset-{{ $ruleset->id }}' ? null : 'ruleset-{{ $ruleset->id }}'"
-                                    :aria-expanded="activeAccordion === 'ruleset-{{ $ruleset->id }}'">
+                                    @click="openDrawer('ruleset-{{ $ruleset->id }}')">
                                     <span>{{ $ruleset->name }}</span>
-                                    <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': activeAccordion === 'ruleset-{{ $ruleset->id }}' }"
-                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div class="mt-1 space-y-1 pl-3" x-show="activeAccordion === 'ruleset-{{ $ruleset->id }}'" x-cloak data-mobile-ruleset-sections>
-                                    @foreach ($navigableSections as $section)
-                                        <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
-                                            class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
-                                            {{ $section->name }}
-                                        </a>
-                                    @endforeach
-                                    <a href="{{ route('ruleset.show', $ruleset) }}"
-                                        class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
-                                        {{ $ruleset->name }}
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                            @endforeach
+                        </div>
 
-                    <div class="space-y-2 border-t border-gray-200 pt-4">
-                        <div data-mobile-knockouts-group>
+                        <div class="space-y-2 border-t border-gray-200 pt-4">
                             <button type="button"
                                 class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 data-mobile-knockouts-trigger
-                                @click="activeAccordion = activeAccordion === 'knockouts' ? null : 'knockouts'"
-                                :aria-expanded="activeAccordion === 'knockouts'">
+                                @click="openDrawer('knockouts')">
                                 <span>Knockouts</span>
-                                <svg class="h-5 w-5 text-gray-400 transition-transform" :class="{ 'rotate-180': activeAccordion === 'knockouts' }"
-                                    viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
                                 </svg>
                             </button>
-                            <div class="mt-1 space-y-1 pl-3" x-show="activeAccordion === 'knockouts'" x-cloak data-mobile-knockouts-links>
-                                @foreach ($navigableKnockouts as $knockout)
-                                    <a href="{{ route('knockout.show', $knockout) }}"
-                                        class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
-                                        {{ $knockout->name }}
+                            <a href="{{ route('history.index') }}"
+                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                History
+                            </a>
+                            <a href="{{ route('page.show', 'handbook') }}"
+                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                Handbook
+                            </a>
+                        </div>
+
+                        <div class="space-y-2 border-t border-gray-200 pt-4">
+                            @if (@auth()->user())
+                                <span class="block px-3 text-sm font-semibold leading-7 text-gray-500">{{ auth()->user()->name }}</span>
+                                <a href="{{ route('player.show', auth()->user()) }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Your profile
+                                </a>
+                                @if (auth()->user()->team_id)
+                                    <a href="{{ route('team.show', auth()->user()->team_id) }}"
+                                        class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                        Your team
+                                    </a>
+                                @endif
+                                <a href="{{ route('support.tickets') }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Submit a request
+                                </a>
+                                @if (auth()->user()->is_admin)
+                                    <a href="{{ route('filament.admin.pages.dashboard') }}"
+                                        class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                        Admin
+                                    </a>
+                                @endif
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <a href="{{ route('logout') }}"
+                                        class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                        onclick="event.preventDefault(); this.closest('form').submit();">
+                                        Log out
+                                    </a>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    Log in
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                @foreach ($rulesets as $ruleset)
+                    @php
+                        $navigableSections = $ruleset->openSections
+                            ->filter(fn ($section) => filled($section?->getRouteKey()))
+                            ->values();
+                    @endphp
+                    @continue($navigableSections->isEmpty())
+                    <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5"
+                        x-show="activeDrawer === 'ruleset-{{ $ruleset->id }}'"
+                        x-cloak
+                        data-mobile-ruleset-sections
+                        data-mobile-menu-panel="ruleset-{{ $ruleset->id }}"
+                        x-transition:enter="transform transition ease-out duration-300"
+                        x-transition:enter-start="translate-x-full"
+                        x-transition:enter-end="translate-x-0"
+                        x-transition:leave="transform transition ease-in duration-200"
+                        x-transition:leave-start="translate-x-0"
+                        x-transition:leave-end="translate-x-full">
+                        <div class="space-y-6">
+                            <button type="button"
+                                class="block w-full rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-500 hover:bg-gray-50"
+                                @click="goBackToRoot()">
+                                <span class="flex items-center gap-3">
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M12.78 4.97a.75.75 0 010 1.06L9.06 10l3.72 3.97a.75.75 0 11-1.1 1.02l-4.25-4.5a.75.75 0 010-1.04l4.25-4.5a.75.75 0 011.1-.02z" clip-rule="evenodd" />
+                                    </svg>
+                                    Back
+                                </span>
+                            </button>
+                            <div class="space-y-2">
+                                @foreach ($navigableSections as $section)
+                                    <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
+                                        class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                        {{ $section->name }}
                                     </a>
                                 @endforeach
-                                <a href="{{ route('page.show', 'knockout-dates') }}"
-                                    class="block rounded-lg px-3 py-3 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50">
-                                    Knockout Dates
+                                <a href="{{ route('ruleset.show', $ruleset) }}"
+                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                    {{ $ruleset->name }}
                                 </a>
                             </div>
                         </div>
-                        <a href="{{ route('history.index') }}"
-                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            History
-                        </a>
-                        <a href="{{ route('page.show', 'handbook') }}"
-                            class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            Handbook
-                        </a>
                     </div>
+                @endforeach
 
-                    <div class="space-y-2 border-t border-gray-200 pt-4">
-                        @if (@auth()->user())
-                            <span class="block px-3 text-sm font-semibold leading-7 text-gray-500">{{ auth()->user()->name }}</span>
-                            <a href="{{ route('player.show', auth()->user()) }}"
-                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                Your profile
-                            </a>
-                            @if (auth()->user()->team_id)
-                                <a href="{{ route('team.show', auth()->user()->team_id) }}"
+                <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5"
+                    x-show="activeDrawer === 'knockouts'"
+                    x-cloak
+                    data-mobile-knockouts-links
+                    data-mobile-menu-panel="knockouts"
+                    x-transition:enter="transform transition ease-out duration-300"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in duration-200"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full">
+                    <div class="space-y-6">
+                        <button type="button"
+                            class="block w-full rounded-lg px-3 py-3 text-left text-base font-semibold leading-7 text-gray-500 hover:bg-gray-50"
+                            @click="goBackToRoot()">
+                            <span class="flex items-center gap-3">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.78 4.97a.75.75 0 010 1.06L9.06 10l3.72 3.97a.75.75 0 11-1.1 1.02l-4.25-4.5a.75.75 0 010-1.04l4.25-4.5a.75.75 0 011.1-.02z" clip-rule="evenodd" />
+                                </svg>
+                                Back
+                            </span>
+                        </button>
+                        <div class="space-y-2">
+                            @foreach ($navigableKnockouts as $knockout)
+                                <a href="{{ route('knockout.show', $knockout) }}"
                                     class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                    Your team
+                                    {{ $knockout->name }}
                                 </a>
-                            @endif
-                            <a href="{{ route('support.tickets') }}"
+                            @endforeach
+                            <a href="{{ route('page.show', 'knockout-dates') }}"
                                 class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                Submit a request
+                                Knockout Dates
                             </a>
-                            @if (auth()->user()->is_admin)
-                                <a href="{{ route('filament.admin.pages.dashboard') }}"
-                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                    Admin
-                                </a>
-                            @endif
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <a href="{{ route('logout') }}"
-                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    onclick="event.preventDefault(); this.closest('form').submit();">
-                                    Log out
-                                </a>
-                            </form>
-                        @else
-                            <a href="{{ route('login') }}"
-                                class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                Log in
-                            </a>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
