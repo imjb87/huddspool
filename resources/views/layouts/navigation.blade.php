@@ -16,11 +16,12 @@
         activeDrawer: 'root',
         headerHeight: 0,
         updateHeaderHeight() {
-            this.headerHeight = this.$refs.header.offsetHeight;
+            this.headerHeight = Math.ceil(this.$refs.header.getBoundingClientRect().bottom);
         },
         openMenu() {
             this.open = true;
             this.activeDrawer = 'root';
+            this.$nextTick(() => this.updateHeaderHeight());
         },
         closeMenu() {
             this.open = false;
@@ -35,8 +36,9 @@
     }"
     x-init="updateHeaderHeight(); window.addEventListener('resize', () => updateHeaderHeight())"
     @scroll.window="scroll = (window.pageYOffset > 0) ? true : false"
-    :class="{ 'shadow-lg': scroll || open }">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global" x-ref="header">
+    :class="{ 'shadow-lg': scroll || open }"
+    x-ref="header">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
         <div class="flex flex-1">
             <a href="/" class="-m-1.5 p-1.5">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
