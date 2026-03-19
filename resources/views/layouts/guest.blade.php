@@ -47,16 +47,9 @@
     @laravelPWA
 </head>
 
-<body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 px-4">
-
-        <div>
-            <a href="/">
-                <img class="w-36" src="{{ asset('images/logo.png') }}" alt="Huddersfield Pool Logo" />
-            </a>
-        </div>
-
-        <div class="w-full sm:max-w-md mt-6 px-4 py-4 bg-white shadow-md overflow-hidden rounded-lg">
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+    <div class="min-h-screen">
+        <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14">
             {{ $slot }}
         </div>
     </div>

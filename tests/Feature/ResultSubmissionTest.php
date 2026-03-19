@@ -22,6 +22,25 @@ class ResultSubmissionTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_result_create_route_displays_the_redesigned_submission_layout(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+        ] = $this->createResultFormLockContext();
+
+        $this->actingAs($teamAdmin)
+            ->get(route('result.create', $fixture))
+            ->assertOk()
+            ->assertSee('data-result-create-page', false)
+            ->assertSee('data-result-create-info-section', false)
+            ->assertSee('data-result-create-form-section', false)
+            ->assertSee('data-result-form', false)
+            ->assertSeeText('Submit a result')
+            ->assertSeeText('Fixture details')
+            ->assertSeeText('Result card');
+    }
+
     public function test_team_admin_can_save_partial_frames(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');

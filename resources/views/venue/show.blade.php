@@ -1,99 +1,115 @@
 @extends('layouts.app')
 
 @section('content')
-<div>
-    <div class="bg-white pt-24 sm:pt-32 pb-8 sm:pb-12">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="mx-auto max-w-3xl lg:mx-0">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl font-serif">{{ $venue->name }}</h2>
-            </div>
-        </div>
-    </div>
-    <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-4 lg:px-8">
-            <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-4">
-                <div class="w-full lg:w-1/3 flex flex-col gap-4">
-                    <div class="rounded-lg bg-white shadow-xs ring-1 ring-gray-900/5">
-                        <dl class="flex flex-wrap">
-                            <div class="flex-auto pl-6 pt-6">
-                                <dt class="text-sm font-semibold leading-6 text-gray-900">Address</dt>
-                                <dd class="mt-1 text-sm leading-6 text-gray-900">
-                                    {{ $venue->address }}
-                                </dd>
-                            </div>
-                            <div class="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-6">
-                                <dt class="flex w-5">
-                                    <span class="sr-only">Venue telephone</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 text-gray-400 mx-auto"
-                                        viewBox="0 0 512 512" fill="currentColor">
-                                        <path
-                                            d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
-                                    </svg>
-                                </dt>
-                                <dd class="text-sm leading-6 text-gray-900">
-                                    <a href="tel:{{ $venue->telephone }}"
-                                        class="text-sm font-medium leading-6 text-gray-900 hover:underline">{{ $venue->telephone }}</a>
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                    <div class="bg-white shadow-sm rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-4 lg:px-6 bg-green-700">
-                            <h2 class="text-sm font-medium leading-6 text-white">Teams</h2>
-                        </div>
-                        <div class="border-t border-gray-200">
-                            <div class="overflow-hidden">
-                                <table class="min-w-full divide-y divide-gray-300">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th scope="col"
-                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                                Name</th>
-                                            <th scope="col"
-                                                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Captain
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 bg-white">
-                                        @forelse ($teams as $team)
-                                            <tr>
-                                                <td
-                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                                    <a class="hover:underline"
-                                                        href="{{ route('team.show', $team->id) }}">
-                                                        {{ $team->name }}
-                                                    </a>
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    <a class="hover:underline"
-                                                        href="{{ route('player.show', $team->captain->id ?? 0) }}">
-                                                        {{ $team->captain?->name }}
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="2"
-                                                    class="px-4 py-6 text-sm text-gray-500 text-center">
-                                                    No active teams for the current season.
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>                    
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="pb-10 lg:pb-14" data-venue-page>
+            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+                data-section-shared-header>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold text-gray-900">{{ $venue->name }}</h1>
                 </div>
-                <section class="w-full lg:w-2/3">
-                    <iframe class="w-full shadow-md sm:rounded-lg"
-                        src="https://www.google.com/maps/embed/v1/place?q={{ urlencode($venue->address) }}&key={{ config('services.google_maps.embed_key') }}"
-                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </section>
+            </div>
+
+            <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
+                <div class="space-y-6">
+                    <section class="py-1" data-venue-info-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Venue information</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Contact details and location information for this venue.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                                    <div class="sm:col-span-2">
+                                        <p class="text-sm font-medium text-gray-500">Address</p>
+                                        <p class="mt-2 text-sm text-gray-900 whitespace-pre-line">{{ $venue->address }}</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Telephone</p>
+                                        @if ($venue->telephone)
+                                            <a href="tel:{{ $venue->telephone }}"
+                                                class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                                {{ $venue->telephone }}
+                                            </a>
+                                        @else
+                                            <p class="mt-2 text-sm text-gray-900">Not listed</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="border-t border-gray-200 pt-6" data-venue-teams-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Teams</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Active teams currently playing out of this venue in the open season.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="divide-y divide-gray-200">
+                                    @forelse ($teams as $team)
+                                        @php
+                                            $openSection = $team->openSection();
+                                        @endphp
+                                        <a href="{{ route('team.show', $team) }}"
+                                            class="block transition hover:bg-gray-50"
+                                            wire:key="venue-team-{{ $team->id }}">
+                                            <div class="flex items-start justify-between gap-4 py-4">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $team->name }}</p>
+                                                    <p class="mt-1 text-xs text-gray-500">
+                                                        {{ $openSection?->name ?? 'Section TBC' }}
+                                                    </p>
+                                                </div>
+
+                                                @if ($team->captain)
+                                                    <div class="shrink-0 text-right">
+                                                        <p class="text-xs font-medium text-gray-500">Captain</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-700">{{ $team->captain->name }}</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    @empty
+                                        <div class="py-6">
+                                            <p class="text-sm text-gray-500">No active teams for the current season.</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="border-t border-gray-200 pt-6" data-venue-map-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Map</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Find the venue using the embedded map.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                                    <iframe class="h-[360px] w-full"
+                                        src="https://www.google.com/maps/embed/v1/place?q={{ urlencode($venue->address) }}&key={{ config('services.google_maps.embed_key') }}"
+                                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
+
+        <x-logo-clouds variant="section-showcase" />
     </div>
-    <x-logo-clouds />
-</div>
 @endsection

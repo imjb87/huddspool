@@ -10,6 +10,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -113,6 +114,38 @@ class CompetitionCacheInvalidationTest extends TestCase
         $this->cacheKeys($keys);
 
         $frame->restore();
+
+        $this->assertCacheKeysCleared($keys);
+    }
+
+    public function test_invalidating_an_open_season_clears_navigation_related_caches(): void
+    {
+        Cache::flush();
+
+        $season = Season::factory()->create([
+            'is_open' => true,
+        ]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $keys = [
+            'stats:open-season',
+            'stats:season-series',
+            'stats:season-series-chart',
+            'nav:past-seasons',
+            'history:index',
+            sprintf('history:season:%d', $season->id),
+            sprintf('section:%d:averages', $section->id),
+            sprintf('section:%d:standings', $section->id),
+            sprintf('history:sections:%d:%d', $season->id, $ruleset->id),
+        ];
+
+        $this->cacheKeys($keys);
+
+        app(CompetitionCacheInvalidator::class)->forgetForSeason($season);
 
         $this->assertCacheKeysCleared($keys);
     }

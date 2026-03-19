@@ -35,7 +35,10 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->get(route('knockout.matches.submit', $match))
             ->assertOk()
             ->assertSee('data-knockout-submit-page', false)
+            ->assertSee('data-knockout-submit-header', false)
             ->assertSee('data-knockout-submit-context', false)
+            ->assertSeeText('Match details')
+            ->assertSeeText('Match score')
             ->assertSee('data-knockout-submit-form', false)
             ->assertSeeLivewire(SubmitResult::class);
     }

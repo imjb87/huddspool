@@ -5,26 +5,27 @@
         $hasRulesetContent = filled(trim(strip_tags((string) $ruleset->content)));
     @endphp
 
-    <div>
-        <div class="bg-white pt-24 pb-8 sm:pt-32 sm:pb-12">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl lg:mx-0">
-                    <h1 class="font-serif text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        {{ $ruleset->name }}
-                    </h1>
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="pb-10 lg:pb-14" data-ruleset-content-page>
+            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+                data-section-shared-header>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold text-gray-900">{{ $ruleset->name }}</h1>
                 </div>
             </div>
-        </div>
 
-        <div class="pb-8 sm:pb-16" data-ruleset-content-page>
-            <div class="mx-auto max-w-7xl px-4 text-base leading-7 text-gray-700 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
                 @if ($hasRulesetContent)
-                    <section class="prose mx-auto max-w-none">
-                        {!! $ruleset->content !!}
+                    <section class="py-1" data-ruleset-content-section>
+                        <div class="prose prose-gray max-w-none text-sm leading-7 text-gray-700">
+                            {!! $ruleset->content !!}
+                        </div>
                     </section>
                 @else
-                    <section class="prose mx-auto max-w-none" data-ruleset-content-empty>
-                        <p>No ruleset content has been published yet.</p>
+                    <section class="py-1" data-ruleset-content-empty>
+                        <div class="prose prose-gray max-w-none text-sm leading-7 text-gray-700">
+                            <p>No ruleset content has been published yet.</p>
+                        </div>
                     </section>
                 @endif
             </div>

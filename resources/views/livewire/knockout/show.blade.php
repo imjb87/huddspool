@@ -1,8 +1,10 @@
 <div data-knockout-show-page x-on:knockout-round-changed.window="window.scrollTo(0, 0)">
     <div class="mx-auto max-w-7xl pt-6 lg:pt-7">
-        <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 pb-4 sm:px-6" data-knockout-shared-header>
-            <h1 class="text-lg font-semibold text-gray-900">{{ $knockout->name }}</h1>
-            <p class="text-sm text-gray-500">{{ $knockout->season->name }}</p>
+        <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pb-4 sm:px-6" data-knockout-shared-header>
+            <div class="min-w-0">
+                <p class="text-sm text-gray-500">{{ $knockout->season->name }}</p>
+                <h1 class="mt-1 text-lg font-semibold text-gray-900">{{ $knockout->name }}</h1>
+            </div>
         </div>
     </div>
 

@@ -1,323 +1,300 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="pt-[80px]">
-    <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-4 lg:px-8">
-            <div class="border-b border-gray-200 pb-2 mb-4">
-                <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
-                    <h3 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Player profile</h3>
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="pb-10 lg:pb-14" data-player-page>
+            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+                data-section-shared-header>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold text-gray-900">{{ $player->name }}</h1>
                 </div>
             </div>
-            <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
-                <div class="overflow-hidden bg-white shadow-sm rounded-lg sm:self-start w-full lg:w-1/3">
-                    <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
-                        <div class="flex items-start space-x-5">
-                            <div class="shrink-0">
-                                @can('updateAvatar', $player)
-                                    <form method="POST" action="{{ route('player.avatar', $player) }}"
-                                        enctype="multipart/form-data" class="relative group">
-                                        @csrf
-                                        <label for="avatar-upload-{{ $player->id }}"
-                                            class="block cursor-pointer relative"
-                                            title="Click to upload a new avatar">
-                                            <img class="h-16 w-16 rounded-full object-cover"
-                                                src="{{ $player->avatar_url }}"
-                                                alt="{{ $player->name }} avatar">
-                                            <span
-                                                class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-semibold text-white z-10">Change</span>
-                                            <span class="absolute inset-0 rounded-full shadow-inner"
-                                                aria-hidden="true"></span>
-                                        </label>
-                                        <input type="file" name="avatar" id="avatar-upload-{{ $player->id }}"
-                                            class="hidden" accept="image/*" onchange="this.form.submit()">
-                                    </form>
-                                @else
-                                    <div class="relative">
-                                        <img class="h-16 w-16 rounded-full object-cover"
-                                            src="{{ $player->avatar_url }}" alt="{{ $player->name }} avatar">
-                                        <span class="absolute inset-0 rounded-full shadow-inner"
-                                            aria-hidden="true"></span>
-                                    </div>
-                                @endcan
-                            </div>
-                            <!--
-                            Use vertical padding to simulate center alignment when both lines of text are one line,
-                            but preserve the same layout if the text wraps without making the image jump around.
-                          -->
-                            <div class="pt-1.5">
-                                <h1 class="text-2xl font-bold text-gray-900">{{ $player->name }}</h1>
-                                <p class="text-sm font-medium text-gray-500">
-                                    @if ($player->team)
-                                        <a href="{{ route('team.show', $player->team) }}">
-                                            {{ $player->team->name }}
-                                        </a>
-                                    @else
-                                        Free agent
-                                    @endif
+
+            <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
+                @if (session('status'))
+                    <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+                <div class="space-y-6">
+                    <section class="py-1" data-player-profile-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Player information</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Public profile details, current team information, and this season's playing record.
                                 </p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="border-t border-gray-100">
-                        <dl class="divide-y divide-gray-100">
-                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium leading-6 text-gray-900">Role</dt>
-                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {{ $player->roleLabel() }}</dd>
-                            </div>
-                            @if ($player->email)
-                                <div class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 relative">
-                                        @auth
-                                            <a href="mailto:{{ $player->email }}">{{ $player->email }}</a>
-                                        @else
-                                            <span class="relative">
-                                                <span class="bg-black text-black p-1">xxxxxxxxxxxxxxxxxx</span>
-                                            </span>
-                                        @endauth
-                                    </dd>
-                                </div>
-                            @endif
-                            @if ($player->telephone)
-                                <div class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Telephone</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 relative">
-                                        @auth
-                                            <a href="tel:{{ $player->telephone }}">{{ $player->telephone }}</a>
-                                        @else
-                                            <span class="relative">
-                                                <span class="bg-black text-black p-1">xxxxxxxxxxxxxxxxxx</span>
-                                            </span>
-                                        @endauth
-                                    </dd>
-                                </div>
-                            @endif
-                        </dl>
-                    </div>
 
-                </div>
+                            <div class="space-y-6 lg:col-span-2">
+                                <div class="pt-1">
+                                    <div class="space-y-5">
+                                        <div class="flex items-start gap-8">
+                                            <div class="shrink-0">
+                                                <img class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200"
+                                                    src="{{ $player->avatar_url }}"
+                                                    alt="{{ $player->name }} avatar">
+                                            </div>
 
-                <section class="w-full lg:w-2/3">
-                    <dl
-                        class="mb-5 grid grid-cols-3 divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm md:grid-cols-3 divide-x">
-                        <div class="px-4 py-5 sm:p-6">
-                            <dt class="text-base font-normal text-gray-900">Played</dt>
-                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
-                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ $averages->frames_played ?? 0 }}
-                                </div>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-5 sm:p-6">
-                            <dt class="text-base font-normal text-gray-900">Won</dt>
-                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
-                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ $averages->frames_won ?? 0 }}
-                                    <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ number_format($averages?->frames_won_percentage,2) ?? 0 }}%)
-                                    </span>
-                                </div>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-5 sm:p-6">
-                            <dt class="text-base font-normal text-gray-900">Lost</dt>
-                            <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
-                                <div class="flex items-baseline text-2xl font-semibold text-green-700">
-                                    {{ $averages->frames_lost ?? 0 }}
-                                    <span class="ml-2 text-sm font-medium text-gray-500">
-                                        ({{ number_format($averages?->frames_lost_percentage,2) ?? 0 }}%)
-                                    </span>
-                                </div>
-                            </dd>
-                        </div>
-                    </dl>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-500">Name</p>
+                                                        <p class="mt-2 text-sm font-semibold text-gray-900">{{ $player->name }}</p>
+                                                    </div>
 
-                    <div class="bg-white shadow-sm rounded-lg flex flex-col overflow-hidden">
-                        <div class="px-4 py-4 bg-green-700">
-                            <h2 class="text-sm font-medium leading-6 text-white">Frames</h2>
-                        </div>
-                        <div class="border-gray-200 h-full flex flex-col">
-                            <div class="min-w-full overflow-hidden">
-                                <div class="bg-white">
-                                    @if ($player->frames && count($player->frames) == 0)
-                                        <div
-                                            class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300">
-                                            <h3 class="mt-2 text-sm font-semibold text-gray-900">No frames</h3>
-                                            <p class="mt-1 text-sm text-gray-500 max-w-prose mx-auto">This player hasn't
-                                                played any frames this season. Please check back here again soon.</p>
-                                        </div>
-                                    @else
-                                        @foreach ($frames as $frame)
-                                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                                                href="{{ route('result.show', $frame->result_id) }}">
-                                                <div
-                                                    class="whitespace-nowrap px-4 py-4 text-sm flex items-center w-full">
-                                                    <div class="pr-4">
-                                                        @if ($frame->home_player_id == $player->id)
-                                                            @if ($frame->home_score > $frame->away_score)
-                                                                <span
-                                                                    class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">W</span>
-                                                            @else
-                                                                <span
-                                                                    class="inline-block bg-red-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">L</span>
-                                                            @endif
+                                                    <div>
+                                                        <p class="text-sm font-medium text-gray-500">Role</p>
+                                                        <p class="mt-2 text-sm text-gray-900">{{ $player->roleLabel() }}</p>
+                                                    </div>
+
+                                                    <div class="col-span-2 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-500">Team</p>
+                                                        @if ($player->team)
+                                                            <a href="{{ route('team.show', $player->team) }}"
+                                                                class="mt-2 inline-flex max-w-full text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                                                <span>{{ $player->team->name }}</span>
+                                                            </a>
                                                         @else
-                                                            @if ($frame->home_score < $frame->away_score)
-                                                                <span
-                                                                    class="inline-block bg-green-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">W</span>
-                                                            @else
-                                                                <span
-                                                                    class="inline-block bg-red-700 text-white text-center mx-auto text-xs leading-5 min-w-[22px] font-extrabold">L</span>
-                                                            @endif
+                                                            <p class="mt-2 text-sm text-gray-900">Free agent</p>
                                                         @endif
                                                     </div>
-                                                    <div class="flex flex-col grow">
-                                                        <div>
-                                                        {{ $frame->home_player_id == $player->id ? $frame->away_player_name : $frame->home_player_name }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @if ($averages)
+                                            @php
+                                                $framesWonPercentage = fmod((float) $averages->frames_won_percentage, 1.0) === 0.0
+                                                    ? number_format($averages->frames_won_percentage, 0)
+                                                    : number_format($averages->frames_won_percentage, 1);
+                                                $framesLostPercentage = fmod((float) $averages->frames_lost_percentage, 1.0) === 0.0
+                                                    ? number_format($averages->frames_lost_percentage, 0)
+                                                    : number_format($averages->frames_lost_percentage, 1);
+                                            @endphp
+                                            <div class="pt-2 pb-2 sm:col-span-2">
+                                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                                                    <div class="grid grid-cols-3 divide-x divide-gray-200">
+                                                        <div class="px-4 py-4 sm:px-5">
+                                                            <p class="text-xs font-medium text-gray-500">Played</p>
+                                                            <p class="mt-1 text-base font-semibold text-gray-900">{{ $averages->frames_played }}</p>
                                                         </div>
-                                                        <div class="text-xs text-gray-500">
-                                                            {{ $frame->home_player_id == $player->id ? $frame->away_team_name : $frame->home_team_name }}
+                                                        <div class="px-4 py-4 sm:px-5">
+                                                            <p class="text-xs font-medium text-gray-500">Won</p>
+                                                            <div class="mt-1 flex items-end justify-between gap-2">
+                                                                <p class="text-base font-semibold text-green-700">{{ $averages->frames_won }}</p>
+                                                                <span class="inline-flex shrink-0 items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
+                                                                    {{ $framesWonPercentage }}%
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="px-4 py-4 sm:px-5">
+                                                            <p class="text-xs font-medium text-gray-500">Lost</p>
+                                                            <div class="mt-1 flex items-end justify-between gap-2">
+                                                                <p class="text-base font-semibold text-red-700">{{ $averages->frames_lost }}</p>
+                                                                <span class="inline-flex shrink-0 items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
+                                                                    {{ $framesLostPercentage }}%
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="w-2/12 text-right text-gray-500 font-semibold">
-                                                        {{ $frame->fixture_date->format('d/m') }}
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if ($player->email)
+                                            <div class="sm:col-span-2">
+                                                <p class="text-sm font-medium text-gray-500">Email address</p>
+                                                <p class="mt-2 text-sm text-gray-900">
+                                                    @auth
+                                                        <a href="mailto:{{ $player->email }}"
+                                                            class="underline decoration-gray-300 underline-offset-3 transition hover:text-gray-700 hover:decoration-gray-500">
+                                                            {{ $player->email }}
+                                                        </a>
+                                                    @else
+                                                        <span class="bg-black px-1 text-black">xxxxxxxxxxxxxxxxxx</span>
+                                                    @endauth
+                                                </p>
+                                            </div>
+                                        @endif
+
+                                        @if ($player->telephone)
+                                            <div class="sm:col-span-2">
+                                                <p class="text-sm font-medium text-gray-500">Phone number</p>
+                                                <p class="mt-2 text-sm text-gray-900">
+                                                    @auth
+                                                        <a href="tel:{{ $player->telephone }}"
+                                                            class="underline decoration-gray-300 underline-offset-3 transition hover:text-gray-700 hover:decoration-gray-500">
+                                                            {{ $player->telephone }}
+                                                        </a>
+                                                    @else
+                                                        <span class="bg-black px-1 text-black">xxxxxxxxxxxxxxxxxx</span>
+                                                    @endauth
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    @if ($knockoutMatches->isNotEmpty())
+                        <section class="border-t border-gray-200 pt-6" data-player-knockout-section>
+                            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                                <div class="space-y-2">
+                                    <h3 class="text-sm font-semibold text-gray-900">Knockouts</h3>
+                                    <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                        Knockout matches this player has featured in.
+                                    </p>
+                                </div>
+
+                                <div class="lg:col-span-2">
+                                    <div class="divide-y divide-gray-200">
+                                        @foreach ($knockoutMatches as $match)
+                                            <a href="{{ route('knockout.show', $match->round->knockout) }}"
+                                                class="block transition hover:bg-gray-50"
+                                                wire:key="player-knockout-{{ $match->id }}">
+                                                <div class="flex items-start gap-3 py-4 sm:items-center sm:gap-4">
+                                                    <div class="min-w-0 flex-1">
+                                                        <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900">
+                                                            <span>{{ $match->homeParticipant?->display_name ?? 'TBC' }}</span>
+                                                            <span class="px-1 font-normal text-gray-400">vs</span>
+                                                            <span>{{ $match->awayParticipant?->display_name ?? 'TBC' }}</span>
+                                                        </p>
+                                                        <p class="mt-1 [overflow-wrap:anywhere] text-xs leading-5 text-gray-500">
+                                                            {{ $match->round?->knockout?->name ?? 'Knockout' }}
+                                                            <span class="text-gray-300">/</span>
+                                                            {{ $match->round?->name ?? 'Round TBC' }}
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="shrink-0 text-right">
+                                                        @if ($match->home_score !== null && $match->away_score !== null)
+                                                            <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-gray-700 via-gray-600 to-gray-500 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
+                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $match->home_score }}</div>
+                                                                <div class="w-px bg-white/25"></div>
+                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $match->away_score }}</div>
+                                                            </div>
+                                                        @else
+                                                            <p class="text-sm text-gray-500">
+                                                                {{ $match->starts_at ? $match->starts_at->format('j M') : 'Date TBC' }}
+                                                            </p>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </a>
                                         @endforeach
-                                    @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="bg-white shadow-sm rounded-lg flex flex-col overflow-hidden mt-6">
-                        <div class="px-4 py-4 bg-green-700">
-                            <h2 class="text-sm font-medium leading-6 text-white">Knockout matches</h2>
-                        </div>
-                        <div class="border-t border-gray-200 divide-y divide-gray-200">
-                            @forelse ($knockoutMatches as $match)
-                                <div class="px-4 py-4 flex flex-col gap-y-2">
-                                    <div class="flex flex-wrap items-center justify-between text-xs uppercase tracking-wide text-gray-500">
-                                        <span>{{ $match->round?->knockout?->name ?? 'Knockout' }}</span>
-                                        <span>{{ $match->round?->name ?? 'Round TBC' }}</span>
-                                    </div>
-                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-2">
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-900">
-                                                {{ $match->homeParticipant?->display_name ?? 'TBC' }}
-                                                <span class="text-gray-400 font-normal">vs</span>
-                                                {{ $match->awayParticipant?->display_name ?? 'TBC' }}
-                                            </p>
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                {{ $match->venue?->name ?? 'Venue TBC' }}
-                                                • {{ $match->starts_at ? $match->starts_at->format('D j M, g:ia') : 'Date TBC' }}
-                                            </p>
-                                            @if ($match->referee)
-                                                <p class="text-xs text-gray-500">
-                                                    Referee: <span class="font-semibold text-gray-700">{{ $match->referee }}</span>
-                                                </p>
-                                            @endif
-                                            @if ($match->forfeitParticipant)
-                                                <p class="text-xs text-red-600">
-                                                    Forfeit: <span class="font-semibold">{{ $match->forfeitParticipant->display_name }}</span>
-                                                </p>
-                                                @if ($match->forfeit_reason)
-                                                    <p class="text-xs text-gray-500">
-                                                        {{ $match->forfeit_reason }}
-                                                    </p>
-                                                @endif
-                                            @endif
-                                        </div>
-                                        @if ($match->starts_at && $match->home_participant_id && $match->away_participant_id)
-                                            @can('submitResult', $match)
-                                                <a href="{{ route('knockout.matches.submit', $match) }}"
-                                                    class="inline-flex items-center justify-center rounded-md bg-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-green-800">
-                                                    Submit result
-                                                </a>
-                                            @endcan
-                                        @endif
-                                    </div>
+                        </section>
+                    @endif
+
+                    @if ($frames && $frames->isNotEmpty())
+                        <section class="border-t border-gray-200 pt-6" data-player-frames-section>
+                            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                                <div class="space-y-2">
+                                    <h3 class="text-sm font-semibold text-gray-900">Frames</h3>
+                                    <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                        Recent frames this player has played in the current section.
+                                    </p>
                                 </div>
-                            @empty
-                                <div class="px-4 py-6 text-sm text-gray-500">
-                                    No knockout matches require action right now.
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-    @if ($history->isNotEmpty())
-        <div class="py-8 sm:py-16">
-            <div class="mx-auto max-w-7xl px-4 lg:px-8">
-                <section>
-                    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0">
-                        <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
-                            <h2 class="text-sm font-medium leading-6 text-white">History</h2>
-                        </div>
-                        <div class="border-t border-gray-200 h-full flex flex-col">
-                            <div class="min-w-full overflow-hidden">
-                                <div class="bg-gray-50 flex">
-                                    <div class="flex w-1/2 pl-4 sm:pl-6">
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Season</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-6/12">Ruleset</div>
-                                    </div>
-                                    <div class="flex w-1/2">
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">Pl</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">W</div>
-                                        <div scope="col" class="py-2 text-sm font-semibold text-gray-900 w-4/12 text-center">L</div>
-                                    </div>
-                                </div>
-                                <div class="bg-white">
-                                    @foreach ($history as $entry)
-                                        @php
-                                            $historyLink = $entry['ruleset_slug']
-                                                ? route('history.show', ['season' => $entry['season_slug'], 'ruleset' => $entry['ruleset_slug']])
-                                                : null;
-                                        @endphp
-                                        @if ($historyLink)
-                                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                                                href="{{ $historyLink }}">
-                                        @else
-                                            <div class="flex w-full border-t border-gray-300">
-                                        @endif
-                                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
-                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 w-6/12 font-semibold" title="{{ $entry['season_name'] }}">
-                                                        {{ $entry['season_label'] ?? $entry['season_name'] }}
+
+                                <div class="lg:col-span-2">
+                                    <div class="divide-y divide-gray-200">
+                                        @foreach ($frames as $frame)
+                                            @php
+                                                $wonFrame = $frame->home_player_id === $player->id
+                                                    ? $frame->home_score > $frame->away_score
+                                                    : $frame->away_score > $frame->home_score;
+                                                $opponentName = $frame->home_player_id === $player->id ? $frame->away_player_name : $frame->home_player_name;
+                                                $opponentTeam = $frame->home_player_id === $player->id ? $frame->away_team_name : $frame->home_team_name;
+                                            @endphp
+                                            <a href="{{ route('result.show', $frame->result_id) }}"
+                                                class="block hover:bg-gray-50"
+                                                wire:key="player-frame-{{ $frame->result_id }}-{{ $loop->index }}">
+                                                <div class="flex items-center gap-4 py-4">
+                                                    <div class="shrink-0">
+                                                        <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $wonFrame ? 'bg-linear-to-br from-green-900 via-green-800 to-green-700' : 'bg-linear-to-br from-red-800 via-red-700 to-red-600' }}">
+                                                            {{ $wonFrame ? 'W' : 'L' }}
+                                                        </span>
                                                     </div>
-                                                    <div class="whitespace-nowrap py-2 text-sm text-gray-500 w-6/12 truncate">
-                                                        {{ $entry['ruleset_name'] ?? 'N/A' }}
+
+                                                    <div class="min-w-0 flex-1">
+                                                        <p class="truncate text-sm font-semibold text-gray-900">{{ $opponentName }}</p>
+                                                        <p class="mt-1 text-xs text-gray-500">{{ $opponentTeam }}</p>
+                                                    </div>
+
+                                                    <div class="shrink-0 text-right text-sm text-gray-500">
+                                                        {{ $frame->fixture_date->format('j M') }}
                                                     </div>
                                                 </div>
-                                                <div class="flex w-1/2 items-center">
-                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                                        {{ $entry['played'] }}
-                                                    </div>
-                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                                        {{ $entry['wins'] }}
-                                                    </div>
-                                                    <div class="py-2 text-sm text-gray-900 w-4/12 text-center">
-                                                        {{ $entry['losses'] }}
-                                                    </div>
-                                                </div>
-                                        @if ($historyLink)
                                             </a>
-                                        @else
-                                            </div>
-                                        @endif
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
+                        </section>
+                    @endif
+
+                    @if ($history->isNotEmpty())
+                        <section class="border-t border-gray-200 pt-6" data-player-history-section>
+                            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                                <div class="space-y-2">
+                                    <h3 class="text-sm font-semibold text-gray-900">History</h3>
+                                    <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                        Season-by-season playing history with archived team and section details.
+                                    </p>
+                                </div>
+
+                                <div class="lg:col-span-2">
+                                    <div class="divide-y divide-gray-200">
+                                        @foreach ($history as $entry)
+                                            @php
+                                                $winPercentage = fmod((float) $entry['win_percentage'], 1.0) === 0.0
+                                                    ? number_format($entry['win_percentage'], 0)
+                                                    : number_format($entry['win_percentage'], 1);
+                                                $lossPercentage = fmod((float) $entry['loss_percentage'], 1.0) === 0.0
+                                                    ? number_format($entry['loss_percentage'], 0)
+                                                    : number_format($entry['loss_percentage'], 1);
+                                            @endphp
+                                            <div class="flex items-center gap-4 py-4" wire:key="player-history-{{ $entry['season_id'] }}-{{ $entry['section_id'] }}-{{ md5((string) $entry['team_name']) }}">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-semibold text-gray-900">{{ $entry['season_name'] }}</p>
+                                                    <p class="mt-1 truncate text-sm text-gray-700">{{ $entry['team_name'] ?? 'Team TBC' }}</p>
+                                                    <p class="mt-1 text-xs text-gray-500">{{ $entry['section_name'] ?? 'Section TBC' }}</p>
+                                                </div>
+
+                                                <div class="ml-auto flex shrink-0 items-start gap-2 self-center text-center">
+                                                    <div class="w-16">
+                                                        <p class="text-xs font-medium text-gray-500">Played</p>
+                                                        <p class="mt-1 text-sm font-semibold leading-5 text-gray-900">{{ $entry['played'] }}</p>
+                                                        <span class="mt-1 inline-flex h-[18px] items-center text-[10px] font-semibold text-transparent">0%</span>
+                                                    </div>
+                                                    <div class="w-16">
+                                                        <p class="text-xs font-medium text-gray-500">Won</p>
+                                                        <p class="mt-1 text-sm font-semibold leading-5 text-green-700">{{ $entry['wins'] }}</p>
+                                                        <span class="mt-1 inline-flex items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">{{ $winPercentage }}%</span>
+                                                    </div>
+                                                    <div class="w-16">
+                                                        <p class="text-xs font-medium text-gray-500">Lost</p>
+                                                        <p class="mt-1 text-sm font-semibold leading-5 text-red-700">{{ $entry['losses'] }}</p>
+                                                        <span class="mt-1 inline-flex items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">{{ $lossPercentage }}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    @endif
+                </div>
             </div>
         </div>
-    @endif
-    <x-logo-clouds />
-</div>
+
+        <x-logo-clouds variant="section-showcase" />
+    </div>
 @endsection

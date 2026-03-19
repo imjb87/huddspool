@@ -8,6 +8,7 @@ use App\Models\Page;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -76,6 +77,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee('open ? closeMenu() : openMenu()', false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
+        $response->assertSee('@mouseenter="open = true"', false);
+        $response->assertSee('@mouseleave="open = false"', false);
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
@@ -171,5 +174,60 @@ class NavigationAndSearchUiTest extends TestCase
             'International Premier',
             'International Section One',
         ]);
+    }
+
+    public function test_authenticated_navigation_points_profile_links_to_account_page(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('account.show').'"', false);
+        $response->assertSeeText('Account');
+        $response->assertDontSee('href="'.route('player.show', $user).'"', false);
+        $response->assertDontSee('href="'.route('support.tickets').'"', false);
+    }
+
+    public function test_frontend_footer_shows_stop_impersonating_link_when_impersonating(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+        session([
+            'impersonated_by' => $admin->id,
+            'impersonator_guard' => 'web',
+            'impersonator_guard_using' => 'web',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('impersonation.leave').'"', false);
+        $response->assertSeeText('Stop impersonating');
+    }
+
+    public function test_frontend_header_menu_uses_app_impersonation_leave_route(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+        session([
+            'impersonated_by' => $admin->id,
+            'impersonator_guard' => 'web',
+            'impersonator_guard_using' => 'web',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('impersonation.leave').'"', false);
+        $response->assertDontSee('href="'.route('filament-impersonate.leave').'"', false);
     }
 }

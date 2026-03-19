@@ -2,45 +2,74 @@
 
 @section('content')
     <div class="bg-gray-50 pt-[72px] pb-10 lg:pb-14" data-knockout-submit-page>
-        <section class="bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl" data-knockout-submit-header>
-            <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-                <div class="mx-auto flex w-full max-w-4xl flex-col gap-3">
-                    <div class="inline-flex w-fit items-center rounded-full bg-white/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-green-50 ring-1 ring-white/15">
-                        Result submission
-                    </div>
-                    <div class="space-y-2">
-                        <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Submit knockout result</h1>
-                        <p class="max-w-2xl text-sm text-green-50/85 sm:text-base">
-                            Record the final score for this match. Existing access rules and result validation still apply.
-                        </p>
-                    </div>
-                </div>
+        <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+            data-section-shared-header
+            data-knockout-submit-header>
+            <div class="min-w-0">
+                <h1 class="text-lg font-semibold text-gray-900">Submit knockout result</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ $match->round?->knockout?->name ?? 'Unassigned knockout' }}
+                    <span class="text-gray-300">/</span>
+                    {{ $match->round?->name ?? 'Unscheduled round' }}
+                </p>
             </div>
-        </section>
+        </div>
 
-        <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8 lg:pt-7">
-            <div class="mx-auto flex w-full max-w-4xl flex-col gap-6">
-                <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-knockout-submit-context>
-                    <div class="bg-linear-to-b from-gray-50 to-gray-100">
-                        <div class="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-                            <div>
-                                <h2 class="text-sm font-semibold text-gray-900 sm:text-base">
-                                    {{ $match->round?->knockout?->name ?? 'Unassigned knockout' }}
-                                </h2>
-                                <p class="mt-1 text-sm text-gray-500">
-                                    {{ $match->round?->name ?? 'Unscheduled round' }}
-                                </p>
-                            </div>
-                            <div class="inline-flex w-fit items-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm ring-1 ring-black/10">
-                                Best of {{ $match->bestOfValue() }} frames
+        <div class="mx-auto max-w-4xl px-4 pt-2 sm:px-6 lg:px-6">
+            <div class="space-y-6">
+                <section class="py-1" data-knockout-submit-context>
+                    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Match details</h3>
+                            <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                Record the final score for this knockout tie. Existing access rules and validation still apply.
+                            </p>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                                <div class="sm:col-span-2">
+                                    <p class="text-sm font-medium text-gray-500">Match</p>
+                                    <p class="mt-2 text-sm font-semibold text-gray-900">
+                                        {{ $match->homeParticipant?->display_name ?? 'TBC' }}
+                                        <span class="font-normal text-gray-400">vs</span>
+                                        {{ $match->awayParticipant?->display_name ?? 'TBC' }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Knockout</p>
+                                    <p class="mt-2 text-sm text-gray-900">{{ $match->round?->knockout?->name ?? 'Unassigned knockout' }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Round</p>
+                                    <p class="mt-2 text-sm text-gray-900">{{ $match->round?->name ?? 'Unscheduled round' }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Format</p>
+                                    <p class="mt-2 text-sm text-gray-900">Best of {{ $match->bestOfValue() }} frames</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div data-knockout-submit-shell>
-                    <livewire:knockout.submit-result :match="$match" />
-                </div>
+                <section class="border-t border-gray-200 pt-6" data-knockout-submit-shell>
+                    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Match score</h3>
+                            <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                Enter the final score. First to {{ $match->targetScoreToWin() }} wins.
+                            </p>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <livewire:knockout.submit-result :match="$match" />
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>

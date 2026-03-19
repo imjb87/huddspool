@@ -3,22 +3,37 @@
 @section('content')
     <section data-home-hero
         class="overflow-hidden bg-linear-to-br from-green-950 via-green-800 to-green-600 pt-[72px] text-white lg:pt-[80px]">
-        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-12">
-                <div class="flex justify-center lg:flex-none lg:justify-start">
+        <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14">
+            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                <div class="flex justify-center lg:justify-start">
                     <div class="relative">
                         <div class="absolute inset-0 rounded-full bg-white/10 blur-3xl"></div>
                         <img class="relative w-36 drop-shadow-2xl sm:w-40 lg:w-44"
                             src="{{ asset('images/logo.png') }}" alt="Huddersfield Pool League logo" />
                     </div>
                 </div>
-                <div class="max-w-2xl space-y-4 text-center lg:text-left">
-                    <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-5xl">
+
+                <div class="space-y-3 text-center lg:col-span-2 lg:text-left">
+                    <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-[2.75rem]">
                         Everything for league night, in one place.
                     </h1>
-                    <p class="max-w-xl text-base leading-7 text-green-50 sm:text-lg">
+                    <p class="text-sm leading-7 text-green-50 sm:text-base">
                         Tables, fixtures, results and averages for every section, with the latest league information
                         always close at hand.
+                    </p>
+                    <p class="text-sm leading-6 text-green-100" data-home-hero-account-link>
+                        @auth
+                            Keep your details, knockouts and team tools together in your
+                            <a href="{{ route('account.show') }}" class="font-semibold text-white underline decoration-white/40 underline-offset-3 transition hover:decoration-white">
+                                account
+                            </a>.
+                        @else
+                            Already involved in the league?
+                            <a href="{{ route('login') }}" class="font-semibold text-white underline decoration-white/40 underline-offset-3 transition hover:decoration-white">
+                                Log in
+                            </a>
+                            to access your account.
+                        @endauth
                     </p>
                 </div>
             </div>
@@ -26,12 +41,14 @@
     </section>
 
     <section class="bg-white py-8 sm:py-10" data-home-live-scores>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl">
-                <h2 class="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl">Live scores</h2>
-                <p class="mt-2 text-sm leading-6 text-gray-600">
-                    Results currently being added across the league.
-                </p>
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
+            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                <div class="space-y-2 lg:col-span-2">
+                    <h2 class="text-sm font-semibold text-gray-900">Live scores</h2>
+                    <p class="text-sm leading-6 text-gray-600">
+                        Results currently being added across the league.
+                    </p>
+                </div>
             </div>
 
             @if ($liveScores->isEmpty())
@@ -99,16 +116,16 @@
     </section>
 
     <section class="bg-white py-10 sm:py-12" data-home-news>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:items-start lg:gap-12">
-                <div class="max-w-sm">
-                    <h2 class="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl">Latest news</h2>
-                    <p class="mt-2 text-sm leading-6 text-gray-600">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
+            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                <div class="space-y-2">
+                    <h2 class="text-sm font-semibold text-gray-900">Latest news</h2>
+                    <p class="max-w-sm text-sm leading-6 text-gray-600">
                         Important updates, date changes and notices from across the league in one place.
                     </p>
                 </div>
 
-                <div class="mt-6 lg:mt-0">
+                <div class="lg:col-span-2">
                     @if ($news->isEmpty())
                         <div class="border-t border-gray-200 pt-6" data-home-news-empty>
                             <p class="text-sm font-semibold text-gray-900">No league news has been published yet.</p>
@@ -125,11 +142,7 @@
                                 ->take(3);
                         @endphp
 
-                        <div @class([
-                            'border-t border-gray-200 pt-6',
-                            'lg:grid lg:gap-10' => $secondaryArticles->isNotEmpty(),
-                            'lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.95fr)]' => $secondaryArticles->isNotEmpty(),
-                        ]) data-home-news-grid>
+                        <div class="border-t border-gray-200 pt-6" data-home-news-grid>
                             <article data-home-news-featured>
                                 <div class="text-sm font-medium text-gray-500">
                                     <time datetime="{{ $featuredArticle->created_at?->toDateString() }}">
@@ -137,11 +150,11 @@
                                     </time>
                                 </div>
 
-                                <h3 class="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                                <h3 class="mt-3 text-lg font-semibold tracking-tight text-gray-900 sm:text-xl">
                                     {{ $featuredArticle->title }}
                                 </h3>
 
-                                <div class="mt-4 space-y-4 text-sm leading-7 text-gray-600 sm:text-base">
+                                <div class="mt-4 space-y-4 text-sm leading-6 text-gray-600">
                                     @foreach ($featuredParagraphs as $paragraph)
                                         <p>{{ $paragraph }}</p>
                                     @endforeach
@@ -149,18 +162,16 @@
                             </article>
 
                             @if ($secondaryArticles->isNotEmpty())
-                                <div class="mt-8 border-t border-gray-200 lg:mt-0 lg:border-l lg:border-t-0 lg:pl-10"
-                                    data-home-news-list>
+                                <div class="mt-6 divide-y divide-gray-200 border-t border-gray-200" data-home-news-list>
                                     @foreach ($secondaryArticles as $article)
-                                        <article class="border-b border-gray-200 py-5 first:pt-0 last:border-b-0 last:pb-0"
-                                            data-home-news-item>
+                                        <article class="py-5 first:pt-4 last:pb-0" data-home-news-item>
                                             <div class="text-sm font-medium text-gray-500">
                                                 <time datetime="{{ $article->created_at?->toDateString() }}">
                                                     {{ $article->created_at?->format('j F Y') }}
                                                 </time>
                                             </div>
 
-                                            <h3 class="mt-3 text-lg font-semibold tracking-tight text-gray-900">
+                                            <h3 class="mt-3 text-base font-semibold tracking-tight text-gray-900">
                                                 {{ $article->title }}
                                             </h3>
 

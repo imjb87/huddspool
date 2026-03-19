@@ -69,9 +69,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->isAdmin();
     }
 
-    public function getRedirectRoute()
+    public function getRedirectRoute(): string
     {
-        return route('player.show', $this);
+        return route('account.show');
     }
 
     /**

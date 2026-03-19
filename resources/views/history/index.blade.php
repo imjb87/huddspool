@@ -12,7 +12,7 @@
                 @forelse ($seasonGroups as $group)
                     <section data-history-season-shell>
                         <button type="button"
-                            class="flex w-full items-center justify-between gap-4 px-0 py-2 text-left"
+                            class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-md px-2 py-2 text-left transition hover:bg-gray-100"
                             @click="openSeason = openSeason === 'season-{{ $group['season']->id }}' ? null : 'season-{{ $group['season']->id }}'; openRuleset = null"
                             :aria-expanded="openSeason === 'season-{{ $group['season']->id }}'"
                             data-history-season-trigger>
@@ -29,7 +29,7 @@
                                 @foreach ($group['rulesets'] as $rulesetGroup)
                                     <div data-history-ruleset-shell>
                                         <button type="button"
-                                            class="flex w-full items-center justify-between gap-4 px-0 py-2 text-left"
+                                            class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-md px-2 py-2 text-left transition hover:bg-gray-100"
                                             @click="openRuleset = openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' ? null : 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
                                             :aria-expanded="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
                                             data-history-ruleset-trigger>
@@ -48,7 +48,7 @@
                                             data-history-ruleset-panel>
                                             @foreach ($rulesetGroup['sections'] as $section)
                                                 <a href="{{ route('history.section.show', ['season' => $group['season'], 'ruleset' => $rulesetGroup['ruleset'], 'section' => $section]) }}"
-                                                    class="flex items-center justify-between gap-3 px-0 py-2 pl-4 text-base font-medium text-gray-700 transition hover:text-gray-900"
+                                                    class="flex items-center justify-between gap-3 rounded-md px-2 py-2 pl-4 text-base font-medium text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
                                                     data-history-section-link>
                                                     <span>{{ $section->name }}</span>
                                                     <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

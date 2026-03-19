@@ -39,6 +39,19 @@ class ResultAuthorizationTest extends TestCase
             ->assertSeeLivewire(ResultForm::class);
     }
 
+    public function test_team_captain_on_fixture_team_can_open_result_create_route(): void
+    {
+        ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());
+
+        $captain = $this->createUserForTeam($homeTeam);
+        $homeTeam->update(['captain_id' => $captain->id]);
+
+        $this->actingAs($captain)
+            ->get(route('result.create', $fixture))
+            ->assertOk()
+            ->assertSeeLivewire(ResultForm::class);
+    }
+
     public function test_regular_player_on_fixture_team_receives_forbidden_when_opening_result_create_route(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());

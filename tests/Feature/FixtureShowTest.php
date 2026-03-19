@@ -60,6 +60,12 @@ class FixtureShowTest extends TestCase
         $response = $this->get(route('fixture.show', $fixture));
 
         $response->assertStatus(200);
+        $response->assertSee('data-fixture-page', false);
+        $response->assertSee('data-fixture-info-section', false);
+        $response->assertSee('data-fixture-head-to-head-section', false);
+        $response->assertSee('data-fixture-home-team-section', false);
+        $response->assertSee('data-fixture-away-team-section', false);
+        $response->assertSeeText('Fixture information');
         $response->assertSeeText('Head to head');
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
         $response->assertSeeText($homePlayer->name);

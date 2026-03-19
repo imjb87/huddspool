@@ -1,20 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-<div>
-    <div class="bg-white pt-24 sm:pt-32 pb-8 sm:pb-12 page-hero">
-        <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="mx-auto max-w-2xl lg:mx-0">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl font-serif">{{ $page->title }}
-                </h2>
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="pb-10 lg:pb-14" data-page-show>
+            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+                data-section-shared-header>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold text-gray-900">{{ $page->title }}</h1>
+                </div>
+            </div>
+
+            <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
+                <section class="py-1" data-page-content-section>
+                    <div class="mx-auto max-w-4xl">
+                        <div class="prose prose-gray max-w-none text-sm leading-7 text-gray-700" data-page-content>
+                            {!! $page->content !!}
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
+
+        <x-logo-clouds variant="section-showcase" />
     </div>
-    <div class="py-8 sm:py-16 page-body">
-        <div class="mx-auto max-w-7xl text-base leading-7 text-gray-700 px-6 lg:px-8">
-            <section class="prose mx-auto page-content">{!! $page->content !!}</section>
-        </div>        
-    </div>
-    <x-logo-clouds />
-</div>
 @endsection

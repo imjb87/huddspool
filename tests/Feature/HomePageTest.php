@@ -34,14 +34,20 @@ class HomePageTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-home-hero', false);
         $response->assertSee('from-green-950 via-green-800 to-green-600 pt-[72px] text-white lg:pt-[80px]', false);
-        $response->assertSee('flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-12', false);
-        $response->assertSee('lg:flex-none lg:justify-start', false);
+        $response->assertSee('mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14', false);
+        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $response->assertSee('lg:col-span-2 lg:text-left', false);
         $response->assertSee('relative w-36 drop-shadow-2xl sm:w-40 lg:w-44', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSeeText('Tables, fixtures, results and averages for every section');
+        $response->assertSee('data-home-hero-account-link', false);
+        $response->assertSee('href="'.route('login').'"', false);
+        $response->assertSeeText('Log in');
         $response->assertSee('src="'.asset('images/logo.png').'"', false);
         $response->assertSee('data-home-live-scores', false);
         $response->assertSeeText('Live scores');
+        $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
+        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $response->assertSeeText('No current matches in progress right now.');
         $response->assertSee('data-home-news', false);
         $response->assertSeeText('Latest news');
@@ -49,8 +55,8 @@ class HomePageTest extends TestCase
         $response->assertSeeText('No league news has been published yet.');
         $response->assertSee('data-section-sponsors', false);
         $response->assertSee('data-section-sponsors-grid', false);
-        $response->assertSee('mx-auto max-w-7xl px-4 sm:px-6 lg:px-8', false);
-        $response->assertSee('lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:items-start lg:gap-12', false);
+        $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
+        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $response->assertSeeText('Backing the league every week');
         $response->assertDontSee('tracking-[0.28em] text-green-100', false);
         $response->assertDontSee('min-h-[calc(100dvh-72px)]', false);
@@ -68,6 +74,10 @@ class HomePageTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-home-hero', false);
         $response->assertSeeText('Everything for league night, in one place.');
+        $response->assertSee('data-home-hero-account-link', false);
+        $response->assertSee('href="'.route('account.show').'"', false);
+        $response->assertSeeText('account');
+        $response->assertDontSee('href="'.route('login').'"', false);
         $response->assertDontSeeText('My Team');
         $response->assertDontSeeText('Pending actions');
     }

@@ -1,16 +1,16 @@
-<form class="divide-y-slate-200 space-y-8 divide-y" wire:submit.prevent="submit" wire:poll.60s="keepLockAlive">
+<form class="space-y-6" wire:submit.prevent="submit" wire:poll.60s="keepLockAlive" data-result-form>
     @if ($lockedByAnother && ! $isLocked)
-        <div class="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
             This result is currently being updated by {{ $lockOwnerName ?? 'another team admin' }}. Lock expires {{ $lockExpiresAtHuman ?? 'soon' }}.
         </div>
     @elseif (! $isLocked && $canEdit)
-        <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+        <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
             You have edit access. Your lock renews automatically while this page stays open.
         </div>
     @endif
 
-    <div class="overflow-hidden shadow-sm rounded-lg divide-y divide-gray-200">
-        <div class="bg-green-700 hidden sm:flex">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="hidden bg-linear-to-br from-green-900 via-green-800 to-green-700 sm:flex">
             <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
                 {{ $fixture->homeTeam->name }}
             </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div
-                    class="w-full sm:w-12 sm:text-center bg-green-700 sm:bg-gray-50 py-2 px-4 text-left text-sm font-semibold text-white sm:text-gray-900 order-first sm:order-2 leading-6"
+                    class="w-full bg-linear-to-br from-green-900 via-green-800 to-green-700 py-2 px-4 text-left text-sm font-semibold text-white order-first leading-6 sm:w-12 sm:bg-gray-50 sm:text-center sm:text-gray-900 sm:bg-none"
                 >
                     <span class="sm:hidden">Frame </span>
                     {{ $i }}
@@ -81,7 +81,7 @@
                 </div>
             </div>
         @endfor
-        <div class="flex flex-wrap bg-gray-50 font-semibold text-gray-900 text-sm">
+        <div class="flex flex-wrap border-t border-gray-200 bg-gray-50 font-semibold text-gray-900 text-sm">
             <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200">
                 <div class="flex-1 leading-6 py-2 px-4 sm:text-right">
                     Home total
@@ -106,10 +106,10 @@
         <x-errors />
     @endif
 
-    <div class="flex gap-x-3 pt-8 justify-end">
+    <div class="flex justify-end gap-x-3 pt-2">
         <a
             href="{{ route('fixture.show', $fixture->id) }}"
-            class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+            class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 transition hover:bg-slate-50"
         >
             Cancel
         </a>
@@ -117,7 +117,7 @@
         @if (! $isLocked && $canEdit)
             <button
                 type="submit"
-                class="inline-flex justify-center rounded-md bg-green-700 py-2 px-3 text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+                class="inline-flex justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 transition hover:brightness-110 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
                 wire:loading.attr="disabled"
                 wire:target="submit"
             >

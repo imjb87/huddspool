@@ -167,7 +167,7 @@
                 </svg>
             </button>
             @if (@auth()->user())
-                <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false" @close.stop="open = false">
                     <button type="button"
                         class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
                         aria-expanded="false" @click="open = !open" :aria-expanded="open">
@@ -188,23 +188,9 @@
                         x-transition:leave-end="opacity-0 translate-y-1"
                         @click="open = false">
                         <div class="py-1">
-                            <a href="{{ route('player.show', auth()->user()) }}"
+                            <a href="{{ route('account.show') }}"
                                 class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                                Your profile
-                            </a>
-                        </div>
-                        @if (auth()->user()->team_id)
-                            <div class="py-1">
-                                <a href="{{ route('team.show', auth()->user()->team_id) }}"
-                                    class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                                    Your team
-                                </a>
-                            </div>
-                        @endif
-                        <div class="py-1">
-                            <a href="{{ route('support.tickets') }}"
-                                class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50">
-                                Submit a request
+                                Account
                             </a>
                         </div>
                         @if (auth()->user()->is_admin)
@@ -218,7 +204,7 @@
                         @if (app('impersonate')->isImpersonating())
                             <div class="py-1">
                                 <a class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50"
-                                    href="{{ route('filament-impersonate.leave') }}">
+                                    href="{{ route('impersonation.leave') }}">
                                     Stop impersonating
                                 </a>
                             </div>
@@ -314,7 +300,7 @@
                         <div class="space-y-2 border-t border-gray-200 pt-4">
                             @if (@auth()->user())
                                 <span class="block px-3 text-sm font-semibold leading-7 text-gray-500">{{ auth()->user()->name }}</span>
-                                <a href="{{ route('player.show', auth()->user()) }}"
+                                <a href="{{ route('account.show') }}"
                                     class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
                                     Your profile
                                 </a>

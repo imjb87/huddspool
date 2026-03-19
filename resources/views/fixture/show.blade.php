@@ -1,259 +1,238 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="mt-[80px]">
-    <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-4 lg:px-8">
-            <div class="border-b border-gray-200 pb-2 mb-4">
-                <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
-                    <h3 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Fixture</h3>
-                    <p class="ml-2 mt-1 truncate text-sm text-gray-500">{{ $fixture->section->name }}</p>
+    @php
+        $canSubmitResult = auth()->check() && auth()->user()->can('submitResult', $fixture) && (! $fixture->result || ! $fixture->result->is_confirmed);
+        $submissionIsOpen = $canSubmitResult && $fixture->fixture_date->lte(now());
+        $standings = $fixture->section->standings()->filter(function ($standing) use ($fixture) {
+            return (int) $standing->id === (int) $fixture->home_team_id || (int) $standing->id === (int) $fixture->away_team_id;
+        })->values();
+    @endphp
+
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="pb-10 lg:pb-14" data-fixture-page>
+            @if ($canSubmitResult)
+                <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-red-700">Result submission</p>
+                            <p class="text-sm text-red-900">{{ $fixture->homeTeam->name }} vs {{ $fixture->awayTeam->name }}</p>
+                        </div>
+
+                        @if ($submissionIsOpen)
+                            <a href="{{ route('result.create', $fixture) }}"
+                                class="inline-flex items-center rounded-full bg-linear-to-br from-red-700 via-red-600 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-red-800 hover:via-red-700 hover:to-red-600">
+                                {{ $fixture->result ? 'Submit result' : 'Submit result' }}
+                            </a>
+                        @else
+                            <span
+                                class="inline-flex items-center rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600">
+                                Opens {{ $fixture->fixture_date->format('j M Y') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
+                data-section-shared-header>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold text-gray-900">Fixture</h1>
+                    <p class="mt-1 text-sm text-gray-500">{{ $fixture->section->name }}</p>
                 </div>
             </div>
-            <div class="flex flex-wrap lg:flex-nowrap gap-x-6 gap-y-6">
-                <div class="w-full lg:w-1/3">
-                    @can('submitResult', $fixture)
-                        @if (! $fixture->result || ! $fixture->result->is_confirmed)
-                            @if ($fixture->fixture_date->lte(now()))
-                                <a href="{{ route('result.create', $fixture->id) }}"
-                                    class="block w-full mb-4 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-xs text-white bg-green-700 hover:bg-green-800 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
-                                    {{ $fixture->result ? 'Update Result' : 'Submit Result' }}
-                                </a>
-                            @else
-                                <button disabled
-                                    class="tooltip w-full mb-4 block items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-xs text-white bg-gray-500 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 text-center">
-                                    <div class="tooltip-text">Oops! You're a bit early! Come back to submit a result from
-                                        {{ $fixture->fixture_date->format('l jS F Y') }}
-                                    </div>
-                                    Submit Result
-                                </button>
-                            @endif
-                        @endif
-                    @endcan
-                    <div class="overflow-hidden bg-white shadow-sm rounded-lg">
-                        <div class="md:flex md:items-center md:justify-between md:space-x-5 px-4 py-6 sm:px-6">
-                            <div class="flex items-start space-x-5">
-                                <div class="pt-1.5">
-                                    <h1 class="text-base font-semibold leading-6 text-gray-900">
-                                        {{ $fixture->homeTeam->name }} vs {{ $fixture->awayTeam->name }}
-                                    </h1>
-                                </div>
+
+            <div class="mx-auto max-w-4xl px-4 pt-2 sm:px-6 lg:px-6">
+                <div class="space-y-6">
+                    <section class="py-1" data-fixture-info-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Fixture information</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Match details, venue, and links back to the wider section schedule.
+                                </p>
                             </div>
-                        </div>
-                        <div class="border-t border-gray-100">
-                            <dl class="divide-y divide-gray-100">
-                                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Date</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <date>{{ $fixture->fixture_date->format('l jS F Y') }}</date>
-                                    </dd>
-                                </div>
-                                <a href="{{ route('ruleset.section.show', ['ruleset' => $fixture->section->ruleset, 'section' => $fixture->section, 'tab' => 'fixtures-results']) }}"
-                                    class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Ruleset</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        {{ $fixture->section->ruleset->name }}
-                                    </dd>
-                                </a>
-                                <a href="{{ route('venue.show', $fixture->venue) }}"
-                                    class="block px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium leading-6 text-gray-900">Venue</dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        {{ $fixture->venue->name }}
-                                    </dd>
-                                </a>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full lg:w-2/3 flex flex-col gap-y-6">
-                    <div class="bg-white shadow-sm rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 py-4 sm:px-6 bg-green-700">
-                            <h2 class="text-sm font-medium leading-6 text-white">Head to head</h2>
-                        </div>
-                        <div class="border-t border-gray-200">
-                            <div class="w-full max-w-full overflow-hidden">
-                                <div class="bg-gray-50">
-                                    <div class="flex">
-                                        <div scope="col"
-                                            class="px-4 sm:px-6 py-2 text-left text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                            #
-                                        </div>
-                                        <div scope="col"
-                                            class="px-2 py-2 sm:px-3 text-left text-sm font-semibold text-gray-900 w-6/12">
-                                            Team</div>
-                                        <div scope="col"
-                                            class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                            Pl
-                                        </div>
-                                        <div scope="col"
-                                            class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">
-                                            W
-                                        </div>
-                                        <div scope="col"
-                                            class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">
-                                            D</div>
-                                        <div scope="col"
-                                            class="px-2 py-2 text-center text-sm font-semibold text-gray-900 hidden md:block w-1/12">
-                                            L</div>
-                                        <div scope="col"
-                                            class="px-2 py-2 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                            Pts</div>
-                                        </tr>
+
+                            <div class="lg:col-span-2">
+                                <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                                    <div class="sm:col-span-2">
+                                        <p class="text-sm font-medium text-gray-500">Match</p>
+                                        <p class="mt-2 text-sm font-semibold text-gray-900">
+                                            {{ $fixture->homeTeam->name }} <span class="font-normal text-gray-400">vs</span>
+                                            {{ $fixture->awayTeam->name }}
+                                        </p>
                                     </div>
-                                    <div class="bg-white">
-                                        @foreach ($fixture->section->standings() as $team)
-                                        @if ($team->id == $fixture->homeTeam->id || $team->id == $fixture->awayTeam->id)
-                                        <a href="{{ route('team.show', $team->id) }}"
-                                            class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex">
-                                            <div
-                                                class="whitespace-nowrap py-3.5 px-4 sm:px-6 text-sm font-medium text-gray-900 text-left w-2/12 md:w-1/12">
-                                                {{ $loop->iteration }}
-                                            </div>
-                                            <div
-                                                class="px-2 sm:px-3 py-3.5 text-sm font-medium text-gray-900 truncate w-6/12">
-                                                <span
-                                                    class="{{ $team->shortname ? 'hidden md:inline' : '' }}">{{ $team->name }}</span>
-                                                @if ($team->shortname)
-                                                <span class="md:hidden"
-                                                    href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
-                                                @endif
-                                            </div>
-                                            <div
-                                                class="whitespace-nowrap px-2 py-3.5 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
-                                                {{ $team->played }}
-                                            </div>
-                                            <div
-                                                class="whitespace-nowrap px-2 py-3.5 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
-                                                {{ $team->wins }}
-                                            </div>
-                                            <div
-                                                class="whitespace-nowrap px-2 py-3.5 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
-                                                {{ $team->draws }}
-                                            </div>
-                                            <div
-                                                class="whitespace-nowrap px-2 py-3.5 text-sm text-gray-500 font-semibold text-center hidden md:block w-1/12">
-                                                {{ $team->losses }}
-                                            </div>
-                                            <div
-                                                class="whitespace-nowrap px-2 py-3.5 text-sm text-gray-500 font-semibold text-center w-2/12 md:w-1/12">
-                                                {{ $team->points }}
-                                            </div>
+
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Date</p>
+                                        <p class="mt-2 text-sm text-gray-900">{{ $fixture->fixture_date->format('l jS F Y') }}</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Ruleset</p>
+                                        <a href="{{ route('ruleset.section.show', ['ruleset' => $fixture->section->ruleset, 'section' => $fixture->section, 'tab' => 'fixtures-results']) }}"
+                                            class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                            {{ $fixture->section->ruleset->name }}
                                         </a>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Venue</p>
+                                        @if ($fixture->venue)
+                                            <a href="{{ route('venue.show', $fixture->venue) }}"
+                                                class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                                {{ $fixture->venue->name }}
+                                            </a>
+                                        @else
+                                            <p class="mt-2 text-sm text-gray-900">Venue TBC</p>
                                         @endif
-                                        @endforeach
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-green-700 shadow-sm rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 sm:px-6 py-4">
-                            <h2 class="text-sm font-medium leading-6 text-white">{{ $fixture->homeTeam->name }}
-                            </h2>
-                        </div>
-                        <div class="border-t border-gray-200">
-                            <div class="overflow-hidden">
-                                <div class="min-w-full divide-y divide-gray-300">
-                                    <div class="bg-gray-50">
-                                        <div class="flex">
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-left text-sm font-semibold text-gray-900 w-6/12 md:w-9/12">
-                                                Name</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                Pl</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                W</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                L</div>
-                                        </div>
-                                    </div>
-                                    <div class="divide-y divide-gray-200 bg-white">
-                                        @foreach ($home_team_players as $player)
-                                        <a href="{{ route('player.show', $player->id) }}"
-                                            class=" hover:cursor-pointer hover:bg-gray-50 flex">
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-6/12 md:w-9/12 truncate">
-                                                {{ $player->name }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_played }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_won }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_lost }}
+                    </section>
+
+                    <section class="border-t border-gray-200 pt-6" data-fixture-head-to-head-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">Head to head</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Current section standings for the two teams in this fixture.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="divide-y divide-gray-200">
+                                    @foreach ($standings as $standing)
+                                        <a href="{{ route('team.show', $standing->id) }}"
+                                            class="block transition hover:bg-gray-50"
+                                            wire:key="fixture-standing-{{ $standing->id }}">
+                                            <div class="flex items-center gap-4 py-4">
+                                                <div class="w-8 shrink-0 text-sm font-semibold text-gray-500">
+                                                    {{ $loop->iteration }}
+                                                </div>
+
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $standing->name }}</p>
+                                                </div>
+
+                                                <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">Pl</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $standing->played }}</p>
+                                                    </div>
+                                                    <div class="hidden w-12 md:block">
+                                                        <p class="text-xs font-medium text-gray-500">W</p>
+                                                        <p class="mt-1 text-sm font-semibold text-green-700">{{ $standing->wins }}</p>
+                                                    </div>
+                                                    <div class="hidden w-12 md:block">
+                                                        <p class="text-xs font-medium text-gray-500">D</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $standing->draws }}</p>
+                                                    </div>
+                                                    <div class="hidden w-12 md:block">
+                                                        <p class="text-xs font-medium text-gray-500">L</p>
+                                                        <p class="mt-1 text-sm font-semibold text-red-700">{{ $standing->losses }}</p>
+                                                    </div>
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">Pts</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $standing->points }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </a>
-                                        @endforeach
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-green-700 shadow-sm rounded-md sm:rounded-lg overflow-hidden">
-                        <div class="px-4 sm:px-6 py-4">
-                            <h2 class="text-sm font-medium leading-6 text-white">
-                                {{ $fixture->awayTeam->name }}
-                            </h2>
-                        </div>
-                        <div class="border-t border-gray-200">
-                            <div class="overflow-hidden">
-                                <div class="min-w-full divide-y divide-gray-300">
-                                    <div class="bg-gray-50">
-                                        <div class="flex">
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-left text-sm font-semibold text-gray-900 w-6/12 md:w-9/12">
-                                                Name</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                Pl</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                W</div>
-                                            <div scope="col"
-                                                class="py-2 px-4 sm:px-6 text-center text-sm font-semibold text-gray-900 w-2/12 md:w-1/12">
-                                                L</div>
-                                        </div>
-                                    </div>
-                                    <div class="divide-y divide-gray-200 bg-white">
-                                        @foreach ($away_team_players as $player)
+                    </section>
+
+                    <section class="border-t border-gray-200 pt-6" data-fixture-home-team-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">{{ $fixture->homeTeam->name }}</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Current player records for the home side in this section.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="divide-y divide-gray-200">
+                                    @foreach ($home_team_players as $player)
                                         <a href="{{ route('player.show', $player->id) }}"
-                                            class=" hover:cursor-pointer hover:bg-gray-50 flex">
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-6/12 md:w-9/12 truncate">
-                                                {{ $player->name }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_played }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_won }}
-                                            </div>
-                                            <div
-                                                class="block whitespace-nowrap py-4 px-4 sm:px-6 text-sm font-medium text-gray-900 w-2/12 md:w-1/12 text-center">
-                                                {{ $player->frames_lost }}
+                                            class="block transition hover:bg-gray-50"
+                                            wire:key="fixture-home-player-{{ $player->id }}">
+                                            <div class="flex items-center gap-4 py-4">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $player->name }}</p>
+                                                </div>
+
+                                                <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">Pl</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $player->frames_played }}</p>
+                                                    </div>
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">W</p>
+                                                        <p class="mt-1 text-sm font-semibold text-green-700">{{ $player->frames_won }}</p>
+                                                    </div>
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">L</p>
+                                                        <p class="mt-1 text-sm font-semibold text-red-700">{{ $player->frames_lost }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </a>
-                                        @endforeach
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="border-t border-gray-200 pt-6" data-fixture-away-team-section>
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-gray-900">{{ $fixture->awayTeam->name }}</h3>
+                                <p class="max-w-sm text-sm leading-6 text-gray-500">
+                                    Current player records for the away side in this section.
+                                </p>
+                            </div>
+
+                            <div class="lg:col-span-2">
+                                <div class="divide-y divide-gray-200">
+                                    @foreach ($away_team_players as $player)
+                                        <a href="{{ route('player.show', $player->id) }}"
+                                            class="block transition hover:bg-gray-50"
+                                            wire:key="fixture-away-player-{{ $player->id }}">
+                                            <div class="flex items-center gap-4 py-4">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $player->name }}</p>
+                                                </div>
+
+                                                <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">Pl</p>
+                                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $player->frames_played }}</p>
+                                                    </div>
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">W</p>
+                                                        <p class="mt-1 text-sm font-semibold text-green-700">{{ $player->frames_won }}</p>
+                                                    </div>
+                                                    <div class="w-12">
+                                                        <p class="text-xs font-medium text-gray-500">L</p>
+                                                        <p class="mt-1 text-sm font-semibold text-red-700">{{ $player->frames_lost }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
+
+        <x-logo-clouds variant="section-showcase" />
     </div>
-    <x-logo-clouds />
-</div>
 @endsection

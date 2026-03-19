@@ -12,21 +12,20 @@ class GetTeamPlayers
     public function __construct(
         protected Team $team,
         protected ?Section $section,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): Collection
     {
         $sectionId = $this->section?->id;
 
         $query = $this->team->players()
-            ->select('users.id', 'users.name', 'users.avatar_path')
+            ->select('users.id', 'users.name', 'users.avatar_path', 'users.role')
             ->leftJoin('frames', function (JoinClause $join) {
                 $join->on('frames.home_player_id', '=', 'users.id')
                     ->orOn('frames.away_player_id', '=', 'users.id');
             })
             ->leftJoin('results', 'results.id', '=', 'frames.result_id')
-            ->groupBy('users.id', 'users.name', 'users.avatar_path')
+            ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role')
             ->orderBy('users.name');
 
         if ($sectionId) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdatePlayerAvatarRequest;
+use App\KnockoutType;
 use App\Models\KnockoutMatch;
 use App\Models\Ruleset;
 use App\Models\User;
@@ -11,7 +12,6 @@ use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
@@ -61,17 +61,18 @@ class PlayerController extends Controller
                 'venue',
                 'forfeitParticipant',
             ])
-            ->whereNull('winner_participant_id')
             ->whereHas('round', fn ($query) => $query->where('is_visible', true))
+            ->whereHas('round.knockout', fn ($query) => $query->whereIn('type', [
+                KnockoutType::Singles->value,
+                KnockoutType::Doubles->value,
+            ]))
             ->where(function ($query) use ($participantQuery) {
                 $query->whereHas('homeParticipant', $participantQuery)
                     ->orWhereHas('awayParticipant', $participantQuery);
             })
-            ->orderBy('starts_at')
-            ->orderBy('id')
-            ->get()
-            ->filter(fn (KnockoutMatch $match) => Gate::forUser($player)->allows('submitResult', $match))
-            ->values();
+            ->orderByDesc('starts_at')
+            ->orderByDesc('id')
+            ->get();
 
         return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
     }

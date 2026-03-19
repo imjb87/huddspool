@@ -4,12 +4,17 @@ namespace Tests\Feature;
 
 use App\Models\Fixture;
 use App\Models\Frame;
+use App\Models\Knockout;
+use App\Models\KnockoutMatch;
+use App\Models\KnockoutParticipant;
+use App\Models\KnockoutRound;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\KnockoutType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -77,12 +82,104 @@ class PlayerProfileTest extends TestCase
         $response = $this->get(route('player.show', $player));
 
         $response->assertStatus(200);
-        $response->assertSeeText('Player profile');
+        $response->assertSee('data-player-page', false);
+        $response->assertSee('data-player-profile-section', false);
+        $response->assertSee('data-player-frames-section', false);
+        $response->assertSee('data-player-history-section', false);
         $response->assertSeeText($player->name);
         $response->assertSeeText($team->name);
         $response->assertSeeTextInOrder(['Played', 'Won', 'Lost']);
-        $response->assertSeeText('50.00%');
+        $response->assertSeeText('50%');
         $response->assertSeeText($opponent->name);
         $response->assertSeeTextInOrder(['Frames', $opponentTeam->name]);
+    }
+
+    public function test_player_profile_shows_read_only_knockout_links(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $team = Team::factory()->create();
+        $player = User::factory()->create(['team_id' => $team->id]);
+        $opponent = User::factory()->create();
+
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Singles KO',
+            'type' => KnockoutType::Singles,
+        ]);
+
+        $round = KnockoutRound::query()->create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $player->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $opponent->id,
+        ]);
+
+        $completedMatch = KnockoutMatch::query()->create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'home_score' => 4,
+            'away_score' => 2,
+            'best_of' => 7,
+            'starts_at' => now()->subDays(2),
+        ]);
+
+        $teamKnockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Team KO',
+            'type' => KnockoutType::Team,
+        ]);
+
+        $teamRound = KnockoutRound::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'name' => 'Semi-finals',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $teamHomeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'team_id' => $team->id,
+        ]);
+
+        $teamAwayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'team_id' => Team::factory()->create()->id,
+        ]);
+
+        KnockoutMatch::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'knockout_round_id' => $teamRound->id,
+            'position' => 1,
+            'home_participant_id' => $teamHomeParticipant->id,
+            'away_participant_id' => $teamAwayParticipant->id,
+            'best_of' => 11,
+            'starts_at' => now()->subDay(),
+        ]);
+
+        $this->get(route('player.show', $player))
+            ->assertOk()
+            ->assertSee('data-player-knockout-section', false)
+            ->assertSeeText('Knockouts')
+            ->assertSeeText($knockout->name)
+            ->assertDontSeeText($teamKnockout->name)
+            ->assertSee(route('knockout.show', $knockout), false)
+            ->assertDontSee(route('knockout.matches.submit', $completedMatch), false)
+            ->assertSeeText('4')
+            ->assertSeeText('2');
     }
 }

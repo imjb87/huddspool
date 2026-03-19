@@ -10,6 +10,7 @@ use App\Http\Controllers\SupportTicketController;
 use App\Models\Ruleset;
 use App\Models\Section;
 use Illuminate\Support\Facades\Route;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,19 @@ Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name
 Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
 Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
 Route::middleware('auth')->group(function () {
+    Route::view('/account', 'account.show')->name('account.show');
+    Route::view('/account/team', 'account.team')->name('account.team');
+    Route::get('/stop-impersonating', function () {
+        if (! Impersonation::isImpersonating()) {
+            return redirect('/');
+        }
+
+        $redirectTo = session('impersonate.back_to') ?? '/';
+
+        Impersonation::leave();
+
+        return redirect($redirectTo);
+    })->name('impersonation.leave');
     Route::get('/knockout-matches/{match}/submit', [KnockoutMatchController::class, 'submit'])->name('knockout.matches.submit');
     Route::middleware('throttle:support-tickets')->group(function () {
         Route::get('/support/tickets', [SupportTicketController::class, 'create'])->name('support.tickets');

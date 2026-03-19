@@ -77,4 +77,24 @@ class AdminMassAssignmentTest extends TestCase
             'captain_id' => $captain->id,
         ]);
     }
+
+    public function test_admin_can_impersonate_a_user_from_the_filament_edit_page(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $player = User::factory()->create();
+
+        Filament::setCurrentPanel('admin');
+
+        Livewire::actingAs($admin)
+            ->test(EditUser::class, [
+                'record' => $player->getRouteKey(),
+            ])
+            ->callAction('impersonate')
+            ->assertRedirect(route('account.show'));
+
+        $this->assertAuthenticatedAs($player);
+        $this->assertSame($admin->id, session('impersonated_by'));
+    }
 }

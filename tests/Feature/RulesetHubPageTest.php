@@ -32,6 +32,8 @@ class RulesetHubPageTest extends TestCase
         $response->assertOk();
         $response->assertSeeText('International Rules');
         $response->assertSee('data-ruleset-content-page', false);
+        $response->assertSee('data-section-shared-header', false);
+        $response->assertSee('data-ruleset-content-section', false);
         $response->assertSee('World rules guidance.', false);
         $response->assertDontSeeLivewire(RulesetSectionPage::class);
     }
@@ -323,8 +325,8 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail()]).'"', false);
         $tablesResponse->assertSee('data-section-sponsors', false);
         $tablesResponse->assertSee('data-section-sponsors-grid', false);
-        $tablesResponse->assertSee('mx-auto max-w-7xl px-4 sm:px-6 lg:px-8', false);
-        $tablesResponse->assertSee('lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:items-start lg:gap-12', false);
+        $tablesResponse->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
+        $tablesResponse->assertSee('grid gap-8 py-8 sm:py-10 lg:grid-cols-3 lg:gap-10', false);
         $this->assertSame(6, substr_count($tablesResponse->getContent(), 'data-section-sponsors-card'));
         $tablesResponse->assertSeeText('Backing the league every week');
         $tablesResponse->assertSee('w-full overflow-hidden border-y border-gray-200 bg-white', false);

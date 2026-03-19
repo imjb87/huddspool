@@ -9,7 +9,7 @@ class FixturePolicy
 {
     public function createResult(User $user, Fixture $fixture): bool
     {
-        if (! $user->isTeamAdmin()) {
+        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
             return false;
         }
 
@@ -22,7 +22,7 @@ class FixturePolicy
             return false;
         }
 
-        return $user->isTeamAdmin() || $user->isAdmin();
+        return $user->isTeamAdmin() || $user->isCaptain() || $user->isAdmin();
     }
 
     private function isOnFixtureTeam(User $user, Fixture $fixture): bool

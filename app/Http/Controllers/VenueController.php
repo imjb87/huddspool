@@ -10,7 +10,7 @@ class VenueController extends Controller
     {
         $teams = $venue->teams()
             ->inOpenSeason()
-            ->with('captain')
+            ->with(['captain', 'openSections.ruleset'])
             ->orderBy('name')
             ->get();
 

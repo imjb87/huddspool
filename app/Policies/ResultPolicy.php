@@ -13,7 +13,7 @@ class ResultPolicy
             return true;
         }
 
-        if (! $user->isTeamAdmin()) {
+        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
             return false;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Support\CompetitionCacheInvalidator;
 use Filament\Actions;
 use App\Filament\Resources\SeasonResource\Pages;
 use App\Filament\Resources\SeasonResource\RelationManagers;
@@ -75,6 +76,9 @@ class SeasonResource extends Resource
                                 $season->update(['is_open' => 0]);
                             }
                         });
+                    })
+                    ->afterStateUpdated(function (Season $record) {
+                        app(CompetitionCacheInvalidator::class)->forgetForSeason($record);
                     })
             ])
             ->filters([

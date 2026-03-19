@@ -118,24 +118,29 @@
 
     @if ($this->relatedSections->isNotEmpty())
         <section class="mx-auto mt-10 w-full max-w-4xl border-t border-gray-200 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-6" data-section-see-also>
-            <div class="space-y-3">
-                <h2 class="text-lg font-semibold text-gray-900">Other sections in {{ $ruleset->name }}</h2>
-                <p class="-mt-3 text-sm leading-6 text-gray-500">
-                    Browse the other sections in this archived ruleset.
-                </p>
-                <ul class="text-base leading-6 text-gray-700" data-section-see-also-links>
-                    @foreach ($this->relatedSections as $relatedSection)
-                        <li class="inline">
-                            <a href="{{ $this->sectionUrl($relatedSection) }}"
-                                class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
-                                {{ $relatedSection->name }}
-                            </a>
-                            @unless ($loop->last)
-                                <span class="mx-2 text-gray-300" aria-hidden="true">/</span>
-                            @endunless
-                        </li>
-                    @endforeach
-                </ul>
+            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+                <div class="space-y-2">
+                    <h2 class="text-sm font-semibold text-gray-900">Other sections in {{ $ruleset->name }}</h2>
+                    <p class="text-sm leading-6 text-gray-500">
+                        Browse the other sections in this archived ruleset.
+                    </p>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <ul class="text-base leading-6 text-gray-700 [overflow-wrap:normal] [word-break:normal]" data-section-see-also-links>
+                        @foreach ($this->relatedSections as $relatedSection)
+                            <li class="inline">
+                                <a href="{{ $this->sectionUrl($relatedSection) }}"
+                                    class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                    {{ $relatedSection->name }}
+                                </a>
+                                @unless ($loop->last)
+                                    <span class="mx-2 text-gray-300" aria-hidden="true">/</span>
+                                @endunless
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         </section>
     @endif
