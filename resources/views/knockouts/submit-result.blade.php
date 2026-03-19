@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] pb-10 lg:pb-14 dark:bg-zinc-950" data-knockout-submit-page>
+    <div class="bg-gray-50 pt-[72px] pb-10 lg:pb-14 dark:bg-zinc-900" data-knockout-submit-page>
         <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
             data-section-shared-header
             data-knockout-submit-header>

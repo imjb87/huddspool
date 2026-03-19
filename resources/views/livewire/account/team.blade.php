@@ -1,4 +1,4 @@
-<div class="pb-10 lg:pb-14 dark:bg-zinc-950" data-account-team-page>
+<div class="pb-10 lg:pb-14 dark:bg-zinc-900" data-account-team-page>
     @if ($this->resultSubmissionPrompt)
         <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200" data-account-result-submission-prompt>
@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" data-account-nav>
+    <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75" data-account-nav>
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
             <nav class="-ml-3 flex gap-2">
                 <a href="{{ route('account.show') }}"
@@ -32,7 +32,7 @@
                     Profile
                 </a>
                 <a href="{{ route('account.team') }}"
-                    class="inline-flex shrink-0 items-center rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition dark:bg-zinc-800 dark:text-gray-300">
+                    class="inline-flex shrink-0 items-center rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition dark:bg-zinc-700 dark:text-gray-300">
                     Team
                 </a>
                 <a href="{{ route('support.tickets') }}"
@@ -253,7 +253,7 @@
                                 </div>
                             @empty
                                 <div class="px-4 py-10 text-center sm:px-6">
-                                    <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                                    <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available.</h3>
                                         <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                             Team fixtures will appear here once the current season schedule has been generated.

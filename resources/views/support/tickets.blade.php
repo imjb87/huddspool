@@ -3,7 +3,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-950">
+    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="pb-10 lg:pb-14" data-support-ticket-page>
             <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
                 data-section-shared-header>
@@ -12,7 +12,7 @@
                 </div>
             </div>
 
-            <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" data-account-nav>
+            <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75" data-account-nav>
                 <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
                     <nav class="-ml-3 flex gap-2">
                         <a href="{{ route('account.show') }}"
@@ -26,7 +26,7 @@
                             </a>
                         @endif
                         <a href="{{ route('support.tickets') }}"
-                            class="inline-flex shrink-0 items-center rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition dark:bg-zinc-800 dark:text-gray-300">
+                            class="inline-flex shrink-0 items-center rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition dark:bg-zinc-700 dark:text-gray-300">
                             Support
                         </a>
                     </nav>

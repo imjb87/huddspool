@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100 text-gray-900 dark:bg-zinc-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100 text-gray-900 dark:bg-zinc-900">
 
 <head>
     <meta charset="utf-8">
@@ -66,8 +66,8 @@
     @laravelPWA
 </head>
 
-<body class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
-    <div class="min-h-screen bg-gray-100 dark:bg-zinc-950">
+<body class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-gray-100">
+    <div class="min-h-screen bg-gray-100 dark:bg-zinc-900">
         @include('layouts.navigation')
         <!-- Page Content -->
         <main>

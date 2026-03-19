@@ -262,7 +262,7 @@
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-        <div class="fixed inset-x-0 right-0 z-30 bg-white shadow-2xl ring-1 ring-black/5 dark:bg-zinc-950 dark:ring-white/10"
+        <div class="fixed inset-x-0 right-0 z-30 bg-white shadow-2xl ring-1 ring-black/5 dark:bg-zinc-900 dark:ring-white/10"
             @click.stop
             :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
             data-mobile-menu-drawer
@@ -270,7 +270,7 @@
             x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
             x-transition:leave="transform transition ease-in duration-200"
             x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
-            <div class="relative h-full overflow-hidden bg-white dark:bg-zinc-950">
+            <div class="relative h-full overflow-hidden bg-white dark:bg-zinc-900">
                 <div class="absolute inset-0 overflow-y-auto px-4 py-5"
                     x-show="activeDrawer === 'root'"
                     x-cloak
@@ -360,7 +360,7 @@
                             ->values();
                     @endphp
                     @continue($navigableSections->isEmpty())
-                    <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5 dark:bg-zinc-950"
+                    <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5 dark:bg-zinc-900"
                         x-show="activeDrawer === 'ruleset-{{ $ruleset->id }}'"
                         x-cloak
                         data-mobile-ruleset-sections
@@ -398,7 +398,7 @@
                     </div>
                 @endforeach
 
-                <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5 dark:bg-zinc-950"
+                <div class="absolute inset-0 overflow-y-auto bg-white px-4 py-5 dark:bg-zinc-900"
                     x-show="activeDrawer === 'knockouts'"
                     x-cloak
                     data-mobile-knockouts-links

@@ -9,7 +9,7 @@
         })->values();
     @endphp
 
-    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-950">
+    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="pb-10 lg:pb-14" data-fixture-page>
             @if ($canSubmitResult)
                 <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
@@ -26,7 +26,7 @@
                             </a>
                         @else
                             <span
-                                class="inline-flex items-center rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 dark:bg-zinc-800 dark:text-gray-300">
+                                class="inline-flex items-center rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 dark:bg-zinc-700 dark:text-gray-300">
                                 Opens {{ $fixture->fixture_date->format('j M Y') }}
                             </span>
                         @endif

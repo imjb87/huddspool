@@ -73,7 +73,7 @@
 
                 <div class="flex items-center justify-center" data-knockout-score-state>
                     @if ($match->forfeitParticipant)
-                        <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-bold uppercase tracking-wide text-gray-600 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-300 dark:ring-zinc-700">
+                        <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-bold uppercase tracking-wide text-gray-600 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-300 dark:ring-zinc-700">
                             FF
                         </span>
                     @elseif ($match->home_score !== null && $match->away_score !== null)
@@ -92,7 +92,7 @@
                             {{ $match->starts_at->format('d/m') }}
                         </span>
                     @else
-                        <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-500 dark:ring-zinc-700">
+                        <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-500 dark:ring-zinc-700">
                             Vs
                         </span>
                     @endif

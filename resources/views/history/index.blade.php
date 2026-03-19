@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-950">
+    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
             <div class="mx-auto max-w-4xl pb-6 sm:pb-8" data-section-shared-header>
                 <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">History</h1>
@@ -63,7 +63,7 @@
                         </div>
                     </section>
                 @empty
-                    <div class="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center text-sm text-gray-500 dark:border-zinc-700 dark:bg-zinc-900/75 dark:text-gray-400">
+                    <div class="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center text-sm text-gray-500 dark:border-zinc-700 dark:bg-zinc-800/75 dark:text-gray-400">
                         No historical seasons are available yet.
                     </div>
                 @endforelse

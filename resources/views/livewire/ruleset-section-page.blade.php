@@ -68,7 +68,7 @@
         @if ($activeTab === 'fixtures-results')
             <a href="{{ route('fixture.download', $section) }}"
                 target="_blank"
-                class="inline-flex min-w-24 items-center justify-center gap-2 self-end rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200 hover:text-gray-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-gray-100"
+                class="inline-flex min-w-24 items-center justify-center gap-2 self-end rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200 hover:text-gray-900 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-gray-100"
                 aria-label="Print fixtures">
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M5 4.25A2.25 2.25 0 017.25 2h5.5A2.25 2.25 0 0115 4.25V6h.75A2.25 2.25 0 0118 8.25v4.5A2.25 2.25 0 0115.75 15H15v.75A2.25 2.25 0 0112.75 18h-5.5A2.25 2.25 0 014 15.75V15h-.75A2.25 2.25 0 011 12.75v-4.5A2.25 2.25 0 013.25 6H4V4.25zM13.5 6V4.25a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75V6h7zM5.5 14.5v1.25c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75V14.5h-7zm9.5-7H3.25a.75.75 0 00-.75.75v4.5c0 .414.336.75.75.75H4V12a1 1 0 011-1h9a1 1 0 011 1v1.5h.75a.75.75 0 00.75-.75v-4.5a.75.75 0 00-.75-.75z" />

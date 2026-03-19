@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-gray-50 pt-[80px] dark:bg-zinc-950">
+<div class="bg-gray-50 pt-[80px] dark:bg-zinc-900">
     <div class="py-8 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
             <div class="border-b border-gray-200 pb-2 mb-4">
@@ -12,7 +12,7 @@
             </div>
             <div class="grid grid-cols-1 gap-x-6 gap-y-6">
                 <section class="-mx-4 sm:m-0">
-                    <div class="overflow-hidden bg-white shadow-md sm:rounded-lg dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
+                    <div class="overflow-hidden bg-white shadow-md sm:rounded-lg dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
                         <div class="px-4 py-4 bg-green-700 flex justify-between items-center">
                             <h2 class="text-sm font-medium leading-6 text-white">Season Summary</h2>
                         </div>

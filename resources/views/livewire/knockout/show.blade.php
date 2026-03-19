@@ -17,7 +17,7 @@
             @php
                 $round = $this->currentRound;
             @endphp
-            <section class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-knockout-round-shell>
+            <section class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-knockout-round-shell>
                 <div class="border-b border-gray-300 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
                     <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-2 sm:px-6" data-knockout-round-header>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-zinc-900/75" data-knockout-round-body>
+                <div class="bg-white dark:bg-zinc-800/75" data-knockout-round-body>
                     @if ($round->matches->isNotEmpty())
                         @foreach ($round->matches as $match)
                             @php
@@ -51,7 +51,7 @@
                         @endforeach
                     @else
                         <div class="px-4 py-10 text-center sm:px-6" data-knockout-empty-state>
-                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
                                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No matches scheduled for this round yet.</h3>
                                 <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                     Match pairings and dates will appear here once the bracket is ready.
@@ -63,7 +63,7 @@
             </section>
         @else
             <div class="px-4 py-10 text-center sm:px-6" data-knockout-empty-state>
-                <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 bg-white px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/75 dark:shadow-none">
+                <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 bg-white px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-800/75 dark:shadow-none">
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No rounds have been published yet.</h3>
                     <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                         The bracket will appear here as soon as round information is published.

@@ -9,7 +9,7 @@
         </div>
     @endif
 
-    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
         <div class="hidden bg-linear-to-br from-green-900 via-green-800 to-green-700 sm:flex">
             <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
                 {{ $fixture->homeTeam->name }}
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div
-                    class="order-first w-full bg-gray-50 py-2 px-4 text-left text-sm font-semibold leading-6 text-gray-900 dark:bg-zinc-800 dark:text-gray-100 sm:w-12 sm:px-0 sm:text-center"
+                    class="order-first w-full bg-gray-50 py-2 px-4 text-left text-sm font-semibold leading-6 text-gray-900 dark:bg-zinc-700 dark:text-gray-100 sm:w-12 sm:px-0 sm:text-center"
                 >
                     <span class="sm:hidden">Frame </span>
                     {{ $i }}

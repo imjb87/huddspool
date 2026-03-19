@@ -47,7 +47,7 @@
                     placeholder="Search players, teams, venues..." role="combobox"
                     aria-expanded="{{ ! empty($resultGroups) ? 'true' : 'false' }}" aria-controls="options">
                 <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
-                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-500">
+                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-500">
                         Ctrl K
                     </span>
                 </div>
@@ -81,7 +81,7 @@
                             @foreach ($resultGroups as $name => $group)
                                 @if ($group['results']->isNotEmpty())
                                     <li wire:key="search-group-{{ $name }}">
-                                        <h2 class="rounded-lg bg-gray-100 px-4 py-2.5 text-xs font-semibold tracking-wide text-gray-900 uppercase dark:bg-zinc-800 dark:text-gray-100">
+                                        <h2 class="rounded-lg bg-gray-100 px-4 py-2.5 text-xs font-semibold tracking-wide text-gray-900 uppercase dark:bg-zinc-700 dark:text-gray-100">
                                             {{ $group['heading'] }}</h2>
                                         <div class="mt-2 text-sm text-gray-800 dark:text-gray-200">
                                             @foreach ($group['results'] as $item)
@@ -107,7 +107,7 @@
                                                                 </p>
                                                             @endif
                                                         </div>
-                                                        <span class="shrink-0 rounded-full bg-gray-100 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-500 dark:bg-zinc-800 dark:text-gray-400">
+                                                        <span class="shrink-0 rounded-full bg-gray-100 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-500 dark:bg-zinc-700 dark:text-gray-400">
                                                             {{ $group['badge'] }}
                                                         </span>
                                                     </a>

@@ -75,7 +75,7 @@ class ResultShowTest extends TestCase
             ->assertSee('data-result-page', false)
             ->assertSee('data-result-info-section', false)
             ->assertSee('data-result-card-section', false)
-            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Result information')
             ->assertSeeText('Result card')

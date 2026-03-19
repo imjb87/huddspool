@@ -23,7 +23,7 @@ class PageShowTest extends TestCase
             ->assertSee('data-page-show', false)
             ->assertSee('data-page-content-section', false)
             ->assertSee('data-page-content', false)
-            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:text-gray-100', false)
             ->assertSee('dark:prose-invert', false)
             ->assertSeeText('Knockout Dates')

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-950">
+    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="pb-10 lg:pb-14" data-player-page>
             <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
                 data-section-shared-header>
@@ -74,7 +74,7 @@
                                                     : number_format($averages->frames_lost_percentage, 1);
                                             @endphp
                                             <div class="pt-2 pb-2 sm:col-span-2">
-                                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:ring-1 dark:ring-white/5">
+                                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:ring-1 dark:ring-white/5">
                                                     <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-zinc-800/80">
                                                         <div class="px-4 py-4 sm:px-5">
                                                             <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>

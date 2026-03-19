@@ -67,7 +67,7 @@ class TeamProfileTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('data-team-page', false);
-        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('data-team-info-section', false);

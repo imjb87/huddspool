@@ -65,7 +65,7 @@ class FixtureShowTest extends TestCase
         $response->assertSee('data-fixture-head-to-head-section', false);
         $response->assertSee('data-fixture-home-team-section', false);
         $response->assertSee('data-fixture-away-team-section', false);
-        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText('Fixture information');

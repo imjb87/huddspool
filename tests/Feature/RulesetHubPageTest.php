@@ -34,7 +34,7 @@ class RulesetHubPageTest extends TestCase
         $response->assertSee('data-ruleset-content-page', false);
         $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-ruleset-content-section', false);
-        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('dark:prose-invert', false);
         $response->assertSee('World rules guidance.', false);

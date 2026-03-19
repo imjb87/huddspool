@@ -2,7 +2,7 @@
     @php
         $isHistoryView = $history ?? false;
     @endphp
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-section-fixtures-shell>
+    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-section-fixtures-shell>
         <div class="min-w-full overflow-hidden">
             <div class="border-b border-gray-200 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
                 <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <div class="border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" wire:loading.remove wire:target="previousWeek, nextWeek">
+            <div class="border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75" wire:loading.remove wire:target="previousWeek, nextWeek">
                 @forelse ($fixtures as $fixture)
                     @php
                         $isByeFixture = $fixture->home_team_id == 1 || $fixture->away_team_id == 1;
@@ -126,7 +126,7 @@
                     @endif
                 @empty
                     <div class="px-4 py-10 text-center sm:px-6">
-                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
                             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available for this week.</h3>
                             <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                 Try another week to see upcoming fixtures or submitted results for this section.
@@ -136,7 +136,7 @@
                 @endforelse
             </div>
 
-            <div class="animate-pulse border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
+            <div class="animate-pulse border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
                 @foreach (range(1, 5) as $row)
                     <div class="border-t border-gray-300 dark:border-zinc-800/80" data-section-fixtures-row-skeleton-row>
                         <div class="mx-auto flex w-full max-w-4xl items-center" data-section-fixtures-band>

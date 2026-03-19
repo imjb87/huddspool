@@ -2,7 +2,7 @@
     @php
         $isHistoryView = $history ?? false;
     @endphp
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-section-table-shell>
+    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-section-table-shell>
         <div class="min-w-full overflow-hidden">
             <div class="border-b border-gray-200 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
                 <div class="mx-auto flex w-full max-w-4xl" data-section-table-band>
@@ -19,10 +19,10 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-zinc-900/75">
+            <div class="bg-white dark:bg-zinc-800/75">
                 @if ($standings->isEmpty())
                     <div class="px-4 py-10 text-center sm:px-6">
-                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
                             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No standings available for this section yet.</h3>
                             <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                 Standings will appear once results are entered for this section.

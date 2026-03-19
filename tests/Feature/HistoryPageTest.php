@@ -63,7 +63,7 @@ class HistoryPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSeeText('History');
-        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('dark:hover:bg-zinc-800/70', false);
         $response->assertSee('dark:text-gray-300', false);

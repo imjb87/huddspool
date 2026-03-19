@@ -1,5 +1,5 @@
 <section class="mt-0 animate-pulse" data-section-tab-skeleton="averages">
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
+    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
         <div class="border-b border-gray-200 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
             <div class="mx-auto flex w-full max-w-4xl">
                 <div class="flex w-[56%] pl-4 sm:w-1/2 sm:pl-6">
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-900/75">
+        <div class="bg-white dark:bg-zinc-800/75">
             @foreach (range(1, 10) as $row)
                 <div class="border-t border-gray-300 dark:border-zinc-800/80" data-section-tab-skeleton-row="averages">
                     <div class="mx-auto flex w-full max-w-4xl items-center">

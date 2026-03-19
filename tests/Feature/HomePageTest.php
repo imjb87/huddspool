@@ -103,13 +103,15 @@ class HomePageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-home-live-scores-shell', false);
-        $response->assertSee('data-home-live-scores-band', false);
         $response->assertSee('data-home-live-scores-list', false);
-        $response->assertSee('max-h-80 overflow-y-auto overscroll-contain bg-white', false);
+        $response->assertSee('max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain', false);
         $response->assertSee('data-home-live-score-row', false);
         $response->assertSee('data-home-live-score-pill', false);
         $response->assertSeeText('Break Masters');
         $response->assertSeeText('Cue Kings');
+        $response->assertSeeText('Premier Division');
+        $response->assertSeeText('International Rules');
+        $response->assertSeeText($data['fixture']->fixture_date->format('j M Y'));
         $response->assertSee('href="'.route('result.show', $result).'"', false);
         $response->assertDontSeeText('No current matches in progress right now.');
     }
@@ -158,7 +160,7 @@ class HomePageTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('max-h-80 overflow-y-auto overscroll-contain bg-white', false);
+        $response->assertSee('max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain', false);
         $this->assertSame(7, substr_count($response->getContent(), 'data-home-live-score-row'));
         $response->assertSeeText('Home Team 1');
         $response->assertSeeText('Away Team 7');
@@ -341,7 +343,7 @@ class HomePageTest extends TestCase
             'ruleset_id' => $ruleset->id,
             'home_team_id' => $homeTeam->id,
             'away_team_id' => $awayTeam->id,
-            'fixture_date' => now(),
+            'fixture_date' => now()->setDate(2026, 3, 17),
         ]);
 
         return compact('season', 'ruleset', 'section', 'homeTeam', 'awayTeam', 'fixture');

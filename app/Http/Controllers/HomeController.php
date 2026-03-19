@@ -21,7 +21,10 @@ class HomeController extends Controller
     private function liveScores(): Collection
     {
         return Result::query()
-            ->with(['section.ruleset'])
+            ->with([
+                'fixture:id,fixture_date',
+                'section.ruleset',
+            ])
             ->inOpenSeason()
             ->where('is_confirmed', false)
             ->where('home_team_id', '!=', 1)

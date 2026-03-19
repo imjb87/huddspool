@@ -1,5 +1,5 @@
 <section data-history-standings-view>
-    <div class="grow-0 overflow-hidden bg-white shadow-sm sm:rounded-lg -mx-4 flex h-full flex-col sm:mx-0 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
+    <div class="grow-0 overflow-hidden bg-white shadow-sm sm:rounded-lg -mx-4 flex h-full flex-col sm:mx-0 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
         <div class="flex items-center justify-between bg-green-700 px-4 py-4 sm:px-6">
             <h2 class="text-sm font-medium leading-6 text-white">Standings</h2>
             <span class="text-xs font-semibold uppercase tracking-wide text-green-100">{{ $section->name }}</span>

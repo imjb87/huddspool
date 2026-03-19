@@ -37,7 +37,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertSee('data-knockout-submit-page', false)
             ->assertSee('data-knockout-submit-header', false)
             ->assertSee('data-knockout-submit-context', false)
-            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:text-gray-100', false)
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Match details')

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-50 text-gray-900 dark:bg-zinc-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-50 text-gray-900 dark:bg-zinc-900">
 
 <head>
     <meta charset="utf-8">
@@ -49,7 +49,7 @@
     @laravelPWA
 </head>
 
-<body class="bg-gray-50 font-sans text-gray-900 antialiased dark:bg-zinc-950 dark:text-gray-100">
+<body class="bg-gray-50 font-sans text-gray-900 antialiased dark:bg-zinc-900 dark:text-gray-100">
     <div class="min-h-screen">
         <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14">
             {{ $slot }}
