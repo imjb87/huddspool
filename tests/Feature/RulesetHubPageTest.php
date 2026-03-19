@@ -34,6 +34,9 @@ class RulesetHubPageTest extends TestCase
         $response->assertSee('data-ruleset-content-page', false);
         $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-ruleset-content-section', false);
+        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:text-gray-100', false);
+        $response->assertSee('dark:prose-invert', false);
         $response->assertSee('World rules guidance.', false);
         $response->assertDontSeeLivewire(RulesetSectionPage::class);
     }
@@ -156,6 +159,7 @@ class RulesetHubPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-ruleset-content-empty', false);
+        $response->assertSee('dark:prose-invert', false);
         $response->assertSeeText('No ruleset content has been published yet.');
     }
 
@@ -332,8 +336,9 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('w-full overflow-hidden border-y border-gray-200 bg-white', false);
         $tablesResponse->assertSee('bg-linear-to-b from-gray-50 to-gray-100', false);
         $tablesResponse->assertSee('w-[44%] pl-4 sm:w-1/2 sm:pl-6', false);
-        $tablesResponse->assertSee('w-[56%] pr-4 sm:w-1/2 sm:pr-0', false);
-        $tablesResponse->assertSee('w-1/5 py-2 text-right text-sm font-semibold text-gray-900', false);
+        $tablesResponse->assertSee('w-[56%] pr-4 sm:w-1/2 sm:pr-6', false);
+        $tablesResponse->assertSee('text-gray-900 dark:text-gray-100', false);
+        $tablesResponse->assertSee('text-green-700 dark:text-green-400', false);
         $tablesResponse->assertDontSee('Print fixtures', false);
         $tablesResponse->assertDontSee('Current standings for this section.');
         $tablesResponse->assertDontSee('rounded-2xl border border-gray-200 bg-white shadow-sm', false);
@@ -362,7 +367,7 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('data-section-averages-controls', false);
         $averagesResponse->assertSee('data-section-see-also', false);
         $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
-        $averagesResponse->assertSee('mx-auto w-full max-w-4xl pl-4 pt-5 pr-4 pb-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:pt-5 lg:pb-6', false);
+        $averagesResponse->assertSee('mx-auto w-full max-w-4xl pl-4 pt-5 pr-4 pb-4 sm:pl-6 sm:pr-6 lg:px-6 lg:pt-5 lg:pb-6', false);
         $averagesResponse->assertSee('flex w-[41%] justify-end', false);
         $averagesResponse->assertSee('flex w-[18%] items-center justify-center', false);
         $averagesResponse->assertSee('cursor-pointer items-center justify-center rounded-full', false);
@@ -373,7 +378,7 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('w-full overflow-hidden border-y border-gray-200 bg-white', false);
         $averagesResponse->assertSee('bg-linear-to-b from-gray-50 to-gray-100', false);
         $averagesResponse->assertSee('w-[56%] pl-4 sm:w-1/2 sm:pl-6', false);
-        $averagesResponse->assertSee('grid w-[44%] grid-cols-[1fr_1fr_1fr_3.25rem] items-center gap-x-1 pr-4 sm:w-1/2 sm:pr-0', false);
+        $averagesResponse->assertSee('grid w-[44%] grid-cols-[1fr_1fr_1fr_3.25rem] items-center gap-x-1 pr-4 sm:w-1/2 sm:pr-6', false);
         $averagesResponse->assertSee('text-sm font-semibold text-gray-900', false);
         $averagesResponse->assertSee('bg-linear-to-br from-green-900 via-green-800 to-green-700', false);
         $averagesResponse->assertSee('inline-flex w-24 cursor-pointer items-center justify-center rounded-full', false);

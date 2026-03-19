@@ -36,6 +36,8 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('data-result-create-info-section', false)
             ->assertSee('data-result-create-form-section', false)
             ->assertSee('data-result-form', false)
+            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Submit a result')
             ->assertSeeText('Fixture details')
             ->assertSeeText('Result card');

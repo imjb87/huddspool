@@ -72,6 +72,13 @@ class ResultShowTest extends TestCase
 
         $this->get(route('result.show', $result))
             ->assertOk()
+            ->assertSee('data-result-page', false)
+            ->assertSee('data-result-info-section', false)
+            ->assertSee('data-result-card-section', false)
+            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:border-zinc-800/80', false)
+            ->assertSeeText('Result information')
+            ->assertSeeText('Result card')
             ->assertViewHas('result', function (Result $viewResult): bool {
                 return $viewResult->relationLoaded('fixture')
                     && $viewResult->fixture->relationLoaded('section')

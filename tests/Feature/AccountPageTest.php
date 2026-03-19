@@ -43,6 +43,10 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-page', false)
             ->assertSee('data-account-header', false)
             ->assertSee('data-account-profile-section', false)
+            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:border-zinc-800/80', false)
+            ->assertSee('dark:bg-zinc-900/75', false)
+            ->assertSee('dark:text-gray-100', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertSeeText('Email address');
     }
@@ -285,6 +289,10 @@ class AccountPageTest extends TestCase
             ->get(route('account.team'))
             ->assertOk()
             ->assertSee('data-account-team-page', false)
+            ->assertSee('dark:bg-zinc-950', false)
+            ->assertSee('dark:border-zinc-800/80', false)
+            ->assertSee('dark:bg-zinc-900/75', false)
+            ->assertSee('dark:text-gray-100', false)
             ->assertSee('data-account-team-info-section', false)
             ->assertSee('data-account-team-section', false)
             ->assertSee('data-account-team-member-stats', false)

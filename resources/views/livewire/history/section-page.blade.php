@@ -48,8 +48,8 @@
                                 wire:key="history-section-tab-{{ $tabKey }}"
                                 data-section-tab="{{ $tabKey }}"
                                 @if ($activeTab === $tabKey) aria-current="page" @endif
-                                class="inline-flex min-w-0 w-full items-center justify-center rounded-full px-3 py-2 text-center text-[13px] font-semibold whitespace-nowrap transition sm:px-4 sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30' : 'text-gray-300 hover:text-gray-100' }}">
-                                <span class="leading-tight {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30' : '' }}">{{ $tabLabel }}</span>
+                                class="inline-flex min-w-0 w-full items-center justify-center rounded-full px-3 py-2 text-center text-[13px] font-semibold whitespace-nowrap transition sm:px-4 sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'text-zinc-900 text-shadow-xs/20 text-shadow-green-950/30' : 'text-gray-300 hover:text-gray-100' }}">
+                                <span class="leading-tight {{ $activeTab === $tabKey ? 'text-zinc-900 text-shadow-xs/20 text-shadow-green-950/30' : '' }}">{{ $tabLabel }}</span>
                             </a>
                         </div>
                     @endforeach
@@ -61,8 +61,8 @@
     <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
         data-section-shared-header>
         <div class="min-w-0">
-            <p class="text-sm text-gray-500">{{ $season->name }}</p>
-            <h1 class="mt-1 text-lg font-semibold text-gray-900">{{ $section->name }}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $season->name }}</p>
+            <h1 class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
         </div>
     </div>
 
@@ -117,25 +117,25 @@
     </div>
 
     @if ($this->relatedSections->isNotEmpty())
-        <section class="mx-auto mt-10 w-full max-w-4xl border-t border-gray-200 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-6" data-section-see-also>
+        <section class="mx-auto mt-10 w-full max-w-4xl border-t border-gray-200 px-4 pt-6 dark:border-zinc-800/80 sm:px-6 sm:pt-8 lg:px-6" data-section-see-also>
             <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
                 <div class="space-y-2">
-                    <h2 class="text-sm font-semibold text-gray-900">Other sections in {{ $ruleset->name }}</h2>
-                    <p class="text-sm leading-6 text-gray-500">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Other sections in {{ $ruleset->name }}</h2>
+                    <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">
                         Browse the other sections in this archived ruleset.
                     </p>
                 </div>
 
                 <div class="lg:col-span-2">
-                    <ul class="text-base leading-6 text-gray-700 [overflow-wrap:normal] [word-break:normal]" data-section-see-also-links>
+                    <ul class="text-base leading-6 text-gray-700 dark:text-gray-300 [overflow-wrap:normal] [word-break:normal]" data-section-see-also-links>
                         @foreach ($this->relatedSections as $relatedSection)
                             <li class="inline">
                                 <a href="{{ $this->sectionUrl($relatedSection) }}"
-                                    class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                    class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
                                     {{ $relatedSection->name }}
                                 </a>
                                 @unless ($loop->last)
-                                    <span class="mx-2 text-gray-300" aria-hidden="true">/</span>
+                                    <span class="mx-2 text-gray-300 dark:text-zinc-600" aria-hidden="true">/</span>
                                 @endunless
                             </li>
                         @endforeach

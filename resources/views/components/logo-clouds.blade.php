@@ -46,14 +46,14 @@
 @endphp
 
 @if ($variant === 'section-showcase')
-    <section {{ $attributes->class([$paddingClasses]) }} data-section-sponsors>
+    <section {{ $attributes->class([$paddingClasses, 'bg-gray-50 dark:bg-zinc-950']) }} data-section-sponsors>
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="grid gap-8 py-8 sm:py-10 lg:grid-cols-3 lg:gap-10">
                 <div class="space-y-2">
-                    <h2 class="text-base font-semibold text-gray-900 sm:text-lg">
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">
                         Backing the league every week
                     </h2>
-                    <p class="max-w-sm text-sm leading-6 text-gray-600">
+                    <p class="max-w-sm text-sm leading-6 text-gray-600 dark:text-gray-400">
                         Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.
                     </p>
                 </div>
@@ -65,12 +65,12 @@
                             rel="noopener noreferrer"
                             class="group block"
                             data-section-sponsors-card>
-                            <div class="relative flex aspect-[2/1] items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-b from-white to-gray-50 px-4 py-4 shadow-sm ring-1 ring-black/5 transition duration-200 hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md">
+                            <div class="relative flex aspect-[2/1] items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-b from-white to-gray-50 px-4 py-4 shadow-sm ring-1 ring-black/5 transition duration-200 hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md dark:border-zinc-700 dark:from-white dark:to-gray-50 dark:ring-white/10 dark:hover:border-green-900/70 dark:hover:shadow-none">
                                 <img class="max-h-12 w-full object-contain transition duration-200 group-hover:scale-[1.02] sm:max-h-14"
                                     src="{{ $sponsor['image'] }}"
                                     alt="{{ $sponsor['alt'] }}">
                             </div>
-                            <p class="mt-2 text-center text-sm font-medium text-gray-600 transition group-hover:text-green-900">
+                            <p class="mt-2 text-center text-sm font-medium text-gray-600 transition group-hover:text-green-900 dark:text-gray-400 dark:group-hover:text-green-400">
                                 {{ $sponsor['name'] }}
                             </p>
                         </a>

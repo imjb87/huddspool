@@ -26,6 +26,8 @@ class AuthenticationTest extends TestCase
         $response->assertSeeText('Access your account to manage your profile');
         $response->assertSee('type="email"', false);
         $response->assertSee('type="password"', false);
+        $response->assertSee('site-theme', false);
+        $response->assertSee('prefers-color-scheme: dark', false);
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void

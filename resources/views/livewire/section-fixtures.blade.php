@@ -2,27 +2,27 @@
     @php
         $isHistoryView = $history ?? false;
     @endphp
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-section-fixtures-shell>
+    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-section-fixtures-shell>
         <div class="min-w-full overflow-hidden">
-            <div class="bg-linear-to-b from-gray-50 to-gray-100">
+            <div class="border-b border-gray-200 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
                 <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
-                    <div scope="col" class="w-[40%] py-2 pl-4 text-right text-sm font-semibold text-gray-900 sm:pl-6">
+                    <div scope="col" class="w-[40%] py-2 pl-4 text-right text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6">
                         Home
                     </div>
-                    <div scope="col" class="w-[20%] px-1 py-2 text-center text-sm font-semibold text-gray-900"></div>
-                    <div scope="col" class="w-[40%] py-2 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">
+                    <div scope="col" class="w-[20%] px-1 py-2 text-center text-sm font-semibold text-gray-900 dark:text-gray-100"></div>
+                    <div scope="col" class="w-[40%] py-2 pr-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pr-6">
                         Away
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white border-b border-gray-300" wire:loading.remove wire:target="previousWeek, nextWeek">
+            <div class="border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" wire:loading.remove wire:target="previousWeek, nextWeek">
                 @forelse ($fixtures as $fixture)
                     @php
                         $isByeFixture = $fixture->home_team_id == 1 || $fixture->away_team_id == 1;
                         $rowClasses = $isByeFixture
-                            ? 'block w-full border-t border-gray-300 bg-gray-50'
-                            : 'block w-full border-t border-gray-300';
+                            ? 'block w-full border-t border-gray-300 bg-gray-50 dark:border-zinc-800/80 dark:bg-zinc-800/50'
+                            : 'block w-full border-t border-gray-300 dark:border-zinc-800/80';
                         $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
                             ? $fixture->result->home_team_name
                             : $fixture->homeTeam->name;
@@ -34,7 +34,7 @@
                     @if ($isHistoryView || $isByeFixture)
                         <div class="{{ $rowClasses }}" wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}">
                             <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
-                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
+                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 dark:text-gray-100 sm:pl-6">
                                     <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                         {{ $homeDisplayName }}
                                     </span>
@@ -45,7 +45,7 @@
                                     @endif
                                 </div>
 
-                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
+                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500 dark:text-gray-400">
                                     @if ($fixture->result)
                                         <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
                                             data-section-fixtures-score-pill>
@@ -64,7 +64,7 @@
                                     @endif
                                 </div>
 
-                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
+                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 dark:text-gray-100 sm:pr-6">
                                     <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                         {{ $awayDisplayName }}
                                     </span>
@@ -77,11 +77,11 @@
                             </div>
                         </div>
                     @else
-                        <a class="{{ $rowClasses }} hover:cursor-pointer hover:bg-gray-50"
+                        <a class="{{ $rowClasses }} hover:cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/80"
                             wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}"
                             href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
                             <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
-                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
+                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 dark:text-gray-100 sm:pl-6">
                                     <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
                                         {{ $homeDisplayName }}
                                     </span>
@@ -92,7 +92,7 @@
                                     @endif
                                 </div>
 
-                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
+                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500 dark:text-gray-400">
                                     @if ($fixture->result)
                                         <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
                                             data-section-fixtures-score-pill>
@@ -111,7 +111,7 @@
                                     @endif
                                 </div>
 
-                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
+                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 dark:text-gray-100 sm:pr-6">
                                     <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
                                         {{ $awayDisplayName }}
                                     </span>
@@ -126,9 +126,9 @@
                     @endif
                 @empty
                     <div class="px-4 py-10 text-center sm:px-6">
-                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8">
-                            <h3 class="text-sm font-semibold text-gray-900">No fixtures available for this week.</h3>
-                            <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500">
+                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available for this week.</h3>
+                            <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                 Try another week to see upcoming fixtures or submitted results for this section.
                             </p>
                         </div>
@@ -136,20 +136,20 @@
                 @endforelse
             </div>
 
-            <div class="animate-pulse border-b border-gray-300 bg-white" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
+            <div class="animate-pulse border-b border-gray-300 bg-white dark:border-zinc-800/80 dark:bg-zinc-900/75" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
                 @foreach (range(1, 5) as $row)
-                    <div class="border-t border-gray-300" data-section-fixtures-row-skeleton-row>
+                    <div class="border-t border-gray-300 dark:border-zinc-800/80" data-section-fixtures-row-skeleton-row>
                         <div class="mx-auto flex w-full max-w-4xl items-center" data-section-fixtures-band>
                             <div class="w-[41%] py-3.5 pl-4 text-right sm:pl-6">
-                                <div class="ml-auto h-4 w-28 rounded-full bg-gray-200"></div>
+                                    <div class="ml-auto h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                             </div>
 
                             <div class="flex w-[18%] items-center justify-center px-1 py-2.5">
-                                <div class="h-7 w-[44px] rounded-sm bg-gray-200"></div>
+                                <div class="h-7 w-[44px] rounded-sm bg-gray-200 dark:bg-zinc-700"></div>
                             </div>
 
                             <div class="w-[41%] py-3.5 pr-4 text-left sm:pr-6">
-                                <div class="h-4 w-28 rounded-full bg-gray-200"></div>
+                                <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                             </div>
                         </div>
                     </div>
@@ -170,7 +170,7 @@
             </div>
 
             <div class="flex w-[18%] items-center justify-center">
-                <span class="text-sm font-semibold text-gray-900">
+                <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Week {{ $week }}
                 </span>
             </div>

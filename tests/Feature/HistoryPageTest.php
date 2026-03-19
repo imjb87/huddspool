@@ -63,6 +63,10 @@ class HistoryPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSeeText('History');
+        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:text-gray-100', false);
+        $response->assertSee('dark:hover:bg-zinc-800/70', false);
+        $response->assertSee('dark:text-gray-300', false);
         $response->assertSee('data-history-index-accordion', false);
         $response->assertSee('data-history-season-trigger', false);
         $response->assertSee('data-history-ruleset-trigger', false);
@@ -117,6 +121,24 @@ class HistoryPageTest extends TestCase
 
         $this->get(route('history.show', [$season, $ruleset]))
             ->assertRedirect(route('history.section.show', [$season, $ruleset, $firstSection]));
+    }
+
+    public function test_history_show_displays_dark_mode_ready_historical_overview(): void
+    {
+        $ruleset = Ruleset::factory()->create(['name' => 'World Rules']);
+        $season = Season::factory()->create([
+            'name' => '2021/22 Season',
+            'is_open' => false,
+        ]);
+        $section = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $season->id,
+            'name' => 'Division A',
+        ]);
+
+        $response = $this->get(route('history.show', [$season, $ruleset]));
+
+        $response->assertRedirect(route('history.section.show', [$season, $ruleset, $section]));
     }
 
     public function test_history_section_page_replicates_section_tabs_and_displays_trashed_records(): void

@@ -51,7 +51,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('bg-gray-500/40', false);
         $response->assertSee('ring-black/5', false);
         $response->assertSee('data-site-search-trigger', false);
+        $response->assertSee('data-theme-toggle', false);
         $response->assertSee('focus-first-search-result', false);
+        $response->assertSee('site-theme', false);
+        $response->assertSee('prefers-color-scheme: dark', false);
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('pl-11 pr-4', false);

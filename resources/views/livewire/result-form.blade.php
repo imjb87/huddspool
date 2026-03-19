@@ -1,15 +1,15 @@
 <form class="space-y-6" wire:submit.prevent="submit" wire:poll.60s="keepLockAlive" data-result-form>
     @if ($lockedByAnother && ! $isLocked)
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
             This result is currently being updated by {{ $lockOwnerName ?? 'another team admin' }}. Lock expires {{ $lockExpiresAtHuman ?? 'soon' }}.
         </div>
     @elseif (! $isLocked && $canEdit)
-        <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+        <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900/60 dark:bg-green-950/30 dark:text-green-200">
             You have edit access. Your lock renews automatically while this page stays open.
         </div>
     @endif
 
-    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
         <div class="hidden bg-linear-to-br from-green-900 via-green-800 to-green-700 sm:flex">
             <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
                 {{ $fixture->homeTeam->name }}
@@ -23,10 +23,10 @@
         </div>
         @for ($i = 1; $i <= 10; $i++)
             <div class="flex flex-wrap" wire:key="result-frame-{{ $i }}">
-                <div class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 sm:border-0">
+                <div class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 dark:border-zinc-800/80 sm:border-0">
                     <select
                         wire:model.live="form.frames.{{ $i }}.home_player_id"
-                        class="border-0 py-2 px-4 leading-6 text-sm flex-1 focus:outline-0 focus:ring-0"
+                        class="flex-1 border-0 bg-transparent py-2 px-4 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
                         <option value="">Select player...</option>
@@ -35,11 +35,11 @@
                             <option value="{{ $player->id }}">{{ $player->name }}</option>
                         @endforeach
                     </select>
-                    <div class="w-10 sm:w-12 border-x border-gray-200">
+                    <div class="w-10 sm:w-12 border-x border-gray-200 dark:border-zinc-800/80">
                         <select
                             wire:model.live="form.frames.{{ $i }}.home_score"
                             name="form.frames.{{ $i }}.home_score"
-                            class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-center text-sm text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0"
+                            class="block w-full appearance-none border-0 bg-transparent pr-0 pl-0 py-2 text-center text-sm leading-6 text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
                             placeholder="0"
                             @disabled($isLocked || ! $canEdit)
                         >
@@ -49,17 +49,17 @@
                     </div>
                 </div>
                 <div
-                    class="w-full bg-linear-to-br from-green-900 via-green-800 to-green-700 py-2 px-4 text-left text-sm font-semibold text-white order-first leading-6 sm:w-12 sm:bg-gray-50 sm:text-center sm:text-gray-900 sm:bg-none"
+                    class="order-first w-full bg-gray-50 py-2 px-4 text-left text-sm font-semibold leading-6 text-gray-900 dark:bg-zinc-800 dark:text-gray-100 sm:w-12 sm:px-0 sm:text-center"
                 >
                     <span class="sm:hidden">Frame </span>
                     {{ $i }}
                 </div>
                 <div class="w-full sm:w-auto flex sm:flex-1 order-last">
-                    <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200">
+                    <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200 dark:border-zinc-800/80">
                         <select
                         wire:model.live="form.frames.{{ $i }}.away_score"
                         name="form.frames.{{ $i }}.away_score"
-                        class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-center text-sm text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0"
+                        class="block w-full appearance-none border-0 bg-transparent pr-0 pl-0 py-2 text-center text-sm leading-6 text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
                         placeholder="0"
                         @disabled($isLocked || ! $canEdit)
                     >
@@ -69,7 +69,7 @@
                 </div>
                 <select
                     wire:model.live="form.frames.{{ $i }}.away_player_id"
-                    class="border-0 py-2 px-4 leading-6 text-sm flex-1 order-first sm:order-last focus:outline-0 focus:ring-0"
+                    class="order-first flex-1 border-0 bg-transparent py-2 px-4 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark] sm:order-last"
                     @disabled($isLocked || ! $canEdit)
                 >
                     <option value="">Select player...</option>
@@ -81,18 +81,18 @@
                 </div>
             </div>
         @endfor
-        <div class="flex flex-wrap border-t border-gray-200 bg-gray-50 font-semibold text-gray-900 text-sm">
-            <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200">
+        <div class="flex flex-wrap border-t border-gray-200 bg-gray-50 text-sm font-semibold text-gray-900 dark:border-zinc-800/80 dark:bg-zinc-800/70 dark:text-gray-100">
+            <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200 dark:border-zinc-800/80">
                 <div class="flex-1 leading-6 py-2 px-4 sm:text-right">
                     Home total
                 </div>
-                    <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200">
+                    <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200 dark:border-zinc-800/80">
                     {{ $form->homeScore }}
                     </div>
                 </div>
-            <div class="w-10 sm:w-12 bg-gray-50"></div>
+            <div class="w-10 sm:w-12 bg-gray-50 dark:bg-zinc-800/70"></div>
             <div class="w-full sm:w-auto flex sm:flex-1">
-                <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200 order-last sm:order-first">
+                <div class="w-10 sm:w-12 order-last border-x border-gray-200 py-2 text-center leading-6 dark:border-zinc-800/80 sm:order-first">
                     {{ $form->awayScore }}
                 </div>
                 <div class="flex-1 leading-6 py-2 px-4 order-first sm:order-last">
@@ -109,7 +109,7 @@
     <div class="flex justify-end gap-x-3 pt-2">
         <a
             href="{{ route('fixture.show', $fixture->id) }}"
-            class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 transition hover:bg-slate-50"
+            class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-gray-100 dark:ring-zinc-700 dark:hover:bg-zinc-800"
         >
             Cancel
         </a>
@@ -124,11 +124,11 @@
                 Submit result
             </button>
         @elseif ($isLocked)
-            <div class="flex items-center text-sm font-semibold text-green-700">
+            <div class="flex items-center text-sm font-semibold text-green-700 dark:text-green-400">
                 Result locked
             </div>
         @else
-            <div class="flex items-center text-sm font-semibold text-amber-700">
+            <div class="flex items-center text-sm font-semibold text-amber-700 dark:text-amber-300">
                 Editing locked by {{ $lockOwnerName ?? 'another team admin' }}
             </div>
         @endif

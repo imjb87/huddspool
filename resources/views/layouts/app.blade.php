@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100 text-gray-900 dark:bg-zinc-950">
 
 <head>
     <meta charset="utf-8">
@@ -23,6 +23,8 @@
         @endisset 
         {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}
     </title>
+
+    @include('layouts.partials.theme-head')
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
@@ -64,8 +66,8 @@
     @laravelPWA
 </head>
 
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+<body class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-950 dark:text-gray-100">
+    <div class="min-h-screen bg-gray-100 dark:bg-zinc-950">
         @include('layouts.navigation')
         <!-- Page Content -->
         <main>

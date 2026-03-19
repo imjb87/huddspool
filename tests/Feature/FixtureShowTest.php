@@ -65,11 +65,18 @@ class FixtureShowTest extends TestCase
         $response->assertSee('data-fixture-head-to-head-section', false);
         $response->assertSee('data-fixture-home-team-section', false);
         $response->assertSee('data-fixture-away-team-section', false);
+        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:border-zinc-800/80', false);
+        $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText('Fixture information');
         $response->assertSeeText('Head to head');
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
         $response->assertSeeText($homePlayer->name);
         $response->assertSeeText($awayPlayer->name);
+        $response->assertSeeText('Played');
+        $response->assertSeeText('Won');
+        $response->assertSeeText('Lost');
+        $response->assertSeeText('0%');
     }
 
     public function test_fixture_show_returns_not_found_when_a_team_relation_is_missing(): void

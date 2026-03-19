@@ -86,6 +86,9 @@ class PlayerProfileTest extends TestCase
         $response->assertSee('data-player-profile-section', false);
         $response->assertSee('data-player-frames-section', false);
         $response->assertSee('data-player-history-section', false);
+        $response->assertSee('dark:bg-zinc-950', false);
+        $response->assertSee('dark:border-zinc-800/80', false);
+        $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($player->name);
         $response->assertSeeText($team->name);
         $response->assertSeeTextInOrder(['Played', 'Won', 'Lost']);

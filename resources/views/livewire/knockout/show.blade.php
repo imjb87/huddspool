@@ -2,8 +2,8 @@
     <div class="mx-auto max-w-7xl pt-6 lg:pt-7">
         <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pb-4 sm:px-6" data-knockout-shared-header>
             <div class="min-w-0">
-                <p class="text-sm text-gray-500">{{ $knockout->season->name }}</p>
-                <h1 class="mt-1 text-lg font-semibold text-gray-900">{{ $knockout->name }}</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $knockout->season->name }}</p>
+                <h1 class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $knockout->name }}</h1>
             </div>
         </div>
     </div>
@@ -17,19 +17,19 @@
             @php
                 $round = $this->currentRound;
             @endphp
-            <section class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-knockout-round-shell>
-                <div class="border-b border-gray-300 bg-linear-to-b from-gray-50 to-gray-100">
+            <section class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5" data-knockout-round-shell>
+                <div class="border-b border-gray-300 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
                     <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-2 sm:px-6" data-knockout-round-header>
-                        <div class="text-sm font-semibold text-gray-900">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                             {{ $round->scheduled_for?->format('j F Y') ?? 'Date TBC' }}
                         </div>
-                        <div class="text-sm font-semibold text-gray-900">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                             Best of {{ $round->bestOfValue() }} frames
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white" data-knockout-round-body>
+                <div class="bg-white dark:bg-zinc-900/75" data-knockout-round-body>
                     @if ($round->matches->isNotEmpty())
                         @foreach ($round->matches as $match)
                             @php
@@ -51,9 +51,9 @@
                         @endforeach
                     @else
                         <div class="px-4 py-10 text-center sm:px-6" data-knockout-empty-state>
-                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8">
-                                <h3 class="text-sm font-semibold text-gray-900">No matches scheduled for this round yet.</h3>
-                                <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500">
+                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-900/75">
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No matches scheduled for this round yet.</h3>
+                                <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                     Match pairings and dates will appear here once the bracket is ready.
                                 </p>
                             </div>
@@ -63,9 +63,9 @@
             </section>
         @else
             <div class="px-4 py-10 text-center sm:px-6" data-knockout-empty-state>
-                <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 bg-white px-6 py-8 shadow-sm">
-                    <h3 class="text-sm font-semibold text-gray-900">No rounds have been published yet.</h3>
-                    <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500">
+                <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 bg-white px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/75 dark:shadow-none">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No rounds have been published yet.</h3>
+                    <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                         The bracket will appear here as soon as round information is published.
                     </p>
                 </div>
@@ -87,7 +87,7 @@
                 </div>
 
                 <div class="flex items-center justify-center px-4">
-                    <span class="text-sm font-semibold text-gray-900" data-knockout-current-round-label>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-knockout-current-round-label>
                         {{ $this->currentRound->name }}
                     </span>
                 </div>

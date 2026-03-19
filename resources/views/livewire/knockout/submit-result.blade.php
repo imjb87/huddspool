@@ -1,20 +1,20 @@
-<div class="w-full" data-knockout-submit-form>
+    <div class="w-full" data-knockout-submit-form>
     @if (session('status'))
-        <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3" data-knockout-submit-success>
-            <p class="text-sm font-medium text-green-800">{{ session('status') }}</p>
+        <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-800/80 dark:bg-green-950/40" data-knockout-submit-success>
+            <p class="text-sm font-medium text-green-800 dark:text-green-300">{{ session('status') }}</p>
         </div>
     @endif
 
     <form wire:submit.prevent="submit" class="space-y-6" data-knockout-submit-form-fields>
         <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
             <div>
-                <p class="text-sm font-semibold text-gray-900">
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {{ $match->homeParticipant?->display_name ?? 'Home participant' }}
                 </p>
                 <input type="number"
                     min="0"
                     wire:model="homeScore"
-                    class="mt-3 block w-full rounded-lg border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20"
+                    class="mt-3 block w-full rounded-lg border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100"
                     data-knockout-submit-home-score>
                 @error('homeScore')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -22,13 +22,13 @@
             </div>
 
             <div>
-                <p class="text-sm font-semibold text-gray-900">
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {{ $match->awayParticipant?->display_name ?? 'Away participant' }}
                 </p>
                 <input type="number"
                     min="0"
                     wire:model="awayScore"
-                    class="mt-3 block w-full rounded-lg border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20"
+                    class="mt-3 block w-full rounded-lg border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100"
                     data-knockout-submit-away-score>
                 @error('awayScore')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="flex justify-end border-t border-gray-200 pt-6">
+        <div class="flex justify-end border-t border-gray-200 pt-6 dark:border-zinc-800/80">
             <button type="submit"
                 class="inline-flex items-center justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-black/10 transition hover:brightness-110 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
                 data-knockout-submit-button>
