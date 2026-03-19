@@ -37,6 +37,16 @@
   [x-cloak] {
     display: none !important;
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html.theme-transitioning *,
+    html.theme-transitioning *::before,
+    html.theme-transitioning *::after {
+      transition-property: background-color, border-color, color, fill, stroke, box-shadow, text-decoration-color;
+      transition-duration: 500ms;
+      transition-timing-function: ease;
+    }
+  }
 }
 
 @layer components {

@@ -2,6 +2,8 @@
     (() => {
         const storageKey = 'site-theme';
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const transitionClass = 'theme-transitioning';
+        let transitionTimeout = null;
 
         const getStoredTheme = () => {
             const storedTheme = window.localStorage.getItem(storageKey);
@@ -21,6 +23,19 @@
             document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
         };
 
+        const startThemeTransition = () => {
+            document.documentElement.classList.add(transitionClass);
+
+            if (transitionTimeout) {
+                window.clearTimeout(transitionTimeout);
+            }
+
+            transitionTimeout = window.setTimeout(() => {
+                document.documentElement.classList.remove(transitionClass);
+                transitionTimeout = null;
+            }, 550);
+        };
+
         const dispatchThemeChange = (theme) => {
             window.dispatchEvent(new CustomEvent('site-theme-changed', {
                 detail: {
@@ -30,6 +45,8 @@
         };
 
         const setTheme = (theme) => {
+            startThemeTransition();
+
             if (theme === 'dark' || theme === 'light') {
                 window.localStorage.setItem(storageKey, theme);
             } else {
