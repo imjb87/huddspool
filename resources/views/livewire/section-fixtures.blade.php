@@ -158,7 +158,7 @@
         </div>
     </div>
 
-    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-6 lg:px-6 lg:py-6" data-section-fixtures-controls>
+    <div class="mx-auto w-full max-w-4xl px-4 pt-5 pb-4 sm:px-6 lg:px-6 lg:pt-5 lg:pb-6" data-section-fixtures-controls>
         <div class="flex w-full" data-section-fixtures-band>
             <div class="flex w-[41%] justify-start">
                 <button wire:click="previousWeek" wire:loading.attr="disabled"

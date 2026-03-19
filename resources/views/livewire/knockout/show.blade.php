@@ -72,7 +72,7 @@
     </div>
 
     @if ($this->currentRound)
-        <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-6 lg:py-6" data-knockout-round-controls>
+        <div class="mx-auto w-full max-w-4xl px-4 pt-5 pb-4 sm:px-6 lg:pt-5 lg:pb-6" data-knockout-round-controls>
             <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center">
                 <div class="flex justify-start">
                     <button wire:click="previousRound"

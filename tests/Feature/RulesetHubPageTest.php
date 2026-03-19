@@ -360,7 +360,7 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('data-section-averages-controls', false);
         $averagesResponse->assertSee('data-section-see-also', false);
         $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
-        $averagesResponse->assertSee('mx-auto w-full max-w-4xl pl-4 py-4 pr-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:py-6', false);
+        $averagesResponse->assertSee('mx-auto w-full max-w-4xl pl-4 pt-5 pr-4 pb-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:pt-5 lg:pb-6', false);
         $averagesResponse->assertSee('flex w-[41%] justify-end', false);
         $averagesResponse->assertSee('flex w-[18%] items-center justify-center', false);
         $averagesResponse->assertSee('cursor-pointer items-center justify-center rounded-full', false);

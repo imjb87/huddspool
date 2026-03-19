@@ -119,7 +119,7 @@
         </div>
     </div>
 
-    <div class="mx-auto w-full max-w-4xl pl-4 py-4 pr-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:py-6" data-section-averages-controls>
+    <div class="mx-auto w-full max-w-4xl pl-4 pt-5 pr-4 pb-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:pt-5 lg:pb-6" data-section-averages-controls>
         <div class="flex w-full" data-section-averages-band>
             <div class="flex w-[41%] justify-start">
                 <button wire:click="previousPage" wire:loading.attr="disabled"
