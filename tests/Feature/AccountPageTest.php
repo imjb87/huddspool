@@ -306,6 +306,7 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $dueFixture), false)
             ->assertSee(route('result.create', $continueFixture), false)
             ->assertDontSee(route('result.create', $futureFixture), false)
+            ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
             ->assertSee(route('knockout.show', $teamKnockout), false)
             ->assertSee(route('knockout.matches.submit', $pendingTeamMatch), false)
             ->assertDontSee(route('knockout.matches.submit', $completedTeamMatch), false);

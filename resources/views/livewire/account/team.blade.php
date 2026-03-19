@@ -208,6 +208,16 @@
                                 @php
                                     $fixture = $item->fixture;
                                     $rowUrl = $fixture->result ? route('result.show', $fixture->result) : (! $item->action_url ? route('fixture.show', $fixture) : null);
+                                    $isDraw = $fixture->result
+                                        && (int) $fixture->result->home_score === (int) $fixture->result->away_score;
+                                    $teamWon = $fixture->result
+                                        && (($fixture->home_team_id == $this->team->id && (int) $fixture->result->home_score > (int) $fixture->result->away_score)
+                                        || ($fixture->away_team_id == $this->team->id && (int) $fixture->result->away_score > (int) $fixture->result->home_score));
+                                    $resultPillClasses = $isDraw
+                                        ? 'bg-linear-to-br from-gray-600 via-gray-500 to-gray-400'
+                                        : ($teamWon
+                                            ? 'bg-linear-to-br from-green-900 via-green-800 to-green-700'
+                                            : 'bg-linear-to-br from-red-800 via-red-700 to-red-600');
                                 @endphp
                                 <div class="py-4" wire:key="account-team-fixture-{{ $fixture->id }}">
                                     @if ($rowUrl)
@@ -223,7 +233,7 @@
 
                                         <div class="ml-auto flex shrink-0 self-center items-center text-right">
                                             @if ($fixture->result)
-                                                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full {{ $resultPillClasses }} text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
                                                     data-section-fixtures-score-pill>
                                                     <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $fixture->result->home_score ?? '' }}</div>
                                                     <div class="w-px bg-white/25"></div>

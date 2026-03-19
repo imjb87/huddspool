@@ -50,7 +50,7 @@
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="grid gap-8 py-8 sm:py-10 lg:grid-cols-3 lg:gap-10">
                 <div class="space-y-2">
-                    <h2 class="text-sm font-semibold text-gray-900">
+                    <h2 class="text-base font-semibold text-gray-900 sm:text-lg">
                         Backing the league every week
                     </h2>
                     <p class="max-w-sm text-sm leading-6 text-gray-600">
