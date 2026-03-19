@@ -16,7 +16,7 @@
                             @click="openSeason = openSeason === 'season-{{ $group['season']->id }}' ? null : 'season-{{ $group['season']->id }}'; openRuleset = null"
                             :aria-expanded="openSeason === 'season-{{ $group['season']->id }}'"
                             data-history-season-trigger>
-                            <h2 class="text-base font-semibold text-gray-900">{{ $group['season']->name }}</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">{{ $group['season']->name }}</h2>
                             <svg class="h-5 w-5 text-gray-400 transition-transform"
                                 :class="{ 'rotate-90': openSeason === 'season-{{ $group['season']->id }}' }"
                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -24,7 +24,7 @@
                             </svg>
                         </button>
 
-                        <div x-show="openSeason === 'season-{{ $group['season']->id }}'" x-cloak class="pl-4 sm:pl-6" data-history-season-panel>
+                        <div x-show="openSeason === 'season-{{ $group['season']->id }}'" x-cloak class="pl-4 pb-3 sm:pl-6 sm:pb-4" data-history-season-panel>
                             <div>
                                 @foreach ($group['rulesets'] as $rulesetGroup)
                                     <div data-history-ruleset-shell>
@@ -33,7 +33,7 @@
                                             @click="openRuleset = openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' ? null : 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
                                             :aria-expanded="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
                                             data-history-ruleset-trigger>
-                                            <h3 class="text-sm font-semibold text-gray-900">{{ $rulesetGroup['ruleset']->name }}</h3>
+                                            <h3 class="text-base font-semibold text-gray-900">{{ $rulesetGroup['ruleset']->name }}</h3>
                                             <svg class="h-5 w-5 text-gray-400 transition-transform"
                                                 :class="{ 'rotate-90': openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' }"
                                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -44,10 +44,11 @@
                                         <div
                                             x-show="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
                                             x-cloak
+                                            class="pb-2 sm:pb-3"
                                             data-history-ruleset-panel>
                                             @foreach ($rulesetGroup['sections'] as $section)
                                                 <a href="{{ route('history.section.show', ['season' => $group['season'], 'ruleset' => $rulesetGroup['ruleset'], 'section' => $section]) }}"
-                                                    class="flex items-center justify-between gap-3 px-0 py-2 pl-4 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+                                                    class="flex items-center justify-between gap-3 px-0 py-2 pl-4 text-base font-medium text-gray-700 transition hover:text-gray-900"
                                                     data-history-section-link>
                                                     <span>{{ $section->name }}</span>
                                                     <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

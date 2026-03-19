@@ -9,10 +9,9 @@
         || (request()->routeIs('page.show') && $currentPage === 'knockout-dates');
 @endphp
 
-<header class="site-header fixed top-0 z-50 w-full bg-white transition-all duration-500"
+<header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500"
     x-data="{
         open: false,
-        scroll: false,
         activeDrawer: 'root',
         headerHeight: 0,
         updateHeaderHeight() {
@@ -35,8 +34,6 @@
         },
     }"
     x-init="updateHeaderHeight(); window.addEventListener('resize', () => updateHeaderHeight())"
-    @scroll.window="scroll = (window.pageYOffset > 0) ? true : false"
-    :class="{ 'shadow-lg': scroll || open }"
     x-ref="header">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
         <div class="flex flex-1">
