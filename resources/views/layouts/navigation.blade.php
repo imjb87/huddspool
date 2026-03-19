@@ -302,17 +302,7 @@
                                 <span class="block px-3 text-sm font-semibold leading-7 text-gray-500">{{ auth()->user()->name }}</span>
                                 <a href="{{ route('account.show') }}"
                                     class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                    Your profile
-                                </a>
-                                @if (auth()->user()->team_id)
-                                    <a href="{{ route('team.show', auth()->user()->team_id) }}"
-                                        class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                        Your team
-                                    </a>
-                                @endif
-                                <a href="{{ route('support.tickets') }}"
-                                    class="block rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                    Submit a request
+                                    Account
                                 </a>
                                 @if (auth()->user()->is_admin)
                                     <a href="{{ route('filament.admin.pages.dashboard') }}"

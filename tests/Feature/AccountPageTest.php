@@ -287,6 +287,7 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-team-page', false)
             ->assertSee('data-account-team-info-section', false)
             ->assertSee('data-account-team-section', false)
+            ->assertSee('data-account-team-member-stats', false)
             ->assertSee('data-account-team-fixtures-section', false)
             ->assertSee('data-account-team-knockout-section', false)
             ->assertSee('href="'.route('support.tickets').'"', false)

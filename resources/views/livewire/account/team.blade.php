@@ -147,7 +147,7 @@
                                     : number_format($rawLostPercentage, 1);
                             @endphp
                             <div class="py-4">
-                                <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-3 sm:gap-4">
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-3">
                                             <img class="h-8 w-8 shrink-0 rounded-full object-cover"
@@ -162,24 +162,28 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
-                                        <div class="w-20">
+                                    <div class="ml-auto flex shrink-0 items-center gap-2 text-center sm:gap-5"
+                                        data-account-team-member-stats>
+                                        <div class="w-14 sm:w-20">
                                             <p class="text-xs font-medium text-gray-500">Played</p>
-                                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ $framesPlayed }}</p>
+                                            <div class="mt-1 flex flex-col items-center gap-1">
+                                                <p class="text-sm font-semibold text-gray-900">{{ $framesPlayed }}</p>
+                                                <span class="invisible inline-flex items-center rounded-md px-1 py-0.5 text-[10px] font-semibold">0%</span>
+                                            </div>
                                         </div>
-                                        <div class="w-20">
+                                        <div class="w-14 sm:w-20">
                                             <p class="text-xs font-medium text-gray-500">Won</p>
-                                            <p class="mt-1 text-sm font-semibold text-gray-900">
-                                                <span class="text-green-700">{{ $framesWon }}</span>
-                                                <span class="ml-1 inline-flex items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">{{ $wonPercentage }}%</span>
-                                            </p>
+                                            <div class="mt-1 flex flex-col items-center gap-1">
+                                                <p class="text-sm font-semibold text-green-700">{{ $framesWon }}</p>
+                                                <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700">{{ $wonPercentage }}%</span>
+                                            </div>
                                         </div>
-                                        <div class="w-20">
+                                        <div class="w-14 sm:w-20">
                                             <p class="text-xs font-medium text-gray-500">Lost</p>
-                                            <p class="mt-1 text-sm font-semibold text-gray-900">
-                                                <span class="text-red-700">{{ $framesLost }}</span>
-                                                <span class="ml-1 inline-flex items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">{{ $lostPercentage }}%</span>
-                                            </p>
+                                            <div class="mt-1 flex flex-col items-center gap-1">
+                                                <p class="text-sm font-semibold text-red-700">{{ $framesLost }}</p>
+                                                <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700">{{ $lostPercentage }}%</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

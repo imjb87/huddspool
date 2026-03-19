@@ -185,6 +185,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
         $response->assertSeeText('Account');
+        $response->assertDontSeeText('Your profile');
+        $response->assertDontSeeText('Your team');
         $response->assertDontSee('href="'.route('player.show', $user).'"', false);
         $response->assertDontSee('href="'.route('support.tickets').'"', false);
     }

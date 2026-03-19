@@ -78,6 +78,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
+        $response->assertSeeText('0%');
     }
 
     public function test_team_profile_displays_team_knockout_matches(): void

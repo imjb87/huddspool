@@ -83,11 +83,19 @@
                                         $framesPlayed = (int) $player->frames_played;
                                         $framesWon = (int) $player->frames_won;
                                         $framesLost = (int) $player->frames_lost;
+                                        $rawWonPercentage = $framesPlayed > 0 ? ($framesWon / $framesPlayed) * 100 : 0;
+                                        $rawLostPercentage = $framesPlayed > 0 ? ($framesLost / $framesPlayed) * 100 : 0;
+                                        $wonPercentage = fmod($rawWonPercentage, 1.0) === 0.0
+                                            ? number_format($rawWonPercentage, 0)
+                                            : number_format($rawWonPercentage, 1);
+                                        $lostPercentage = fmod($rawLostPercentage, 1.0) === 0.0
+                                            ? number_format($rawLostPercentage, 0)
+                                            : number_format($rawLostPercentage, 1);
                                     @endphp
                                     <a href="{{ route('player.show', $player) }}"
                                         class="block py-4 transition hover:bg-gray-50"
                                         wire:key="team-player-{{ $player->id }}">
-                                        <div class="flex items-center gap-4">
+                                        <div class="flex items-center gap-3 sm:gap-4">
                                             <div class="shrink-0">
                                                 <img class="h-8 w-8 rounded-full object-cover"
                                                     src="{{ $player->avatar_url }}"
@@ -98,18 +106,27 @@
                                                 <p class="truncate text-sm font-semibold text-gray-900">{{ $player->name }}</p>
                                             </div>
 
-                                            <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
+                                            <div class="ml-auto flex shrink-0 items-center gap-3 text-center sm:gap-4">
                                                 <div class="w-16">
                                                     <p class="text-xs font-medium text-gray-500">Played</p>
-                                                    <p class="mt-1 text-sm font-semibold text-gray-900">{{ $framesPlayed }}</p>
+                                                    <div class="mt-1 flex flex-col items-center gap-1">
+                                                        <p class="text-sm font-semibold text-gray-900">{{ $framesPlayed }}</p>
+                                                        <span class="invisible inline-flex items-center rounded-md px-1 py-0.5 text-[10px] font-semibold">0%</span>
+                                                    </div>
                                                 </div>
                                                 <div class="w-16">
                                                     <p class="text-xs font-medium text-gray-500">Won</p>
-                                                    <p class="mt-1 text-sm font-semibold text-green-700">{{ $framesWon }}</p>
+                                                    <div class="mt-1 flex flex-col items-center gap-1">
+                                                        <p class="text-sm font-semibold text-green-700">{{ $framesWon }}</p>
+                                                        <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700">{{ $wonPercentage }}%</span>
+                                                    </div>
                                                 </div>
                                                 <div class="w-16">
                                                     <p class="text-xs font-medium text-gray-500">Lost</p>
-                                                    <p class="mt-1 text-sm font-semibold text-red-700">{{ $framesLost }}</p>
+                                                    <div class="mt-1 flex flex-col items-center gap-1">
+                                                        <p class="text-sm font-semibold text-red-700">{{ $framesLost }}</p>
+                                                        <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700">{{ $lostPercentage }}%</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
