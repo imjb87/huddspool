@@ -166,6 +166,18 @@ class Section extends Model
                 ->map(function ($team) use ($results, $teamExpulsions) {
                     // Check if the team is expelled
                     $expelled = $teamExpulsions->has($team->id);
+                    $latestResult = $results
+                        ->filter(function ($result) use ($team) {
+                            return $result->home_team_id === $team->id || $result->away_team_id === $team->id;
+                        })
+                        ->sortByDesc('id')
+                        ->first();
+
+                    $archivedName = match (true) {
+                        $latestResult?->home_team_id === $team->id => $latestResult->home_team_name,
+                        $latestResult?->away_team_id === $team->id => $latestResult->away_team_name,
+                        default => null,
+                    };
 
                     if ($expelled) {
                         $played = $wins = $draws = $losses = $points = 0;
@@ -200,7 +212,9 @@ class Section extends Model
                     return (object) [
                         'id' => $team->id,
                         'name' => $team->name,
+                        'archived_name' => $archivedName,
                         'shortname' => $team->shortname,
+                        'trashed' => method_exists($team, 'trashed') ? $team->trashed() : false,
                         'played' => $played,
                         'wins' => $wins,
                         'draws' => $draws,

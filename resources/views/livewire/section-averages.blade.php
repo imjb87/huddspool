@@ -1,4 +1,7 @@
 <section data-section-averages-view class="mt-0">
+    @php
+        $isHistoryView = $history ?? false;
+    @endphp
     <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-section-averages-shell>
         <div class="min-w-full overflow-hidden">
             <div class="bg-linear-to-b from-gray-50 to-gray-100">
@@ -28,9 +31,19 @@
                     </div>
                 @else
                     @foreach ($players as $player)
-                        <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
-                            wire:key="section-average-{{ $section->id }}-page-{{ $page }}-player-{{ $player->id }}"
-                            href="{{ route('player.show', $player->id) }}">
+                        @php
+                            $canLinkPlayer = ! ($isHistoryView && $player->trashed);
+                        @endphp
+                        @if ($canLinkPlayer)
+                            <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                                wire:key="section-average-{{ $section->id }}-page-{{ $page }}-player-{{ $player->id }}"
+                                data-section-averages-row-type="link"
+                                href="{{ route('player.show', $player->id) }}">
+                        @else
+                            <div class="block w-full border-t border-gray-300"
+                                wire:key="section-average-{{ $section->id }}-page-{{ $page }}-player-{{ $player->id }}"
+                                data-section-averages-row-type="static">
+                        @endif
                             <div class="mx-auto flex w-full max-w-4xl" data-section-averages-band>
                                 <div class="flex w-[56%] items-center pl-4 sm:w-1/2 sm:pl-6">
                                     <div class="w-2/12 whitespace-nowrap py-2 text-sm font-semibold text-gray-900">
@@ -62,7 +75,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        @if ($canLinkPlayer)
+                            </a>
+                        @else
+                            </div>
+                        @endif
                     @endforeach
                 @endif
             </div>

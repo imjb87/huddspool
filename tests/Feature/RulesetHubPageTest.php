@@ -259,8 +259,9 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertSee('w-full overflow-hidden border-y border-gray-200 bg-white', false);
         $fixturesResponse->assertSee('bg-linear-to-b from-gray-50 to-gray-100', false);
         $fixturesResponse->assertSee('Print fixtures', false);
+        $fixturesResponse->assertSeeText('Print');
         $fixturesResponse->assertSee('Week 1', false);
-        $fixturesResponse->assertSee('inline-flex items-center text-gray-700 hover:text-green-800', false);
+        $fixturesResponse->assertSee('inline-flex min-w-24 items-center justify-center gap-2 self-end rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200 hover:text-gray-900', false);
         $fixturesResponse->assertSee('flex w-[18%] items-center justify-center', false);
         $fixturesResponse->assertSee('text-sm font-semibold text-gray-900', false);
         $fixturesResponse->assertSee('bg-linear-to-br from-green-900 via-green-800 to-green-700', false);

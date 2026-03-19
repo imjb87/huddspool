@@ -1,48 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="pt-[80px]">
-    <div class="py-8 sm:py-16">
-        <div class="mx-auto max-w-7xl px-4 lg:px-8">
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl font-serif">History</h1>
-                <p class="mt-2 text-sm text-gray-600">Browse archived seasons and revisit standings and player averages for each ruleset.</p>
+    <div class="bg-gray-50 pt-[72px]">
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+            <div class="mx-auto max-w-4xl pb-6 sm:pb-8" data-section-shared-header>
+                <h1 class="text-lg font-semibold text-gray-900">History</h1>
             </div>
 
-            @forelse ($seasonGroups as $group)
-                <section class="mb-8 bg-white shadow-sm sm:rounded-lg overflow-hidden">
-                    <div class="px-4 sm:px-6 py-4 bg-green-700">
-                        <div class="flex items-center justify-between gap-4">
+            <div class="mx-auto max-w-4xl" data-history-index-accordion
+                x-data="{ openSeason: null, openRuleset: null }">
+                @forelse ($seasonGroups as $group)
+                    <section data-history-season-shell>
+                        <button type="button"
+                            class="flex w-full items-center justify-between gap-4 px-0 py-2 text-left"
+                            @click="openSeason = openSeason === 'season-{{ $group['season']->id }}' ? null : 'season-{{ $group['season']->id }}'; openRuleset = null"
+                            :aria-expanded="openSeason === 'season-{{ $group['season']->id }}'"
+                            data-history-season-trigger>
+                            <h2 class="text-base font-semibold text-gray-900">{{ $group['season']->name }}</h2>
+                            <svg class="h-5 w-5 text-gray-400 transition-transform"
+                                :class="{ 'rotate-90': openSeason === 'season-{{ $group['season']->id }}' }"
+                                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <div x-show="openSeason === 'season-{{ $group['season']->id }}'" x-cloak class="pl-4 sm:pl-6" data-history-season-panel>
                             <div>
-                                <h2 class="text-sm font-medium leading-6 text-white">{{ $group['season']->name }}</h2>
-                                <p class="text-[11px] uppercase tracking-wide text-green-100">{{ $group['season']->slug }}</p>
+                                @foreach ($group['rulesets'] as $rulesetGroup)
+                                    <div data-history-ruleset-shell>
+                                        <button type="button"
+                                            class="flex w-full items-center justify-between gap-4 px-0 py-2 text-left"
+                                            @click="openRuleset = openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' ? null : 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
+                                            :aria-expanded="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
+                                            data-history-ruleset-trigger>
+                                            <h3 class="text-sm font-semibold text-gray-900">{{ $rulesetGroup['ruleset']->name }}</h3>
+                                            <svg class="h-5 w-5 text-gray-400 transition-transform"
+                                                :class="{ 'rotate-90': openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' }"
+                                                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+
+                                        <div
+                                            x-show="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
+                                            x-cloak
+                                            data-history-ruleset-panel>
+                                            @foreach ($rulesetGroup['sections'] as $section)
+                                                <a href="{{ route('history.section.show', ['season' => $group['season'], 'ruleset' => $rulesetGroup['ruleset'], 'section' => $section]) }}"
+                                                    class="flex items-center justify-between gap-3 px-0 py-2 pl-4 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+                                                    data-history-section-link>
+                                                    <span>{{ $section->name }}</span>
+                                                    <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <a href="{{ route('history.season', $group['season']) }}"
-                                class="inline-flex items-center gap-1 rounded-md border border-white/30 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10">
-                                Season overview
-                            </a>
                         </div>
+                    </section>
+                @empty
+                    <div class="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center text-sm text-gray-500">
+                        No historical seasons are available yet.
                     </div>
-                    <div class="divide-y divide-gray-200">
-                        @forelse ($group['rulesets'] as $ruleset)
-                            <a href="{{ route('history.show', [$group['season'], $ruleset]) }}"
-                                class="flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 transition">
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-900">{{ $ruleset->name }}</h3>
-                                    <p class="text-xs text-gray-500">View standings & averages</p>
-                                </div>
-                                <x-heroicon-o-arrow-right class="h-4 w-4 text-gray-400" />
-                            </a>
-                        @empty
-                            <div class="px-4 sm:px-6 py-6 text-sm text-gray-500">No rulesets recorded for this season.</div>
-                        @endforelse
-                    </div>
-                </section>
-            @empty
-                <div class="text-center text-sm text-gray-500">No historical seasons available yet.</div>
-            @endforelse
+                @endforelse
+            </div>
         </div>
+
+        <x-logo-clouds variant="section-showcase" />
     </div>
-    <x-logo-clouds class="pt-8 sm:pt-10 pb-12 sm:pb-16" />
-</div>
 @endsection

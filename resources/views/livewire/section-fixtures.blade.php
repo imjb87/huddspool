@@ -1,4 +1,7 @@
 <section data-section-fixtures-view class="mt-0">
+    @php
+        $isHistoryView = $history ?? false;
+    @endphp
     <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-section-fixtures-shell>
         <div class="min-w-full overflow-hidden">
             <div class="bg-linear-to-b from-gray-50 to-gray-100">
@@ -17,63 +20,108 @@
                 @forelse ($fixtures as $fixture)
                     @php
                         $isByeFixture = $fixture->home_team_id == 1 || $fixture->away_team_id == 1;
+                        $rowClasses = $isByeFixture
+                            ? 'block w-full border-t border-gray-300 bg-gray-50'
+                            : 'block w-full border-t border-gray-300';
+                        $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
+                            ? $fixture->result->home_team_name
+                            : $fixture->homeTeam->name;
+                        $awayDisplayName = $isHistoryView && $fixture->result?->away_team_name
+                            ? $fixture->result->away_team_name
+                            : $fixture->awayTeam->name;
                     @endphp
 
-                    @if ($isByeFixture)
-                        <div class="block w-full border-t border-gray-300 bg-gray-50"
-                            wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}">
+                    @if ($isHistoryView || $isByeFixture)
+                        <div class="{{ $rowClasses }}" wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}">
+                            <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
+                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
+                                    <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
+                                        {{ $homeDisplayName }}
+                                    </span>
+                                    @if ($fixture->homeTeam->shortname)
+                                        <span class="block truncate whitespace-nowrap md:hidden">
+                                            {{ $isHistoryView ? $homeDisplayName : $fixture->homeTeam->shortname }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
+                                    @if ($fixture->result)
+                                        <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                            data-section-fixtures-score-pill>
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                                                {{ $fixture->result->home_score ?? '' }}
+                                            </div>
+                                            <div class="w-px bg-white/25"></div>
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                                                {{ $fixture->result->away_score ?? '' }}
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="whitespace-nowrap text-center text-sm font-semibold text-gray-500">
+                                            {{ $fixture->fixture_date->format('d/m') }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
+                                    <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
+                                        {{ $awayDisplayName }}
+                                    </span>
+                                    @if ($fixture->awayTeam->shortname)
+                                        <span class="block truncate whitespace-nowrap md:hidden">
+                                            {{ $isHistoryView ? $awayDisplayName : $fixture->awayTeam->shortname }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     @else
-                        <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50"
+                        <a class="{{ $rowClasses }} hover:cursor-pointer hover:bg-gray-50"
                             wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}"
                             href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
-                    @endif
-
-                    <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
-                        <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
-                            <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
-                                {{ $fixture->homeTeam->name }}
-                            </span>
-                            @if ($fixture->homeTeam->shortname)
-                                <span class="block truncate whitespace-nowrap md:hidden">
-                                    {{ $fixture->homeTeam->shortname }}
-                                </span>
-                            @endif
-                        </div>
-
-                        <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
-                            @if ($fixture->result)
-                                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
-                                    data-section-fixtures-score-pill>
-                                    <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
-                                        {{ $fixture->result->home_score ?? '' }}
-                                    </div>
-                                    <div class="w-px bg-white/25"></div>
-                                    <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
-                                        {{ $fixture->result->away_score ?? '' }}
-                                    </div>
+                            <div class="mx-auto flex w-full max-w-4xl" data-section-fixtures-band>
+                                <div class="w-[40%] py-4 pl-4 text-right text-sm text-gray-900 sm:pl-6">
+                                    <span class="block truncate whitespace-nowrap {{ $fixture->homeTeam->shortname ? 'hidden md:block' : '' }}">
+                                        {{ $homeDisplayName }}
+                                    </span>
+                                    @if ($fixture->homeTeam->shortname)
+                                        <span class="block truncate whitespace-nowrap md:hidden">
+                                            {{ $isHistoryView ? $homeDisplayName : $fixture->homeTeam->shortname }}
+                                        </span>
+                                    @endif
                                 </div>
-                            @else
-                                <span class="whitespace-nowrap text-center text-sm font-semibold text-gray-500">
-                                    {{ $fixture->fixture_date->format('d/m') }}
-                                </span>
-                            @endif
-                        </div>
 
-                        <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
-                            <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
-                                {{ $fixture->awayTeam->name }}
-                            </span>
-                            @if ($fixture->awayTeam->shortname)
-                                <span class="block truncate whitespace-nowrap md:hidden">
-                                    {{ $fixture->awayTeam->shortname }}
-                                </span>
-                            @endif
-                        </div>
-                    </div>
+                                <div class="flex w-[20%] items-center justify-center px-1 py-3 text-sm font-semibold text-gray-500">
+                                    @if ($fixture->result)
+                                        <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                            data-section-fixtures-score-pill>
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                                                {{ $fixture->result->home_score ?? '' }}
+                                            </div>
+                                            <div class="w-px bg-white/25"></div>
+                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                                                {{ $fixture->result->away_score ?? '' }}
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="whitespace-nowrap text-center text-sm font-semibold text-gray-500">
+                                            {{ $fixture->fixture_date->format('d/m') }}
+                                        </span>
+                                    @endif
+                                </div>
 
-                    @if ($isByeFixture)
-                        </div>
-                    @else
+                                <div class="w-[40%] py-4 pr-4 text-left text-sm text-gray-900 sm:pr-6">
+                                    <span class="block truncate whitespace-nowrap {{ $fixture->awayTeam->shortname ? 'hidden md:block' : '' }}">
+                                        {{ $awayDisplayName }}
+                                    </span>
+                                    @if ($fixture->awayTeam->shortname)
+                                        <span class="block truncate whitespace-nowrap md:hidden">
+                                            {{ $isHistoryView ? $awayDisplayName : $fixture->awayTeam->shortname }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                         </a>
                     @endif
                 @empty

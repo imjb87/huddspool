@@ -8,12 +8,12 @@ final class SectionPlayerAverageData
         public int $id,
         public string $name,
         public ?string $team_name,
+        public bool $trashed,
         public int $frames_played,
         public int $frames_won,
         public int $frames_lost,
         public float $frames_won_percentage,
         public float $frames_lost_percentage,
         public string $avatar_url,
-    ) {
-    }
+    ) {}
 }

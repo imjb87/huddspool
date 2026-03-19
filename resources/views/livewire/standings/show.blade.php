@@ -1,4 +1,7 @@
 <section data-section-table-view class="mt-0">
+    @php
+        $isHistoryView = $history ?? false;
+    @endphp
     <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md" data-section-table-shell>
         <div class="min-w-full overflow-hidden">
             <div class="bg-linear-to-b from-gray-50 to-gray-100">
@@ -31,10 +34,21 @@
                         @php
                             $withdrawn = (bool) ($team->pivot->withdrawn_at ?? false);
                             $textClass = $withdrawn ? 'text-gray-400' : 'text-gray-900';
+                            $displayName = $isHistoryView ? ($team->archived_name ?? $team->name) : $team->name;
                         @endphp
-                        <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 {{ $withdrawn ? 'line-through' : '' }}"
-                            wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
-                            href="{{ route('team.show', $team->id) }}">
+                        @php
+                            $canLinkTeam = ! ($isHistoryView && ($team->trashed ?? false));
+                        @endphp
+                        @if ($canLinkTeam)
+                            <a class="block w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 {{ $withdrawn ? 'line-through' : '' }}"
+                                wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
+                                data-section-table-row-type="link"
+                                href="{{ route('team.show', $team->id) }}">
+                        @else
+                            <div class="block w-full border-t border-gray-300 {{ $withdrawn ? 'line-through' : '' }}"
+                                wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
+                                data-section-table-row-type="static">
+                        @endif
                             <div class="mx-auto flex w-full max-w-4xl" data-section-table-band>
                                 <div class="flex w-[44%] items-center pl-4 sm:w-1/2 sm:pl-6">
                                     <div class="w-2/12 whitespace-nowrap py-2 text-sm font-semibold {{ $textClass }}">
@@ -42,11 +56,11 @@
                                     </div>
                                     <div class="flex w-10/12 flex-col whitespace-nowrap py-2 text-sm {{ $textClass }}">
                                         <span class="{{ $team->shortname ? 'hidden md:inline' : '' }}">
-                                            {{ $team->name }}
+                                            {{ $displayName }}
                                         </span>
                                         @if ($team->shortname)
                                             <span class="md:hidden {{ $textClass }}">
-                                                {{ $team->shortname }}
+                                                {{ $isHistoryView ? $displayName : $team->shortname }}
                                             </span>
                                         @endif
                                     </div>
@@ -69,7 +83,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        @if ($canLinkTeam)
+                            </a>
+                        @else
+                            </div>
+                        @endif
                     @endforeach
                 @endif
             </div>

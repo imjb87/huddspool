@@ -43,6 +43,7 @@ Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('t
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 Route::get('/history/{season}', [HistoryController::class, 'season'])->name('history.season');
 Route::get('/history/{season}/{ruleset}', [HistoryController::class, 'show'])->name('history.show');
+Route::get('/history/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
 Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
 Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');

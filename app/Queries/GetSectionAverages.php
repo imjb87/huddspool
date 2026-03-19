@@ -16,8 +16,7 @@ class GetSectionAverages
         protected Section $section,
         protected int $page = 1,
         protected int $perPage = 10
-    ) {
-    }
+    ) {}
 
     /**
      * @return Collection<int, SectionPlayerAverageData>
@@ -25,9 +24,7 @@ class GetSectionAverages
     public function __invoke(): Collection
     {
         $sectionId = $this->section->id;
-        $cacheKey = sprintf('section:%d:averages', $sectionId);
-
-        $allPlayers = Cache::remember($cacheKey, now()->addMinutes(2), function () use ($sectionId) {
+        $allPlayers = Cache::remember($this->cacheKey($sectionId), now()->addMinutes(2), function () use ($sectionId) {
             $frames = Frame::query()
                 ->with([
                     'homePlayer:id,name',
@@ -119,7 +116,7 @@ class GetSectionAverages
                 ->all();
 
             $playerUsers = User::withTrashed()
-                ->select(['id', 'name', 'avatar_path'])
+                ->select(['id', 'name', 'avatar_path', 'deleted_at'])
                 ->whereIn('id', array_keys($stats))
                 ->get()
                 ->keyBy('id');
@@ -143,6 +140,7 @@ class GetSectionAverages
                         id: $playerId,
                         name: $user?->name ?? $data['name'] ?? 'Unknown',
                         team_name: $topTeam['name'] ?? null,
+                        trashed: $user?->trashed() ?? false,
                         frames_played: $played,
                         frames_won: $won,
                         frames_lost: $lost,
@@ -170,5 +168,10 @@ class GetSectionAverages
         return $allPlayers
             ->slice($offset, $this->perPage)
             ->values();
+    }
+
+    private function cacheKey(int $sectionId): string
+    {
+        return sprintf('section:%d:averages', $sectionId);
     }
 }

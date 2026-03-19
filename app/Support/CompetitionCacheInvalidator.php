@@ -8,6 +8,8 @@ use App\Models\Result;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\SectionTeam;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Spatie\ResponseCache\Facades\ResponseCache;
 
@@ -156,6 +158,46 @@ class CompetitionCacheInvalidator
         }
     }
 
+    public function forgetForTeam(Team $team): void
+    {
+        $this->forgetHomeResponseCache();
+        $this->forgetKeys([
+            'stats:open-season',
+            'nav:past-seasons',
+        ]);
+        $this->forgetTeamSeasonHistories([$team->id]);
+
+        foreach ($this->sectionsForTeamIds([$team->id]) as $section) {
+            $this->forgetSectionCaches($section->id);
+            $this->forgetSeasonHistory($section->season_id);
+            $this->forgetSeasonRulesetHistory($section->season_id, $section->ruleset_id);
+        }
+    }
+
+    public function forgetForUser(User $user): void
+    {
+        $this->forgetHomeResponseCache();
+        $this->forgetKeys([
+            'stats:open-season',
+        ]);
+        $this->forgetPlayerSeasonHistories([$user->id]);
+
+        $teamIds = $this->normalizedIds([
+            $user->team_id,
+            $user->getOriginal('team_id'),
+        ]);
+
+        if ($teamIds === []) {
+            return;
+        }
+
+        foreach ($this->sectionsForTeamIds($teamIds) as $section) {
+            $this->forgetSectionCaches($section->id);
+            $this->forgetSeasonHistory($section->season_id);
+            $this->forgetSeasonRulesetHistory($section->season_id, $section->ruleset_id);
+        }
+    }
+
     public function forgetForNews(): void
     {
         $this->forgetHomeResponseCache();
@@ -205,6 +247,18 @@ class CompetitionCacheInvalidator
         }
 
         Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
+    }
+
+    /**
+     * @param  array<int, int>  $teamIds
+     */
+    private function sectionsForTeamIds(array $teamIds)
+    {
+        return Section::withTrashed()
+            ->whereHas('teams', function ($query) use ($teamIds) {
+                $query->withTrashed()->whereIn('teams.id', $teamIds);
+            })
+            ->get(['id', 'season_id', 'ruleset_id']);
     }
 
     /**

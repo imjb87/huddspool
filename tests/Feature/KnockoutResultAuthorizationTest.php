@@ -34,6 +34,9 @@ class KnockoutResultAuthorizationTest extends TestCase
         $this->actingAs($homePlayerTwo)
             ->get(route('knockout.matches.submit', $match))
             ->assertOk()
+            ->assertSee('data-knockout-submit-page', false)
+            ->assertSee('data-knockout-submit-context', false)
+            ->assertSee('data-knockout-submit-form', false)
             ->assertSeeLivewire(SubmitResult::class);
     }
 
@@ -63,6 +66,7 @@ class KnockoutResultAuthorizationTest extends TestCase
         $this->actingAs($captain)
             ->get(route('knockout.matches.submit', $match))
             ->assertOk()
+            ->assertSee('data-knockout-submit-shell', false)
             ->assertSeeLivewire(SubmitResult::class);
     }
 

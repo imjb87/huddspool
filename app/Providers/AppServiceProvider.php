@@ -5,10 +5,14 @@ namespace App\Providers;
 use App\Models\KnockoutRound;
 use App\Models\News;
 use App\Models\Season;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\Venue;
 use App\Observers\KnockoutRoundObserver;
 use App\Observers\NewsObserver;
 use App\Observers\SeasonObserver;
+use App\Observers\TeamObserver;
+use App\Observers\UserObserver;
 use App\Observers\VenueObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -32,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         KnockoutRound::observe(KnockoutRoundObserver::class);
         News::observe(NewsObserver::class);
         Season::observe(SeasonObserver::class);
+        Team::observe(TeamObserver::class);
+        User::observe(UserObserver::class);
         Venue::observe(VenueObserver::class);
 
         RateLimiter::for('api', function (Request $request): Limit {
