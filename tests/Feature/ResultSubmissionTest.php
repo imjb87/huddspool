@@ -192,7 +192,7 @@ class ResultSubmissionTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_partial_autosave_preserves_existing_frame_ids_when_later_frames_change(): void
+    public function test_partial_autosave_does_not_delete_existing_frames_when_a_saved_frame_becomes_incomplete(): void
     {
         [
             'fixture' => $fixture,
@@ -224,8 +224,42 @@ class ResultSubmissionTest extends TestCase
 
         $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
 
-        $this->assertCount(1, $result->frames);
+        $this->assertCount(2, $result->frames);
         $this->assertSame($firstFrameId, $result->frames[0]->id);
+        $this->assertSame(2, $result->home_score);
+        $this->assertSame(0, $result->away_score);
+    }
+
+    public function test_partial_autosave_persists_the_completed_follow_up_after_an_incomplete_edit(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $component = Livewire::actingAs($teamAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        $component->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id);
+        $component->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id);
+        $component->set('form.frames.1.home_score', 1);
+
+        $component->set('form.frames.2.home_player_id', (string) $homePlayers[1]->id);
+        $component->set('form.frames.2.away_player_id', (string) $awayPlayers[1]->id);
+        $component->set('form.frames.2.home_score', 1);
+
+        $component->set('form.frames.2.home_score', 0);
+        $component->set('form.frames.2.away_score', 1);
+
+        $result = Result::firstOrFail()->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
+
+        $this->assertCount(2, $result->frames);
+        $this->assertSame(1, $result->home_score);
+        $this->assertSame(1, $result->away_score);
+        $this->assertSame(0, $result->frames[1]->home_score);
+        $this->assertSame(1, $result->frames[1]->away_score);
     }
 
     public function test_result_create_route_redirects_when_result_is_locked(): void

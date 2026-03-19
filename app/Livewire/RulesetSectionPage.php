@@ -142,6 +142,20 @@ class RulesetSectionPage extends Component
         return route('ruleset.section.show', $parameters);
     }
 
+    public function sectionUrl(Section $section): string
+    {
+        $parameters = [
+            'ruleset' => $this->ruleset,
+            'section' => $section,
+        ];
+
+        if ($this->activeTab !== 'tables') {
+            $parameters['tab'] = $this->activeTab;
+        }
+
+        return route('ruleset.section.show', $parameters);
+    }
+
     /**
      * @return array<string, string>
      */
@@ -189,6 +203,16 @@ class RulesetSectionPage extends Component
         return (new GetSectionAverages($this->section, $this->page, $this->perPage))();
     }
 
+    #[Computed]
+    public function relatedSections(): EloquentCollection
+    {
+        $this->ruleset->loadMissing('openSections.season');
+
+        return $this->ruleset->openSections
+            ->reject(fn (Section $section) => $section->is($this->section))
+            ->values();
+    }
+
     public function render(): View
     {
         return view('livewire.ruleset-section-page');
@@ -225,5 +249,6 @@ class RulesetSectionPage extends Component
         unset($this->standings);
         unset($this->fixtures);
         unset($this->players);
+        unset($this->relatedSections);
     }
 }

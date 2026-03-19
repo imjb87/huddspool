@@ -39,7 +39,7 @@
                         <select
                             wire:model.live="form.frames.{{ $i }}.home_score"
                             name="form.frames.{{ $i }}.home_score"
-                            class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                            class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-center text-sm text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0"
                             placeholder="0"
                             @disabled($isLocked || ! $canEdit)
                         >
@@ -59,7 +59,7 @@
                         <select
                         wire:model.live="form.frames.{{ $i }}.away_score"
                         name="form.frames.{{ $i }}.away_score"
-                        class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-gray-900 text-sm text-center focus:outline-0 focus:ring-0"
+                        class="appearance-none bg-none block w-full border-0 pr-0 pl-0 py-2 leading-6 text-center text-sm text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0"
                         placeholder="0"
                         @disabled($isLocked || ! $canEdit)
                     >

@@ -177,6 +177,10 @@ class ResultForm extends Component
             return;
         }
 
+        if ($this->shouldSkipAutosaveForIncompleteEdit($frames)) {
+            return;
+        }
+
         if ($this->form->matchesExistingFrames($this->result, $frames)) {
             return;
         }
@@ -189,11 +193,12 @@ class ResultForm extends Component
     private function persistFrames(array $frames, bool $lock): Result
     {
         $isOverridden = $this->result?->is_overridden ?? 0;
+        $scores = $this->scoresFromFrames($frames);
 
-        return DB::transaction(function () use ($frames, $lock, $isOverridden) {
+        return DB::transaction(function () use ($frames, $lock, $isOverridden, $scores) {
             $attributes = [
-                'home_score' => $this->form->homeScore,
-                'away_score' => $this->form->awayScore,
+                'home_score' => $scores['home_score'],
+                'away_score' => $scores['away_score'],
                 'is_confirmed' => $lock,
                 'is_overridden' => $isOverridden,
                 'section_id' => $this->fixture->section_id,
@@ -221,6 +226,34 @@ class ResultForm extends Component
 
             return $this->result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
         });
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
+     */
+    private function shouldSkipAutosaveForIncompleteEdit(array $frames): bool
+    {
+        if (! $this->result) {
+            return false;
+        }
+
+        $existingFrameCount = $this->result->relationLoaded('frames')
+            ? $this->result->frames->count()
+            : $this->result->frames()->count();
+
+        return count($frames) < $existingFrameCount;
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
+     * @return array{home_score: int, away_score: int}
+     */
+    private function scoresFromFrames(array $frames): array
+    {
+        return [
+            'home_score' => array_sum(array_column($frames, 'home_score')),
+            'away_score' => array_sum(array_column($frames, 'away_score')),
+        ];
     }
 
     /**

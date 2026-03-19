@@ -29,7 +29,7 @@
         }"
         x-init="syncIndicator()"
         @resize.window="syncIndicator()">
-        <div class="mx-auto max-w-7xl px-4 py-3 lg:px-8">
+        <div class="mx-auto max-w-7xl px-2.5 py-3 lg:px-8">
             @php($tabs = $this->tabs())
             <div class="mx-auto w-full max-w-2xl rounded-full bg-black/15 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(5,46,22,0.35)]"
                 data-section-tabs-scroll
@@ -48,7 +48,7 @@
                             wire:key="section-tab-{{ $tabKey }}"
                             data-section-tab="{{ $tabKey }}"
                             @if ($activeTab === $tabKey) aria-current="page" @endif
-                            class="inline-flex min-w-0 w-full items-center justify-center rounded-full px-3 py-2 text-center text-[13px] font-semibold whitespace-nowrap transition sm:px-4 sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'text-green-900' : 'text-white hover:bg-white/16 active:bg-white/20' }}">
+                            class="inline-flex min-w-0 w-full items-center justify-center rounded-full px-3 py-2 text-center text-[13px] font-semibold whitespace-nowrap transition sm:px-4 sm:text-sm data-loading:opacity-60 {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30' : 'text-gray-300 hover:text-gray-100' }}">
                             <span class="leading-tight {{ $activeTab === $tabKey ? 'text-shadow-xs/20 text-shadow-green-950/30' : '' }}">{{ $tabLabel }}</span>
                         </a>
                     </div>
@@ -120,4 +120,28 @@
             @endif
         </div>
     </div>
+
+    @if ($this->relatedSections->isNotEmpty())
+        <section class="mx-auto mt-10 w-full max-w-4xl border-t border-gray-200 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-6" data-section-see-also>
+            <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">Other sections in {{ $ruleset->name }}</h2>
+                <p class="-mt-3 text-sm leading-6 text-gray-500">
+                    Browse the other sections in this ruleset.
+                </p>
+                <ul class="flex flex-wrap gap-y-2 text-base leading-6 text-gray-700" data-section-see-also-links>
+                    @foreach ($this->relatedSections as $relatedSection)
+                        <li class="flex items-center">
+                            <a href="{{ $this->sectionUrl($relatedSection) }}"
+                                class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500">
+                                {{ $relatedSection->name }}
+                            </a>
+                            @unless ($loop->last)
+                                <span class="mx-2 text-gray-300" aria-hidden="true">/</span>
+                            @endunless
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </section>
+    @endif
 </div>

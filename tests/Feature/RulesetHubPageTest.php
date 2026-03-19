@@ -295,7 +295,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-tab-skeleton="tables"', false);
         $this->assertSame(10, substr_count($tablesResponse->getContent(), 'data-section-tab-skeleton-row="tables"'));
         $tablesResponse->assertSee('sticky top-[72px] z-30 bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl', false);
-        $tablesResponse->assertSee('mx-auto max-w-7xl px-4 py-3 lg:px-8', false);
+        $tablesResponse->assertSee('mx-auto max-w-7xl px-2.5 py-3 lg:px-8', false);
         $tablesResponse->assertSee('data-section-tabs-track', false);
         $tablesResponse->assertSee('data-section-tab-indicator', false);
         $tablesResponse->assertSee('x-init="syncIndicator()"', false);
@@ -315,6 +315,11 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-table-view', false);
         $tablesResponse->assertSee('data-section-table-shell', false);
         $tablesResponse->assertSee('data-section-table-band', false);
+        $tablesResponse->assertSee('data-section-see-also', false);
+        $tablesResponse->assertSee('data-section-see-also-links', false);
+        $tablesResponse->assertSeeText('Other sections in '.$ruleset->name);
+        $tablesResponse->assertSeeText('Division B');
+        $tablesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail()]).'"', false);
         $tablesResponse->assertSee('data-section-sponsors', false);
         $tablesResponse->assertSee('data-section-sponsors-grid', false);
         $tablesResponse->assertSee('mx-auto max-w-7xl px-4 sm:px-6 lg:px-8', false);
@@ -352,6 +357,8 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('data-section-averages-shell', false);
         $averagesResponse->assertSee('data-section-averages-band', false);
         $averagesResponse->assertSee('data-section-averages-controls', false);
+        $averagesResponse->assertSee('data-section-see-also', false);
+        $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
         $averagesResponse->assertSee('mx-auto w-full max-w-4xl pl-4 py-4 pr-4 sm:pl-6 sm:pr-6 lg:pl-6 lg:pr-0 lg:py-6', false);
         $averagesResponse->assertSee('flex w-[41%] justify-end', false);
         $averagesResponse->assertSee('flex w-[18%] items-center justify-center', false);
