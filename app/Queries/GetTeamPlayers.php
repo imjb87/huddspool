@@ -25,6 +25,8 @@ class GetTeamPlayers
                     ->orOn('frames.away_player_id', '=', 'users.id');
             })
             ->leftJoin('results', 'results.id', '=', 'frames.result_id')
+            ->whereNull('frames.deleted_at')
+            ->whereNull('results.deleted_at')
             ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role')
             ->orderBy('users.name');
 

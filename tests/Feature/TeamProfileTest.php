@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\KnockoutType;
 use App\Models\Fixture;
+use App\Models\Frame;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
@@ -13,7 +15,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\KnockoutType;
+use App\Queries\GetTeamPlayers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,6 +32,7 @@ class TeamProfileTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
+        Team::factory()->create();
         $team = Team::factory()->create();
         $opponent = Team::factory()->create();
 
@@ -82,6 +85,80 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
         $response->assertSeeText('0%');
+    }
+
+    public function test_team_profile_excludes_soft_deleted_frames_from_player_totals(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $player = User::factory()->create([
+            'team_id' => $team->id,
+            'name' => 'Conrad Wass',
+        ]);
+
+        $opponentPlayer = User::factory()->create([
+            'team_id' => $opponent->id,
+            'name' => 'Opponent Player',
+        ]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+        ]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 2,
+            'away_team_id' => $opponent->id,
+            'away_team_name' => $opponent->name,
+            'away_score' => 1,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+
+        Frame::create([
+            'result_id' => $result->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponentPlayer->id,
+            'away_score' => 0,
+        ]);
+
+        $deletedFrame = Frame::create([
+            'result_id' => $result->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponentPlayer->id,
+            'away_score' => 0,
+        ]);
+
+        $deletedFrame->delete();
+
+        $players = (new GetTeamPlayers($team, $section))();
+        $playerStats = $players->firstWhere('id', $player->id);
+
+        $this->assertNotNull($playerStats);
+        $this->assertSame(1, (int) $playerStats->frames_played);
+        $this->assertSame(1, (int) $playerStats->frames_won);
+        $this->assertSame(0, (int) $playerStats->frames_lost);
+
     }
 
     public function test_team_profile_displays_team_knockout_matches(): void
