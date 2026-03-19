@@ -6,8 +6,8 @@ return [
         'name' => env('APP_NAME', 'My PWA App'),
         'short_name' => 'Huddspool',
         'start_url' => '/',
-        'background_color' => '#ffffff',
-        'theme_color' => '#000000',
+        'background_color' => '#166534',
+        'theme_color' => '#166534',
         'display' => 'standalone',
         'orientation'=> 'any',
         'status_bar'=> 'black',
@@ -30,11 +30,11 @@ return [
             ],
             '192x192' => [
                 'path' => '/images/icons/icon-192-192.png',
-                'purpose' => 'any'
+                'purpose' => 'any maskable'
             ],
             '512x512' => [
                 'path' => '/images/icons/icon-512-512.png',
-                'purpose' => 'any'
+                'purpose' => 'any maskable'
             ],
         ],
         'splash' => [
