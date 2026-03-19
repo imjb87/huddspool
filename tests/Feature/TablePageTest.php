@@ -57,7 +57,7 @@ class TablePageTest extends TestCase
             'section' => $section,
         ]))
             ->assertOk()
-            ->assertSeeText('Tables')
+            ->assertSeeText('Standings')
             ->assertSeeText($ruleset->name)
             ->assertSeeText($section->name)
             ->assertSeeText($homeTeam->name)

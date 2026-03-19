@@ -1,60 +1,64 @@
 <section class="mt-0 animate-pulse" data-section-tab-skeleton="averages">
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
-        <div class="border-b border-gray-200 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
-            <div class="mx-auto flex w-full max-w-4xl">
-                <div class="flex w-[56%] pl-4 sm:w-1/2 sm:pl-6">
-                    <div class="w-2/12 py-2">
-                        <div class="h-4 w-5 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+    <div class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+            <div class="space-y-2">
+                <div class="h-4 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                <div class="h-4 w-48 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div>
+                    <div class="flex items-center justify-between gap-2 pb-2" data-section-averages-band>
+                        <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
+
+                        <div class="ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5">
+                            @foreach (range(1, 3) as $column)
+                                <div class="w-12 sm:w-16">
+                                    <div class="mx-auto h-3 w-8 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                    <div class="w-10/12 py-2">
-                        <div class="h-4 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                    </div>
-                </div>
-                <div class="grid w-[44%] grid-cols-3 pr-4 sm:w-1/2 sm:pr-6">
-                    @foreach (range(1, 3) as $column)
-                        <div class="py-2 text-center">
-                            <div class="mx-auto h-4 w-6 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+
+                    @foreach (range(1, 5) as $row)
+                        <div class="py-4" data-section-tab-skeleton-row="averages">
+                            <div class="flex items-center gap-3 sm:gap-4" data-section-averages-band>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-4 w-4 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                        <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                        <div class="space-y-2">
+                                            <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                            <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-5">
+                                    <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
+                                    <div class="flex flex-col items-center gap-1">
+                                        <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
+                                        <div class="h-6 w-12 rounded-md bg-gray-200 dark:bg-zinc-700"></div>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-1">
+                                        <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
+                                        <div class="h-6 w-12 rounded-md bg-gray-200 dark:bg-zinc-700"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @endforeach
-                </div>
-            </div>
-        </div>
 
-        <div class="bg-white dark:bg-zinc-800/75">
-            @foreach (range(1, 10) as $row)
-                <div class="border-t border-gray-300 dark:border-zinc-800/80" data-section-tab-skeleton-row="averages">
-                    <div class="mx-auto flex w-full max-w-4xl items-center">
-                        <div class="flex w-[56%] items-center pl-4 sm:w-1/2 sm:pl-6">
-                            <div class="w-2/12 py-2">
-                                <div class="h-4 w-4 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            </div>
-                            <div class="flex w-10/12 items-center gap-3 py-2">
-                                <div class="h-6 w-6 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                                <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            </div>
-                        </div>
-                        <div class="grid w-[44%] grid-cols-3 items-center pr-4 sm:w-1/2 sm:pr-6">
-                            <div class="py-2 text-center">
-                                <div class="mx-auto h-4 w-6 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            </div>
-                            <div class="py-2 text-center">
-                                <div class="mx-auto h-4 w-16 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            </div>
-                            <div class="py-2 text-center">
-                                <div class="mx-auto h-4 w-6 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            </div>
+                    <div class="pt-5 pb-4 lg:pt-5 lg:pb-6">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                            <div class="h-4 w-14 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                            <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        </div>
-    </div>
-
-    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-6 lg:px-6 lg:py-6">
-        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <div class="justify-self-start h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-            <div class="h-4 w-14 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-            <div class="justify-self-end h-10 w-16 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+            </div>
         </div>
     </div>
 </section>

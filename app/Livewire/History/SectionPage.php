@@ -32,7 +32,7 @@ class SectionPage extends Component
     #[Url(except: 1, history: true)]
     public int $page = 1;
 
-    public int $perPage = 10;
+    public int $perPage = 5;
 
     /**
      * @var array<int, string>
@@ -168,7 +168,7 @@ class SectionPage extends Component
     public function tabs(): array
     {
         return [
-            'tables' => 'Tables',
+            'tables' => 'Standings',
             'fixtures-results' => 'Fixtures/Results',
             'averages' => 'Averages',
         ];

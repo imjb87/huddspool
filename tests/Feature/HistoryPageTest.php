@@ -215,6 +215,9 @@ class HistoryPageTest extends TestCase
         $response->assertSee('data-history-section-page', false);
         $response->assertSee('data-section-tabs', false);
         $response->assertSee('data-ruleset-active-panel="tables"', false);
+        $response->assertSee('border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75', false);
+        $response->assertDontSee('sticky top-[72px] z-30 bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl', false);
+        $response->assertDontSee('data-section-tab-indicator', false);
         $response->assertSeeText('Division A');
         $response->assertSeeText('2021/22 Season');
         $response->assertSeeText('Reds');

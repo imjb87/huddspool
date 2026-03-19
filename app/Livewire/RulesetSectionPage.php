@@ -29,7 +29,7 @@ class RulesetSectionPage extends Component
     #[Url(except: 1, history: true)]
     public int $page = 1;
 
-    public int $perPage = 10;
+    public int $perPage = 5;
 
     /**
      * @var array<int, string>
@@ -162,7 +162,7 @@ class RulesetSectionPage extends Component
     public function tabs(): array
     {
         return [
-            'tables' => 'Tables',
+            'tables' => 'Standings',
             'fixtures-results' => 'Fixtures/Results',
             'averages' => 'Averages',
         ];
