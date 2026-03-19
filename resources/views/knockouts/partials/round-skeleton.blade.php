@@ -1,42 +1,37 @@
-<section class="mt-0 animate-pulse">
-    <div class="w-full overflow-hidden border-y border-gray-200 bg-white shadow-md dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
-        <div class="border-b border-gray-300 bg-linear-to-b from-gray-50 to-gray-100 dark:border-zinc-800/80 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800/80">
-            <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
-                <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-            </div>
+<section class="mx-auto mt-6 w-full max-w-4xl animate-pulse px-4 sm:px-6 lg:px-6">
+    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+        <div class="space-y-2">
+            <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+            <div class="h-4 w-36 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-800/75">
-            @foreach (range(1, 5) as $row)
-                <div class="border-t border-gray-300 dark:border-zinc-800/80" data-knockout-round-skeleton-row>
-                    <div class="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 py-4 sm:px-6">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="h-3 w-16 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                        </div>
+        <div class="lg:col-span-2">
+            <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                @foreach (range(1, 5) as $row)
+                    <div class="py-4" data-knockout-round-skeleton-row>
+                        <div class="flex flex-col gap-3 sm:gap-4">
+                            <div class="grid grid-cols-[minmax(0,1fr)_88px_minmax(0,1fr)] items-center gap-3">
+                                <div class="ml-auto h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                <div class="mx-auto h-7 w-[44px] rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                            </div>
 
-                        <div class="grid grid-cols-[minmax(0,1fr)_88px_minmax(0,1fr)] items-center gap-3">
-                            <div class="ml-auto h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                            <div class="mx-auto h-7 w-[44px] rounded-sm bg-gray-200 dark:bg-zinc-700"></div>
-                            <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                            <div class="flex items-center gap-2">
+                                <div class="h-3 w-16 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                <div class="h-3 w-4 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                <div class="h-3 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
+                @endforeach
+            </div>
 
-    <div class="mx-auto w-full max-w-4xl px-4 py-4 sm:px-6 lg:py-6">
-        <div class="flex w-full">
-            <div class="flex w-[41%] justify-start">
-                <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-            </div>
-            <div class="flex w-[18%] items-center justify-center">
-                <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-            </div>
-            <div class="flex w-[41%] justify-end">
-                <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+            <div class="pt-5 pb-4 lg:pt-5 lg:pb-6">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                    <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                    <div class="h-10 w-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                </div>
             </div>
         </div>
     </div>

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -14,7 +15,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\KnockoutType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -184,5 +184,24 @@ class PlayerProfileTest extends TestCase
             ->assertDontSee(route('knockout.matches.submit', $completedMatch), false)
             ->assertSeeText('4')
             ->assertSeeText('2');
+    }
+
+    public function test_guest_does_not_see_private_contact_details_on_player_profile(): void
+    {
+        $team = Team::factory()->create();
+        $player = User::factory()->create([
+            'team_id' => $team->id,
+            'email' => 'conrad@example.com',
+            'telephone' => '07123 456789',
+        ]);
+
+        $this->get(route('player.show', $player))
+            ->assertOk()
+            ->assertDontSeeText('Email address')
+            ->assertDontSeeText('Phone number')
+            ->assertDontSeeText('conrad@example.com')
+            ->assertDontSeeText('07123 456789')
+            ->assertDontSee('mailto:', false)
+            ->assertDontSee('tel:', false);
     }
 }
