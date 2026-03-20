@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\KnockoutType;
 use App\Livewire\History\SectionPage as HistorySectionPage;
 use App\Models\Fixture;
 use App\Models\Frame;
+use App\Models\Knockout;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -53,6 +55,12 @@ class HistoryPageTest extends TestCase
             'name' => 'Division Two',
         ]);
 
+        $archivedKnockout = Knockout::query()->create([
+            'season_id' => $archivedSeason->id,
+            'name' => 'Singles Cup',
+            'type' => KnockoutType::Singles,
+        ]);
+
         Section::factory()->create([
             'ruleset_id' => $ruleset->id,
             'season_id' => $futureSeason->id,
@@ -63,23 +71,31 @@ class HistoryPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSeeText('History');
+        $response->assertSeeText('Season archive');
+        $response->assertSeeText('Browse past seasons, then drill into each ruleset and section for archived standings, fixtures, results, and averages.');
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:text-gray-100', false);
-        $response->assertSee('dark:hover:bg-zinc-800/70', false);
+        $response->assertSee('max-w-4xl px-4 pt-2 sm:px-6 lg:px-6', false);
+        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $response->assertSee('dark:text-gray-300', false);
         $response->assertSee('data-history-index-accordion', false);
         $response->assertSee('data-history-season-trigger', false);
         $response->assertSee('data-history-ruleset-trigger', false);
         $response->assertSee('data-history-section-link', false);
+        $response->assertSee('data-history-knockouts-shell', false);
+        $response->assertSee('data-history-knockout-link', false);
         $response->assertSeeText('2022/23 Season');
         $response->assertSeeText('2023/24 Season');
         $response->assertSeeText('Eight Ball');
         $response->assertSeeText('Division One');
+        $response->assertSeeText('Knockouts');
+        $response->assertSeeText('Singles Cup');
         $response->assertSee('href="'.route('history.section.show', [
             'season' => $archivedSeason,
             'ruleset' => $ruleset,
             'section' => $archivedSection,
         ]).'"', false);
+        $response->assertSee('href="'.route('knockout.show', $archivedKnockout).'"', false);
         $response->assertDontSeeText('2026/27 Season');
         $response->assertDontSee('href="'.route('history.section.show', [
             'season' => $futureSeason,

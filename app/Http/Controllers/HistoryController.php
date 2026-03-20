@@ -21,7 +21,10 @@ class HistoryController extends Controller
 
         $seasons = Cache::remember('history:index', now()->addMinutes(10), function () use ($rulesetOrder) {
             return Season::query()
-                ->with(['sections' => fn ($query) => $query->withTrashed()->with('ruleset:id,name,slug')])
+                ->with([
+                    'sections' => fn ($query) => $query->withTrashed()->with('ruleset:id,name,slug'),
+                    'knockouts' => fn ($query) => $query->orderBy('name'),
+                ])
                 ->orderByDesc('id')
                 ->get()
                 ->filter(fn (Season $season) => $season->hasConcluded())
@@ -45,9 +48,14 @@ class HistoryController extends Controller
                         ->sortBy(fn (array $group) => sprintf('%03d-%s', $group['sort_order'], $group['ruleset']->name))
                         ->values();
 
+                    $knockouts = $season->knockouts
+                        ->filter(fn ($knockout) => filled($knockout->slug))
+                        ->values();
+
                     return [
                         'season' => $season,
                         'rulesets' => $rulesets,
+                        'knockouts' => $knockouts,
                     ];
                 });
         });

@@ -28,6 +28,6 @@
             </div>
         </div>
     </div>
-    <x-logo-clouds class="pt-8 sm:pt-10 pb-12 sm:pb-16" variant="section-showcase" />
+    <x-logo-clouds class="pt-8 sm:pt-10 pb-12 sm:pb-16"  />
 </div>
 @endsection

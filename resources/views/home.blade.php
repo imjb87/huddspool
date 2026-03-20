@@ -178,5 +178,5 @@
         </div>
     </section>
 
-    <x-logo-clouds variant="section-showcase" class="pt-10 sm:pt-12" />
+    <x-logo-clouds class="pt-10 sm:pt-12"  />
 @endsection

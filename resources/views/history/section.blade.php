@@ -8,5 +8,5 @@
         :initial-tab="request('tab', 'tables')"
     />
 
-    <x-logo-clouds variant="section-showcase" />
+    <x-logo-clouds  />
 @endsection

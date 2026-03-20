@@ -57,7 +57,10 @@ class NavigationComposer
         return Cache::remember('nav:past-seasons', now()->addMinutes(10), function () {
             return Season::query()
                 ->where('is_open', false)
-                ->with(['sections.ruleset:id,name,slug'])
+                ->with([
+                    'sections.ruleset:id,name,slug',
+                    'knockouts' => fn ($query) => $query->orderBy('name'),
+                ])
                 ->orderByDesc('id')
                 ->get();
         });

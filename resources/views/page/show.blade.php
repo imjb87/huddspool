@@ -21,6 +21,6 @@
             </div>
         </div>
 
-        <x-logo-clouds variant="section-showcase" />
+        <x-logo-clouds  />
     </div>
 @endsection

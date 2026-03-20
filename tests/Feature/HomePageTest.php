@@ -58,6 +58,7 @@ class HomePageTest extends TestCase
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $response->assertSeeText('Backing the league every week');
+        $response->assertSeeText('Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.');
         $response->assertDontSee('tracking-[0.28em] text-green-100', false);
         $response->assertDontSee('min-h-[calc(100dvh-72px)]', false);
         $response->assertDontSeeText('Upcoming fixtures');

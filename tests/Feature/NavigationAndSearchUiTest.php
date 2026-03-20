@@ -79,6 +79,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-history-links', false);
         $response->assertSee('data-mobile-knockouts-trigger', false);
         $response->assertSee('data-mobile-knockouts-links', false);
+        $response->assertSee('data-mobile-back-label', false);
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee('open ? closeMenu() : openMenu()', false);
         $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
@@ -96,8 +97,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
-        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800/80 dark:bg-zinc-900', false);
-        $response->assertSee(":class=\"{ 'dark:border-transparent': open }\"", false);
+        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800 dark:bg-zinc-900', false);
+        $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertDontSee('dark:backdrop-blur', false);
         $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
@@ -148,7 +149,6 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('Champion of Champions');
         $response->assertSee('href="'.route('page.show', 'knockout-dates').'"', false);
         $response->assertSeeText('Knockout Dates');
-        $response->assertDontSeeText('Archived Knockout');
         $response->assertDontSee('href="'.route('knockout.index').'"', false);
     }
 
@@ -177,6 +177,13 @@ class NavigationAndSearchUiTest extends TestCase
             'name' => 'Archived Section One',
         ]);
 
+        $historyKnockout = Knockout::query()->create([
+            'season_id' => $historySeason->id,
+            'name' => 'Archived Singles Cup',
+            'slug' => 'archived-singles-cup',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
         $response = $this->get(route('home'));
 
         $response->assertOk();
@@ -185,15 +192,19 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-history-season-trigger', false);
         $response->assertSee('data-mobile-history-ruleset-trigger', false);
         $response->assertSee('data-mobile-history-section-links', false);
+        $response->assertSee('data-mobile-history-knockout-link', false);
         $response->assertSee('data-mobile-menu-panel="history"', false);
         $response->assertSee('data-mobile-menu-panel="history-season-'.$historySeason->id.'"', false);
         $response->assertSee('Winter 2025', false);
         $response->assertSee('International Rules', false);
         $response->assertSee('Archived Section One', false);
+        $response->assertSee('Archived Singles Cup', false);
+        $response->assertSee('data-mobile-back-label', false);
         $response->assertSee(
             'href="'.route('history.section.show', ['season' => $historySeason, 'ruleset' => $ruleset, 'section' => $historySection]).'"',
             false
         );
+        $response->assertSee('href="'.route('knockout.show', $historyKnockout).'"', false);
     }
 
     public function test_knockout_index_redirects_to_knockout_dates_page(): void

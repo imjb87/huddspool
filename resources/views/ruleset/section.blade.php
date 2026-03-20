@@ -7,5 +7,5 @@
         :initial-tab="$activeTab"
     />
 
-    <x-logo-clouds variant="section-showcase" />
+    <x-logo-clouds  />
 @endsection
