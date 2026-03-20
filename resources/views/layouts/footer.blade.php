@@ -1,5 +1,5 @@
 <footer class="bg-white dark:border-t dark:border-zinc-800/80 dark:bg-zinc-900/95">
-    @if (app('impersonate')->isImpersonating())
+    @if ($is_impersonating ?? false)
         <div class="border-b border-gray-200 dark:border-zinc-800/80">
             <div class="mx-auto max-w-7xl px-6 py-3 text-right lg:px-8">
                 <a href="{{ route('impersonation.leave') }}"

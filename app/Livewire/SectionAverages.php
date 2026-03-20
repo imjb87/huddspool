@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
+use App\Support\SectionAveragesViewData;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -63,10 +64,21 @@ class SectionAverages extends Component
 
     public function render(): View
     {
+        $viewData = SectionAveragesViewData::make(
+            $this->players,
+            $this->page,
+            $this->perPage,
+            false,
+            $this->totalPlayers,
+        );
+
         return view('livewire.section-averages', [
             'players' => $this->players,
             'perPage' => $this->perPage,
             'totalPlayers' => $this->totalPlayers,
+            'averageRows' => $viewData['averageRows'],
+            'averageSummaryCopy' => $viewData['summaryCopy'],
+            'lastPage' => $viewData['lastPage'],
         ]);
     }
 

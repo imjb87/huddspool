@@ -1,0 +1,27 @@
+<div class="flex items-center gap-3">
+    <div class="min-w-0 flex-1">
+        @if ($playerId)
+            <a href="{{ route('player.show', $player) }}"
+                class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 transition hover:text-gray-500 dark:text-gray-100 dark:hover:text-gray-300">
+                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                    src="{{ $player->avatar_url }}"
+                    alt="{{ $player->name }} avatar">
+                <span class="truncate">{{ $player->name }}</span>
+            </a>
+        @else
+            <span class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                    src="{{ asset('/images/user.jpg') }}"
+                    alt="Awarded">
+                <span class="truncate">Awarded</span>
+            </span>
+        @endif
+    </div>
+
+    <div class="shrink-0">
+        <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700"
+            data-result-frame-score-pill>
+            {{ $score }}
+        </div>
+    </div>
+</div>

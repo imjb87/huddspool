@@ -1,20 +1,10 @@
 <section data-section-averages-view class="mt-0">
-    @php($isHistoryView = $history ?? false)
-    @php($totalPlayers = $totalPlayers ?? $players->count())
-    @php($lastPage = max(1, (int) ceil($totalPlayers / $perPage)))
-    @php($averageRows = $players->values()->map(fn ($player, $index) => [
-        'player' => $player,
-        'can_link' => ! ($isHistoryView && $player->trashed),
-        'ranking' => $index + 1 + (($page - 1) * $perPage),
-    ]))
     <div class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
             <div class="space-y-2">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Averages</h2>
                 <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    {{ $isHistoryView
-                        ? 'Archived frame records and win rates for this section.'
-                        : 'Current frame records and win rates for this section.' }}
+                    {{ $averageSummaryCopy }}
                 </p>
             </div>
 

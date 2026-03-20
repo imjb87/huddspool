@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Support\PercentageFormatter;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -149,7 +150,7 @@ class User extends Authenticatable implements FilamentUser
             return 0;
         }
 
-        return number_format(($this->framesWon()->count() / $framesPlayed) * 100, 2);
+        return PercentageFormatter::trimmedSingleDecimal(($this->framesWon()->count() / $framesPlayed) * 100);
     }
 
     public function lossPercentage(): float|int|string
@@ -160,7 +161,7 @@ class User extends Authenticatable implements FilamentUser
             return 0;
         }
 
-        return number_format(($this->framesLost()->count() / $framesPlayed) * 100, 2);
+        return PercentageFormatter::trimmedSingleDecimal(($this->framesLost()->count() / $framesPlayed) * 100);
     }
 
     public function expulsions(): MorphMany

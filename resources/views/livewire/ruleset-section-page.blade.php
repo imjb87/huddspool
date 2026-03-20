@@ -1,5 +1,7 @@
 @php
     $contentPadding = in_array($activeTab, ['tables', 'averages'], true) ? 'pb-8 lg:pb-8' : 'pb-10 lg:pb-14';
+    $averageViewData = $this->averageViewData(false);
+    $fixtureRows = $this->fixtureRows(false);
 @endphp
 
 <div class="pt-[72px] {{ $contentPadding }}">
@@ -79,6 +81,7 @@
                 @include('livewire.section-fixtures', [
                     'section' => $section,
                     'fixtures' => $this->fixtures,
+                    'fixtureRows' => $fixtureRows,
                     'week' => $week,
                 ])
             @else
@@ -88,6 +91,9 @@
                     'page' => $page,
                     'perPage' => $perPage,
                     'totalPlayers' => $this->totalPlayers,
+                    'averageRows' => $averageViewData['averageRows'],
+                    'averageSummaryCopy' => $averageViewData['summaryCopy'],
+                    'lastPage' => $averageViewData['lastPage'],
                 ])
             @endif
         </div>

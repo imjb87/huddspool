@@ -2,12 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
+use App\Support\SectionAveragesViewData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -231,6 +234,57 @@ abstract class BaseSectionPage extends Component
     protected function lastPage(): int
     {
         return max(1, (int) ceil($this->totalPlayers / $this->perPage));
+    }
+
+    /**
+     * @return array{
+     *     summaryCopy: string,
+     *     lastPage: int,
+     *     averageRows: Collection<int, array{
+     *         player: mixed,
+     *         can_link: bool,
+     *         ranking: int
+     *     }>
+     * }
+     */
+    protected function averageViewData(bool $isHistoryView): array
+    {
+        return SectionAveragesViewData::make(
+            $this->players,
+            $this->page,
+            $this->perPage,
+            $isHistoryView,
+            $this->totalPlayers,
+        );
+    }
+
+    /**
+     * @return SupportCollection<int, object>
+     */
+    protected function fixtureRows(bool $isHistoryView): SupportCollection
+    {
+        return $this->fixtures->map(function (Fixture $fixture) use ($isHistoryView) {
+            $isByeFixture = $fixture->isBye();
+            $fixtureLink = $fixture->result
+                ? route('result.show', $fixture->result)
+                : (! $isHistoryView ? route('fixture.show', $fixture) : null);
+            $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
+                ? $fixture->result->home_team_name
+                : $fixture->homeTeam->name;
+            $awayDisplayName = $isHistoryView && $fixture->result?->away_team_name
+                ? $fixture->result->away_team_name
+                : $fixture->awayTeam->name;
+
+            return (object) [
+                'fixture' => $fixture,
+                'is_bye' => $isByeFixture,
+                'link' => $fixtureLink,
+                'home_team_name' => $fixture->homeTeam->shortname && ! $isHistoryView ? $fixture->homeTeam->shortname : $homeDisplayName,
+                'away_team_name' => $fixture->awayTeam->shortname && ! $isHistoryView ? $fixture->awayTeam->shortname : $awayDisplayName,
+                'row_meta' => $fixture->fixture_date->format('j M Y'),
+                'row_classes' => 'block rounded-lg',
+            ];
+        });
     }
 
     /**

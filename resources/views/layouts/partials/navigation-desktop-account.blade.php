@@ -59,7 +59,7 @@
                         </a>
                     </div>
                 @endif
-                @if (app('impersonate')->isImpersonating())
+                @if ($is_impersonating ?? false)
                     <div class="py-1">
                         <a class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800"
                             href="{{ route('impersonation.leave') }}">

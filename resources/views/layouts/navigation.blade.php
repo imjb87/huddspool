@@ -1,20 +1,7 @@
-@php
-    $currentRuleset = request()->route('ruleset');
-    $currentPage = request()->route('page');
-    $isRulesetRoute = request()->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
-    $navigationRulesets = collect($navigation_rulesets ?? []);
-    $historySeasonGroups = collect($navigation_history_season_groups ?? []);
-    $navigableKnockouts = collect($navigation_active_knockouts ?? []);
-    $isKnockoutRoute = request()->routeIs('knockout.*')
-        || (request()->routeIs('page.show') && $currentPage === 'knockout-dates');
-    $mobileDrawerPanelClasses = 'absolute inset-0 overflow-y-auto bg-white px-4 py-4 dark:bg-zinc-900';
-    $mobileDrawerPanelContentClasses = 'space-y-5';
-    $mobileDrawerListClasses = 'space-y-1';
-    $mobileDrawerBackButtonClasses = 'block w-full border-b border-gray-200 pb-3 text-left dark:border-gray-800';
-    $mobileDrawerBackLabelClasses = 'flex items-center gap-3 py-3 text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200';
-    $mobileDrawerLinkClasses = 'flex w-full items-center justify-between rounded-lg px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200';
-    $mobileDrawerTextLinkClasses = 'block rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200';
-@endphp
+@php(extract($navigation_view_data ?? [], EXTR_SKIP))
+@php($navigationRulesets = collect($navigation_rulesets ?? []))
+@php($historySeasonGroups = collect($navigation_history_season_groups ?? []))
+@php($navigableKnockouts = collect($navigation_active_knockouts ?? []))
 
 <header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800 dark:bg-zinc-900"
     x-data="{
