@@ -58,7 +58,7 @@
                             </p>
                         </div>
                     @else
-                        <div class="mt-6 max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain dark:divide-zinc-800/80"
+                        <div class="max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain dark:divide-zinc-800/80"
                             data-home-live-scores-shell
                             data-home-live-scores-list>
                             @foreach ($liveScores as $result)
