@@ -10,6 +10,7 @@ use App\Http\Controllers\SupportTicketController;
 use App\Models\Ruleset;
 use App\Models\Section;
 use Illuminate\Support\Facades\Route;
+use LaravelPWA\Http\Controllers\LaravelPWAController;
 use STS\FilamentImpersonate\Facades\Impersonation;
 
 /*
@@ -48,6 +49,8 @@ Route::get('/history/{season}/{ruleset}/{section}', [HistoryController::class, '
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
 Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
 Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
+Route::get('/manifest.json', [LaravelPWAController::class, 'manifestJson'])->name('laravelpwa.manifest');
+Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelpwa.offline');
 Route::middleware('auth')->group(function () {
     Route::view('/account', 'account.show')->name('account.show');
     Route::view('/account/team', 'account.team')->name('account.team');
