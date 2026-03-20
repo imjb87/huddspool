@@ -44,20 +44,20 @@ return [
     ],
 
     'google_analytics' => [
-        'measurement_id' => env('GOOGLE_ANALYTICS_MEASUREMENT_ID', 'G-620MNWY15S'),
+        'measurement_id' => env('GOOGLE_ANALYTICS_MEASUREMENT_ID'),
     ],
 
     'google_maps' => [
-        'embed_key' => env('GOOGLE_MAPS_EMBED_KEY', 'AIzaSyChqGQscjoMavQG46mrE3j2oz26pedhXFU'),
+        'embed_key' => env('GOOGLE_MAPS_EMBED_KEY'),
     ],
 
     'hotjar' => [
-        'site_id' => env('HOTJAR_SITE_ID', 3651301),
-        'snippet_version' => env('HOTJAR_SNIPPET_VERSION', 6),
+        'site_id' => env('HOTJAR_SITE_ID'),
+        'snippet_version' => env('HOTJAR_SNIPPET_VERSION'),
     ],
 
     'font_awesome' => [
-        'kit_url' => env('FONT_AWESOME_KIT_URL', 'https://kit.fontawesome.com/b12bfcfdee.js'),
+        'kit_url' => env('FONT_AWESOME_KIT_URL'),
     ],
 
     'nominatim' => [

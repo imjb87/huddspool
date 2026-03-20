@@ -10,39 +10,42 @@
 
     @include('layouts.partials.theme-head')
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
+    @if (filled(config('services.google_analytics.measurement_id')))
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
 
-        gtag('config', @js(config('services.google_analytics.measurement_id')));
-    </script>
+            gtag('config', @js(config('services.google_analytics.measurement_id')));
+        </script>
+    @endif
 
-    <!-- Hotjar Tracking Code for https://huddspool.co.uk -->
-    <script>
-        (function(h, o, t, j, a, r) {
-            h.hj = h.hj || function() {
-                (h.hj.q = h.hj.q || []).push(arguments)
-            };
-            h._hjSettings = {
-                hjid: @js(config('services.hotjar.site_id')),
-                hjsv: @js(config('services.hotjar.snippet_version'))
-            };
-            a = o.getElementsByTagName('head')[0];
-            r = o.createElement('script');
-            r.async = 1;
-            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-    </script>
+    @if (filled(config('services.hotjar.site_id')) && filled(config('services.hotjar.snippet_version')))
+        <script>
+            (function(h, o, t, j, a, r) {
+                h.hj = h.hj || function() {
+                    (h.hj.q = h.hj.q || []).push(arguments)
+                };
+                h._hjSettings = {
+                    hjid: @js(config('services.hotjar.site_id')),
+                    hjsv: @js(config('services.hotjar.snippet_version'))
+                };
+                a = o.getElementsByTagName('head')[0];
+                r = o.createElement('script');
+                r.async = 1;
+                r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+        </script>
+    @endif
 
-    <!-- Fonts -->
-    <script src="{{ config('services.font_awesome.kit_url') }}" crossorigin="anonymous"></script>
+    @if (filled(config('services.font_awesome.kit_url')))
+        <script src="{{ config('services.font_awesome.kit_url') }}" crossorigin="anonymous"></script>
+    @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
