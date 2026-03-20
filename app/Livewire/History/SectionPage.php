@@ -74,9 +74,10 @@ class SectionPage extends Component
 
     public function updatedPage(): void
     {
-        $this->page = max(1, $this->page);
+        $this->page = min(max(1, $this->page), $this->lastPage());
 
         unset($this->players);
+        unset($this->totalPlayers);
     }
 
     public function previousPage(): void
@@ -85,15 +86,17 @@ class SectionPage extends Component
             $this->page--;
 
             unset($this->players);
+            unset($this->totalPlayers);
         }
     }
 
     public function nextPage(): void
     {
-        if ($this->players->count() === $this->perPage) {
+        if ($this->hasNextPage()) {
             $this->page++;
 
             unset($this->players);
+            unset($this->totalPlayers);
         }
     }
 
@@ -169,7 +172,7 @@ class SectionPage extends Component
     {
         return [
             'tables' => 'Standings',
-            'fixtures-results' => 'Fixtures/Results',
+            'fixtures-results' => 'Fixtures & Results',
             'averages' => 'Averages',
         ];
     }
@@ -208,6 +211,12 @@ class SectionPage extends Component
     public function players(): Collection
     {
         return (new GetSectionAverages($this->section, $this->page, $this->perPage))();
+    }
+
+    #[Computed]
+    public function totalPlayers(): int
+    {
+        return (new GetSectionAverages($this->section, 1, $this->perPage))->total();
     }
 
     #[Computed]
@@ -258,6 +267,17 @@ class SectionPage extends Component
         unset($this->standings);
         unset($this->fixtures);
         unset($this->players);
+        unset($this->totalPlayers);
         unset($this->relatedSections);
+    }
+
+    private function hasNextPage(): bool
+    {
+        return $this->page < $this->lastPage();
+    }
+
+    private function lastPage(): int
+    {
+        return max(1, (int) ceil($this->totalPlayers / $this->perPage));
     }
 }

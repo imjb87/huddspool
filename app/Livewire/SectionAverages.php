@@ -26,8 +26,9 @@ class SectionAverages extends Component
 
     public function updatedPage(): void
     {
-        $this->page = max(1, $this->page);
+        $this->page = min(max(1, $this->page), $this->lastPage());
         unset($this->players);
+        unset($this->totalPlayers);
     }
 
     public function previousPage(): void
@@ -35,14 +36,16 @@ class SectionAverages extends Component
         if ($this->page > 1) {
             $this->page--;
             unset($this->players);
+            unset($this->totalPlayers);
         }
     }
 
     public function nextPage(): void
     {
-        if ($this->players->count() === $this->perPage) {
+        if ($this->hasNextPage()) {
             $this->page++;
             unset($this->players);
+            unset($this->totalPlayers);
         }
     }
 
@@ -52,11 +55,28 @@ class SectionAverages extends Component
         return (new GetSectionAverages($this->section, $this->page, $this->perPage))();
     }
 
+    #[Computed]
+    public function totalPlayers(): int
+    {
+        return (new GetSectionAverages($this->section, 1, $this->perPage))->total();
+    }
+
     public function render(): View
     {
         return view('livewire.section-averages', [
             'players' => $this->players,
             'perPage' => $this->perPage,
+            'totalPlayers' => $this->totalPlayers,
         ]);
+    }
+
+    private function hasNextPage(): bool
+    {
+        return $this->page < $this->lastPage();
+    }
+
+    private function lastPage(): int
+    {
+        return max(1, (int) ceil($this->totalPlayers / $this->perPage));
     }
 }

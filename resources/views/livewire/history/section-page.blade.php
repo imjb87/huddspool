@@ -77,6 +77,7 @@
                     'players' => $this->players,
                     'page' => $page,
                     'perPage' => $perPage,
+                    'totalPlayers' => $this->totalPlayers,
                     'history' => true,
                 ])
             @endif

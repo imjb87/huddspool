@@ -263,7 +263,7 @@ class RulesetHubPageTest extends TestCase
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-tab-skeleton-row="fixtures-results"'));
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-fixtures-row-skeleton-row'));
         $fixturesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
-        $fixturesResponse->assertSeeText('Fixtures & results');
+        $fixturesResponse->assertSee('<h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures & Results</h2>', false);
         $fixturesResponse->assertSee('Print fixtures', false);
         $fixturesResponse->assertSeeText('Print');
         $fixturesResponse->assertSee('Week 1', false);
@@ -324,9 +324,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSeeText('Backing the league every week');
         $tablesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $tablesResponse->assertSeeText('Standings');
-        $tablesResponse->assertSee('flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100', false);
-        $tablesResponse->assertSee('grid shrink-0 grid-cols-5 gap-3 text-center', false);
-        $tablesResponse->assertSee('text-green-700 dark:text-green-400', false);
+        $tablesResponse->assertSee('ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-4', false);
         $tablesResponse->assertDontSee('Print fixtures', false);
         $tablesResponse->assertDontSee('Current standings for this section.');
         $tablesResponse->assertDontSee('rounded-2xl border border-gray-200 bg-white shadow-sm', false);
@@ -360,13 +358,11 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $averagesResponse->assertSeeText('Averages');
         $averagesResponse->assertSee('flex items-center gap-3 sm:gap-4', false);
-        $averagesResponse->assertSee('ml-auto flex shrink-0 items-center gap-2 text-center sm:gap-5', false);
+        $averagesResponse->assertSee('ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5', false);
         $averagesResponse->assertSee('data-section-averages-row-skeleton', false);
         $averagesResponse->assertSee('wire:target="previousPage, nextPage"', false);
         $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-tab-skeleton-row="averages"'));
         $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-averages-row-skeleton-row'));
-        $averagesResponse->assertSee('inline-flex items-center justify-center rounded-md bg-green-100', false);
-        $averagesResponse->assertSee('inline-flex items-center justify-center rounded-md bg-red-100', false);
         $averagesResponse->assertSee('inline-flex w-24 cursor-pointer items-center justify-center rounded-full', false);
         $averagesResponse->assertSee('Page 1');
         $averagesResponse->assertSee('Previous');

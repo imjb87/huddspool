@@ -23,8 +23,27 @@ class GetSectionAverages
      */
     public function __invoke(): Collection
     {
+        $allPlayers = $this->allPlayers();
+        $offset = max(0, ($this->page - 1) * $this->perPage);
+
+        return $allPlayers
+            ->slice($offset, $this->perPage)
+            ->values();
+    }
+
+    public function total(): int
+    {
+        return $this->allPlayers()->count();
+    }
+
+    /**
+     * @return Collection<int, SectionPlayerAverageData>
+     */
+    private function allPlayers(): Collection
+    {
         $sectionId = $this->section->id;
-        $allPlayers = Cache::remember($this->cacheKey($sectionId), now()->addMinutes(2), function () use ($sectionId) {
+
+        return Cache::remember($this->cacheKey($sectionId), now()->addMinutes(2), function () use ($sectionId) {
             $frames = Frame::query()
                 ->with([
                     'homePlayer:id,name',
@@ -162,12 +181,6 @@ class GetSectionAverages
                 })
                 ->values();
         });
-
-        $offset = max(0, ($this->page - 1) * $this->perPage);
-
-        return $allPlayers
-            ->slice($offset, $this->perPage)
-            ->values();
     }
 
     private function cacheKey(int $sectionId): string

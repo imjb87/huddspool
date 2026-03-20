@@ -87,6 +87,7 @@
                     'players' => $this->players,
                     'page' => $page,
                     'perPage' => $perPage,
+                    'totalPlayers' => $this->totalPlayers,
                 ])
             @endif
         </div>

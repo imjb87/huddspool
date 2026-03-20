@@ -85,7 +85,7 @@ class PlayerAveragesTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-section-averages-view', false);
         $response->assertSee('data-section-averages-percentage-badge', false);
-        $response->assertSee('inline-flex items-center justify-center rounded-full', false);
+        $response->assertSee('inline-flex w-24 cursor-pointer items-center justify-center rounded-full', false);
         $response->assertSee('bg-linear-to-br from-green-900 via-green-800 to-green-700', false);
         $response->assertSeeText($section->name);
         $response->assertSeeText('Real Player');
@@ -226,5 +226,67 @@ class PlayerAveragesTest extends TestCase
             ->assertSee('Player 11')
             ->assertSee('Player 12')
             ->assertDontSee('Player 01');
+    }
+
+    public function test_section_averages_does_not_advance_past_the_last_full_page_of_players(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $opponent = User::factory()->create([
+            'name' => 'Common Opponent',
+            'team_id' => $awayTeam->id,
+        ]);
+
+        foreach (range(1, 9) as $number) {
+            $player = User::factory()->create([
+                'name' => sprintf('Player %02d', $number),
+                'team_id' => $homeTeam->id,
+            ]);
+
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $homeTeam->id,
+                'away_team_id' => $awayTeam->id,
+            ]);
+
+            $result = Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $homeTeam->id,
+                'home_team_name' => $homeTeam->name,
+                'home_score' => 1,
+                'away_team_id' => $awayTeam->id,
+                'away_team_name' => $awayTeam->name,
+                'away_score' => 0,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'submitted_by' => $player->id,
+                'is_confirmed' => true,
+            ]);
+
+            Frame::create([
+                'result_id' => $result->id,
+                'home_player_id' => $player->id,
+                'home_score' => 1,
+                'away_player_id' => $opponent->id,
+                'away_score' => 0,
+            ]);
+        }
+
+        Livewire::test(SectionAverages::class, ['section' => $section])
+            ->call('nextPage')
+            ->assertSet('page', 1);
     }
 }

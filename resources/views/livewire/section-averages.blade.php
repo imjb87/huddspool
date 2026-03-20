@@ -1,6 +1,8 @@
 <section data-section-averages-view class="mt-0">
     @php
         $isHistoryView = $history ?? false;
+        $totalPlayers = $totalPlayers ?? $players->count();
+        $lastPage = max(1, (int) ceil($totalPlayers / $perPage));
         $summaryCopy = $isHistoryView
             ? 'Archived frame records and win rates for this section.'
             : 'Current frame records and win rates for this section.';
@@ -158,7 +160,7 @@
                         <button wire:click="nextPage" wire:loading.attr="disabled"
                             class="inline-flex w-24 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                             aria-label="Next"
-                            {{ $players->count() < $perPage ? 'disabled' : '' }}>
+                            {{ $page >= $lastPage ? 'disabled' : '' }}>
                             Next
                         </button>
                     </div>
