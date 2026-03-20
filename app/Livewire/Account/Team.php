@@ -3,51 +3,22 @@
 namespace App\Livewire\Account;
 
 use App\Models\Fixture;
-use App\Models\Section;
-use App\Models\Team as TeamModel;
-use App\Models\User;
 use App\Queries\GetTeamKnockoutMatches;
 use App\Queries\GetTeamPlayers;
-use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
-class Team extends Component
+class Team extends BaseAccountComponent
 {
     use AuthorizesRequests;
 
     public function mount(): void
     {
         abort_unless($this->canManageTeam && $this->team, 403);
-    }
-
-    #[Computed]
-    public function user(): User
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->loadMissing([
-            'team.venue',
-            'team.captain',
-        ]);
-    }
-
-    #[Computed]
-    public function team(): ?TeamModel
-    {
-        return $this->user->team;
-    }
-
-    #[Computed]
-    public function currentSection(): ?Section
-    {
-        return $this->team?->openSection();
     }
 
     #[Computed]
@@ -95,14 +66,6 @@ class Team extends Component
     }
 
     #[Computed]
-    public function resultSubmissionPrompt(): ?object
-    {
-        $prompt = $this->resultSubmissionPromptResolver()->promptFor($this->user);
-
-        return $prompt ? (object) $prompt : null;
-    }
-
-    #[Computed]
     public function teamKnockoutMatches(): Collection
     {
         if (! $this->team) {
@@ -140,11 +103,6 @@ class Team extends Component
     public function render(): View
     {
         return view('livewire.account.team');
-    }
-
-    private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
-    {
-        return app(ResultSubmissionPromptResolver::class);
     }
 
     private function ordinal(int $number): string

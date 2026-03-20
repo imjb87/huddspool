@@ -2,26 +2,21 @@
 
 namespace App\Livewire\Account;
 
-use App\Models\Section;
-use App\Models\Team;
-use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
 use App\Queries\GetTeamPlayers;
-use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
-class Show extends Component
+class Show extends BaseAccountComponent
 {
     use AuthorizesRequests;
     use WithFileUploads;
@@ -86,30 +81,6 @@ class Show extends Component
     }
 
     #[Computed]
-    public function user(): User
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->loadMissing([
-            'team.venue',
-            'team.captain',
-        ]);
-    }
-
-    #[Computed]
-    public function team(): ?Team
-    {
-        return $this->user->team;
-    }
-
-    #[Computed]
-    public function currentSection(): ?Section
-    {
-        return $this->team?->openSection();
-    }
-
-    #[Computed]
     public function record(): object
     {
         return new GetPlayerAverages($this->user, $this->currentSection)();
@@ -134,14 +105,6 @@ class Show extends Component
     }
 
     #[Computed]
-    public function resultSubmissionPrompt(): ?object
-    {
-        $prompt = $this->resultSubmissionPromptResolver()->promptFor($this->user);
-
-        return $prompt ? (object) $prompt : null;
-    }
-
-    #[Computed]
     public function teamMembers(): Collection
     {
         if (! $this->team) {
@@ -154,10 +117,5 @@ class Show extends Component
     public function render(): View
     {
         return view('livewire.account.show');
-    }
-
-    private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
-    {
-        return app(ResultSubmissionPromptResolver::class);
     }
 }
