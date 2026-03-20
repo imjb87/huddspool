@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Fixture;
 use App\Models\Result;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ResultController extends Controller
 {
@@ -24,7 +25,7 @@ class ResultController extends Controller
         return view('result.show', compact('result'));
     }
 
-    public function create(Fixture $fixture)
+    public function create(Fixture $fixture): RedirectResponse|View
     {
         $fixture->load([
             'section',

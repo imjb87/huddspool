@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +38,7 @@ class PlayerController extends Controller
         return redirect()->route('ruleset.section.show', $parameters);
     }
 
-    public function show(User $player)
+    public function show(User $player): View
     {
         $section = $player->team?->openSection();
         $averages = $player->team ? (new GetPlayerAverages($player, $section))() : null;
@@ -77,7 +78,7 @@ class PlayerController extends Controller
         return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
     }
 
-    public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player)
+    public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player): RedirectResponse
     {
         $this->authorize('updateAvatar', $player);
 

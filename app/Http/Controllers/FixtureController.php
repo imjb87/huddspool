@@ -7,9 +7,11 @@ use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetTeamPlayers;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\Response;
 
 class FixtureController extends Controller
 {
@@ -34,7 +36,7 @@ class FixtureController extends Controller
         return redirect()->route('ruleset.section.show', $parameters);
     }
 
-    public function show(Fixture $fixture)
+    public function show(Fixture $fixture): View
     {
         if ($fixture->isBye()) {
             abort(404);
@@ -54,7 +56,7 @@ class FixtureController extends Controller
         return view('fixture.show', compact('fixture', 'home_team_players', 'away_team_players'));
     }
 
-    public function download(Section $section)
+    public function download(Section $section): Response
     {
         $fixtures = $section->fixtures()->get();
         $teams = $section->teams()->get()->sortBy('pivot.sort');

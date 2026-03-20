@@ -6,6 +6,8 @@ use App\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -42,37 +44,37 @@ class Fixture extends Model
         'fixture_date' => 'datetime',
     ];
 
-    public function season()
+    public function season(): BelongsTo
     {
         return $this->belongsTo(Season::class, 'season_id');
     }
 
-    public function section()
+    public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
     }
 
-    public function homeTeam()
+    public function homeTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'home_team_id')->withTrashed();
     }
 
-    public function awayTeam()
+    public function awayTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'away_team_id')->withTrashed();
     }
 
-    public function venue()
+    public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
     }
 
-    public function ruleset()
+    public function ruleset(): BelongsTo
     {
         return $this->belongsTo(Ruleset::class);
     }
 
-    public function result()
+    public function result(): HasOne
     {
         return $this->hasOne(Result::class);
     }

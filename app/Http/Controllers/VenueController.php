@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Venue;
+use Illuminate\Contracts\View\View;
 
 class VenueController extends Controller
 {
-    public function show(Venue $venue)
+    public function show(Venue $venue): View
     {
         $teams = $venue->teams()
             ->inOpenSeason()

@@ -8,10 +8,11 @@ use App\Models\Team;
 use App\Queries\GetTeamFixtures;
 use App\Queries\GetTeamPlayers;
 use App\Queries\GetTeamSeasonHistory;
+use Illuminate\Contracts\View\View;
 
 class TeamController extends Controller
 {
-    public function show(Team $team)
+    public function show(Team $team): View
     {
         if ($team->id === 1) {
             abort(404);
