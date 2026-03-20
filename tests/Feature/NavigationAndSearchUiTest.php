@@ -82,6 +82,13 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee('open ? closeMenu() : openMenu()', false);
         $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
+        $response->assertSee('deferredInstallPrompt: null', false);
+        $response->assertSee('canInstallApp: false', false);
+        $response->assertSee("window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); });", false);
+        $response->assertSee("window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })", false);
+        $response->assertSee("window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true", false);
+        $response->assertSee('data-install-app-trigger', false);
+        $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertSee("@click=\"openDrawer('history')\"", false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
         $response->assertSee('@mouseenter="open = true"', false);
@@ -90,6 +97,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800/80 dark:bg-zinc-900', false);
+        $response->assertSee(":class=\"{ 'dark:border-transparent': open }\"", false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertDontSee('dark:backdrop-blur', false);
         $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
@@ -239,6 +247,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
         $response->assertSeeText('Account');
+        $response->assertSee('data-install-app-trigger', false);
+        $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertDontSeeText('Your profile');
         $response->assertDontSeeText('Your team');
         $response->assertDontSee('href="'.route('player.show', $user).'"', false);

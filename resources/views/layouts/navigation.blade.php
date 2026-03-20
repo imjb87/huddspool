@@ -41,19 +41,36 @@
 @endphp
 
 <header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800/80 dark:bg-zinc-900"
+    :class="{ 'dark:border-transparent': open }"
     x-data="{
         open: false,
         activeDrawer: 'root',
         headerHeight: 0,
         theme: 'light',
+        deferredInstallPrompt: null,
+        canInstallApp: false,
         updateHeaderHeight() {
             this.headerHeight = Math.ceil(this.$refs.header.getBoundingClientRect().bottom);
         },
         syncTheme() {
             this.theme = window.siteTheme?.currentTheme?.() ?? 'light';
         },
+        syncInstallAvailability() {
+            const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            this.canInstallApp = !!this.deferredInstallPrompt && !standalone;
+        },
         toggleTheme() {
             this.theme = window.siteTheme?.toggleTheme?.() ?? (this.theme === 'dark' ? 'light' : 'dark');
+        },
+        async installApp() {
+            if (!this.deferredInstallPrompt) {
+                return;
+            }
+
+            this.deferredInstallPrompt.prompt();
+            await this.deferredInstallPrompt.userChoice;
+            this.deferredInstallPrompt = null;
+            this.syncInstallAvailability();
         },
         openMenu() {
             this.open = true;
@@ -71,7 +88,7 @@
             this.activeDrawer = 'root';
         },
     }"
-    x-init="syncTheme(); updateHeaderHeight(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => updateHeaderHeight()); window.addEventListener('site-theme-changed', () => syncTheme())"
+    x-init="syncTheme(); syncInstallAvailability(); updateHeaderHeight(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => updateHeaderHeight()); window.addEventListener('site-theme-changed', () => syncTheme()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
     x-ref="header">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
         <div class="flex flex-1">
@@ -249,6 +266,14 @@
                                 Account
                             </a>
                         </div>
+                        <div class="py-1" x-cloak x-show="canInstallApp">
+                            <button type="button"
+                                class="block w-full rounded-md py-2 pl-3 pr-4 text-left text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800"
+                                @click="installApp()"
+                                data-install-app-trigger>
+                                Install app
+                            </button>
+                        </div>
                         @if (auth()->user()->is_admin)
                             <div class="py-1">
                                 <a href="{{ route('filament.admin.pages.dashboard') }}"
@@ -278,6 +303,14 @@
                     </div>
                 </div>
             @else
+                <button type="button"
+                    class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
+                    x-cloak
+                    x-show="canInstallApp"
+                    @click="installApp()"
+                    data-install-app-trigger>
+                    Install app
+                </button>
                 <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">
                     Log in <span aria-hidden="true">&rarr;</span>
                 </a>
@@ -385,6 +418,14 @@
                                     Log in
                                 </a>
                             @endif
+                            <button type="button"
+                                class="block w-full rounded-lg px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-900"
+                                x-cloak
+                                x-show="canInstallApp"
+                                @click="installApp()"
+                                data-mobile-install-app-trigger>
+                                Install app
+                            </button>
                         </div>
                     </div>
                 </div>
