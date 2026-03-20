@@ -58,7 +58,7 @@
                                         <div class="flex items-center gap-3 sm:gap-4" data-section-averages-band>
                                             <div class="min-w-0 flex-1">
                                                 <div class="flex items-center gap-3">
-                                                    <span class="shrink-0 text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400">
+                                                    <span class="w-4 text-center shrink-0 text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400 sm:w-7">
                                                         {{ $ranking }}
                                                     </span>
                                                     <img class="h-8 w-8 shrink-0 rounded-full object-cover"
@@ -118,7 +118,7 @@
                                     <div class="flex items-center gap-3 sm:gap-4" data-section-averages-band>
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-3">
-                                                <div class="h-4 w-4 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                                <div class="h-4 w-6 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-7"></div>
                                                 <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                                 <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                             </div>
