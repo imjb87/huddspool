@@ -147,9 +147,9 @@
 
                             <div class="lg:col-span-2">
                                 <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
-                                        @foreach ($fixtures as $fixture)
-                                            @php
-                                                $rowUrl = ($fixture->home_team_id == 1 || $fixture->away_team_id == 1)
+                                            @foreach ($fixtures as $fixture)
+                                                @php
+                                                $rowUrl = $fixture->isBye()
                                                     ? null
                                                     : ($fixture->result_id ? route('result.show', $fixture->result_id) : route('fixture.show', $fixture->id));
                                                 $isDraw = $fixture->result_id

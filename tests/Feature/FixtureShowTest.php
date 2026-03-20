@@ -105,4 +105,36 @@ class FixtureShowTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_fixture_show_returns_not_found_for_a_bye_fixture(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create(['name' => 'Bye']);
+        $awayTeam = Team::factory()->create(['name' => 'Blues']);
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $homePlayer = User::factory()->create(['team_id' => $homeTeam->id]);
+        User::factory()->create(['team_id' => $awayTeam->id]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+
+        $this->actingAs($homePlayer);
+
+        $this->get(route('fixture.show', $fixture))
+            ->assertNotFound();
+    }
 }

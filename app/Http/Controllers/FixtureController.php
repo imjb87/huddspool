@@ -36,7 +36,7 @@ class FixtureController extends Controller
 
     public function show(Fixture $fixture)
     {
-        if ($fixture->home_team_id == 1 || $fixture->away_team_id == 1) {
+        if ($fixture->isBye()) {
             abort(404);
         }
 

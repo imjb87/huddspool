@@ -85,6 +85,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
         $response->assertSeeText('0%');
+        $response->assertSee('href="'.route('result.show', $result).'"', false);
     }
 
     public function test_team_profile_excludes_soft_deleted_frames_from_player_totals(): void
@@ -159,6 +160,35 @@ class TeamProfileTest extends TestCase
         $this->assertSame(1, (int) $playerStats->frames_won);
         $this->assertSame(0, (int) $playerStats->frames_lost);
 
+    }
+
+    public function test_team_profile_does_not_link_bye_fixture(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create(['name' => 'Bye']);
+        $opponent = Team::factory()->create(['name' => 'Blues']);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+        ]);
+
+        $response = $this->get(route('team.show', $team));
+
+        $response->assertOk();
+        $response->assertDontSee('href="'.route('fixture.show', $fixture).'"', false);
     }
 
     public function test_team_profile_displays_team_knockout_matches(): void

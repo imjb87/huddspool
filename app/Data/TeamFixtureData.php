@@ -20,8 +20,7 @@ final class TeamFixtureData
         public ?int $result_id,
         public ?int $home_score,
         public ?int $away_score,
-    ) {
-    }
+    ) {}
 
     public static function fromFixture(Fixture $fixture): self
     {
@@ -39,5 +38,10 @@ final class TeamFixtureData
             home_score: $fixture->result?->home_score,
             away_score: $fixture->result?->away_score,
         );
+    }
+
+    public function isBye(): bool
+    {
+        return $this->home_team_name === 'Bye' || $this->away_team_name === 'Bye';
     }
 }
