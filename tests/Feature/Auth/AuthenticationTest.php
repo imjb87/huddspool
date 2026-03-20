@@ -10,6 +10,12 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Socialite\Contracts\Provider;
+use Laravel\Socialite\Facades\Socialite;
+use Mockery;
+use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -26,8 +32,246 @@ class AuthenticationTest extends TestCase
         $response->assertSeeText('Access your account to manage your profile');
         $response->assertSee('type="email"', false);
         $response->assertSee('type="password"', false);
+        $response->assertSee(route('auth.google'), false);
+        $response->assertSeeText('Continue with Google');
+        $response->assertDontSee(route('auth.facebook'), false);
+        $response->assertDontSeeText('Continue with Facebook');
         $response->assertSee('site-theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
+    }
+
+    public function test_users_can_start_google_authentication(): void
+    {
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('redirect')
+            ->once()
+            ->andReturn(new SymfonyRedirectResponse('https://accounts.google.com/o/oauth2/auth'));
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
+
+        $this->get(route('auth.google'))
+            ->assertRedirect('https://accounts.google.com/o/oauth2/auth');
+    }
+
+    public function test_existing_users_can_authenticate_with_google(): void
+    {
+        Storage::fake('public');
+        Http::fake([
+            'https://example.com/avatar.jpg' => Http::response('avatar-binary', 200, [
+                'Content-Type' => 'image/jpeg',
+            ]),
+        ]);
+
+        $user = User::factory()->create();
+
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn($user->email);
+        $socialiteUser->shouldReceive('getAvatar')
+            ->once()
+            ->andReturn('https://example.com/avatar.jpg');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
+
+        $response = $this->get('/auth/google/callback');
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('account.show'));
+        $this->assertStringStartsWith('avatars/google-', $user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+    }
+
+    public function test_users_can_start_facebook_authentication(): void
+    {
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('redirect')
+            ->once()
+            ->andReturn(new SymfonyRedirectResponse('https://www.facebook.com/v19.0/dialog/oauth'));
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('facebook')
+            ->andReturn($provider);
+
+        $this->get(route('auth.facebook'))
+            ->assertRedirect('https://www.facebook.com/v19.0/dialog/oauth');
+    }
+
+    public function test_existing_users_can_authenticate_with_facebook(): void
+    {
+        Storage::fake('public');
+        Http::fake([
+            'https://example.com/facebook-avatar.jpg' => Http::response('avatar-binary', 200, [
+                'Content-Type' => 'image/jpeg',
+            ]),
+        ]);
+
+        $user = User::factory()->create();
+
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn($user->email);
+        $socialiteUser->shouldReceive('getAvatar')
+            ->once()
+            ->andReturn('https://example.com/facebook-avatar.jpg');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('facebook')
+            ->andReturn($provider);
+
+        $response = $this->get('/auth/facebook/callback');
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('account.show'));
+        $this->assertStringStartsWith('avatars/facebook-', $user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+    }
+
+    public function test_facebook_authentication_does_not_replace_an_existing_avatar(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/existing-avatar.jpg', 'existing-avatar');
+
+        $user = User::factory()->create([
+            'avatar_path' => 'avatars/existing-avatar.jpg',
+        ]);
+
+        Http::fake();
+
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn($user->email);
+        $socialiteUser->shouldReceive('getAvatar')
+            ->once()
+            ->andReturn('https://example.com/new-facebook-avatar.jpg');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('facebook')
+            ->andReturn($provider);
+
+        $response = $this->get('/auth/facebook/callback');
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('account.show'));
+        $this->assertSame('avatars/existing-avatar.jpg', $user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists('avatars/existing-avatar.jpg');
+        Http::assertNothingSent();
+    }
+
+    public function test_google_authentication_does_not_replace_an_existing_avatar(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/existing-avatar.jpg', 'existing-avatar');
+
+        $user = User::factory()->create([
+            'avatar_path' => 'avatars/existing-avatar.jpg',
+        ]);
+
+        Http::fake();
+
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn($user->email);
+        $socialiteUser->shouldReceive('getAvatar')
+            ->once()
+            ->andReturn('https://example.com/new-avatar.jpg');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
+
+        $response = $this->get('/auth/google/callback');
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('account.show'));
+        $this->assertSame('avatars/existing-avatar.jpg', $user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists('avatars/existing-avatar.jpg');
+        Http::assertNothingSent();
+    }
+
+    public function test_google_authentication_fails_when_no_matching_user_exists(): void
+    {
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn('missing@example.com');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
+
+        $response = $this->from(route('login'))->get('/auth/google/callback');
+
+        $this->assertGuest();
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHasErrors([
+            'google' => 'No account matches the email address on that Google account.',
+        ]);
+    }
+
+    public function test_facebook_authentication_fails_when_no_matching_user_exists(): void
+    {
+        $socialiteUser = Mockery::mock();
+        $socialiteUser->shouldReceive('getEmail')
+            ->once()
+            ->andReturn('missing@example.com');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')
+            ->once()
+            ->andReturn($socialiteUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('facebook')
+            ->andReturn($provider);
+
+        $response = $this->from(route('login'))->get('/auth/facebook/callback');
+
+        $this->assertGuest();
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHasErrors([
+            'facebook' => 'No account matches the email address on that Facebook account.',
+        ]);
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
