@@ -88,7 +88,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); });", false);
         $response->assertSee("window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })", false);
         $response->assertSee("window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true", false);
-        $response->assertSee('data-install-app-trigger', false);
+        $response->assertDontSee('data-install-app-trigger', false);
         $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertSee("@click=\"openDrawer('history')\"", false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);

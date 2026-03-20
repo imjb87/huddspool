@@ -14,7 +14,13 @@ class NavigationComposer
 {
     private const RULESETS_CACHE_KEY = 'nav:rulesets:v4';
 
+    private const NAVIGATION_RULESETS_CACHE_KEY = 'nav:prepared-rulesets:v1';
+
     private const ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:active-knockouts:v2';
+
+    private const NAVIGABLE_ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:navigable-active-knockouts:v1';
+
+    private const HISTORY_SEASON_GROUPS_CACHE_KEY = 'nav:history-season-groups:v1';
 
     public function compose(View $view): void
     {
@@ -22,6 +28,9 @@ class NavigationComposer
             'rulesets' => $this->rulesets(),
             'past_seasons' => $this->pastSeasons(),
             'active_knockouts' => $this->activeKnockouts(),
+            'navigation_rulesets' => $this->navigationRulesets(),
+            'navigation_history_season_groups' => $this->historySeasonGroups(),
+            'navigation_active_knockouts' => $this->navigableActiveKnockouts(),
         ]);
     }
 
@@ -80,6 +89,79 @@ class NavigationComposer
                 ->orderByDesc('season_id')
                 ->orderBy('name')
                 ->get(['id', 'name', 'slug']);
+        });
+    }
+
+    protected function navigationRulesets(): Collection
+    {
+        return Cache::remember(self::NAVIGATION_RULESETS_CACHE_KEY, now()->addMinutes(10), function () {
+            return $this->rulesets()
+                ->map(function (Ruleset $ruleset): array {
+                    return [
+                        'ruleset' => $ruleset,
+                        'sections' => $ruleset->openSections
+                            ->filter(fn ($section) => filled($section?->getRouteKey()))
+                            ->values(),
+                    ];
+                })
+                ->filter(fn (array $item) => $item['sections']->isNotEmpty())
+                ->values();
+        });
+    }
+
+    protected function navigableActiveKnockouts(): Collection
+    {
+        return Cache::remember(self::NAVIGABLE_ACTIVE_KNOCKOUTS_CACHE_KEY, now()->addMinutes(10), function () {
+            return $this->activeKnockouts()
+                ->filter(fn ($knockout) => filled($knockout?->slug))
+                ->values();
+        });
+    }
+
+    protected function historySeasonGroups(): Collection
+    {
+        if (! Schema::hasTable('seasons')) {
+            return collect();
+        }
+
+        $historyRulesetOrder = [
+            'international-rules' => 0,
+            'blackball-rules' => 1,
+            'epa-rules' => 2,
+        ];
+
+        return Cache::remember(self::HISTORY_SEASON_GROUPS_CACHE_KEY, now()->addMinutes(10), function () use ($historyRulesetOrder) {
+            return $this->pastSeasons()
+                ->filter(fn ($season) => $season?->hasConcluded())
+                ->values()
+                ->map(function ($season) use ($historyRulesetOrder): array {
+                    $rulesets = $season->sections
+                        ->filter(fn ($section) => $section->ruleset && filled($section->slug))
+                        ->groupBy('ruleset_id')
+                        ->map(function ($sections) use ($historyRulesetOrder): array {
+                            $firstSection = $sections->first();
+
+                            return [
+                                'ruleset' => $firstSection->ruleset,
+                                'sort_order' => $historyRulesetOrder[$firstSection->ruleset->slug ?? ''] ?? PHP_INT_MAX,
+                                'sections' => $sections
+                                    ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+                                    ->values(),
+                            ];
+                        })
+                        ->sortBy(fn (array $group) => sprintf('%03d-%s', $group['sort_order'], $group['ruleset']->name))
+                        ->values();
+
+                    $knockouts = $season->knockouts
+                        ->filter(fn ($knockout) => filled($knockout?->slug))
+                        ->values();
+
+                    return [
+                        'season' => $season,
+                        'rulesets' => $rulesets,
+                        'knockouts' => $knockouts,
+                    ];
+                });
         });
     }
 }
