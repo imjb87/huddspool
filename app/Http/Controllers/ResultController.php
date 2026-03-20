@@ -22,7 +22,10 @@ class ResultController extends Controller
             'submittedBy',
         ]);
 
-        return view('result.show', compact('result'));
+        return view('result.show', [
+            'result' => $result,
+            'submittedAt' => $result->submitted_at ?? $result->created_at,
+        ]);
     }
 
     public function create(Fixture $fixture): RedirectResponse|View

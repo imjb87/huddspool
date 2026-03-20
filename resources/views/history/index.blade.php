@@ -23,9 +23,6 @@
                         <div class="lg:col-span-2" data-history-index-accordion
                             x-data="{ openSeason: null, openRuleset: null }">
                             @forelse ($seasonGroups as $group)
-                                @php
-                                    $seasonKnockouts = collect($group['knockouts'] ?? []);
-                                @endphp
                                 <section class="border-t border-gray-200 first:border-t-0 dark:border-zinc-800/80" data-history-season-shell>
                                     <button type="button"
                                         class="flex w-full items-center justify-between gap-4 py-4 text-left transition hover:text-gray-700 dark:hover:text-gray-200"
@@ -79,7 +76,7 @@
                                             </div>
                                         @endforeach
 
-                                        @if ($seasonKnockouts->isNotEmpty())
+                                        @if ($group['knockouts']->isNotEmpty())
                                             <div class="ml-4 border-t border-gray-200 dark:border-zinc-800/80 sm:ml-6"
                                                 data-history-knockouts-shell>
                                                 <p class="py-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
@@ -87,7 +84,7 @@
                                                 </p>
 
                                                 <div class="ml-4 divide-y divide-gray-200 dark:divide-zinc-800/80 sm:ml-6">
-                                                    @foreach ($seasonKnockouts as $knockout)
+                                                    @foreach ($group['knockouts'] as $knockout)
                                                         <a href="{{ route('knockout.show', $knockout) }}"
                                                             class="flex items-center justify-between gap-3 py-3 text-sm font-medium text-gray-700 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                                             data-history-knockout-link>

@@ -32,7 +32,12 @@ class Search extends Component
 
     public function render(): View
     {
-        return view('livewire.search');
+        $normalizedSearchTerm = $this->normalizedSearchTerm();
+
+        return view('livewire.search', [
+            'resultGroups' => $this->resultGroups,
+            'searchTermLength' => strlen($normalizedSearchTerm),
+        ]);
     }
 
     /**

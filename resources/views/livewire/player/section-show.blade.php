@@ -44,7 +44,7 @@
                                     <div class="py-2 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center relative">
                                         {{ $player->frames_won }}
                                         <span class="items-center rounded-md bg-green-100 px-1 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300 absolute left-full -translate-x-1/2">
-                                            {{ rtrim(rtrim(number_format($player->frames_won_percentage, 1), '0'), '.') }}%
+                                            {{ \App\Support\PercentageFormatter::trimmedSingleDecimal($player->frames_won_percentage) }}%
                                         </span>
                                     </div>
                                     <div class="py-2 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center">

@@ -6,6 +6,7 @@ use App\Models\Fixture;
 use App\Models\Section;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -61,8 +62,41 @@ class SectionFixtures extends Component
         return view(
             'livewire.section-fixtures',
             [
+                'history' => false,
                 'fixtures' => $this->fixtures,
+                'fixtureRows' => $this->fixtureRows(),
             ]
         );
+    }
+
+    /**
+     * @return SupportCollection<int, object>
+     */
+    public function fixtureRows(): SupportCollection
+    {
+        $isHistoryView = false;
+
+        return $this->fixtures->map(function (Fixture $fixture) use ($isHistoryView) {
+            $isByeFixture = $fixture->isBye();
+            $fixtureLink = $fixture->result
+                ? route('result.show', $fixture->result)
+                : (! $isHistoryView ? route('fixture.show', $fixture) : null);
+            $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
+                ? $fixture->result->home_team_name
+                : $fixture->homeTeam->name;
+            $awayDisplayName = $isHistoryView && $fixture->result?->away_team_name
+                ? $fixture->result->away_team_name
+                : $fixture->awayTeam->name;
+
+            return (object) [
+                'fixture' => $fixture,
+                'is_bye' => $isByeFixture,
+                'link' => $fixtureLink,
+                'home_team_name' => $fixture->homeTeam->shortname && ! $isHistoryView ? $fixture->homeTeam->shortname : $homeDisplayName,
+                'away_team_name' => $fixture->awayTeam->shortname && ! $isHistoryView ? $fixture->awayTeam->shortname : $awayDisplayName,
+                'row_meta' => $fixture->fixture_date->format('j M Y'),
+                'row_classes' => 'block rounded-lg',
+            ];
+        });
     }
 }

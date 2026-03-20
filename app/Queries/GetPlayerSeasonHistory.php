@@ -12,7 +12,6 @@ class GetPlayerSeasonHistory
 {
     public function __construct(
         protected User $player,
-        protected ?SeasonLabelFormatter $seasonLabelFormatter = null,
     ) {}
 
     public function __invoke(): Collection
@@ -78,7 +77,7 @@ class GetPlayerSeasonHistory
                     'season_id' => $row->season_id,
                     'season_name' => $row->season_name,
                     'season_slug' => $row->season_slug,
-                    'season_label' => $this->seasonLabelFormatter()->for($row->season_name, $row->season_dates ?? []),
+                    'season_label' => SeasonLabelFormatter::format($row->season_name, $row->season_dates ?? []),
                     'section_id' => $row->section_id,
                     'section_name' => $row->section_name,
                     'ruleset_id' => $row->ruleset_id,
@@ -94,10 +93,5 @@ class GetPlayerSeasonHistory
                 ];
             })->filter(fn ($entry) => $entry['season_id']);
         });
-    }
-
-    protected function seasonLabelFormatter(): SeasonLabelFormatter
-    {
-        return $this->seasonLabelFormatter ??= app(SeasonLabelFormatter::class);
     }
 }

@@ -9,19 +9,6 @@
 
         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80 lg:col-span-2" data-account-team-management>
             @foreach ($this->teamMembers as $member)
-                @php
-                    $framesPlayed = (int) $member->frames_played;
-                    $framesWon = (int) $member->frames_won;
-                    $framesLost = (int) $member->frames_lost;
-                    $rawWonPercentage = $framesPlayed > 0 ? ($framesWon / $framesPlayed) * 100 : 0;
-                    $rawLostPercentage = $framesPlayed > 0 ? ($framesLost / $framesPlayed) * 100 : 0;
-                    $wonPercentage = fmod($rawWonPercentage, 1.0) === 0.0
-                        ? number_format($rawWonPercentage, 0)
-                        : number_format($rawWonPercentage, 1);
-                    $lostPercentage = fmod($rawLostPercentage, 1.0) === 0.0
-                        ? number_format($rawLostPercentage, 0)
-                        : number_format($rawLostPercentage, 1);
-                @endphp
                 <div class="py-4">
                     <div class="flex items-center gap-3 sm:gap-4">
                         <div class="min-w-0 flex-1">
@@ -43,22 +30,22 @@
                             <div class="w-14 sm:w-20">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
                                 <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $framesPlayed }}</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ (int) $member->frames_played }}</p>
                                     <span class="invisible inline-flex items-center rounded-md px-1 py-0.5 text-[10px] font-semibold">0%</span>
                                 </div>
                             </div>
                             <div class="w-14 sm:w-20">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Won</p>
                                 <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ $framesWon }}</p>
-                                    <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">{{ $wonPercentage }}%</span>
+                                    <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ (int) $member->frames_won }}</p>
+                                    <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">{{ \App\Support\PercentageFormatter::ratio((int) $member->frames_won, (int) $member->frames_played) }}%</span>
                                 </div>
                             </div>
                             <div class="w-14 sm:w-20">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Lost</p>
                                 <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $framesLost }}</p>
-                                    <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300">{{ $lostPercentage }}%</span>
+                                    <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ (int) $member->frames_lost }}</p>
+                                    <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300">{{ \App\Support\PercentageFormatter::ratio((int) $member->frames_lost, (int) $member->frames_played) }}%</span>
                                 </div>
                             </div>
                         </div>

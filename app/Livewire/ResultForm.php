@@ -7,6 +7,8 @@ use App\Models\Fixture;
 use App\Models\FixtureResultLock;
 use App\Models\Frame;
 use App\Models\Result;
+use App\Support\ResultFormDraftStore;
+use App\Support\ResultFormFrameRowBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -89,7 +91,9 @@ class ResultForm extends Component
 
     public function render(): View
     {
-        return view('livewire.result-form');
+        return view('livewire.result-form', [
+            'frameRows' => (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames),
+        ]);
     }
 
     private function guardAccess(): void
@@ -159,7 +163,10 @@ class ResultForm extends Component
     {
         $this->result = $result?->load(['frames' => fn ($query) => $query->orderBy('id')]);
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
-        $this->form->syncFromResultAndDraft($this->result, $this->draftFramesFromSession());
+        $this->form->syncFromResultAndDraft(
+            $this->result,
+            (new ResultFormDraftStore)->get((int) auth()->id(), (int) $this->fixture->getKey()),
+        );
     }
 
     public function handleFrameUpdate(): void
@@ -343,59 +350,14 @@ class ResultForm extends Component
         $this->clearLockState();
     }
 
-    /**
-     * @return array<int, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null
-     */
-    private function draftFramesFromSession(): ?array
-    {
-        $draftFrames = session($this->draftFramesSessionKey());
-
-        return is_array($draftFrames) ? $draftFrames : null;
-    }
-
     private function persistDraftFramesToSession(): void
     {
-        if ($this->draftFramesAreEmpty()) {
-            $this->clearDraftFramesFromSession();
-
-            return;
-        }
-
-        session()->put($this->draftFramesSessionKey(), $this->form->frames);
+        (new ResultFormDraftStore)->put((int) auth()->id(), (int) $this->fixture->getKey(), $this->form->frames);
     }
 
     private function clearDraftFramesFromSession(): void
     {
-        session()->forget($this->draftFramesSessionKey());
-    }
-
-    private function draftFramesAreEmpty(): bool
-    {
-        foreach ($this->form->frames as $frame) {
-            $homePlayerId = $frame['home_player_id'] ?? null;
-            $awayPlayerId = $frame['away_player_id'] ?? null;
-            $homeScore = (int) ($frame['home_score'] ?? 0);
-            $awayScore = (int) ($frame['away_score'] ?? 0);
-
-            if ($homePlayerId !== null && $homePlayerId !== '') {
-                return false;
-            }
-
-            if ($awayPlayerId !== null && $awayPlayerId !== '') {
-                return false;
-            }
-
-            if ($homeScore > 0 || $awayScore > 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function draftFramesSessionKey(): string
-    {
-        return 'result-form-draft:'.auth()->id().':'.$this->fixture->getKey();
+        (new ResultFormDraftStore)->forget((int) auth()->id(), (int) $this->fixture->getKey());
     }
 
     private function redirectToFixtureOrResult(): Redirector

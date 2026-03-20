@@ -118,9 +118,6 @@
             @endif
 
             @if ($result->is_confirmed && $result->submittedBy)
-                @php
-                    $submittedAt = $result->submitted_at ?? $result->created_at;
-                @endphp
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                     Submitted by {{ $result->submittedBy->name }} on {{ $submittedAt->format('j M Y') }} at {{ $submittedAt->format('H:i') }}.
                 </p>

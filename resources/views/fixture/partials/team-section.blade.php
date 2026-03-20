@@ -10,19 +10,6 @@
         <div class="lg:col-span-2">
             <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                 @foreach ($players as $player)
-                    @php
-                        $framesPlayed = (int) $player->frames_played;
-                        $framesWon = (int) $player->frames_won;
-                        $framesLost = (int) $player->frames_lost;
-                        $rawWonPercentage = $framesPlayed > 0 ? ($framesWon / $framesPlayed) * 100 : 0;
-                        $rawLostPercentage = $framesPlayed > 0 ? ($framesLost / $framesPlayed) * 100 : 0;
-                        $wonPercentage = fmod($rawWonPercentage, 1.0) === 0.0
-                            ? number_format($rawWonPercentage, 0)
-                            : number_format($rawWonPercentage, 1);
-                        $lostPercentage = fmod($rawLostPercentage, 1.0) === 0.0
-                            ? number_format($rawLostPercentage, 0)
-                            : number_format($rawLostPercentage, 1);
-                    @endphp
                     <a href="{{ route('player.show', $player->id) }}"
                         class="block"
                         wire:key="{{ $sectionKey }}-{{ $player->id }}">
@@ -41,22 +28,22 @@
                                 <div class="w-16">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
                                     <div class="mt-1 flex flex-col items-center gap-1">
-                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $framesPlayed }}</p>
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ (int) $player->frames_played }}</p>
                                         <span class="invisible inline-flex items-center rounded-md px-1 py-0.5 text-[10px] font-semibold">0%</span>
                                     </div>
                                 </div>
                                 <div class="w-16">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Won</p>
                                     <div class="mt-1 flex flex-col items-center gap-1">
-                                        <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ $framesWon }}</p>
-                                        <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">{{ $wonPercentage }}%</span>
+                                        <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ (int) $player->frames_won }}</p>
+                                        <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">{{ \App\Support\PercentageFormatter::ratio((int) $player->frames_won, (int) $player->frames_played) }}%</span>
                                     </div>
                                 </div>
                                 <div class="w-16">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Lost</p>
                                     <div class="mt-1 flex flex-col items-center gap-1">
-                                        <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $framesLost }}</p>
-                                        <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300">{{ $lostPercentage }}%</span>
+                                        <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ (int) $player->frames_lost }}</p>
+                                        <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300">{{ \App\Support\PercentageFormatter::ratio((int) $player->frames_lost, (int) $player->frames_played) }}%</span>
                                     </div>
                                 </div>
                             </div>

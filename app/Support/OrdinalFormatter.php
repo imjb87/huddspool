@@ -8,6 +8,11 @@ class OrdinalFormatter
 {
     public function for(int $number): string
     {
+        return self::format($number);
+    }
+
+    public static function format(int $number): string
+    {
         $suffix = match (true) {
             $number % 100 >= 11 && $number % 100 <= 13 => 'th',
             $number % 10 === 1 => 'st',

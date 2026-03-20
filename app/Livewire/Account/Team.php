@@ -83,7 +83,7 @@ class Team extends BaseAccountComponent
 
         return (object) [
             'position' => $position,
-            'label' => app(OrdinalFormatter::class)->for($position).' of '.$standings->count(),
+            'label' => OrdinalFormatter::format($position).' of '.$standings->count(),
             'points' => (int) ($standing->points ?? 0),
             'played' => (int) ($standing->played ?? 0),
         ];

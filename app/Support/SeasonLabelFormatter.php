@@ -8,6 +8,11 @@ class SeasonLabelFormatter
 {
     public function for(?string $seasonName, mixed $seasonDates): string
     {
+        return self::format($seasonName, $seasonDates);
+    }
+
+    public static function format(?string $seasonName, mixed $seasonDates): string
+    {
         $dates = collect(is_string($seasonDates) ? json_decode($seasonDates, true) : $seasonDates);
 
         $firstDate = $dates

@@ -1,75 +1,54 @@
 <section data-section-fixtures-view class="mt-0">
-    @php
-        $isHistoryView = $history ?? false;
-        $summaryCopy = $isHistoryView
-            ? 'Archived fixtures and submitted results for this section by week.'
-            : 'Current fixtures and submitted results for this section by week.';
-    @endphp
     <div class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
             <div class="space-y-2">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures & Results</h2>
                 <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    {{ $summaryCopy }}
+                    {{ ($history ?? false)
+                        ? 'Archived fixtures and submitted results for this section by week.'
+                        : 'Current fixtures and submitted results for this section by week.' }}
                 </p>
             </div>
 
             <div class="lg:col-span-2">
                 <div data-section-fixtures-shell>
                     <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" wire:loading.remove wire:target="previousWeek, nextWeek">
-                        @forelse ($fixtures as $fixture)
-                            @php
-                                $isByeFixture = $fixture->isBye();
-                                $fixtureLink = $fixture->result
-                                    ? route('result.show', $fixture->result)
-                                    : (! $isHistoryView ? route('fixture.show', $fixture) : null);
-                                $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
-                                    ? $fixture->result->home_team_name
-                                    : $fixture->homeTeam->name;
-                                $awayDisplayName = $isHistoryView && $fixture->result?->away_team_name
-                                    ? $fixture->result->away_team_name
-                                    : $fixture->awayTeam->name;
-                                $homeTeamName = $fixture->homeTeam->shortname && ! $isHistoryView ? $fixture->homeTeam->shortname : $homeDisplayName;
-                                $awayTeamName = $fixture->awayTeam->shortname && ! $isHistoryView ? $fixture->awayTeam->shortname : $awayDisplayName;
-                                $rowMeta = $fixture->fixture_date->format('j M Y');
-                                $rowClasses = 'block rounded-lg';
-                            @endphp
-
-                            <div wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}">
-                                @if ($fixtureLink === null || $isByeFixture)
-                                    <div class="{{ $rowClasses }}">
+                        @forelse ($fixtureRows as $row)
+                            <div wire:key="section-fixture-{{ $section->id }}-{{ $row->fixture->id }}">
+                                @if ($row->link === null || $row->is_bye)
+                                    <div class="{{ $row->row_classes }}">
                                 @else
-                                    <a class="{{ $rowClasses }}"
-                                        href="{{ $fixtureLink }}">
+                                    <a class="{{ $row->row_classes }}"
+                                        href="{{ $row->link }}">
                                 @endif
                                         <div class="flex items-start justify-between gap-4 py-4" data-section-fixtures-band>
                                             <div class="min-w-0 flex-1">
                                                 <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                                    {{ $homeTeamName }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $awayTeamName }}
+                                                    {{ $row->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $row->away_team_name }}
                                                 </p>
                                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $rowMeta }}
+                                                    {{ $row->row_meta }}
                                                 </p>
                                             </div>
 
                                             <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                                                @if ($fixture->result)
+                                                @if ($row->fixture->result)
                                                     <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
                                                         data-section-fixtures-score-pill>
                                                         <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
-                                                            {{ $fixture->result->home_score ?? '' }}
+                                                            {{ $row->fixture->result->home_score ?? '' }}
                                                         </div>
                                                         <div class="w-px bg-white/25"></div>
                                                         <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
-                                                            {{ $fixture->result->away_score ?? '' }}
+                                                            {{ $row->fixture->result->away_score ?? '' }}
                                                         </div>
                                                     </div>
                                                 @else
-                                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $fixture->fixture_date->format('j M') }}</p>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $row->fixture->fixture_date->format('j M') }}</p>
                                                 @endif
                                             </div>
                                         </div>
-                                @if ($fixtureLink === null || $isByeFixture)
+                                @if ($row->link === null || $row->is_bye)
                                     </div>
                                 @else
                                     </a>

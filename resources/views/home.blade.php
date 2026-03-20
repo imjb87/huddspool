@@ -62,13 +62,6 @@
                             data-home-live-scores-shell
                             data-home-live-scores-list>
                             @foreach ($liveScores as $result)
-                                @php
-                                    $rowMeta = collect([
-                                        $result->fixture?->fixture_date?->format('j M Y'),
-                                        $result->section?->name,
-                                        $result->section?->ruleset?->name,
-                                    ])->filter()->implode(' / ');
-                                @endphp
                                 <div class="py-4" data-home-live-score-row>
                                     <a href="{{ route('result.show', $result) }}" class="block rounded-lg">
                                         <div class="flex items-start justify-between gap-4">
@@ -76,8 +69,8 @@
                                                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                                     {{ $result->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $result->away_team_name }}
                                                 </p>
-                                                @if ($rowMeta !== '')
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $rowMeta }}</p>
+                                                @if ($result->row_meta !== '')
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $result->row_meta }}</p>
                                                 @endif
                                             </div>
 
@@ -115,7 +108,7 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    @if ($news->isEmpty())
+                    @if (! $featuredArticle)
                         <div class="border-t border-gray-200 pt-6 dark:border-zinc-800" data-home-news-empty>
                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">No league news has been published yet.</p>
                             <p class="mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
@@ -123,14 +116,6 @@
                             </p>
                         </div>
                     @else
-                        @php
-                            $featuredArticle = $news->first();
-                            $secondaryArticles = $news->slice(1);
-                            $featuredParagraphs = collect(preg_split('/\r\n|\r|\n/', trim((string) $featuredArticle->content)))
-                                ->filter()
-                                ->take(3);
-                        @endphp
-
                         <div class="border-t border-gray-200 pt-6 dark:border-zinc-800" data-home-news-grid>
                             <article data-home-news-featured>
                                 <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -145,10 +130,10 @@
 
                                 <div class="mt-4 space-y-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
                                     @foreach ($featuredParagraphs as $paragraph)
-                                        <p>{{ $paragraph }}</p>
-                                    @endforeach
-                                </div>
-                            </article>
+                                            <p>{{ $paragraph }}</p>
+                                        @endforeach
+                                    </div>
+                                </article>
 
                             @if ($secondaryArticles->isNotEmpty())
                                 <div class="mt-6 divide-y divide-gray-200 border-t border-gray-200 dark:divide-zinc-800 dark:border-zinc-800" data-home-news-list>

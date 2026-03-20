@@ -57,6 +57,6 @@ abstract class BaseAccountComponent extends Component
 
     protected function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
     {
-        return app(ResultSubmissionPromptResolver::class);
+        return new ResultSubmissionPromptResolver;
     }
 }
