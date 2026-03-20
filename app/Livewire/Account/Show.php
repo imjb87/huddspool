@@ -6,7 +6,6 @@ use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
-use App\Queries\GetTeamPlayers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -102,16 +101,6 @@ class Show extends BaseAccountComponent
     public function knockoutMatches(): Collection
     {
         return new GetPlayerKnockoutMatches($this->user)();
-    }
-
-    #[Computed]
-    public function teamMembers(): Collection
-    {
-        if (! $this->team) {
-            return collect();
-        }
-
-        return new GetTeamPlayers($this->team, $this->currentSection)();
     }
 
     public function render(): View

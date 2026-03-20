@@ -5,7 +5,9 @@ namespace App\Livewire\Account;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Queries\GetTeamPlayers;
 use App\Support\ResultSubmissionPromptResolver;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -33,6 +35,16 @@ abstract class BaseAccountComponent extends Component
     public function currentSection(): ?Section
     {
         return $this->team?->openSection();
+    }
+
+    #[Computed]
+    public function teamMembers(): Collection
+    {
+        if (! $this->team) {
+            return collect();
+        }
+
+        return new GetTeamPlayers($this->team, $this->currentSection)();
     }
 
     #[Computed]

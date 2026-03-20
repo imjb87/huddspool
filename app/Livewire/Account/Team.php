@@ -4,11 +4,10 @@ namespace App\Livewire\Account;
 
 use App\Models\Fixture;
 use App\Queries\GetTeamKnockoutMatches;
-use App\Queries\GetTeamPlayers;
+use App\Support\OrdinalFormatter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 
@@ -25,16 +24,6 @@ class Team extends BaseAccountComponent
     public function canManageTeam(): bool
     {
         return $this->user->isCaptain() || $this->user->isTeamAdmin();
-    }
-
-    #[Computed]
-    public function teamMembers(): Collection
-    {
-        if (! $this->team) {
-            return collect();
-        }
-
-        return new GetTeamPlayers($this->team, $this->currentSection)();
     }
 
     #[Computed]
@@ -94,7 +83,7 @@ class Team extends BaseAccountComponent
 
         return (object) [
             'position' => $position,
-            'label' => $this->ordinal($position).' of '.$standings->count(),
+            'label' => app(OrdinalFormatter::class)->for($position).' of '.$standings->count(),
             'points' => (int) ($standing->points ?? 0),
             'played' => (int) ($standing->played ?? 0),
         ];
@@ -103,18 +92,5 @@ class Team extends BaseAccountComponent
     public function render(): View
     {
         return view('livewire.account.team');
-    }
-
-    private function ordinal(int $number): string
-    {
-        $suffix = match (true) {
-            $number % 100 >= 11 && $number % 100 <= 13 => 'th',
-            $number % 10 === 1 => 'st',
-            $number % 10 === 2 => 'nd',
-            $number % 10 === 3 => 'rd',
-            default => 'th',
-        };
-
-        return Str::of($number)->append($suffix)->toString();
     }
 }
