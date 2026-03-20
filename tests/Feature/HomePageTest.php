@@ -36,7 +36,7 @@ class HomePageTest extends TestCase
         $response->assertSee('from-green-950 via-green-800 to-green-600 pt-[72px] text-white lg:pt-[80px]', false);
         $response->assertSee('mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14', false);
         $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
-        $response->assertSee('lg:col-span-2 lg:text-left', false);
+        $response->assertSee('space-y-3 text-left lg:col-span-2 lg:pr-12 xl:pr-16', false);
         $response->assertSee('relative w-36 drop-shadow-2xl sm:w-40 lg:w-44', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSeeText('Tables, fixtures, results and averages for every section');

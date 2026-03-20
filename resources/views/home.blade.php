@@ -5,7 +5,7 @@
         class="overflow-hidden bg-linear-to-br from-green-950 via-green-800 to-green-600 pt-[72px] text-white lg:pt-[80px]">
         <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14">
             <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-                <div class="flex justify-center lg:justify-start">
+                <div class="flex justify-start">
                     <div class="relative">
                         <div class="absolute inset-0 rounded-full bg-white/10 blur-3xl"></div>
                         <img class="relative w-36 drop-shadow-2xl sm:w-40 lg:w-44"
@@ -13,7 +13,7 @@
                     </div>
                 </div>
 
-                <div class="space-y-3 text-center lg:col-span-2 lg:text-left">
+                <div class="space-y-3 text-left lg:col-span-2 lg:pr-12 xl:pr-16">
                     <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-[2.75rem]">
                         Everything for league night, in one place.
                     </h1>
