@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Account;
 
-use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Models\KnockoutMatch;
 use App\Models\Section;
@@ -85,46 +84,6 @@ class Show extends Component
 
         $this->avatarUpload = null;
         $this->removeAvatar = true;
-    }
-
-    public function promoteToTeamAdmin(int $playerId): void
-    {
-        $member = $this->captainTeamMember($playerId);
-
-        $member->update([
-            'role' => UserRole::TeamAdmin->value,
-        ]);
-
-        unset($this->user);
-        unset($this->teamMembers);
-
-        session()->flash('status', 'Player promoted to team admin');
-    }
-
-    public function removeFromTeam(int $playerId): void
-    {
-        $member = $this->captainTeamMember($playerId);
-
-        if ($member->is($this->user)) {
-            abort(403);
-        }
-
-        if ($this->team && $this->team->captain_id === $member->id) {
-            abort(403);
-        }
-
-        $member->update([
-            'team_id' => null,
-            'role' => UserRole::Player->value,
-        ]);
-
-        unset($this->user);
-        unset($this->team);
-        unset($this->teamMembers);
-        unset($this->record);
-        unset($this->frames);
-
-        session()->flash('status', 'Player removed from team');
     }
 
     #[Computed]
@@ -233,14 +192,5 @@ class Show extends Component
     private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
     {
         return app(ResultSubmissionPromptResolver::class);
-    }
-
-    private function captainTeamMember(int $playerId): User
-    {
-        if (! $this->user->isCaptain() || ! $this->team) {
-            abort(403);
-        }
-
-        return $this->team->players()->whereKey($playerId)->firstOrFail();
     }
 }
