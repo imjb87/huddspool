@@ -75,17 +75,24 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
         $response->assertSee('data-knockouts-nav', false);
+        $response->assertSee('data-mobile-history-trigger', false);
+        $response->assertSee('data-mobile-history-links', false);
         $response->assertSee('data-mobile-knockouts-trigger', false);
         $response->assertSee('data-mobile-knockouts-links', false);
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee('open ? closeMenu() : openMenu()', false);
+        $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
+        $response->assertSee("@click=\"openDrawer('history')\"", false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
         $response->assertSee('@mouseenter="open = true"', false);
         $response->assertSee('@mouseleave="open = false"', false);
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
-        $response->assertSee('rounded-lg px-3 py-3 text-base font-semibold leading-7 text-gray-900', false);
+        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800/80 dark:bg-zinc-900', false);
+        $response->assertSee('dark:bg-zinc-900', false);
+        $response->assertDontSee('dark:backdrop-blur', false);
+        $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
         $response->assertSee('aria-label="Toggle main menu"', false);
         $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
@@ -135,6 +142,50 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('Knockout Dates');
         $response->assertDontSeeText('Archived Knockout');
         $response->assertDontSee('href="'.route('knockout.index').'"', false);
+    }
+
+    public function test_home_page_lists_history_index_content_in_mobile_drawers(): void
+    {
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $historySeason = Season::factory()->create([
+            'is_open' => false,
+            'name' => 'Winter 2025',
+        ]);
+
+        $ruleset = Ruleset::factory()->create([
+            'name' => 'International Rules',
+            'slug' => 'international-rules',
+        ]);
+
+        Section::factory()->create([
+            'season_id' => $openSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Current Section',
+        ]);
+
+        $historySection = Section::factory()->create([
+            'season_id' => $historySeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Archived Section One',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('data-mobile-history-trigger', false);
+        $response->assertSee('data-mobile-history-links', false);
+        $response->assertSee('data-mobile-history-season-trigger', false);
+        $response->assertSee('data-mobile-history-ruleset-trigger', false);
+        $response->assertSee('data-mobile-history-section-links', false);
+        $response->assertSee('data-mobile-menu-panel="history"', false);
+        $response->assertSee('data-mobile-menu-panel="history-season-'.$historySeason->id.'"', false);
+        $response->assertSee('Winter 2025', false);
+        $response->assertSee('International Rules', false);
+        $response->assertSee('Archived Section One', false);
+        $response->assertSee(
+            'href="'.route('history.section.show', ['season' => $historySeason, 'ruleset' => $ruleset, 'section' => $historySection]).'"',
+            false
+        );
     }
 
     public function test_knockout_index_redirects_to_knockout_dates_page(): void

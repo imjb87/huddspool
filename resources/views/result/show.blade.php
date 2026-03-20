@@ -83,15 +83,15 @@
                     </section>
 
                     <section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-result-card-section>
-                        <div class="space-y-5">
+                        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
                             <div class="space-y-2">
                                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result card</h3>
-                                <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">
+                                <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                                     Frame-by-frame scores, match totals, and submission details.
                                 </p>
                             </div>
 
-                            <div class="space-y-5">
+                            <div class="space-y-5 lg:col-span-2">
                                 @if (! $result->is_confirmed)
                                     <div class="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 dark:border-yellow-900/60 dark:bg-yellow-950/30">
                                         <p class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
@@ -100,129 +100,105 @@
                                     </div>
                                 @endif
 
-                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
-                                    <div class="hidden bg-linear-to-br from-green-900 via-green-800 to-green-700 sm:flex">
-                                        <div class="flex-1 px-4 py-2 text-right text-sm leading-6 font-semibold text-white">
-                                            Home
-                                        </div>
-                                        <div class="w-12 py-3 text-center text-sm leading-6 font-semibold text-white/80">
-                                        </div>
-                                        <div class="flex-1 px-4 py-2 text-left text-sm leading-6 font-semibold text-white">
-                                            Away
+                                @if ($result->is_overridden)
+                                    <div class="px-4 py-10 text-center sm:px-6">
+                                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
+                                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result overridden</h3>
+                                            <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
+                                                This match result was overridden by an admin.
+                                            </p>
                                         </div>
                                     </div>
-
-                                    @if ($result->is_overridden)
-                                        <div class="px-6 py-4">
-                                            <div class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-zinc-700">
-                                                <span class="mt-2 block text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                                    This match was overridden by an admin.
-                                                </span>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                @else
+                                    <div class="space-y-4" data-result-card-shell>
+                                        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-result-card-frames>
                                             @foreach ($result->frames as $key => $frame)
-                                                <div class="flex flex-wrap bg-white dark:bg-transparent">
-                                                    <div
-                                                        class="order-2 flex w-full border-y border-gray-200 dark:border-zinc-800/80 sm:order-first sm:w-auto sm:flex-1 sm:border-0">
-                                                        @if ($frame->home_player_id)
-                                                            <a href="{{ route('player.show', $frame->homePlayer) }}"
-                                                                class="flex-1 border-0 px-4 py-2 text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100">
-                                                                <span class="flex items-center gap-3">
-                                                                    <img class="h-6 w-6 rounded-full object-cover"
-                                                                        src="{{ $frame->homePlayer->avatar_url }}"
-                                                                        alt="{{ $frame->homePlayer->name }} avatar">
-                                                                    <span>{{ $frame->homePlayer->name }}</span>
-                                                                </span>
-                                                            </a>
-                                                        @else
-                                                            <div
-                                                                class="flex-1 border-0 px-4 py-2 text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100">
-                                                                <span class="flex items-center gap-3">
-                                                                    <img class="h-6 w-6 rounded-full object-cover"
-                                                                        src="{{ asset('/images/user.jpg') }}"
-                                                                        alt="Awarded">
-                                                                    <span>Awarded</span>
-                                                                </span>
-                                                            </div>
-                                                        @endif
-                                                        <div class="w-10 border-x border-gray-200 dark:border-zinc-800/80 sm:w-12">
-                                                            <div
-                                                                class="block w-full px-0 py-2 text-center text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100">
-                                                                {{ $frame->home_score }}
+                                                <div class="py-4" wire:key="result-frame-{{ $frame->id }}">
+                                                    <div class="flex items-start justify-between gap-4" data-result-card-band>
+                                                        <div class="min-w-0 flex-1">
+                                                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">
+                                                                Frame {{ $key + 1 }}
+                                                            </p>
+                                                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                                @if ($frame->home_player_id)
+                                                                    <a href="{{ route('player.show', $frame->homePlayer) }}"
+                                                                        class="inline-flex min-w-0 items-center gap-2 transition hover:text-gray-500 dark:hover:text-gray-300">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ $frame->homePlayer->avatar_url }}"
+                                                                            alt="{{ $frame->homePlayer->name }} avatar">
+                                                                        <span class="truncate">{{ $frame->homePlayer->name }}</span>
+                                                                    </a>
+                                                                @else
+                                                                    <span class="inline-flex min-w-0 items-center gap-2">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ asset('/images/user.jpg') }}"
+                                                                            alt="Awarded">
+                                                                        <span class="truncate">Awarded</span>
+                                                                    </span>
+                                                                @endif
+
+                                                                <span class="font-normal text-gray-400 dark:text-gray-500">vs</span>
+
+                                                                @if ($frame->away_player_id)
+                                                                    <a href="{{ route('player.show', $frame->awayPlayer) }}"
+                                                                        class="inline-flex min-w-0 items-center gap-2 transition hover:text-gray-500 dark:hover:text-gray-300">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ $frame->awayPlayer->avatar_url }}"
+                                                                            alt="{{ $frame->awayPlayer->name }} avatar">
+                                                                        <span class="truncate">{{ $frame->awayPlayer->name }}</span>
+                                                                    </a>
+                                                                @else
+                                                                    <span class="inline-flex min-w-0 items-center gap-2">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ asset('/images/user.jpg') }}"
+                                                                            alt="Awarded">
+                                                                        <span class="truncate">Awarded</span>
+                                                                    </span>
+                                                                @endif
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div
-                                                        class="order-first w-full bg-gray-50 px-4 py-2 text-left text-sm leading-6 font-semibold text-gray-900 dark:bg-zinc-700 dark:text-gray-100 sm:order-2 sm:w-12 sm:px-0 sm:text-center">
-                                                        <span class="sm:hidden">Frame </span>{{ $key + 1 }}
-                                                    </div>
-
-                                                    <div class="order-last flex w-full sm:w-auto sm:flex-1">
-                                                        <div class="order-last w-10 border-x border-gray-200 dark:border-zinc-800/80 sm:order-first sm:w-12">
-                                                            <div
-                                                                class="block w-full px-0 py-2 text-center text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100">
-                                                                {{ $frame->away_score }}
+                                                        <div class="ml-auto flex shrink-0 self-center items-center text-right">
+                                                            <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700"
+                                                                data-result-frame-score-pill>
+                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $frame->home_score }}</div>
+                                                                <div class="w-px bg-gray-300/70 dark:bg-zinc-600"></div>
+                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $frame->away_score }}</div>
                                                             </div>
                                                         </div>
-                                                        @if ($frame->away_player_id)
-                                                            <a href="{{ route('player.show', $frame->awayPlayer) }}"
-                                                                class="order-first flex-1 border-0 px-4 py-2 text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100 sm:order-last">
-                                                                <span class="flex items-center gap-3">
-                                                                    <img class="h-6 w-6 rounded-full object-cover"
-                                                                        src="{{ $frame->awayPlayer->avatar_url }}"
-                                                                        alt="{{ $frame->awayPlayer->name }} avatar">
-                                                                    <span>{{ $frame->awayPlayer->name }}</span>
-                                                                </span>
-                                                            </a>
-                                                        @else
-                                                            <div
-                                                                class="order-first flex-1 border-0 px-4 py-2 text-sm leading-6 text-gray-900 focus:ring-0 focus:outline-0 dark:text-gray-100 sm:order-last">
-                                                                <span class="flex items-center gap-3">
-                                                                    <img class="h-6 w-6 rounded-full object-cover"
-                                                                        src="{{ asset('/images/user.jpg') }}"
-                                                                        alt="Awarded">
-                                                                    <span>Awarded</span>
-                                                                </span>
-                                                            </div>
-                                                        @endif
                                                     </div>
                                                 </div>
                                             @endforeach
+                                        </div>
 
-                                            <div class="flex flex-wrap bg-gray-50 text-sm font-semibold text-gray-900 dark:bg-zinc-800/70 dark:text-gray-100">
-                                                <div class="flex w-full border-b border-gray-200 dark:border-zinc-800/80 sm:w-auto sm:flex-1 sm:border-b-0">
-                                                    <div class="flex-1 px-4 py-2 leading-6 sm:text-right">
-                                                        Home total
-                                                    </div>
-                                                    <div class="w-10 border-x border-gray-200 py-2 text-center leading-6 dark:border-zinc-800/80 sm:w-12">
-                                                        {{ $result->home_score }}
-                                                    </div>
-                                                </div>
-                                                <div class="hidden w-12 bg-gray-50 dark:bg-zinc-800/70 sm:block"></div>
-                                                <div class="flex w-full sm:w-auto sm:flex-1">
-                                                    <div class="order-last w-10 border-x border-gray-200 py-2 text-center leading-6 dark:border-zinc-800/80 sm:order-first sm:w-12">
-                                                        {{ $result->away_score }}
-                                                    </div>
-                                                    <div class="order-first flex-1 px-4 py-2 leading-6 sm:order-last">
-                                                        Away total
-                                                    </div>
+                                        <div class="flex items-start justify-between gap-4 py-1" data-result-card-band>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
+                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ $result->home_team_name }}
+                                                    <span class="text-gray-300 dark:text-zinc-600">/</span>
+                                                    {{ $result->away_team_name }}
+                                                </p>
+                                            </div>
+
+                                            <div class="ml-auto flex shrink-0 self-center items-center text-right">
+                                                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                                    data-result-score-pill>
+                                                    <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $result->home_score }}</div>
+                                                    <div class="w-px bg-white/25"></div>
+                                                    <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $result->away_score }}</div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
 
                                 @if ($result->is_confirmed && $result->submittedBy)
                                     @php
                                         $submittedAt = $result->submitted_at ?? $result->created_at;
                                     @endphp
-                                    <p class="text-center text-sm italic text-gray-500 dark:text-gray-400">
-                                        This result was submitted by {{ $result->submittedBy->name }} on
-                                        {{ $submittedAt->format('l jS F Y') }} at
-                                        {{ $submittedAt->format('H:i') }}.
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Submitted by {{ $result->submittedBy->name }} on {{ $submittedAt->format('j M Y') }} at {{ $submittedAt->format('H:i') }}.
                                     </p>
                                 @endif
                             </div>

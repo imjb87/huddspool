@@ -26,6 +26,7 @@ class ResultShowTest extends TestCase
             $section = Section::factory()->create([
                 'season_id' => $season->id,
                 'ruleset_id' => $ruleset->id,
+                'slug' => 'test-section',
             ]);
 
             Team::factory()->create();
@@ -75,6 +76,10 @@ class ResultShowTest extends TestCase
             ->assertSee('data-result-page', false)
             ->assertSee('data-result-info-section', false)
             ->assertSee('data-result-card-section', false)
+            ->assertSee('data-result-card-shell', false)
+            ->assertSee('data-result-card-frames', false)
+            ->assertSee('data-result-score-pill', false)
+            ->assertSee('data-result-frame-score-pill', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Result information')

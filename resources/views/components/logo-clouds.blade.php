@@ -46,7 +46,7 @@
 @endphp
 
 @if ($variant === 'section-showcase')
-    <section {{ $attributes->class([$paddingClasses, 'bg-gray-50 dark:bg-zinc-900']) }} data-section-sponsors>
+    <section {{ $attributes->class([$paddingClasses, 'bg-gray-50 dark:bg-zinc-800/75']) }} data-section-sponsors>
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="grid gap-8 py-8 sm:py-10 lg:grid-cols-3 lg:gap-10">
                 <div class="space-y-2">

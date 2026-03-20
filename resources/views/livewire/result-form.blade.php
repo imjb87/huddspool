@@ -9,94 +9,88 @@
         </div>
     @endif
 
-    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
-        <div class="hidden bg-linear-to-br from-green-900 via-green-800 to-green-700 sm:flex">
-            <div class="flex-1 leading-6 py-2 px-4 text-left font-semibold text-white text-sm">
-                {{ $fixture->homeTeam->name }}
-            </div>
-            <div class="w-12 text-center leading-6 py-2 font-semibold text-white text-sm">
-                vs
-            </div>
-            <div class="flex-1 leading-6 py-2 px-4 text-right font-semibold text-white text-sm">
-                {{ $fixture->awayTeam->name }}
-            </div>
+    <div class="space-y-4" data-result-form-shell>
+        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-result-form-frames>
+            @for ($i = 1; $i <= 10; $i++)
+                <div class="py-4" wire:key="result-frame-{{ $i }}">
+                    <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">Frame {{ $i }}</p>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <select
+                                wire:model.live="form.frames.{{ $i }}.home_player_id"
+                                class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
+                                @disabled($isLocked || ! $canEdit)
+                            >
+                                <option value="">Select player...</option>
+                                <option value="0">Awarded</option>
+                                @foreach ($fixture->homeTeam->players as $player)
+                                    <option value="{{ $player->id }}">{{ $player->name }}</option>
+                                @endforeach
+                            </select>
+
+                            <div class="shrink-0">
+                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700">
+                                    <select
+                                        wire:model.live="form.frames.{{ $i }}.home_score"
+                                        name="form.frames.{{ $i }}.home_score"
+                                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-gray-700 [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-200 dark:[color-scheme:dark]"
+                                        @disabled($isLocked || ! $canEdit)
+                                    >
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <select
+                                wire:model.live="form.frames.{{ $i }}.away_player_id"
+                                class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
+                                @disabled($isLocked || ! $canEdit)
+                            >
+                                <option value="">Select player...</option>
+                                <option value="0">Awarded</option>
+                                @foreach ($fixture->awayTeam->players as $player)
+                                    <option value="{{ $player->id }}">{{ $player->name }}</option>
+                                @endforeach
+                            </select>
+
+                            <div class="shrink-0">
+                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700">
+                                    <select
+                                        wire:model.live="form.frames.{{ $i }}.away_score"
+                                        name="form.frames.{{ $i }}.away_score"
+                                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-gray-700 [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-200 dark:[color-scheme:dark]"
+                                        @disabled($isLocked || ! $canEdit)
+                                    >
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endfor
         </div>
-        @for ($i = 1; $i <= 10; $i++)
-            <div class="flex flex-wrap" wire:key="result-frame-{{ $i }}">
-                <div class="w-full sm:w-auto flex sm:flex-1 order-2 sm:order-first border-b border-gray-200 dark:border-zinc-800/80 sm:border-0">
-                    <select
-                        wire:model.live="form.frames.{{ $i }}.home_player_id"
-                        class="flex-1 border-0 bg-transparent py-2 px-4 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
-                        @disabled($isLocked || ! $canEdit)
-                    >
-                        <option value="">Select player...</option>
-                        <option value="0">Awarded</option>
-                        @foreach ($fixture->homeTeam->players as $player)
-                            <option value="{{ $player->id }}">{{ $player->name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="w-10 sm:w-12 border-x border-gray-200 dark:border-zinc-800/80">
-                        <select
-                            wire:model.live="form.frames.{{ $i }}.home_score"
-                            name="form.frames.{{ $i }}.home_score"
-                            class="block w-full appearance-none border-0 bg-transparent pr-0 pl-0 py-2 text-center text-sm leading-6 text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
-                            placeholder="0"
-                            @disabled($isLocked || ! $canEdit)
-                        >
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                        </select>
-                    </div>
-                </div>
-                <div
-                    class="order-first w-full bg-gray-50 py-2 px-4 text-left text-sm font-semibold leading-6 text-gray-900 dark:bg-zinc-700 dark:text-gray-100 sm:w-12 sm:px-0 sm:text-center"
-                >
-                    <span class="sm:hidden">Frame </span>
-                    {{ $i }}
-                </div>
-                <div class="w-full sm:w-auto flex sm:flex-1 order-last">
-                    <div class="w-10 sm:w-12 order-last sm:order-first border-x border-gray-200 dark:border-zinc-800/80">
-                        <select
-                        wire:model.live="form.frames.{{ $i }}.away_score"
-                        name="form.frames.{{ $i }}.away_score"
-                        class="block w-full appearance-none border-0 bg-transparent pr-0 pl-0 py-2 text-center text-sm leading-6 text-gray-900 [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
-                        placeholder="0"
-                        @disabled($isLocked || ! $canEdit)
-                    >
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                    </select>
-                </div>
-                <select
-                    wire:model.live="form.frames.{{ $i }}.away_player_id"
-                    class="order-first flex-1 border-0 bg-transparent py-2 px-4 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark] sm:order-last"
-                    @disabled($isLocked || ! $canEdit)
-                >
-                    <option value="">Select player...</option>
-                    <option value="0">Awarded</option>
-                    @foreach ($fixture->awayTeam->players as $player)
-                        <option value="{{ $player->id }}">{{ $player->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+
+        <div class="flex items-start justify-between gap-4 py-1" data-result-form-band>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {{ $fixture->homeTeam->name }}
+                    <span class="text-gray-300 dark:text-zinc-600">/</span>
+                    {{ $fixture->awayTeam->name }}
+                </p>
             </div>
-        @endfor
-        <div class="flex flex-wrap border-t border-gray-200 bg-gray-50 text-sm font-semibold text-gray-900 dark:border-zinc-800/80 dark:bg-zinc-800/70 dark:text-gray-100">
-            <div class="w-full sm:w-auto flex sm:flex-1 border-b border-gray-200 dark:border-zinc-800/80">
-                <div class="flex-1 leading-6 py-2 px-4 sm:text-right">
-                    Home total
-                </div>
-                    <div class="w-10 sm:w-12 leading-6 py-2 text-center border-x border-gray-200 dark:border-zinc-800/80">
-                    {{ $form->homeScore }}
-                    </div>
-                </div>
-            <div class="w-10 sm:w-12 bg-gray-50 dark:bg-zinc-800/70"></div>
-            <div class="w-full sm:w-auto flex sm:flex-1">
-                <div class="w-10 sm:w-12 order-last border-x border-gray-200 py-2 text-center leading-6 dark:border-zinc-800/80 sm:order-first">
-                    {{ $form->awayScore }}
-                </div>
-                <div class="flex-1 leading-6 py-2 px-4 order-first sm:order-last">
-                    Away total
+
+            <div class="ml-auto flex shrink-0 self-center items-center text-right">
+                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
+                    <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $form->homeScore }}</div>
+                    <div class="w-px bg-white/25"></div>
+                    <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $form->awayScore }}</div>
                 </div>
             </div>
         </div>
