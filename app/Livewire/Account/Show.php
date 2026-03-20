@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Account;
 
-use App\KnockoutType;
-use App\Models\KnockoutMatch;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
+use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
 use App\Queries\GetTeamPlayers;
 use App\Support\ResultSubmissionPromptResolver;
@@ -131,39 +130,7 @@ class Show extends Component
     #[Computed]
     public function knockoutMatches(): Collection
     {
-        $player = $this->user;
-
-        $participantQuery = function ($query) use ($player) {
-            $query->where('player_one_id', $player->id)
-                ->orWhere('player_two_id', $player->id);
-
-            if ($player->team_id) {
-                $query->orWhere('team_id', $player->team_id);
-            }
-        };
-
-        return KnockoutMatch::query()
-            ->with([
-                'round.knockout',
-                'homeParticipant',
-                'awayParticipant',
-                'venue',
-                'forfeitParticipant',
-                'winner',
-            ])
-            ->whereHas('round', fn ($query) => $query->where('is_visible', true))
-            ->whereHas('round.knockout', fn ($query) => $query->whereIn('type', [
-                KnockoutType::Singles,
-                KnockoutType::Doubles,
-            ]))
-            ->where(function ($query) use ($participantQuery) {
-                $query->whereHas('homeParticipant', $participantQuery)
-                    ->orWhereHas('awayParticipant', $participantQuery);
-            })
-            ->orderByDesc('starts_at')
-            ->orderByDesc('id')
-            ->get()
-            ->values();
+        return new GetPlayerKnockoutMatches($this->user)();
     }
 
     #[Computed]

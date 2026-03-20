@@ -25,9 +25,14 @@ class PlayerProfileTest extends TestCase
     public function test_player_profile_displays_averages_and_recent_frames(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
+        $archivedSeason = Season::factory()->create(['is_open' => false]);
         $ruleset = Ruleset::factory()->create();
         $section = Section::factory()->create([
             'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $archivedSection = Section::factory()->create([
+            'season_id' => $archivedSeason->id,
             'ruleset_id' => $ruleset->id,
         ]);
 
@@ -36,6 +41,8 @@ class PlayerProfileTest extends TestCase
 
         $section->teams()->attach($team->id, ['sort' => 1]);
         $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
+        $archivedSection->teams()->attach($team->id, ['sort' => 1]);
+        $archivedSection->teams()->attach($opponentTeam->id, ['sort' => 2]);
 
         $player = User::factory()->create(['team_id' => $team->id]);
         $opponent = User::factory()->create(['team_id' => $opponentTeam->id]);
@@ -74,6 +81,35 @@ class PlayerProfileTest extends TestCase
             'home_player_id' => $opponent->id,
             'home_score' => 2,
             'away_player_id' => $player->id,
+            'away_score' => 1,
+        ]);
+
+        $archivedFixture = Fixture::factory()->create([
+            'season_id' => $archivedSeason->id,
+            'section_id' => $archivedSection->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+        ]);
+
+        $archivedResult = Result::factory()->create([
+            'fixture_id' => $archivedFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 7,
+            'away_team_id' => $opponentTeam->id,
+            'away_team_name' => $opponentTeam->name,
+            'away_score' => 3,
+            'section_id' => $archivedSection->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+
+        Frame::create([
+            'result_id' => $archivedResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 2,
+            'away_player_id' => $opponent->id,
             'away_score' => 1,
         ]);
 
@@ -174,16 +210,23 @@ class PlayerProfileTest extends TestCase
             'starts_at' => now()->subDay(),
         ]);
 
-        $this->get(route('player.show', $player))
+        $response = $this->get(route('player.show', $player))
             ->assertOk()
             ->assertSee('data-player-knockout-section', false)
             ->assertSeeText('Knockouts')
             ->assertSeeText($knockout->name)
-            ->assertDontSeeText($teamKnockout->name)
             ->assertSee(route('knockout.show', $knockout), false)
             ->assertDontSee(route('knockout.matches.submit', $completedMatch), false)
             ->assertSeeText('4')
             ->assertSeeText('2');
+
+        preg_match('/<section[^>]*data-player-knockout-section[^>]*>.*?<\/section>/s', $response->getContent(), $matches);
+
+        $knockoutSection = $matches[0] ?? '';
+
+        $this->assertNotSame('', $knockoutSection);
+        $this->assertStringContainsString($knockout->name, $knockoutSection);
+        $this->assertStringNotContainsString($teamKnockout->name, $knockoutSection);
     }
 
     public function test_guest_does_not_see_private_contact_details_on_player_profile(): void

@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Account;
 
-use App\KnockoutType;
 use App\Models\Fixture;
-use App\Models\KnockoutMatch;
 use App\Models\Section;
 use App\Models\Team as TeamModel;
 use App\Models\User;
+use App\Queries\GetTeamKnockoutMatches;
 use App\Queries\GetTeamPlayers;
 use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Database\Eloquent\Builder;
@@ -110,23 +109,7 @@ class Team extends Component
             return collect();
         }
 
-        return KnockoutMatch::query()
-            ->with([
-                'round.knockout',
-                'homeParticipant',
-                'awayParticipant',
-                'winner',
-            ])
-            ->whereHas('round', fn ($query) => $query->where('is_visible', true))
-            ->whereHas('round.knockout', fn ($query) => $query->where('type', KnockoutType::Team))
-            ->where(function ($query) {
-                $query->whereHas('homeParticipant', fn ($participantQuery) => $participantQuery->where('team_id', $this->team->id))
-                    ->orWhereHas('awayParticipant', fn ($participantQuery) => $participantQuery->where('team_id', $this->team->id));
-            })
-            ->orderByDesc('starts_at')
-            ->orderByDesc('id')
-            ->get()
-            ->values();
+        return new GetTeamKnockoutMatches($this->team)();
     }
 
     #[Computed]
