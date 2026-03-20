@@ -12,11 +12,29 @@
     <div class="space-y-4" data-result-form-shell>
         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-result-form-frames>
             @for ($i = 1; $i <= 10; $i++)
+                @php
+                    $homeSelectedPlayer = $fixture->homeTeam->players->firstWhere('id', (int) data_get($form->frames, $i.'.home_player_id'));
+                    $awaySelectedPlayer = $fixture->awayTeam->players->firstWhere('id', (int) data_get($form->frames, $i.'.away_player_id'));
+                    $homeIsAwarded = (string) data_get($form->frames, $i.'.home_player_id') === '0';
+                    $awayIsAwarded = (string) data_get($form->frames, $i.'.away_player_id') === '0';
+                @endphp
                 <div class="py-4" wire:key="result-frame-{{ $i }}">
                     <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">Frame {{ $i }}</p>
 
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
+                            @if ($homeSelectedPlayer)
+                                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                    src="{{ $homeSelectedPlayer->avatar_url }}"
+                                    alt="{{ $homeSelectedPlayer->name }} avatar">
+                            @elseif ($homeIsAwarded)
+                                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                    src="{{ asset('/images/user.jpg') }}"
+                                    alt="Awarded">
+                            @else
+                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700"></div>
+                            @endif
+
                             <select
                                 wire:model.live="form.frames.{{ $i }}.home_player_id"
                                 class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
@@ -45,6 +63,18 @@
                         </div>
 
                         <div class="flex items-center gap-3">
+                            @if ($awaySelectedPlayer)
+                                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                    src="{{ $awaySelectedPlayer->avatar_url }}"
+                                    alt="{{ $awaySelectedPlayer->name }} avatar">
+                            @elseif ($awayIsAwarded)
+                                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                    src="{{ asset('/images/user.jpg') }}"
+                                    alt="Awarded">
+                            @else
+                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700"></div>
+                            @endif
+
                             <select
                                 wire:model.live="form.frames.{{ $i }}.away_player_id"
                                 class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"

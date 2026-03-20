@@ -316,6 +316,23 @@ class ResultSubmissionTest extends TestCase
         }
     }
 
+    public function test_selected_players_render_avatar_previews_in_the_result_form(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($teamAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSee($homePlayers[0]->avatar_url, false)
+            ->assertSee($awayPlayers[0]->avatar_url, false);
+    }
+
     public function test_result_create_route_redirects_when_result_is_locked(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
