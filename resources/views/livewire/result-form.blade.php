@@ -32,7 +32,7 @@
                                     src="{{ asset('/images/user.jpg') }}"
                                     alt="Awarded">
                             @else
-                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700"></div>
+                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
                             @endif
 
                             <select
@@ -48,7 +48,7 @@
                             </select>
 
                             <div class="shrink-0">
-                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700">
+                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700">
                                     <select
                                         wire:model.live="form.frames.{{ $i }}.home_score"
                                         name="form.frames.{{ $i }}.home_score"
@@ -72,7 +72,7 @@
                                     src="{{ asset('/images/user.jpg') }}"
                                     alt="Awarded">
                             @else
-                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700"></div>
+                                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
                             @endif
 
                             <select
@@ -88,7 +88,7 @@
                             </select>
 
                             <div class="shrink-0">
-                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700">
+                                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700">
                                     <select
                                         wire:model.live="form.frames.{{ $i }}.away_score"
                                         name="form.frames.{{ $i }}.away_score"

@@ -101,7 +101,7 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('fixture.show', $fixture))
             ->assertOk()
-            ->assertSeeText('Submit Result');
+            ->assertSeeText('Submit result');
 
         $this->actingAs($siteAdmin)
             ->get(route('result.create', $fixture))
