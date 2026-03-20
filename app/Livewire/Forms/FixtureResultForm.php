@@ -37,21 +37,24 @@ class FixtureResultForm extends Form
 
     public function syncFromResult(?Result $result): void
     {
-        if (! $result) {
-            $this->frames = $this->emptyFrames();
-            $this->homeScore = 0;
-            $this->awayScore = 0;
-            $this->totalScore = 0;
+        $this->syncFromResultAndDraft($result);
+    }
 
-            return;
+    /**
+     * @param  array<int, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null  $draftFrames
+     */
+    public function syncFromResultAndDraft(?Result $result, ?array $draftFrames = null): void
+    {
+        $state = $result
+            ? $this->mapFramesToState($result->frames->sortBy('id')->values())
+            : $this->emptyFrames();
+
+        if ($draftFrames !== null) {
+            $state = $this->mergeDraftFramesIntoState($state, $draftFrames);
         }
 
-        $frames = $result->frames->sortBy('id')->values();
-
-        $this->frames = $this->mapFramesToState($frames);
-        $this->homeScore = (int) $result->home_score;
-        $this->awayScore = (int) $result->away_score;
-        $this->totalScore = $this->homeScore + $this->awayScore;
+        $this->frames = $state;
+        $this->recalculateScores();
     }
 
     /**
@@ -255,6 +258,31 @@ class FixtureResultForm extends Form
         }
 
         return $frames;
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int|string, away_score: int|string}>  $state
+     * @param  array<int, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $draftFrames
+     * @return array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int|string, away_score: int|string}>
+     */
+    private function mergeDraftFramesIntoState(array $state, array $draftFrames): array
+    {
+        for ($i = 1; $i <= 10; $i++) {
+            if (! array_key_exists($i, $draftFrames)) {
+                continue;
+            }
+
+            $draftFrame = $draftFrames[$i];
+
+            $state[$i] = [
+                'home_player_id' => $draftFrame['home_player_id'] ?? null,
+                'away_player_id' => $draftFrame['away_player_id'] ?? null,
+                'home_score' => $draftFrame['home_score'] ?? 0,
+                'away_score' => $draftFrame['away_score'] ?? 0,
+            ];
+        }
+
+        return $state;
     }
 
     private function recalculateScores(): void

@@ -285,6 +285,37 @@ class ResultSubmissionTest extends TestCase
         $this->assertSame(1, $result->frames[1]->away_score);
     }
 
+    public function test_player_selections_persist_after_scoring_one_frame_with_all_players_selected(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $component = Livewire::actingAs($teamAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        for ($i = 1; $i <= 10; $i++) {
+            $homePlayer = $homePlayers[($i - 1) % $homePlayers->count()];
+            $awayPlayer = $awayPlayers[($i - 1) % $awayPlayers->count()];
+
+            $component->set("form.frames.$i.home_player_id", (string) $homePlayer->id);
+            $component->set("form.frames.$i.away_player_id", (string) $awayPlayer->id);
+        }
+
+        $component->set('form.frames.1.home_score', 1);
+
+        for ($i = 1; $i <= 10; $i++) {
+            $homePlayer = $homePlayers[($i - 1) % $homePlayers->count()];
+            $awayPlayer = $awayPlayers[($i - 1) % $awayPlayers->count()];
+
+            $component->assertSet("form.frames.$i.home_player_id", (string) $homePlayer->id);
+            $component->assertSet("form.frames.$i.away_player_id", (string) $awayPlayer->id);
+        }
+    }
+
     public function test_result_create_route_redirects_when_result_is_locked(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
