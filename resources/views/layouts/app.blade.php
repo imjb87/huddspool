@@ -18,9 +18,11 @@
     @endif
 
     <title>
-        @isset($title) 
-            {{ $title }} | 
-        @endisset 
+        @hasSection('title')
+            {{ trim($__env->yieldContent('title')) }} |
+        @elseif (isset($title))
+            {{ $title }} |
+        @endif
         {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}
     </title>
 

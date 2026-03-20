@@ -34,6 +34,7 @@ class SupportTicketSubmissionTest extends TestCase
             ->assertSee('data-support-ticket-page', false)
             ->assertSee('href="'.route('account.show').'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
+            ->assertSeeText('Support tickets |')
             ->assertSee('value="Test User"', false)
             ->assertSee('value="support@example.com"', false);
 

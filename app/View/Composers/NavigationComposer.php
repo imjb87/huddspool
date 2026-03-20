@@ -26,23 +26,24 @@ class NavigationComposer
 
     public function compose(View $view): void
     {
+        $request = request();
+
         $view->with([
             'rulesets' => $this->rulesets(),
             'past_seasons' => $this->pastSeasons(),
             'active_knockouts' => $this->activeKnockouts(),
-            'navigationRulesets' => $this->navigationRulesets(),
+            'navigationRulesets' => $this->desktopNavigationRulesets($request),
             'historySeasonGroups' => $this->historySeasonGroups(),
             'navigableKnockouts' => $this->navigableActiveKnockouts(),
             'is_impersonating' => Impersonation::isImpersonating(),
-        ] + $this->navigationViewData(request()));
+        ] + $this->navigationViewData($request));
     }
 
     /**
      * @return array{
-     *     currentRuleset: mixed,
-     *     currentPage: mixed,
-     *     isRulesetRoute: bool,
-     *     isKnockoutRoute: bool,
+     *     knockoutNavIsActive: bool,
+     *     historyNavIsActive: bool,
+     *     handbookNavIsActive: bool,
      *     mobileDrawerPanelClasses: string,
      *     mobileDrawerPanelContentClasses: string,
      *     mobileDrawerListClasses: string,
@@ -57,11 +58,10 @@ class NavigationComposer
         $currentPage = $request->route('page');
 
         return [
-            'currentRuleset' => $request->route('ruleset'),
-            'currentPage' => $currentPage,
-            'isRulesetRoute' => $request->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index'),
-            'isKnockoutRoute' => $request->routeIs('knockout.*')
+            'knockoutNavIsActive' => $request->routeIs('knockout.*')
                 || ($request->routeIs('page.show') && $currentPage === 'knockout-dates'),
+            'historyNavIsActive' => $request->routeIs('history.*'),
+            'handbookNavIsActive' => $request->routeIs('page.show') && $currentPage === 'handbook',
             'mobileDrawerPanelClasses' => 'absolute inset-0 overflow-y-auto bg-white px-4 py-4 dark:bg-zinc-900',
             'mobileDrawerPanelContentClasses' => 'space-y-5',
             'mobileDrawerListClasses' => 'space-y-1',
@@ -145,6 +145,23 @@ class NavigationComposer
                 ->filter(fn (array $item) => $item['sections']->isNotEmpty())
                 ->values();
         });
+    }
+
+    protected function desktopNavigationRulesets(Request $request): Collection
+    {
+        $currentRuleset = $request->route('ruleset');
+        $isRulesetRoute = $request->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
+
+        return $this->navigationRulesets()
+            ->map(function (array $navigationRuleset) use ($currentRuleset, $isRulesetRoute): array {
+                $ruleset = $navigationRuleset['ruleset'];
+
+                return $navigationRuleset + [
+                    'is_active' => $isRulesetRoute
+                        && $currentRuleset instanceof Ruleset
+                        && $currentRuleset->is($ruleset),
+                ];
+            });
     }
 
     protected function navigableActiveKnockouts(): Collection

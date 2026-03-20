@@ -124,15 +124,7 @@ class CompetitionCacheInvalidator
         }
 
         $this->forgetSeasonHistory($expulsion->season_id);
-
-        $sections = Section::query()
-            ->where('season_id', $expulsion->season_id)
-            ->get(['id', 'ruleset_id']);
-
-        foreach ($sections as $section) {
-            $this->forgetSectionCaches($section->id);
-            $this->forgetSeasonRulesetHistory($expulsion->season_id, $section->ruleset_id);
-        }
+        $this->forgetSections($this->sectionsForSeasonId($expulsion->season_id));
     }
 
     public function forgetForSeason(Season $season): void
@@ -144,11 +136,7 @@ class CompetitionCacheInvalidator
         $this->forgetSeasonHistory($season->id);
 
         $season->loadMissing('sections');
-
-        foreach ($season->sections as $section) {
-            $this->forgetSectionCaches($section->id);
-            $this->forgetSeasonRulesetHistory($season->id, $section->ruleset_id);
-        }
+        $this->forgetSections($season->sections);
     }
 
     public function forgetForTeam(Team $team): void
@@ -157,12 +145,7 @@ class CompetitionCacheInvalidator
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(['nav:past-seasons']);
         $this->forgetTeamSeasonHistories([$team->id]);
-
-        foreach ($this->sectionsForTeamIds([$team->id]) as $section) {
-            $this->forgetSectionCaches($section->id);
-            $this->forgetSeasonHistory($section->season_id);
-            $this->forgetSeasonRulesetHistory($section->season_id, $section->ruleset_id);
-        }
+        $this->forgetSections($this->sectionsForTeamIds([$team->id]));
     }
 
     public function forgetForUser(User $user): void
@@ -179,12 +162,7 @@ class CompetitionCacheInvalidator
         if ($teamIds === []) {
             return;
         }
-
-        foreach ($this->sectionsForTeamIds($teamIds) as $section) {
-            $this->forgetSectionCaches($section->id);
-            $this->forgetSeasonHistory($section->season_id);
-            $this->forgetSeasonRulesetHistory($section->season_id, $section->ruleset_id);
-        }
+        $this->forgetSections($this->sectionsForTeamIds($teamIds));
     }
 
     public function forgetForNews(): void
@@ -250,6 +228,13 @@ class CompetitionCacheInvalidator
         $this->forgetSeasonRelatedCaches($seasonId, $rulesetId);
     }
 
+    private function forgetSections(iterable $sections): void
+    {
+        foreach ($sections as $section) {
+            $this->forgetSectionRelatedCaches($section->id, $section->season_id, $section->ruleset_id);
+        }
+    }
+
     /**
      * @param  array<int, int>  $teamIds
      */
@@ -259,6 +244,13 @@ class CompetitionCacheInvalidator
             ->whereHas('teams', function ($query) use ($teamIds) {
                 $query->withTrashed()->whereIn('teams.id', $teamIds);
             })
+            ->get(['id', 'season_id', 'ruleset_id']);
+    }
+
+    private function sectionsForSeasonId(int $seasonId)
+    {
+        return Section::query()
+            ->where('season_id', $seasonId)
             ->get(['id', 'season_id', 'ruleset_id']);
     }
 

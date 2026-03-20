@@ -54,7 +54,7 @@ class ResultForm extends Component
     {
         $this->fixture = $this->loadFixture($fixture);
 
-        $this->guardAccess();
+        $this->ensureFixtureCanBeSubmitted();
         $this->hydrateResultState();
         $this->initializeLock();
     }
@@ -102,7 +102,18 @@ class ResultForm extends Component
         ]);
     }
 
-    private function guardAccess(): void
+    private function ensureFixtureCanBeSubmitted(): void
+    {
+        $this->ensureFixtureIsAccessible();
+
+        $this->result = $this->fixture->result;
+
+        if ($this->result && $this->result->is_confirmed) {
+            abort(404);
+        }
+    }
+
+    private function ensureFixtureIsAccessible(): void
     {
         if ($this->isHomeOrAwayTeam(1)) {
             abort(404);
@@ -111,12 +122,6 @@ class ResultForm extends Component
         Gate::authorize('submitResult', $this->fixture);
 
         if ($this->fixture->fixture_date->gte(now())) {
-            abort(404);
-        }
-
-        $this->result = $this->fixture->result;
-
-        if ($this->result && $this->result->is_confirmed) {
             abort(404);
         }
     }
@@ -137,16 +142,7 @@ class ResultForm extends Component
     private function refreshActionState(): void
     {
         $this->fixture = $this->loadFixture($this->fixture);
-
-        if ($this->isHomeOrAwayTeam(1)) {
-            abort(404);
-        }
-
-        Gate::authorize('submitResult', $this->fixture);
-
-        if ($this->fixture->fixture_date->gte(now())) {
-            abort(404);
-        }
+        $this->ensureFixtureIsAccessible();
 
         $this->result = $this->fixture->result;
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
@@ -171,7 +167,7 @@ class ResultForm extends Component
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
         $this->form->syncFromResultAndDraft(
             $this->result,
-            $this->draftStore()->get((int) auth()->id(), (int) $this->fixture->getKey()),
+            $this->draftStore()->get($this->authenticatedUserId(), (int) $this->fixture->getKey()),
         );
     }
 
@@ -253,7 +249,7 @@ class ResultForm extends Component
 
     private function releaseLock(): void
     {
-        $this->lockManager()->release($this->lock, (int) auth()->id());
+        $this->lockManager()->release($this->lock, $this->authenticatedUserId());
 
         $this->clearLockState();
     }
@@ -278,12 +274,12 @@ class ResultForm extends Component
 
     private function persistDraftFramesToSession(): void
     {
-        $this->draftStore()->put((int) auth()->id(), (int) $this->fixture->getKey(), $this->form->frames);
+        $this->draftStore()->put($this->authenticatedUserId(), (int) $this->fixture->getKey(), $this->form->frames);
     }
 
     private function clearDraftFramesFromSession(): void
     {
-        $this->draftStore()->forget((int) auth()->id(), (int) $this->fixture->getKey());
+        $this->draftStore()->forget($this->authenticatedUserId(), (int) $this->fixture->getKey());
     }
 
     private function redirectToFixtureOrResult(): Redirector
@@ -315,5 +311,10 @@ class ResultForm extends Component
     private function frameRows(): array
     {
         return (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames);
+    }
+
+    private function authenticatedUserId(): int
+    {
+        return (int) auth()->id();
     }
 }

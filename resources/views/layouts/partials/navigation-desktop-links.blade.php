@@ -1,15 +1,10 @@
 <div class="hidden lg:flex lg:items-center lg:gap-x-6">
     @foreach ($navigationRulesets as $navigationRuleset)
-        @php
-            $ruleset = $navigationRuleset['ruleset'];
-            $navigableSections = $navigationRuleset['sections'];
-            $isActiveRuleset = $isRulesetRoute && $currentRuleset instanceof \App\Models\Ruleset && $currentRuleset->is($ruleset);
-        @endphp
         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
             <button type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $isActiveRuleset ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $navigationRuleset['is_active'] ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
                 @click="open = ! open" :aria-expanded="open">
-                {{ $ruleset->name }}
+                {{ $navigationRuleset['ruleset']->name }}
                 <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                 </svg>
@@ -24,16 +19,16 @@
                 x-transition:leave="transition ease-in duration-150"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 translate-y-1">
-                @foreach ($navigableSections as $section)
-                    <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
+                @foreach ($navigationRuleset['sections'] as $section)
+                    <a href="{{ route('ruleset.section.show', ['ruleset' => $navigationRuleset['ruleset'], 'section' => $section]) }}"
                         class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
                         {{ $section->name }}
                     </a>
                 @endforeach
                 <div class="mx-2 my-1 border-t border-gray-200 dark:border-gray-800"></div>
-                <a href="{{ route('ruleset.show', $ruleset) }}"
+                <a href="{{ route('ruleset.show', $navigationRuleset['ruleset']) }}"
                     class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                    {{ $ruleset->name }}
+                    {{ $navigationRuleset['ruleset']->name }}
                 </a>
             </div>
         </div>
@@ -41,7 +36,7 @@
 
     <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
         <button type="button"
-            class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $isKnockoutRoute ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
+            class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $knockoutNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
             @click="open = ! open" :aria-expanded="open">
             Knockouts
             <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -75,11 +70,11 @@
         </div>
     </div>
     <a href="{{ route('history.index') }}"
-        class="text-sm font-semibold leading-6 {{ request()->routeIs('history.*') ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
+        class="text-sm font-semibold leading-6 {{ $historyNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
         History
     </a>
     <a href="{{ route('page.show', 'handbook') }}"
-        class="text-sm font-semibold leading-6 {{ request()->routeIs('page.show') && request()->route('page') === 'handbook' ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
+        class="text-sm font-semibold leading-6 {{ $handbookNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
         Handbook
     </a>
 </div>

@@ -9,8 +9,7 @@
             <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
                 @if ($homeParticipant)
                     @if ($knockout->type === \App\KnockoutType::Doubles)
-                        @php($homePlayers = [$homeParticipant->playerOne, $homeParticipant->playerTwo])
-                        @foreach ($homePlayers as $player)
+                        @foreach ([$homeParticipant->playerOne, $homeParticipant->playerTwo] as $player)
                             @if (! $loop->first)
                                 <span class="text-gray-300 dark:text-zinc-600"> / </span>
                             @endif
@@ -41,8 +40,7 @@
 
                 @if ($awayParticipant)
                     @if ($knockout->type === \App\KnockoutType::Doubles)
-                        @php($awayPlayers = [$awayParticipant->playerOne, $awayParticipant->playerTwo])
-                        @foreach ($awayPlayers as $player)
+                        @foreach ([$awayParticipant->playerOne, $awayParticipant->playerTwo] as $player)
                             @if (! $loop->first)
                                 <span class="text-gray-300 dark:text-zinc-600"> / </span>
                             @endif

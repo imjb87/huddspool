@@ -1,6 +1,6 @@
-@php($title = 'Support tickets')
-
 @extends('layouts.app')
+
+@section('title', 'Support tickets')
 
 @section('content')
     <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">

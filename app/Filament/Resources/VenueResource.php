@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
+use App\Support\CoordinateFormatter;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -54,13 +55,13 @@ class VenueResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->helperText('Automatically populated from the address.')
-                            ->formatStateUsing(fn ($state) => self::formatCoordinate($state)),
+                            ->formatStateUsing(fn ($state) => CoordinateFormatter::sevenDecimalPlaces($state)),
                         Forms\Components\TextInput::make('longitude')
                             ->label('Longitude')
                             ->disabled()
                             ->dehydrated(false)
                             ->helperText('Automatically populated from the address.')
-                            ->formatStateUsing(fn ($state) => self::formatCoordinate($state)),
+                            ->formatStateUsing(fn ($state) => CoordinateFormatter::sevenDecimalPlaces($state)),
                     ]),
             ]);
     }
@@ -99,14 +100,5 @@ class VenueResource extends Resource
             'create' => Pages\CreateVenue::route('/create'),
             'edit' => Pages\EditVenue::route('/{record}/edit'),
         ];
-    }
-
-    private static function formatCoordinate(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        return number_format((float) $value, 7);
     }
 }
