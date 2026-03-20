@@ -60,7 +60,7 @@
                             @endif
                                 <div class="flex items-center justify-between gap-2 sm:gap-3" data-section-table-band>
                                     <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
-                                        <div class="shrink-0 text-sm font-semibold tabular-nums {{ $textClass }}">
+                                        <div class="w-4 shrink-0 text-sm font-semibold tabular-nums {{ $textClass }}">
                                             {{ $index + 1 }}
                                         </div>
                                         <div class="min-w-0">
