@@ -114,41 +114,23 @@
                                         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-result-card-frames>
                                             @foreach ($result->frames as $key => $frame)
                                                 <div class="py-4" wire:key="result-frame-{{ $frame->id }}">
-                                                    <div class="flex items-start justify-between gap-4" data-result-card-band>
-                                                        <div class="min-w-0 flex-1">
-                                                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">
-                                                                Frame {{ $key + 1 }}
-                                                            </p>
-                                                            <div class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                    <div class="space-y-3" data-result-card-band>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                            Frame {{ $key + 1 }}
+                                                        </p>
+
+                                                        <div class="flex items-center gap-3">
+                                                            <div class="min-w-0 flex-1">
                                                                 @if ($frame->home_player_id)
                                                                     <a href="{{ route('player.show', $frame->homePlayer) }}"
-                                                                        class="inline-flex min-w-0 items-center gap-2 transition hover:text-gray-500 dark:hover:text-gray-300">
+                                                                        class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 transition hover:text-gray-500 dark:text-gray-100 dark:hover:text-gray-300">
                                                                         <img class="h-6 w-6 shrink-0 rounded-full object-cover"
                                                                             src="{{ $frame->homePlayer->avatar_url }}"
                                                                             alt="{{ $frame->homePlayer->name }} avatar">
                                                                         <span class="truncate">{{ $frame->homePlayer->name }}</span>
                                                                     </a>
                                                                 @else
-                                                                    <span class="inline-flex min-w-0 items-center gap-2">
-                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                                                                            src="{{ asset('/images/user.jpg') }}"
-                                                                            alt="Awarded">
-                                                                        <span class="truncate">Awarded</span>
-                                                                    </span>
-                                                                @endif
-
-                                                                <span class="font-normal text-gray-400 dark:text-gray-500">vs</span>
-
-                                                                @if ($frame->away_player_id)
-                                                                    <a href="{{ route('player.show', $frame->awayPlayer) }}"
-                                                                        class="inline-flex min-w-0 items-center gap-2 transition hover:text-gray-500 dark:hover:text-gray-300">
-                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                                                                            src="{{ $frame->awayPlayer->avatar_url }}"
-                                                                            alt="{{ $frame->awayPlayer->name }} avatar">
-                                                                        <span class="truncate">{{ $frame->awayPlayer->name }}</span>
-                                                                    </a>
-                                                                @else
-                                                                    <span class="inline-flex min-w-0 items-center gap-2">
+                                                                    <span class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                                                         <img class="h-6 w-6 shrink-0 rounded-full object-cover"
                                                                             src="{{ asset('/images/user.jpg') }}"
                                                                             alt="Awarded">
@@ -156,14 +138,40 @@
                                                                     </span>
                                                                 @endif
                                                             </div>
+
+                                                            <div class="shrink-0">
+                                                                <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700"
+                                                                    data-result-frame-score-pill>
+                                                                    {{ $frame->home_score }}
+                                                                </div>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                                                            <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700"
-                                                                data-result-frame-score-pill>
-                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $frame->home_score }}</div>
-                                                                <div class="w-px bg-gray-300/70 dark:bg-zinc-600"></div>
-                                                                <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $frame->away_score }}</div>
+                                                        <div class="flex items-center gap-3">
+                                                            <div class="min-w-0 flex-1">
+                                                                @if ($frame->away_player_id)
+                                                                    <a href="{{ route('player.show', $frame->awayPlayer) }}"
+                                                                        class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 transition hover:text-gray-500 dark:text-gray-100 dark:hover:text-gray-300">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ $frame->awayPlayer->avatar_url }}"
+                                                                            alt="{{ $frame->awayPlayer->name }} avatar">
+                                                                        <span class="truncate">{{ $frame->awayPlayer->name }}</span>
+                                                                    </a>
+                                                                @else
+                                                                    <span class="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                                        <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+                                                                            src="{{ asset('/images/user.jpg') }}"
+                                                                            alt="Awarded">
+                                                                        <span class="truncate">Awarded</span>
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+
+                                                            <div class="shrink-0">
+                                                                <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:ring-zinc-700"
+                                                                    data-result-frame-score-pill>
+                                                                    {{ $frame->away_score }}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
