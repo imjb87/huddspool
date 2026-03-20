@@ -9,8 +9,10 @@ use App\Http\Controllers\RulesetController;
 use App\Http\Controllers\SupportTicketController;
 use App\Models\Ruleset;
 use App\Models\Section;
+use App\Support\ResponseCacheTags;
 use Illuminate\Support\Facades\Route;
 use LaravelPWA\Http\Controllers\LaravelPWAController;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
 use STS\FilamentImpersonate\Facades\Impersonation;
 
 /*
@@ -26,29 +28,53 @@ use STS\FilamentImpersonate\Facades\Impersonation;
 
 require __DIR__.'/auth.php';
 
-Route::get('/', HomeController::class)->name('home');
-Route::get('/rulesets', [RulesetController::class, 'index'])->name('ruleset.index');
-Route::get('/rulesets/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
-Route::get('/tables/{ruleset}', 'App\Http\Controllers\TableController@index')->name('table.index');
-Route::get('/fixtures-and-results/{ruleset}', 'App\Http\Controllers\FixtureController@index')->name('fixture.index');
-Route::get('/fixtures/{fixture}', 'App\Http\Controllers\FixtureController@show')->name('fixture.show');
-Route::get('/fixtures/download/{section:slug}', 'App\Http\Controllers\FixtureController@download')->name('fixture.download');
-
-Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')->name('result.show');
+Route::get('/', HomeController::class)
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::HOME]))
+    ->name('home');
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
+    Route::get('/rulesets', [RulesetController::class, 'index'])->name('ruleset.index');
+    Route::get('/rulesets/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
+    Route::get('/tables/{ruleset}', 'App\Http\Controllers\TableController@index')->name('table.index');
+    Route::get('/fixtures-and-results/{ruleset}', 'App\Http\Controllers\FixtureController@index')->name('fixture.index');
+    Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController@index')->name('player.index');
+    Route::get('/rulesets/{ruleset}/{section:slug}', function (Ruleset $ruleset, Section $section) {
+        return redirect()->route('ruleset.section.show', array_merge(request()->query(), [
+            'ruleset' => $ruleset,
+            'section' => $section,
+        ]));
+    })->scopeBindings();
+    Route::get('/{ruleset}/{section:slug}', [RulesetController::class, 'section'])->scopeBindings()->name('ruleset.section.show');
+});
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::FIXTURES]))->group(function () {
+    Route::get('/fixtures/{fixture}', 'App\Http\Controllers\FixtureController@show')->name('fixture.show');
+    Route::get('/fixtures/download/{section:slug}', 'App\Http\Controllers\FixtureController@download')->name('fixture.download');
+});
+Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::RESULTS]))
+    ->name('result.show');
 Route::get('/results/create/{fixture}', 'App\Http\Controllers\ResultController@create')->name('result.create');
-Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController@index')->name('player.index');
-Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')->name('player.show');
+Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PLAYERS]))
+    ->name('player.show');
 Route::post('/players/{player}/avatar', [PlayerController::class, 'updateAvatar'])
     ->middleware('auth')
     ->name('player.avatar');
-Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')->name('team.show');
-Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
-Route::get('/history/{season}', [HistoryController::class, 'season'])->name('history.season');
-Route::get('/history/{season}/{ruleset}', [HistoryController::class, 'show'])->name('history.show');
-Route::get('/history/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
-Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')->name('venue.show');
-Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
-Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
+Route::get('/teams/{team}', 'App\Http\Controllers\TeamController@show')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::TEAMS]))
+    ->name('team.show');
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::HISTORY]))->group(function () {
+    Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/{season}', [HistoryController::class, 'season'])->name('history.season');
+    Route::get('/history/{season}/{ruleset}', [HistoryController::class, 'show'])->name('history.show');
+    Route::get('/history/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
+});
+Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::VENUES]))
+    ->name('venue.show');
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::KNOCKOUTS]))->group(function () {
+    Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
+    Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
+});
 Route::get('/manifest.json', [LaravelPWAController::class, 'manifestJson'])->name('laravelpwa.manifest');
 Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelpwa.offline');
 Route::middleware('auth')->group(function () {
@@ -71,11 +97,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/support/tickets', [SupportTicketController::class, 'store'])->name('support.tickets.store');
     });
 });
-Route::get('/rulesets/{ruleset}/{section:slug}', function (Ruleset $ruleset, Section $section) {
-    return redirect()->route('ruleset.section.show', array_merge(request()->query(), [
-        'ruleset' => $ruleset,
-        'section' => $section,
-    ]));
-})->scopeBindings();
-Route::get('/{ruleset}/{section:slug}', [RulesetController::class, 'section'])->scopeBindings()->name('ruleset.section.show');
-Route::get('/{page}', 'App\Http\Controllers\PageController@show')->name('page.show');
+Route::get('/{page}', 'App\Http\Controllers\PageController@show')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PAGES]))
+    ->name('page.show');

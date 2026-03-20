@@ -2,14 +2,22 @@
 
 namespace App\Providers;
 
+use App\Models\Knockout;
+use App\Models\KnockoutMatch;
+use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
 use App\Models\News;
+use App\Models\Page;
 use App\Models\Season;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Observers\KnockoutMatchObserver;
+use App\Observers\KnockoutObserver;
+use App\Observers\KnockoutParticipantObserver;
 use App\Observers\KnockoutRoundObserver;
 use App\Observers\NewsObserver;
+use App\Observers\PageObserver;
 use App\Observers\SeasonObserver;
 use App\Observers\TeamObserver;
 use App\Observers\UserObserver;
@@ -33,8 +41,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Knockout::observe(KnockoutObserver::class);
+        KnockoutMatch::observe(KnockoutMatchObserver::class);
+        KnockoutParticipant::observe(KnockoutParticipantObserver::class);
         KnockoutRound::observe(KnockoutRoundObserver::class);
         News::observe(NewsObserver::class);
+        Page::observe(PageObserver::class);
         Season::observe(SeasonObserver::class);
         Team::observe(TeamObserver::class);
         User::observe(UserObserver::class);
