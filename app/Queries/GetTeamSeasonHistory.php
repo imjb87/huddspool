@@ -5,15 +5,16 @@ namespace App\Queries;
 use App\Models\Result;
 use App\Models\SectionTeam;
 use App\Models\Team;
+use App\Support\SeasonLabelFormatter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class GetTeamSeasonHistory
 {
-    public function __construct(protected Team $team)
-    {
-    }
+    public function __construct(
+        protected Team $team,
+        protected ?SeasonLabelFormatter $seasonLabelFormatter = null,
+    ) {}
 
     public function __invoke(): Collection
     {
@@ -33,8 +34,7 @@ class GetTeamSeasonHistory
                         OR (results.away_team_id = ? AND results.away_score < results.home_score)
                     THEN 1 ELSE 0 END) as losses,
                     SUM(CASE WHEN results.home_team_id = ? THEN results.home_score ELSE 0 END)
-                        + SUM(CASE WHEN results.away_team_id = ? THEN results.away_score ELSE 0 END) as raw_points'
-                , [$teamId, $teamId, $teamId, $teamId, $teamId, $teamId])
+                        + SUM(CASE WHEN results.away_team_id = ? THEN results.away_score ELSE 0 END) as raw_points', [$teamId, $teamId, $teamId, $teamId, $teamId, $teamId])
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
                 ->leftJoin('rulesets', 'rulesets.id', '=', 'fixtures.ruleset_id')
@@ -58,12 +58,13 @@ class GetTeamSeasonHistory
                 ->groupBy('sections.season_id', 'sections.ruleset_id')
                 ->get()
                 ->mapWithKeys(function ($row) {
-                    $key = $row->season_id . ':' . ($row->ruleset_id ?? 'null');
+                    $key = $row->season_id.':'.($row->ruleset_id ?? 'null');
+
                     return [$key => (int) $row->total_deducted];
                 });
 
             return $rows->map(function ($row) use ($deductions) {
-                $key = $row->season_id . ':' . ($row->ruleset_id ?? 'null');
+                $key = $row->season_id.':'.($row->ruleset_id ?? 'null');
                 $deducted = $deductions[$key] ?? 0;
 
                 $wins = (int) $row->wins;
@@ -76,7 +77,7 @@ class GetTeamSeasonHistory
                     'season_id' => $row->season_id,
                     'season_name' => $row->season_name,
                     'season_slug' => $row->season_slug,
-                    'season_label' => $this->determineSeasonLabel($row->season_name, $row->season_dates ?? []),
+                    'season_label' => $this->seasonLabelFormatter()->for($row->season_name, $row->season_dates ?? []),
                     'ruleset_id' => $row->ruleset_id,
                     'ruleset_name' => $row->ruleset_name,
                     'ruleset_slug' => $row->ruleset_slug,
@@ -90,51 +91,8 @@ class GetTeamSeasonHistory
         });
     }
 
-    protected function determineSeasonLabel(?string $seasonName, mixed $seasonDates): string
+    protected function seasonLabelFormatter(): SeasonLabelFormatter
     {
-        $dates = collect(is_string($seasonDates) ? json_decode($seasonDates, true) : $seasonDates);
-
-        $firstDate = $dates
-            ->flatten()
-            ->filter()
-            ->map(function ($value) {
-                if ($value instanceof Carbon) {
-                    return $value;
-                }
-
-                if (is_string($value)) {
-                    try {
-                        return Carbon::parse($value);
-                    } catch (\Throwable) {
-                        return null;
-                    }
-                }
-
-                return null;
-            })
-            ->filter()
-            ->sort()
-            ->first();
-
-        if ($firstDate) {
-            return $firstDate->isoFormat('MMM YY');
-        }
-
-        if ($seasonName) {
-            if (preg_match('/\d{4}/', $seasonName, $match)) {
-                return Carbon::createFromDate((int) $match[0], 1, 1)->isoFormat('MMM YY');
-            }
-
-            if (preg_match('/\d{2}/', $seasonName, $match)) {
-                $year = (int) $match[0];
-                $year += $year >= 70 ? 1900 : 2000;
-
-                return Carbon::createFromDate($year, 1, 1)->isoFormat('MMM YY');
-            }
-
-            return $seasonName;
-        }
-
-        return 'Unknown';
+        return $this->seasonLabelFormatter ??= app(SeasonLabelFormatter::class);
     }
 }

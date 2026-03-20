@@ -4,15 +4,16 @@ namespace App\Queries;
 
 use App\Models\Frame;
 use App\Models\User;
+use App\Support\SeasonLabelFormatter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class GetPlayerSeasonHistory
 {
-    public function __construct(protected User $player)
-    {
-    }
+    public function __construct(
+        protected User $player,
+        protected ?SeasonLabelFormatter $seasonLabelFormatter = null,
+    ) {}
 
     public function __invoke(): Collection
     {
@@ -32,8 +33,7 @@ class GetPlayerSeasonHistory
                     SUM(CASE WHEN (frames.home_player_id = ? AND frames.home_score > frames.away_score)
                         OR (frames.away_player_id = ? AND frames.away_score > frames.home_score)
                     THEN 1 ELSE 0 END) as wins,
-                    SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END) as draws'
-                , [$playerId, $playerId, $playerId])
+                    SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END) as draws', [$playerId, $playerId, $playerId])
                 ->join('results', 'results.id', '=', 'frames.result_id')
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
@@ -78,7 +78,7 @@ class GetPlayerSeasonHistory
                     'season_id' => $row->season_id,
                     'season_name' => $row->season_name,
                     'season_slug' => $row->season_slug,
-                    'season_label' => $this->determineSeasonLabel($row->season_name, $row->season_dates ?? []),
+                    'season_label' => $this->seasonLabelFormatter()->for($row->season_name, $row->season_dates ?? []),
                     'section_id' => $row->section_id,
                     'section_name' => $row->section_name,
                     'ruleset_id' => $row->ruleset_id,
@@ -96,51 +96,8 @@ class GetPlayerSeasonHistory
         });
     }
 
-    protected function determineSeasonLabel(?string $seasonName, mixed $seasonDates): string
+    protected function seasonLabelFormatter(): SeasonLabelFormatter
     {
-        $dates = collect(is_string($seasonDates) ? json_decode($seasonDates, true) : $seasonDates);
-
-        $firstDate = $dates
-            ->flatten()
-            ->filter()
-            ->map(function ($value) {
-                if ($value instanceof Carbon) {
-                    return $value;
-                }
-
-                if (is_string($value)) {
-                    try {
-                        return Carbon::parse($value);
-                    } catch (\Throwable) {
-                        return null;
-                    }
-                }
-
-                return null;
-            })
-            ->filter()
-            ->sort()
-            ->first();
-
-        if ($firstDate) {
-            return $firstDate->isoFormat('MMM YY');
-        }
-
-        if ($seasonName) {
-            if (preg_match('/\d{4}/', $seasonName, $match)) {
-                return Carbon::createFromDate((int) $match[0], 1, 1)->isoFormat('MMM YY');
-            }
-
-            if (preg_match('/\d{2}/', $seasonName, $match)) {
-                $year = (int) $match[0];
-                $year += $year >= 70 ? 1900 : 2000;
-
-                return Carbon::createFromDate($year, 1, 1)->isoFormat('MMM YY');
-            }
-
-            return $seasonName;
-        }
-
-        return 'Unknown';
+        return $this->seasonLabelFormatter ??= app(SeasonLabelFormatter::class);
     }
 }
