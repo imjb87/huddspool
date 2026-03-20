@@ -7,6 +7,7 @@ use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
 use App\Models\Result;
+use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
@@ -148,13 +149,13 @@ class Show extends Component
     }
 
     #[Computed]
-    public function currentSection()
+    public function currentSection(): ?Section
     {
         return $this->team?->openSection();
     }
 
     #[Computed]
-    public function record()
+    public function record(): object
     {
         return new GetPlayerAverages($this->user, $this->currentSection)();
     }

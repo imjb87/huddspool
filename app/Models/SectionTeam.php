@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\CompetitionCacheInvalidator;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class SectionTeam extends Pivot
@@ -45,7 +46,7 @@ class SectionTeam extends Pivot
         return self::displaySortValue((int) $this->sort);
     }
 
-    public function results()
+    public function results(): HasManyThrough
     {
         return $this->hasManyThrough(Result::class, Fixture::class, 'section_id', 'fixture_id', 'section_id', 'id')
             ->where(function ($query) {
@@ -54,13 +55,12 @@ class SectionTeam extends Pivot
             });
     }
 
-    // Computed Attributes
-    public function getPlayedAttribute()
+    public function getPlayedAttribute(): int
     {
-        return $this->results->count(); // Dynamically filters results for this team
+        return $this->results->count();
     }
 
-    public function getWinsAttribute()
+    public function getWinsAttribute(): int
     {
         return $this->results->filter(function ($result) {
             return ($result->home_team_id == $this->team_id && $result->home_score > $result->away_score) ||
@@ -68,14 +68,14 @@ class SectionTeam extends Pivot
         })->count();
     }
 
-    public function getDrawsAttribute()
+    public function getDrawsAttribute(): int
     {
         return $this->results->filter(function ($result) {
             return $result->home_score == $result->away_score;
         })->count();
     }
 
-    public function getLossesAttribute()
+    public function getLossesAttribute(): int
     {
         return $this->results->filter(function ($result) {
             return ($result->home_team_id == $this->team_id && $result->home_score < $result->away_score) ||
@@ -83,16 +83,14 @@ class SectionTeam extends Pivot
         })->count();
     }
 
-    public function getPointsAttribute()
+    public function getPointsAttribute(): int
     {
-        // Calculate the total points from the results
         $totalPoints = $this->results->sum(function ($result) {
             return $result->home_team_id == $this->team_id
                 ? $result->home_score
                 : $result->away_score;
         });
 
-        // Subtract the deducted points (default to 0 if null)
         return max(0, $totalPoints - ($this->deducted ?? 0));
     }
 }

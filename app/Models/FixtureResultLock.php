@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 class FixtureResultLock extends Model
@@ -20,12 +21,12 @@ class FixtureResultLock extends Model
         'locked_until' => 'datetime',
     ];
 
-    public function fixture()
+    public function fixture(): BelongsTo
     {
         return $this->belongsTo(Fixture::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'locked_by')->withTrashed();
     }
@@ -40,4 +41,3 @@ class FixtureResultLock extends Model
         return $this->locked_by === $userId && $this->isActive();
     }
 }
-

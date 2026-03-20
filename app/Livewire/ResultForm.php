@@ -10,8 +10,10 @@ use App\Models\Result;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class ResultForm extends Component
 {
@@ -56,7 +58,7 @@ class ResultForm extends Component
         }
     }
 
-    public function submit()
+    public function submit(): Redirector
     {
         $this->refreshActionState();
 
@@ -85,7 +87,7 @@ class ResultForm extends Component
         $this->refreshActionState();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.result-form');
     }
@@ -396,7 +398,7 @@ class ResultForm extends Component
         return 'result-form-draft:'.auth()->id().':'.$this->fixture->getKey();
     }
 
-    private function redirectToFixtureOrResult()
+    private function redirectToFixtureOrResult(): Redirector
     {
         $result = $this->result ?? $this->fixture->result;
 

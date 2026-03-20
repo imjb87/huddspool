@@ -6,6 +6,7 @@ use App\Models\KnockoutMatch;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -43,7 +44,7 @@ class SubmitResult extends Component
         return redirect()->route('knockout.show', $this->match->round->knockout);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.knockout.submit-result');
     }

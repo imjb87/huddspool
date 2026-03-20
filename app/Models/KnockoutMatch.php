@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\KnockoutType;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class KnockoutMatch extends Model
@@ -48,6 +49,7 @@ class KnockoutMatch extends Model
     ];
 
     protected ?int $previousWinnerId = null;
+
     protected bool $suppressAutoBye = false;
 
     protected static function booted(): void
@@ -58,7 +60,7 @@ class KnockoutMatch extends Model
             // Only enforce venue conflict for non-team knockouts
             $type = $match->knockout?->type;
             $homeVenueAllowed = false;
-            if ($type === \App\KnockoutType::Team && $match->venue_id) {
+            if ($type === KnockoutType::Team && $match->venue_id) {
                 $roundName = strtolower((string) $match->round?->name);
                 $homeVenueId = $match->homeParticipant?->team?->venue_id;
                 $homeVenueAllowed = $homeVenueId
@@ -175,7 +177,7 @@ class KnockoutMatch extends Model
         return $this->belongsTo(User::class, 'reported_by_id');
     }
 
-    public function scopeOrdered($query)
+    public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('position');
     }
@@ -287,7 +289,7 @@ class KnockoutMatch extends Model
     {
         $type = $this->type();
 
-    return $type === KnockoutType::Team ? 11 : $this->bestOfValue();
+        return $type === KnockoutType::Team ? 11 : $this->bestOfValue();
     }
 
     public function targetScoreToWin(): int
@@ -412,7 +414,7 @@ class KnockoutMatch extends Model
             // Set venue for team knockouts up to semi-finals
             $knockout = $next->knockout;
             $round = $next->round;
-            if ($knockout && $knockout->type === \App\KnockoutType::Team && $round && !str_contains(strtolower($round->name), 'semi') && !str_contains(strtolower($round->name), 'final')) {
+            if ($knockout && $knockout->type === KnockoutType::Team && $round && ! str_contains(strtolower($round->name), 'semi') && ! str_contains(strtolower($round->name), 'final')) {
                 $homeParticipant = $next->homeParticipant;
                 if ($homeParticipant && $homeParticipant->team) {
                     $update['venue_id'] = $homeParticipant->team->venue_id;

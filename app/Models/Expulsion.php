@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Expulsion extends Model
 {
@@ -46,7 +48,7 @@ class Expulsion extends Model
     /**
      * Get the owning expellable model (team or player).
      */
-    public function expellable()
+    public function expellable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -54,7 +56,7 @@ class Expulsion extends Model
     /**
      * Get the season associated with the expulsion.
      */
-    public function season()
+    public function season(): BelongsTo
     {
         return $this->belongsTo(Season::class);
     }

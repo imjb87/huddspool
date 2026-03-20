@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Season extends Model
@@ -56,12 +57,12 @@ class Season extends Model
     /**
      * Get the sections for the season.
      */
-    public function sections()
+    public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
     }
 
-    public function fixtures()
+    public function fixtures(): HasMany
     {
         return $this->hasMany(Fixture::class);
     }
@@ -69,12 +70,12 @@ class Season extends Model
     /**
      * Get the knockouts for the season.
      */
-    public function knockouts()
+    public function knockouts(): HasMany
     {
         return $this->hasMany(Knockout::class);
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }
@@ -145,7 +146,7 @@ class Season extends Model
     /**
      * Get the expulsions for the season.
      */
-    public function expulsions()
+    public function expulsions(): HasMany
     {
         return $this->hasMany(Expulsion::class);
     }

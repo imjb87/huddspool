@@ -6,32 +6,34 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInviteRegistrationRequest;
 use App\Models\User;
 use App\Notifications\InviteNotification;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class InviteController extends Controller
 {
-    public static function send(User $user)
+    public static function send(User $user): void
     {
-        $invitation_token = hash('sha256', $user->email.time());
+        $invitationToken = hash('sha256', $user->email.time());
 
-        $user->invitation_token = $invitation_token;
+        $user->invitation_token = $invitationToken;
         $user->save();
 
-        $user->notify(new InviteNotification($invitation_token));
+        $user->notify(new InviteNotification($invitationToken));
     }
 
-    public function register($token)
+    public function register(string $token): View
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::query()->where('invitation_token', $token)->firstOrFail();
 
         return view('auth.register', ['user' => $user]);
     }
 
-    public function store(Request $request, $token)
+    public function store(Request $request, string $token): RedirectResponse
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::query()->where('invitation_token', $token)->firstOrFail();
 
         $registrationRequest = new StoreInviteRegistrationRequest;
 

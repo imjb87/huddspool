@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use App\Support\CompetitionCacheInvalidator;
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Frame extends Model
 {
-    use \Awobaz\Compoships\Compoships, HasFactory, SoftDeletes;
+    use Compoships, HasFactory, SoftDeletes;
 
     protected static function booted(): void
     {
@@ -40,7 +42,7 @@ class Frame extends Model
     /**
      * Get the result that owns the frame.
      */
-    public function result()
+    public function result(): BelongsTo
     {
         return $this->belongsTo(Result::class);
     }
@@ -48,7 +50,7 @@ class Frame extends Model
     /**
      * Get the home player that owns the frame.
      */
-    public function homePlayer()
+    public function homePlayer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'home_player_id')->withTrashed();
     }
@@ -56,7 +58,7 @@ class Frame extends Model
     /**
      * Get the away player that owns the frame.
      */
-    public function awayPlayer()
+    public function awayPlayer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'away_player_id')->withTrashed();
     }

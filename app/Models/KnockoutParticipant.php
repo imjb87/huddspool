@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\KnockoutType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class KnockoutParticipant extends Model
 {
@@ -45,7 +45,7 @@ class KnockoutParticipant extends Model
         return $this->belongsTo(User::class, 'player_two_id');
     }
 
-    public function scopeOrdered($query)
+    public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderByRaw('COALESCE(seed, 9999)')
             ->orderBy('label');
@@ -59,10 +59,10 @@ class KnockoutParticipant extends Model
             ->leftJoin('users as player_one', 'knockout_participants.player_one_id', '=', 'player_one.id')
             ->leftJoin('users as player_two', 'knockout_participants.player_two_id', '=', 'player_two.id')
             ->where(function (Builder $query) use ($search) {
-                $query->where('knockout_participants.label', 'like', '%' . $search . '%')
-                    ->orWhere('teams.name', 'like', '%' . $search . '%')
-                    ->orWhere('player_one.name', 'like', '%' . $search . '%')
-                    ->orWhere('player_two.name', 'like', '%' . $search . '%');
+                $query->where('knockout_participants.label', 'like', '%'.$search.'%')
+                    ->orWhere('teams.name', 'like', '%'.$search.'%')
+                    ->orWhere('player_one.name', 'like', '%'.$search.'%')
+                    ->orWhere('player_two.name', 'like', '%'.$search.'%');
             })
             ->select('knockout_participants.*');
     }

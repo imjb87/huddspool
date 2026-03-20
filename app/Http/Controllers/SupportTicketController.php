@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSupportTicketRequest;
 use App\Services\SupportTicketService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,7 +15,7 @@ class SupportTicketController extends Controller
         protected SupportTicketService $supportTickets,
     ) {}
 
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         $user = $request->user();
 
@@ -26,7 +28,7 @@ class SupportTicketController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $user = $request->user();
 

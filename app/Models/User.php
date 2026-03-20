@@ -6,6 +6,9 @@ use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -85,12 +88,12 @@ class User extends Authenticatable implements FilamentUser
     /**
      * Get the user's team.
      */
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
-    public function frames()
+    public function frames(): HasMany
     {
         return $this->hasMany(Frame::class, 'home_player_id')
             ->whereHas('result.fixture.season', function ($query) {
@@ -102,7 +105,7 @@ class User extends Authenticatable implements FilamentUser
             });
     }
 
-    public function framesWon()
+    public function framesWon(): HasMany
     {
         return $this->hasMany(Frame::class, 'home_player_id')
             ->where(function ($query) {
@@ -120,7 +123,7 @@ class User extends Authenticatable implements FilamentUser
             });
     }
 
-    public function framesLost()
+    public function framesLost(): HasMany
     {
         return $this->hasMany(Frame::class, 'home_player_id')
             ->where(function ($query) {
@@ -138,7 +141,7 @@ class User extends Authenticatable implements FilamentUser
             });
     }
 
-    public function winPercentage()
+    public function winPercentage(): float|int|string
     {
         $framesPlayed = $this->frames->count();
 
@@ -149,7 +152,7 @@ class User extends Authenticatable implements FilamentUser
         return number_format(($this->framesWon()->count() / $framesPlayed) * 100, 2);
     }
 
-    public function lossPercentage()
+    public function lossPercentage(): float|int|string
     {
         $framesPlayed = $this->frames->count();
 
@@ -160,27 +163,27 @@ class User extends Authenticatable implements FilamentUser
         return number_format(($this->framesLost()->count() / $framesPlayed) * 100, 2);
     }
 
-    public function expulsions()
+    public function expulsions(): MorphMany
     {
         return $this->morphMany(Expulsion::class, 'expellable');
     }
 
-    public function isTeamAdmin()
+    public function isTeamAdmin(): bool
     {
         return $this->roleEnum() === UserRole::TeamAdmin;
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return (bool) $this->is_admin;
     }
 
-    public function isCaptain()
+    public function isCaptain(): bool
     {
         return $this->id === $this->team?->captain_id;
     }
 
-    public function roleLabel()
+    public function roleLabel(): string
     {
         if ($this->isCaptain()) {
             return 'Captain';

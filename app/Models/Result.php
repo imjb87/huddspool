@@ -7,6 +7,8 @@ use App\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
@@ -62,7 +64,7 @@ class Result extends Model
     /**
      * Get the fixture that owns the result.
      */
-    public function fixture()
+    public function fixture(): BelongsTo
     {
         return $this->belongsTo(Fixture::class);
     }
@@ -70,22 +72,22 @@ class Result extends Model
     /**
      * Get the result's frames.
      */
-    public function frames()
+    public function frames(): HasMany
     {
         return $this->hasMany(Frame::class);
     }
 
-    public function submittedBy()
+    public function submittedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'submitted_by')->withTrashed();
     }
 
-    public function section()
+    public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
     }
 
-    public function ruleset()
+    public function ruleset(): BelongsTo
     {
         return $this->belongsTo(Ruleset::class);
     }

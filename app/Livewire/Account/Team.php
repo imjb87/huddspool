@@ -7,6 +7,7 @@ use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
 use App\Models\Result;
+use App\Models\Section;
 use App\Models\Team as TeamModel;
 use App\Models\User;
 use App\Queries\GetTeamPlayers;
@@ -85,7 +86,7 @@ class Team extends Component
     }
 
     #[Computed]
-    public function currentSection()
+    public function currentSection(): ?Section
     {
         return $this->team?->openSection();
     }

@@ -122,7 +122,7 @@ class AccountPageTest extends TestCase
 
     public function test_team_admin_sees_result_submission_prompt_on_account_page_when_fixture_is_due(): void
     {
-        $season = Season::factory()->create(['is_open' => false]);
+        $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
         $section = Section::factory()->create([
             'season_id' => $season->id,
@@ -268,10 +268,10 @@ class AccountPageTest extends TestCase
             'position' => 1,
             'home_participant_id' => $teamHomeParticipant->id,
             'away_participant_id' => $teamAwayParticipant->id,
-            'home_score' => 4,
+            'home_score' => 6,
             'away_score' => 2,
             'winner_participant_id' => $teamHomeParticipant->id,
-            'best_of' => 7,
+            'best_of' => 11,
             'starts_at' => now()->subDays(2),
         ]);
 
@@ -335,7 +335,7 @@ class AccountPageTest extends TestCase
 
     public function test_account_page_shows_player_history_sections(): void
     {
-        $season = Season::factory()->create(['is_open' => true]);
+        $season = Season::factory()->create(['is_open' => false]);
         $ruleset = Ruleset::factory()->create();
         $section = Section::factory()->create([
             'season_id' => $season->id,
@@ -501,12 +501,13 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-knockout-section', false)
             ->assertSeeText('Knockouts')
             ->assertSeeText($knockout->name)
-            ->assertDontSeeText($teamKnockout->name)
+            ->assertSeeText($teamKnockout->name)
             ->assertSeeText('4')
             ->assertSeeText('2')
             ->assertSee(route('knockout.matches.submit', $pendingMatch), false)
             ->assertSee(route('knockout.show', $knockout), false)
-            ->assertDontSee(route('knockout.matches.submit', $completedMatch), false);
+            ->assertDontSee(route('knockout.matches.submit', $completedMatch), false)
+            ->assertSee(route('knockout.show', $teamKnockout), false);
     }
 
     public function test_captain_can_promote_and_remove_team_members_from_account_page(): void
@@ -568,5 +569,4 @@ class AccountPageTest extends TestCase
             ->call('removeFromTeam', $member->id)
             ->assertForbidden();
     }
-
 }

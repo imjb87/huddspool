@@ -124,7 +124,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertSet('awayScore', 1);
     }
 
-    public function test_team_captain_sees_submit_link_on_player_profile(): void
+    public function test_team_captain_sees_submit_link_on_account_page(): void
     {
         ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
 
@@ -138,12 +138,12 @@ class KnockoutResultAuthorizationTest extends TestCase
         $match->update(['starts_at' => now()->addDay()]);
 
         $this->actingAs($captain)
-            ->get(route('player.show', $captain))
+            ->get(route('account.team'))
             ->assertOk()
-            ->assertSeeText('Submit result');
+            ->assertSee(route('knockout.matches.submit', $match), false);
     }
 
-    public function test_regular_team_member_does_not_see_submit_link_on_player_profile(): void
+    public function test_regular_team_member_does_not_see_submit_link_on_account_page(): void
     {
         ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
 
@@ -156,9 +156,9 @@ class KnockoutResultAuthorizationTest extends TestCase
         $match->update(['starts_at' => now()->addDay()]);
 
         $this->actingAs($player)
-            ->get(route('player.show', $player))
+            ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSeeText('Submit result');
+            ->assertDontSee(route('knockout.matches.submit', $match), false);
     }
 
     /**
