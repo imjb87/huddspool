@@ -18,7 +18,7 @@ class Result extends Model
 
     protected static function booted(): void
     {
-        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $cacheInvalidator = new CompetitionCacheInvalidator;
         $flush = function (Result $result) use ($cacheInvalidator): void {
             $cacheInvalidator->forgetForResult($result);
         };

@@ -29,7 +29,7 @@ class HomeLatestActivity extends Component
     {
         $user = auth()->user();
 
-        $recentActivity = app(GetRecentActivity::class)($this->visibleRows);
+        $recentActivity = (new GetRecentActivity)($this->visibleRows);
 
         return $recentActivity->map(function (HomeActivityItem $item) use ($user): array {
             $canResume = false;

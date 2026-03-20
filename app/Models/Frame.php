@@ -15,7 +15,7 @@ class Frame extends Model
 
     protected static function booted(): void
     {
-        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $cacheInvalidator = new CompetitionCacheInvalidator;
         $flush = function (Frame $frame) use ($cacheInvalidator): void {
             $cacheInvalidator->forgetForFrame($frame);
         };

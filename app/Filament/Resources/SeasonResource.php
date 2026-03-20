@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use App\Support\CompetitionCacheInvalidator;
-use Filament\Actions;
 use App\Filament\Resources\SeasonResource\Pages;
 use App\Filament\Resources\SeasonResource\RelationManagers;
 use App\Models\Season;
+use App\Support\CompetitionCacheInvalidator;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -28,8 +29,8 @@ class SeasonResource extends Resource
         return $schema
             ->schema([
                 // Main section spanning 2 columns
-                \Filament\Schemas\Components\Section::make('Season information')
-                ->columnSpanFull()
+                Section::make('Season information')
+                    ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Name')
@@ -38,8 +39,8 @@ class SeasonResource extends Resource
                     ]),
 
                 // Dates on the right in a smaller section spanning 1 column
-                \Filament\Schemas\Components\Section::make('Schedule')
-                ->columnSpanFull()
+                Section::make('Schedule')
+                    ->columnSpanFull()
                     ->columnSpan(2)
                     ->schema([
                         Forms\Components\Repeater::make('dates')
@@ -59,7 +60,6 @@ class SeasonResource extends Resource
             ]);
     }
 
-
     public static function table(Table $table): Table
     {
         return $table
@@ -78,8 +78,8 @@ class SeasonResource extends Resource
                         });
                     })
                     ->afterStateUpdated(function (Season $record) {
-                        app(CompetitionCacheInvalidator::class)->forgetForSeason($record);
-                    })
+                        (new CompetitionCacheInvalidator)->forgetForSeason($record);
+                    }),
             ])
             ->filters([
                 //

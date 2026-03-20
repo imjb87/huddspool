@@ -14,7 +14,7 @@ class Expulsion extends Model
 
     protected static function booted(): void
     {
-        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $cacheInvalidator = new CompetitionCacheInvalidator;
         $flush = function (Expulsion $expulsion) use ($cacheInvalidator): void {
             $cacheInvalidator->forgetForExpulsion($expulsion);
         };

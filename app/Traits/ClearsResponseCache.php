@@ -26,7 +26,7 @@ trait ClearsResponseCache
 
     protected function flushRulesetCaches(): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForRulesetContent(
+        (new CompetitionCacheInvalidator)->forgetForRulesetContent(
             $this->resolveRulesetSlug(),
             $this->resolveSectionId(),
             $this->resolveSeasonId(),

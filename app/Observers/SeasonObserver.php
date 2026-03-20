@@ -24,6 +24,6 @@ class SeasonObserver
 
     protected function flushCaches(Season $season): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForSeason($season);
+        (new CompetitionCacheInvalidator)->forgetForSeason($season);
     }
 }

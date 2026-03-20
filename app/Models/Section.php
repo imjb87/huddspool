@@ -22,7 +22,7 @@ class Section extends Model
 
     protected static function booted(): void
     {
-        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $cacheInvalidator = new CompetitionCacheInvalidator;
 
         static::deleting(function (Section $section) {
             if ($section->hasRecordedResults()) {

@@ -14,11 +14,11 @@ class NewsObserver
 
     public function saved(News $news): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForNews();
+        (new CompetitionCacheInvalidator)->forgetForNews();
     }
 
     public function deleted(News $news): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForNews();
+        (new CompetitionCacheInvalidator)->forgetForNews();
     }
 }

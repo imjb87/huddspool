@@ -9,6 +9,7 @@ use App\Models\Frame;
 use App\Models\Result;
 use App\Support\ResultFormDraftStore;
 use App\Support\ResultFormFrameRowBuilder;
+use App\Support\ResultFormLockManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -308,28 +309,9 @@ class ResultForm extends Component
             return;
         }
 
-        $user = auth()->user();
-
-        $this->lock = FixtureResultLock::firstOrNew(['fixture_id' => $this->fixture->id]);
-
-        if ($this->lock->exists && $this->lock->isActive() && $this->lock->locked_by !== $user->id) {
-            $this->lock->loadMissing('user');
-            $this->canEdit = false;
-            $this->lockedByAnother = true;
-            $this->lockOwnerName = $this->lock->user?->name ?? 'Another team admin';
-            $this->lockExpiresAtHuman = optional($this->lock->locked_until)?->diffForHumans();
-
-            return;
-        }
-
-        $this->lock->locked_by = $user->id;
-        $this->lock->locked_until = now()->addMinutes($this->lockTimeoutMinutes);
-        $this->lock->save();
-
-        $this->canEdit = true;
-        $this->lockedByAnother = false;
-        $this->lockOwnerName = $user->name;
-        $this->lockExpiresAtHuman = optional($this->lock->locked_until)?->diffForHumans();
+        $this->applyLockState(
+            (new ResultFormLockManager)->acquire($this->fixture, auth()->user(), $this->lockTimeoutMinutes),
+        );
     }
 
     private function clearLockState(): void
@@ -343,11 +325,27 @@ class ResultForm extends Component
 
     private function releaseLock(): void
     {
-        if ($this->lock && $this->lock->locked_by === auth()->id()) {
-            $this->lock->delete();
-        }
+        (new ResultFormLockManager)->release($this->lock, (int) auth()->id());
 
         $this->clearLockState();
+    }
+
+    /**
+     * @param  array{
+     *     lock: ?FixtureResultLock,
+     *     canEdit: bool,
+     *     lockedByAnother: bool,
+     *     lockOwnerName: ?string,
+     *     lockExpiresAtHuman: ?string
+     * }  $state
+     */
+    private function applyLockState(array $state): void
+    {
+        $this->lock = $state['lock'];
+        $this->canEdit = $state['canEdit'];
+        $this->lockedByAnother = $state['lockedByAnother'];
+        $this->lockOwnerName = $state['lockOwnerName'];
+        $this->lockExpiresAtHuman = $state['lockExpiresAtHuman'];
     }
 
     private function persistDraftFramesToSession(): void

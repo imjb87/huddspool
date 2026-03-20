@@ -24,6 +24,6 @@ class TeamObserver
 
     protected function flushCaches(Team $team): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForTeam($team);
+        (new CompetitionCacheInvalidator)->forgetForTeam($team);
     }
 }

@@ -16,7 +16,7 @@ class SectionTeam extends Pivot
 
     protected static function booted(): void
     {
-        $cacheInvalidator = app(CompetitionCacheInvalidator::class);
+        $cacheInvalidator = new CompetitionCacheInvalidator;
         $flush = function (SectionTeam $pivot) use ($cacheInvalidator): void {
             $cacheInvalidator->forgetForSectionTeam($pivot);
         };

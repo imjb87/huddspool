@@ -24,6 +24,6 @@ class UserObserver
 
     protected function flushCaches(User $user): void
     {
-        app(CompetitionCacheInvalidator::class)->forgetForUser($user);
+        (new CompetitionCacheInvalidator)->forgetForUser($user);
     }
 }
