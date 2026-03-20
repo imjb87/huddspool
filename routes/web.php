@@ -37,13 +37,6 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->grou
     Route::get('/tables/{ruleset}', 'App\Http\Controllers\TableController@index')->name('table.index');
     Route::get('/fixtures-and-results/{ruleset}', 'App\Http\Controllers\FixtureController@index')->name('fixture.index');
     Route::get('/players/averages/{ruleset}', 'App\Http\Controllers\PlayerController@index')->name('player.index');
-    Route::get('/rulesets/{ruleset}/{section:slug}', function (Ruleset $ruleset, Section $section) {
-        return redirect()->route('ruleset.section.show', array_merge(request()->query(), [
-            'ruleset' => $ruleset,
-            'section' => $section,
-        ]));
-    })->scopeBindings();
-    Route::get('/{ruleset}/{section:slug}', [RulesetController::class, 'section'])->scopeBindings()->name('ruleset.section.show');
 });
 Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::FIXTURES]))->group(function () {
     Route::get('/fixtures/{fixture}', 'App\Http\Controllers\FixtureController@show')->name('fixture.show');
@@ -96,6 +89,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/support/tickets', [SupportTicketController::class, 'create'])->name('support.tickets');
         Route::post('/support/tickets', [SupportTicketController::class, 'store'])->name('support.tickets.store');
     });
+});
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
+    Route::get('/rulesets/{ruleset}/{section:slug}', function (Ruleset $ruleset, Section $section) {
+        return redirect()->route('ruleset.section.show', array_merge(request()->query(), [
+            'ruleset' => $ruleset,
+            'section' => $section,
+        ]));
+    })->scopeBindings();
+    Route::get('/{ruleset}/{section:slug}', [RulesetController::class, 'section'])->scopeBindings()->name('ruleset.section.show');
 });
 Route::get('/{page}', 'App\Http\Controllers\PageController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PAGES]))
