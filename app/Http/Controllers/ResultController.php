@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Fixture;
 use App\Models\Result;
+use Illuminate\Contracts\View\View;
 
 class ResultController extends Controller
 {
-    public function show(Result $result)
+    public function show(Result $result): View
     {
         $result->load([
-            'fixture.section.ruleset',
-            'fixture.venue',
+            'fixture' => fn ($query) => $query->with([
+                'season',
+                'section' => fn ($sectionQuery) => $sectionQuery->withTrashed()->with('ruleset'),
+                'venue' => fn ($venueQuery) => $venueQuery->withTrashed(),
+            ]),
             'frames.homePlayer',
             'frames.awayPlayer',
             'submittedBy',

@@ -1,13 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $fixture = $result->fixture;
+        $section = $fixture->section;
+        $season = $fixture->season;
+        $ruleset = $section?->ruleset;
+        $sectionLink = null;
+
+        if ($section && $ruleset) {
+            $sectionLink = $season && $season->hasConcluded()
+                ? route('history.section.show', [
+                    'season' => $season,
+                    'ruleset' => $ruleset,
+                    'section' => $section,
+                    'tab' => 'fixtures-results',
+                ])
+                : route('ruleset.section.show', [
+                    'ruleset' => $ruleset,
+                    'section' => $section,
+                    'tab' => 'fixtures-results',
+                ]);
+        }
+    @endphp
     <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="pb-10 lg:pb-14" data-result-page>
             <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
                 data-section-shared-header>
                 <div class="min-w-0">
                     <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Result</h1>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $result->fixture->section->name }}</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $section?->name ?? 'Archived section' }}</p>
                 </div>
             </div>
 
@@ -60,18 +82,22 @@
 
                                     <div>
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ruleset</p>
-                                        <a href="{{ route('ruleset.section.show', ['ruleset' => $result->fixture->section->ruleset, 'section' => $result->fixture->section, 'tab' => 'fixtures-results']) }}"
-                                            class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
-                                            {{ $result->fixture->section->ruleset->name }}
-                                        </a>
+                                        @if ($sectionLink && $ruleset)
+                                            <a href="{{ $sectionLink }}"
+                                                class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                                                {{ $ruleset->name }}
+                                            </a>
+                                        @else
+                                            <p class="mt-2 text-sm text-gray-900 dark:text-gray-100">Unavailable</p>
+                                        @endif
                                     </div>
 
                                     <div>
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Venue</p>
-                                        @if ($result->fixture->venue)
-                                            <a href="{{ route('venue.show', $result->fixture->venue) }}"
+                                        @if ($fixture->venue)
+                                            <a href="{{ route('venue.show', $fixture->venue) }}"
                                                 class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
-                                                {{ $result->fixture->venue->name }}
+                                                {{ $fixture->venue->name }}
                                             </a>
                                         @else
                                             <p class="mt-2 text-sm text-gray-900 dark:text-gray-100">Venue TBC</p>

@@ -82,6 +82,11 @@ class Fixture extends Model
         return $this->result()->exists();
     }
 
+    public function isBye(): bool
+    {
+        return $this->homeTeam?->name === 'Bye' || $this->awayTeam?->name === 'Bye';
+    }
+
     /**
      * Scope fixtures for the given team id(s).
      */

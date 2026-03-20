@@ -19,7 +19,10 @@
                     <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" wire:loading.remove wire:target="previousWeek, nextWeek">
                         @forelse ($fixtures as $fixture)
                             @php
-                                $isByeFixture = $fixture->home_team_id == 1 || $fixture->away_team_id == 1;
+                                $isByeFixture = $fixture->isBye();
+                                $fixtureLink = $fixture->result
+                                    ? route('result.show', $fixture->result)
+                                    : (! $isHistoryView ? route('fixture.show', $fixture) : null);
                                 $homeDisplayName = $isHistoryView && $fixture->result?->home_team_name
                                     ? $fixture->result->home_team_name
                                     : $fixture->homeTeam->name;
@@ -33,11 +36,11 @@
                             @endphp
 
                             <div wire:key="section-fixture-{{ $section->id }}-{{ $fixture->id }}">
-                                @if ($isHistoryView || $isByeFixture)
+                                @if ($fixtureLink === null || $isByeFixture)
                                     <div class="{{ $rowClasses }}">
                                 @else
                                     <a class="{{ $rowClasses }}"
-                                        href="{{ $fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture) }}">
+                                        href="{{ $fixtureLink }}">
                                 @endif
                                         <div class="flex items-start justify-between gap-4 py-4" data-section-fixtures-band>
                                             <div class="min-w-0 flex-1">
@@ -66,7 +69,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                @if ($isHistoryView || $isByeFixture)
+                                @if ($fixtureLink === null || $isByeFixture)
                                     </div>
                                 @else
                                     </a>

@@ -249,6 +249,7 @@ class HistoryPageTest extends TestCase
             'ruleset' => $ruleset,
             'section' => $section,
             'tab' => 'fixtures-results',
+            'week' => 2,
         ]));
 
         $fixturesResponse->assertOk();
@@ -256,6 +257,7 @@ class HistoryPageTest extends TestCase
         $fixturesResponse->assertSeeText('Blues');
         $fixturesResponse->assertDontSeeText('Modern Reds');
         $fixturesResponse->assertDontSeeText('Modern Blues');
+        $fixturesResponse->assertSee('href="'.route('result.show', $result).'"', false);
 
         $averagesResponse = $this->get(route('history.section.show', [
             'season' => $season,
