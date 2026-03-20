@@ -16,6 +16,8 @@ class Team extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const string BYE_NAME = 'Bye';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -167,5 +169,23 @@ class Team extends Model
     public function sectionTeams(): HasMany
     {
         return $this->hasMany(SectionTeam::class);
+    }
+
+    public function isBye(): bool
+    {
+        return $this->name === self::BYE_NAME;
+    }
+
+    public function scopeNotBye(Builder $query): Builder
+    {
+        return $query->where('name', '!=', self::BYE_NAME);
+    }
+
+    public static function byeOrFail(): self
+    {
+        /** @var self $team */
+        $team = self::query()->where('name', self::BYE_NAME)->firstOrFail();
+
+        return $team;
     }
 }

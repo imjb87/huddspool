@@ -2,19 +2,19 @@
 
 namespace App\Rules;
 
+use App\Models\Team;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Collection;
 
 class UniqueTeamsInSection implements Rule
 {
-    protected Array $teams;
+    protected array $teams;
 
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($teams)
+    public function __construct(array $teams)
     {
         $this->teams = $teams;
     }
@@ -24,23 +24,23 @@ class UniqueTeamsInSection implements Rule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
-        $teams = collect($this->teams);
-        $teams = $teams->filter(function($team_id) {
-            return $team_id != 1;
-        });
-        return $teams->count() == $teams->unique()->count();
+        $teams = collect($this->teams)
+            ->filter(function ($teamId) {
+                $team = Team::query()->find($teamId);
+
+                return $team?->isBye() !== true;
+            });
+
+        return $teams->count() === $teams->unique()->count();
     }
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return 'Each team can only be in a section once.';
     }

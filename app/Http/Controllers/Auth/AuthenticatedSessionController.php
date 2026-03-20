@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,8 +71,8 @@ class AuthenticatedSessionController extends Controller
             ->with(['result', 'homeTeam', 'awayTeam'])
             ->inOpenSeason()
             ->forTeam($user->team)
-            ->whereHas('homeTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
-            ->whereHas('awayTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
+            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
+            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
             ->whereDate('fixture_date', '<=', now()->toDateString())
             ->orderBy('fixture_date')
             ->orderBy('id')

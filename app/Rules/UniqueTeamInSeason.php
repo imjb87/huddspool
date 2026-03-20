@@ -2,23 +2,26 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Models\Season;
 use App\Models\Team;
+use Illuminate\Contracts\Validation\Rule;
 
 class UniqueTeamInSeason implements Rule
 {
     protected Season $season;
-    protected Array $teams;
+
+    protected array $teams;
+
     protected Team $failing_team;
-    protected $section_id;
+
+    protected ?int $section_id;
 
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct(Season $season, Array $teams, $section_id = null)
+    public function __construct(Season $season, array $teams, ?int $section_id = null)
     {
         $this->season = $season;
         $this->teams = $teams;
@@ -30,30 +33,32 @@ class UniqueTeamInSeason implements Rule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
-        foreach( $this->teams as $team_id ) {
-            $team = Team::find($team_id);
-            if( $team->id != 1 ) {
-                foreach( $this->season->sections as $section ) {
-                    if( $section->id != $this->section_id && $section->teams->contains($team) ) {
-                        $this->failing_team = $team;
-                        return false;
-                    }
+        foreach ($this->teams as $teamId) {
+            $team = Team::query()->find($teamId);
+
+            if (! $team || $team->isBye()) {
+                continue;
+            }
+
+            foreach ($this->season->sections as $section) {
+                if ($section->id !== $this->section_id && $section->teams->contains($team)) {
+                    $this->failing_team = $team;
+
+                    return false;
                 }
             }
         }
+
         return true;
     }
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return "The team {$this->failing_team->name} is already in another section in this season.";
     }

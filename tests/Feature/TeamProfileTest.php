@@ -171,8 +171,8 @@ class TeamProfileTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
-        $team = Team::factory()->create(['name' => 'Bye']);
-        $opponent = Team::factory()->create(['name' => 'Blues']);
+        $team = Team::factory()->create(['name' => 'Blues']);
+        $opponent = Team::factory()->create(['name' => Team::BYE_NAME]);
 
         $section->teams()->attach($team->id, ['sort' => 1]);
         $section->teams()->attach($opponent->id, ['sort' => 2]);
@@ -189,6 +189,25 @@ class TeamProfileTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('href="'.route('fixture.show', $fixture).'"', false);
+    }
+
+    public function test_bye_team_profile_returns_not_found(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create(['name' => Team::BYE_NAME]);
+        $opponent = Team::factory()->create();
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $this->get(route('team.show', $team))
+            ->assertNotFound();
     }
 
     public function test_team_profile_displays_team_knockout_matches(): void
@@ -236,7 +255,7 @@ class TeamProfileTest extends TestCase
             'position' => 1,
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
-            'home_score' => 5,
+            'home_score' => 6,
             'away_score' => 4,
             'winner_participant_id' => $homeParticipant->id,
             'best_of' => 11,
@@ -250,7 +269,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText('Team knockouts');
         $response->assertSeeText($knockout->name);
         $response->assertSee(route('knockout.show', $knockout), false);
-        $response->assertSeeText('5');
+        $response->assertSeeText('6');
         $response->assertSeeText('4');
     }
 }

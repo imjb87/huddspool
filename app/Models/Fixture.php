@@ -86,7 +86,7 @@ class Fixture extends Model
 
     public function isBye(): bool
     {
-        return $this->homeTeam?->name === 'Bye' || $this->awayTeam?->name === 'Bye';
+        return $this->homeTeam?->isBye() === true || $this->awayTeam?->isBye() === true;
     }
 
     /**

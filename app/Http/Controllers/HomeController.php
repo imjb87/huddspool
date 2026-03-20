@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Models\Result;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -27,8 +28,8 @@ class HomeController extends Controller
             ])
             ->inOpenSeason()
             ->where('is_confirmed', false)
-            ->where('home_team_id', '!=', 1)
-            ->where('away_team_id', '!=', 1)
+            ->whereHas('fixture.homeTeam', fn (Builder $query) => $query->notBye())
+            ->whereHas('fixture.awayTeam', fn (Builder $query) => $query->notBye())
             ->orderByDesc('updated_at')
             ->get();
     }

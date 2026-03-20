@@ -3,6 +3,7 @@
 namespace App\Data;
 
 use App\Models\Fixture;
+use App\Models\Team;
 use Illuminate\Support\Carbon;
 
 final class TeamFixtureData
@@ -42,6 +43,6 @@ final class TeamFixtureData
 
     public function isBye(): bool
     {
-        return $this->home_team_name === 'Bye' || $this->away_team_name === 'Bye';
+        return $this->home_team_name === Team::BYE_NAME || $this->away_team_name === Team::BYE_NAME;
     }
 }

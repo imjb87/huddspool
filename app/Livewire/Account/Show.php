@@ -13,6 +13,7 @@ use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
 use App\Queries\GetTeamPlayers;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -223,8 +224,8 @@ class Show extends Component
             ->with(['result', 'homeTeam', 'awayTeam'])
             ->inOpenSeason()
             ->forTeam($this->team)
-            ->whereHas('homeTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
-            ->whereHas('awayTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
+            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
+            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
             ->whereDate('fixture_date', '<=', now()->toDateString())
             ->orderBy('fixture_date')
             ->orderBy('id')

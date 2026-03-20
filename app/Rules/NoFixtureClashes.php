@@ -2,13 +2,15 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Models\Fixture;
+use Illuminate\Contracts\Validation\Rule;
 
 class NoFixtureClashes implements Rule
 {
     public $clashes;
+
     public $schedule;
+
     public $season_id;
 
     /**
@@ -51,9 +53,7 @@ class NoFixtureClashes implements Rule
             })
             ->get();
 
-        $this->clashes = $this->clashes->filter(function ($clash) {
-            return $clash->homeTeam->name != 'Bye' && $clash->awayTeam->name != 'Bye';
-        });        
+        $this->clashes = $this->clashes->reject(fn (Fixture $clash) => $clash->isBye());
 
         return $this->clashes->isEmpty();
     }
@@ -66,8 +66,8 @@ class NoFixtureClashes implements Rule
     public function message()
     {
         // List dates, venues and home team name for each clash
-        return 'The following existing fixtures clash with this proposed schedule, you may ignore them if you wish:<ul class="list-disc space-y-1 pl-5 mt-2">' . $this->clashes->map(function ($clash) {
-            return '<li>Week ' . $clash->week . ': ' . $clash->homeTeam->name . ' v ' . $clash->awayTeam->name . ' at ' . $clash->venue->name . ' in ' . $clash->section->name . '</li>';
-        })->implode('') . '</ul>';
+        return 'The following existing fixtures clash with this proposed schedule, you may ignore them if you wish:<ul class="list-disc space-y-1 pl-5 mt-2">'.$this->clashes->map(function ($clash) {
+            return '<li>Week '.$clash->week.': '.$clash->homeTeam->name.' v '.$clash->awayTeam->name.' at '.$clash->venue->name.' in '.$clash->section->name.'</li>';
+        })->implode('').'</ul>';
     }
 }

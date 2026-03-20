@@ -10,6 +10,7 @@ use App\Models\Result;
 use App\Models\Team as TeamModel;
 use App\Models\User;
 use App\Queries\GetTeamPlayers;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -116,8 +117,8 @@ class Team extends Component
             ->with(['result', 'homeTeam', 'awayTeam'])
             ->inOpenSeason()
             ->forTeam($this->team)
-            ->whereHas('homeTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
-            ->whereHas('awayTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
+            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
+            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
             ->orderBy('fixture_date')
             ->orderBy('id')
             ->get()

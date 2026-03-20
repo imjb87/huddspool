@@ -8,6 +8,7 @@ use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -24,9 +25,6 @@ class AdminWidgetsTest extends TestCase
             'season_id' => $season->id,
             'ruleset_id' => $ruleset->id,
         ]);
-
-        // ensure ID 1 is occupied so the widget's exclusions don't affect test teams
-        Team::factory()->create();
 
         $homeTeam = Team::factory()->create();
         $awayTeam = Team::factory()->create();
@@ -105,8 +103,8 @@ class AdminWidgetsTest extends TestCase
                 $query->where('is_confirmed', true);
             })
             ->whereHas('season', fn ($query) => $query->where('is_open', true))
-            ->where('home_team_id', '!=', 1)
-            ->where('away_team_id', '!=', 1)
+            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
+            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
             ->where('fixture_date', '<', now())
             ->pluck('id');
 

@@ -14,7 +14,7 @@ class TeamController extends Controller
 {
     public function show(Team $team): View
     {
-        if ($team->id === 1) {
+        if ($team->isBye()) {
             abort(404);
         }
 

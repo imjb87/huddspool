@@ -2,10 +2,11 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Fixture;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use App\Models\Fixture;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class OutstandingFixtures extends BaseWidget
@@ -24,10 +25,8 @@ class OutstandingFixtures extends BaseWidget
                     ->whereHas('season', function ($query) {
                         $query->where('is_open', true);
                     })
-                    ->where('home_team_id', '!=', 1)
-                    ->where('away_team_id', '!=', 1)
-                    ->whereHas('homeTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
-                    ->whereHas('awayTeam', fn ($query) => $query->where('name', '!=', 'Bye'))
+                    ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
+                    ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
                     ->where('fixture_date', '<', now())
                     ->orderBy('fixture_date', 'asc')
             )
@@ -35,12 +34,12 @@ class OutstandingFixtures extends BaseWidget
                 Tables\Columns\TextColumn::make('homeTeam.name')->label('Home team')->alignRight()->searchable(),
                 Tables\Columns\TextColumn::make('fixture_status')->label(false)->state(function (Model $record) {
                     if ($record->result && ! $record->result->is_confirmed) {
-                        return $record->result->home_score . ' - ' . $record->result->away_score;
+                        return $record->result->home_score.' - '.$record->result->away_score;
                     }
 
                     return $record->fixture_date->format('d/m');
                 })->alignCenter(),
-                Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),                
+                Tables\Columns\TextColumn::make('awayTeam.name')->label('Away team')->alignLeft()->searchable(),
             ])
             ->recordUrl(
                 fn (Model $record): string => route(

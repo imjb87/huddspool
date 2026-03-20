@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\SectionResource\RelationManagers;
 
+use App\Models\SectionTeam;
+use App\Models\Team;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SectionTeam;
 
 class TeamsRelationManager extends RelationManager
 {
@@ -34,7 +35,7 @@ class TeamsRelationManager extends RelationManager
             ->allowDuplicates()
             ->columns([
                 Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
-                    ->formatStateUsing(fn(string $state): string => $state == 10 ? '0' : $state),
+                    ->formatStateUsing(fn (string $state): string => $state == 10 ? '0' : $state),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('pivot.deducted'),
             ])
@@ -48,7 +49,9 @@ class TeamsRelationManager extends RelationManager
                         $section = $livewire->getOwnerRecord();
 
                         $existingTeamIds = $section->teams()->pluck('teams.id')->all();
-                        $byeTeamId = 1;
+                        $byeTeamId = Team::query()
+                            ->where('name', Team::BYE_NAME)
+                            ->value('id');
 
                         $excludedTeamIds = array_values(array_filter(
                             $existingTeamIds,
@@ -64,12 +67,12 @@ class TeamsRelationManager extends RelationManager
                 Actions\CreateAction::make()
                     ->label('Create a new team')
                     ->slideOver(true)
-                    ->modalHeading('Create a new team')
+                    ->modalHeading('Create a new team'),
             ])
             ->actions([
                 Actions\DetachAction::make()
                     ->label('Remove team')
-                    ->visible(fn(RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() == 0),
+                    ->visible(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() == 0),
                 Actions\Action::make('DeductPoints')
                     ->label('Deduct points')
                     ->modalHeading('Deduct points')
@@ -123,6 +126,7 @@ class TeamsRelationManager extends RelationManager
                     ->icon('heroicon-o-trash')
                     ->requiresConfirmation()
                     ->action(function (RelationManager $livewire, Model $record): void {
+                        $byeTeam = Team::byeOrFail();
                         $week = 0;
 
                         $section = $livewire->getOwnerRecord();
@@ -152,16 +156,16 @@ class TeamsRelationManager extends RelationManager
                             });
                         }
 
-                        $section->fixtures()->each(function ($fixture) use ($record) {
+                        $section->fixtures()->each(function ($fixture) use ($byeTeam, $record) {
                             if ($fixture->home_team_id == $record->id) {
-                                if (!$fixture->result) {
-                                    $fixture->home_team_id = 1; // Set to bye team
+                                if (! $fixture->result) {
+                                    $fixture->home_team_id = $byeTeam->getKey();
                                     $fixture->save();
                                 }
                             }
                             if ($fixture->away_team_id == $record->id) {
-                                if (!$fixture->result) {
-                                    $fixture->away_team_id = 1; // Set to bye team
+                                if (! $fixture->result) {
+                                    $fixture->away_team_id = $byeTeam->getKey();
                                     $fixture->save();
                                 }
                             }
@@ -174,7 +178,7 @@ class TeamsRelationManager extends RelationManager
             ->reorderable('sort');
     }
 
-    public function getTableRecordKey(Model | array $record): string
+    public function getTableRecordKey(Model|array $record): string
     {
         if (is_array($record)) {
             return (string) ($record['id'] ?? '');
