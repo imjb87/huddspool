@@ -47,6 +47,11 @@ class SearchComponentTest extends TestCase
 
         Livewire::test(Search::class)
             ->set('searchTerm', '  Imperial Club  ')
+            ->assertSee('data-search-modal-shell', false)
+            ->assertSee('max-w-xl transform overflow-hidden rounded-xl', false)
+            ->assertSee('data-search-loading-state', false)
+            ->assertSee('data-search-loading-skeleton', false)
+            ->assertSee('data-search-results-shell', false)
             ->assertSeeText('Imperial Club')
             ->assertSeeText('12 West Street')
             ->assertSeeText('Venue')
@@ -73,5 +78,27 @@ class SearchComponentTest extends TestCase
             ->assertSeeText('Imperial Club')
             ->assertDontSeeText('Alex Carter')
             ->assertSeeText('Team');
+    }
+
+    public function test_component_shows_player_avatars_in_player_results(): void
+    {
+        Model::withoutEvents(function (): void {
+            $season = Season::factory()->create(['is_open' => true]);
+            $section = Section::factory()->create(['season_id' => $season->id]);
+            $team = Team::factory()->create(['name' => 'Imperials']);
+
+            $team->sections()->attach($section);
+
+            User::factory()->create([
+                'name' => 'Alex Carter',
+                'team_id' => $team->id,
+            ]);
+        });
+
+        Livewire::test(Search::class)
+            ->set('searchTerm', 'Alex')
+            ->assertSee('data-search-player-avatar', false)
+            ->assertSeeText('Alex Carter')
+            ->assertSeeText('Imperials');
     }
 }
