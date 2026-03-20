@@ -35,7 +35,7 @@ class TeamsRelationManager extends RelationManager
             ->allowDuplicates()
             ->columns([
                 Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
-                    ->formatStateUsing(fn (string $state): string => $state == 10 ? '0' : $state),
+                    ->formatStateUsing(fn (string $state): string => (string) SectionTeam::displaySortValue((int) $state)),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('pivot.deducted'),
             ])

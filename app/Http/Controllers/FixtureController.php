@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Section;
+use App\Models\SectionTeam;
 use App\Queries\GetTeamPlayers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
@@ -92,8 +93,8 @@ class FixtureController extends Controller
                 $grid[$awayTeam->name] = [];
             }
 
-            $homeTeamSort = $homeTeam->pivot->sort == 10 ? 0 : $homeTeam->pivot->sort;
-            $awayTeamSort = $awayTeam->pivot->sort == 10 ? 0 : $awayTeam->pivot->sort;
+            $homeTeamSort = SectionTeam::displaySortValue((int) $homeTeam->pivot->sort);
+            $awayTeamSort = SectionTeam::displaySortValue((int) $awayTeam->pivot->sort);
 
             $grid[$homeTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort.'v'.$awayTeamSort;
             $grid[$awayTeam->name][$fixture->fixture_date->format('d/m')] = $homeTeamSort.'v'.$awayTeamSort;

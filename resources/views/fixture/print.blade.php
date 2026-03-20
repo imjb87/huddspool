@@ -1,3 +1,4 @@
+@php use App\Models\SectionTeam; @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -49,7 +50,7 @@
                 <tbody>
                     @foreach ($grid as $team => $row)
                         <tr>
-                            <td class="index-cell">{{ $loop->iteration == 10 ? 0 : $loop->iteration }}</td>
+                            <td class="index-cell">{{ SectionTeam::displaySortValue($loop->iteration) }}</td>
                             <td class="team-cell">{{ $team }}</td>
                             @foreach ($headerDates as $date)
                                 <td>{{ $row[$date] ?? '' }}</td>

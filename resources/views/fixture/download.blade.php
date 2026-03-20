@@ -1,3 +1,4 @@
+@php use App\Models\SectionTeam; @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -39,7 +40,7 @@
                 <tbody class="divide-y divide-gray-200 bg-white">
                     @foreach($grid as $key => $row)
                     <tr class="divide-x divide-gray-200">
-                        <td class="py-1 px-2 pl-2 text-xs font-medium whitespace-nowrap text-gray-900 text-center">{{ $loop->iteration == 10 ? 0 : $loop->iteration }}</td>
+                        <td class="py-1 px-2 pl-2 text-xs font-medium whitespace-nowrap text-gray-900 text-center">{{ SectionTeam::displaySortValue($loop->iteration) }}</td>
                         <td class="py-1 px-2 pl-2 text-xs font-medium whitespace-nowrap text-gray-900">
                             {{ $key }}
                         </td>

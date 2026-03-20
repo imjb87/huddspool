@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class SectionTeam extends Pivot
 {
+    public const int WRAP_SORT_POSITION = 10;
+
     protected $table = 'section_team';
 
     public $incrementing = true;
@@ -32,6 +34,16 @@ class SectionTeam extends Pivot
         'deducted' => 'integer',
         'sort' => 'integer',
     ];
+
+    public static function displaySortValue(int $sort): int
+    {
+        return $sort === self::WRAP_SORT_POSITION ? 0 : $sort;
+    }
+
+    public function getDisplaySortAttribute(): int
+    {
+        return self::displaySortValue((int) $this->sort);
+    }
 
     public function results()
     {
