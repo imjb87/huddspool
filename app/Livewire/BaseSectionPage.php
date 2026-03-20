@@ -258,6 +258,13 @@ abstract class BaseSectionPage extends Component
         );
     }
 
+    protected function contentPadding(): string
+    {
+        return in_array($this->activeTab, ['tables', 'averages'], true)
+            ? 'pb-8 lg:pb-8'
+            : 'pb-10 lg:pb-14';
+    }
+
     /**
      * @return SupportCollection<int, object>
      */
@@ -285,6 +292,34 @@ abstract class BaseSectionPage extends Component
                 'row_classes' => 'block rounded-lg',
             ];
         });
+    }
+
+    /**
+     * @return array{
+     *     contentPadding: string,
+     *     tabs: array<string, string>,
+     *     fixtureRows: SupportCollection<int, object>,
+     *     averageRows: Collection<int, array{
+     *         player: mixed,
+     *         can_link: bool,
+     *         ranking: int
+     *     }>,
+     *     averageSummaryCopy: string,
+     *     lastPage: int
+     * }
+     */
+    protected function sectionPageViewData(bool $isHistoryView): array
+    {
+        $averageViewData = $this->averageViewData($isHistoryView);
+
+        return [
+            'contentPadding' => $this->contentPadding(),
+            'tabs' => $this->tabs(),
+            'fixtureRows' => $this->fixtureRows($isHistoryView),
+            'averageRows' => $averageViewData['averageRows'],
+            'averageSummaryCopy' => $averageViewData['summaryCopy'],
+            'lastPage' => $averageViewData['lastPage'],
+        ];
     }
 
     /**

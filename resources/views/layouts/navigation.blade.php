@@ -1,8 +1,3 @@
-@php(extract($navigation_view_data ?? [], EXTR_SKIP))
-@php($navigationRulesets = collect($navigation_rulesets ?? []))
-@php($historySeasonGroups = collect($navigation_history_season_groups ?? []))
-@php($navigableKnockouts = collect($navigation_active_knockouts ?? []))
-
 <header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800 dark:bg-zinc-900"
     x-data="{
         open: false,

@@ -2,17 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class VenueResource extends Resource
 {
@@ -28,8 +27,8 @@ class VenueResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
+                Section::make('Information')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -46,8 +45,8 @@ class VenueResource extends Resource
                             ->placeholder('Venue address')
                             ->columnSpanFull(),
                     ]),
-                \Filament\Schemas\Components\Section::make('Location')
-                ->columnSpanFull()
+                Section::make('Location')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('latitude')
@@ -55,13 +54,13 @@ class VenueResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->helperText('Automatically populated from the address.')
-                            ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 7) : null),
+                            ->formatStateUsing(fn ($state) => self::formatCoordinate($state)),
                         Forms\Components\TextInput::make('longitude')
                             ->label('Longitude')
                             ->disabled()
                             ->dehydrated(false)
                             ->helperText('Automatically populated from the address.')
-                            ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 7) : null),
+                            ->formatStateUsing(fn ($state) => self::formatCoordinate($state)),
                     ]),
             ]);
     }
@@ -74,7 +73,7 @@ class VenueResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->wrap()
+                    ->wrap(),
             ])
             ->filters([
                 //
@@ -100,5 +99,14 @@ class VenueResource extends Resource
             'create' => Pages\CreateVenue::route('/create'),
             'edit' => Pages\EditVenue::route('/{record}/edit'),
         ];
+    }
+
+    private static function formatCoordinate(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return number_format((float) $value, 7);
     }
 }

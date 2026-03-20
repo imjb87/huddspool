@@ -29,7 +29,7 @@ class RulesetSectionPage extends BaseSectionPage
 
     public function render(): View
     {
-        return view('livewire.ruleset-section-page');
+        return view('livewire.ruleset-section-page', $this->sectionPageViewData(false));
     }
 
     protected function baseRouteParameters(): array

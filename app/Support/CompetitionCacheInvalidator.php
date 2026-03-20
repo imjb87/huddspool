@@ -15,17 +15,36 @@ use Spatie\ResponseCache\Facades\ResponseCache;
 
 class CompetitionCacheInvalidator
 {
+    /**
+     * @var array<int, string>
+     */
+    private const NAVIGATION_CACHE_KEYS = [
+        'nav:past-seasons',
+        'history:index',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const OPEN_SEASON_STATS_CACHE_KEYS = [
+        'stats:open-season',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const SEASON_SERIES_CACHE_KEYS = [
+        'stats:season-series',
+        'stats:season-series-chart',
+    ];
+
     public function forgetForRulesetContent(?string $slug, ?int $sectionId, ?int $seasonId, ?int $rulesetId): void
     {
         $this->forgetHomeResponseCache();
         $this->forgetRulesetResponseCache($slug);
-        $this->forgetKeys([
-            'stats:open-season',
-            'nav:past-seasons',
-            'history:index',
-        ]);
-        $this->forgetSectionCaches($sectionId);
-        $this->forgetSeasonRulesetHistory($seasonId, $rulesetId);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
+        $this->forgetSectionRelatedCaches($sectionId, $seasonId, $rulesetId);
     }
 
     public function forgetForResult(Result $result): void
@@ -35,30 +54,22 @@ class CompetitionCacheInvalidator
             $result->home_team_id,
             $result->away_team_id,
         ]);
-        $this->forgetKeys([
-            'stats:season-series',
-            'stats:season-series-chart',
-        ]);
+        $this->forgetKeys(self::SEASON_SERIES_CACHE_KEYS);
 
         $result->loadMissing('section', 'fixture');
 
         $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;
         $rulesetId = $result->fixture?->ruleset_id ?? $result->section?->ruleset_id;
 
-        $this->forgetSeasonHistory($seasonId);
-        $this->forgetSeasonRulesetHistory($seasonId, $rulesetId);
+        $this->forgetSeasonRelatedCaches($seasonId, $rulesetId);
     }
 
     public function forgetForFrame(Frame $frame): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'stats:open-season',
-            'stats:season-series',
-            'stats:season-series-chart',
-            'history:index',
-            'nav:past-seasons',
-        ]);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
+        $this->forgetKeys(self::SEASON_SERIES_CACHE_KEYS);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
 
         $frame->loadMissing('result.section', 'result.fixture');
 
@@ -66,9 +77,7 @@ class CompetitionCacheInvalidator
         $seasonId = $frame->result?->fixture?->season_id ?? $frame->result?->section?->season_id;
         $rulesetId = $frame->result?->fixture?->ruleset_id ?? $frame->result?->section?->ruleset_id;
 
-        $this->forgetSectionCaches($sectionId);
-        $this->forgetSeasonHistory($seasonId);
-        $this->forgetSeasonRulesetHistory($seasonId, $rulesetId);
+        $this->forgetSectionRelatedCaches($sectionId, $seasonId, $rulesetId);
         $this->forgetPlayerSeasonHistories([
             $frame->home_player_id,
             $frame->away_player_id,
@@ -82,13 +91,8 @@ class CompetitionCacheInvalidator
     public function forgetForSection(Section $section): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'history:index',
-            'nav:past-seasons',
-        ]);
-        $this->forgetSectionCaches($section->id);
-        $this->forgetSeasonHistory($section->season_id);
-        $this->forgetSeasonRulesetHistory($section->season_id, $section->ruleset_id);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
+        $this->forgetSectionRelatedCaches($section->id, $section->season_id, $section->ruleset_id);
     }
 
     public function forgetForSectionTeam(SectionTeam $sectionTeam): void
@@ -99,28 +103,21 @@ class CompetitionCacheInvalidator
         }
 
         $this->forgetSectionCaches($sectionTeam->section_id);
-        $this->forgetKeys([
-            'nav:past-seasons',
-            'history:index',
-        ]);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
         $this->forgetTeamSeasonHistories([$sectionTeam->team_id]);
 
         $section = Section::query()
             ->select('season_id', 'ruleset_id')
             ->find($sectionTeam->section_id);
 
-        $this->forgetSeasonHistory($section?->season_id);
-        $this->forgetSeasonRulesetHistory($section?->season_id, $section?->ruleset_id);
+        $this->forgetSeasonRelatedCaches($section?->season_id, $section?->ruleset_id);
     }
 
     public function forgetForExpulsion(Expulsion $expulsion): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'stats:open-season',
-            'history:index',
-            'nav:past-seasons',
-        ]);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
 
         if (! $expulsion->season_id) {
             return;
@@ -141,13 +138,9 @@ class CompetitionCacheInvalidator
     public function forgetForSeason(Season $season): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'stats:open-season',
-            'stats:season-series',
-            'stats:season-series-chart',
-            'nav:past-seasons',
-            'history:index',
-        ]);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
+        $this->forgetKeys(self::SEASON_SERIES_CACHE_KEYS);
+        $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
         $this->forgetSeasonHistory($season->id);
 
         $season->loadMissing('sections');
@@ -161,10 +154,8 @@ class CompetitionCacheInvalidator
     public function forgetForTeam(Team $team): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'stats:open-season',
-            'nav:past-seasons',
-        ]);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
+        $this->forgetKeys(['nav:past-seasons']);
         $this->forgetTeamSeasonHistories([$team->id]);
 
         foreach ($this->sectionsForTeamIds([$team->id]) as $section) {
@@ -177,9 +168,7 @@ class CompetitionCacheInvalidator
     public function forgetForUser(User $user): void
     {
         $this->forgetHomeResponseCache();
-        $this->forgetKeys([
-            'stats:open-season',
-        ]);
+        $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetPlayerSeasonHistories([$user->id]);
 
         $teamIds = $this->normalizedIds([
@@ -247,6 +236,18 @@ class CompetitionCacheInvalidator
         }
 
         Cache::forget(sprintf('history:sections:%d:%d', $seasonId, $rulesetId));
+    }
+
+    private function forgetSeasonRelatedCaches(?int $seasonId, ?int $rulesetId): void
+    {
+        $this->forgetSeasonHistory($seasonId);
+        $this->forgetSeasonRulesetHistory($seasonId, $rulesetId);
+    }
+
+    private function forgetSectionRelatedCaches(?int $sectionId, ?int $seasonId, ?int $rulesetId): void
+    {
+        $this->forgetSectionCaches($sectionId);
+        $this->forgetSeasonRelatedCaches($seasonId, $rulesetId);
     }
 
     /**

@@ -5,12 +5,11 @@ namespace App\Livewire;
 use App\Livewire\Forms\FixtureResultForm;
 use App\Models\Fixture;
 use App\Models\FixtureResultLock;
-use App\Models\Frame;
 use App\Models\Result;
 use App\Support\ResultFormDraftStore;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormLockManager;
-use Illuminate\Support\Facades\DB;
+use App\Support\ResultFormPersister;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -45,6 +44,12 @@ class ResultForm extends Component
 
     protected int $lockTimeoutMinutes = 10;
 
+    protected ?ResultFormDraftStore $draftStore = null;
+
+    protected ?ResultFormLockManager $lockManager = null;
+
+    protected ?ResultFormPersister $persister = null;
+
     public function mount(Fixture $fixture): void
     {
         $this->fixture = $this->loadFixture($fixture);
@@ -74,7 +79,7 @@ class ResultForm extends Component
         }
 
         $frames = $this->form->prepareFrames(requireComplete: true);
-        $result = $this->persistFrames($frames, lock: true);
+        $result = $this->persister()->persist($this->fixture, $this->result, $frames, lock: true);
 
         $this->syncComponentState($result);
         $this->clearDraftFramesFromSession();
@@ -93,7 +98,7 @@ class ResultForm extends Component
     public function render(): View
     {
         return view('livewire.result-form', [
-            'frameRows' => (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames),
+            'frameRows' => $this->frameRows(),
         ]);
     }
 
@@ -166,7 +171,7 @@ class ResultForm extends Component
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
         $this->form->syncFromResultAndDraft(
             $this->result,
-            (new ResultFormDraftStore)->get((int) auth()->id(), (int) $this->fixture->getKey()),
+            $this->draftStore()->get((int) auth()->id(), (int) $this->fixture->getKey()),
         );
     }
 
@@ -198,47 +203,9 @@ class ResultForm extends Component
             return;
         }
 
-        $result = $this->persistFrames($frames, lock: false);
+        $result = $this->persister()->persist($this->fixture, $this->result, $frames, lock: false);
 
         $this->syncComponentState($result);
-    }
-
-    private function persistFrames(array $frames, bool $lock): Result
-    {
-        $isOverridden = $this->result?->is_overridden ?? 0;
-        $scores = $this->scoresFromFrames($frames);
-
-        return DB::transaction(function () use ($frames, $lock, $isOverridden, $scores) {
-            $attributes = [
-                'home_score' => $scores['home_score'],
-                'away_score' => $scores['away_score'],
-                'is_confirmed' => $lock,
-                'is_overridden' => $isOverridden,
-                'section_id' => $this->fixture->section_id,
-                'ruleset_id' => $this->fixture->ruleset_id,
-            ];
-
-            if ($lock) {
-                $attributes['submitted_by'] = auth()->id();
-                $attributes['submitted_at'] = now();
-            }
-
-            if (! $this->result) {
-                $this->result = Result::create(array_merge($attributes, [
-                    'fixture_id' => $this->fixture->id,
-                    'home_team_id' => $this->fixture->homeTeam->id,
-                    'home_team_name' => $this->fixture->homeTeam->name,
-                    'away_team_id' => $this->fixture->awayTeam->id,
-                    'away_team_name' => $this->fixture->awayTeam->name,
-                ]));
-            } else {
-                $this->result->update($attributes);
-            }
-
-            $this->syncPersistedFrames(array_values($frames));
-
-            return $this->result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
-        });
     }
 
     /**
@@ -257,45 +224,6 @@ class ResultForm extends Component
         return count($frames) < $existingFrameCount;
     }
 
-    /**
-     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
-     * @return array{home_score: int, away_score: int}
-     */
-    private function scoresFromFrames(array $frames): array
-    {
-        return [
-            'home_score' => array_sum(array_column($frames, 'home_score')),
-            'away_score' => array_sum(array_column($frames, 'away_score')),
-        ];
-    }
-
-    /**
-     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
-     */
-    private function syncPersistedFrames(array $frames): void
-    {
-        $existingFrames = $this->result
-            ? $this->result->frames()->orderBy('id')->get()->values()
-            : collect();
-
-        foreach ($frames as $index => $frame) {
-            $existingFrame = $existingFrames[$index] ?? null;
-
-            if ($existingFrame instanceof Frame) {
-                $existingFrame->update($frame);
-
-                continue;
-            }
-
-            $this->result->frames()->create($frame);
-        }
-
-        $existingFrames
-            ->slice(count($frames))
-            ->each
-            ->delete();
-    }
-
     private function isHomeOrAwayTeam(int $teamId): bool
     {
         return $this->fixture->homeTeam->id === $teamId || $this->fixture->awayTeam->id === $teamId;
@@ -310,7 +238,7 @@ class ResultForm extends Component
         }
 
         $this->applyLockState(
-            (new ResultFormLockManager)->acquire($this->fixture, auth()->user(), $this->lockTimeoutMinutes),
+            $this->lockManager()->acquire($this->fixture, auth()->user(), $this->lockTimeoutMinutes),
         );
     }
 
@@ -325,7 +253,7 @@ class ResultForm extends Component
 
     private function releaseLock(): void
     {
-        (new ResultFormLockManager)->release($this->lock, (int) auth()->id());
+        $this->lockManager()->release($this->lock, (int) auth()->id());
 
         $this->clearLockState();
     }
@@ -350,12 +278,12 @@ class ResultForm extends Component
 
     private function persistDraftFramesToSession(): void
     {
-        (new ResultFormDraftStore)->put((int) auth()->id(), (int) $this->fixture->getKey(), $this->form->frames);
+        $this->draftStore()->put((int) auth()->id(), (int) $this->fixture->getKey(), $this->form->frames);
     }
 
     private function clearDraftFramesFromSession(): void
     {
-        (new ResultFormDraftStore)->forget((int) auth()->id(), (int) $this->fixture->getKey());
+        $this->draftStore()->forget((int) auth()->id(), (int) $this->fixture->getKey());
     }
 
     private function redirectToFixtureOrResult(): Redirector
@@ -367,5 +295,25 @@ class ResultForm extends Component
         }
 
         return redirect()->route('fixture.show', $this->fixture);
+    }
+
+    private function draftStore(): ResultFormDraftStore
+    {
+        return $this->draftStore ??= new ResultFormDraftStore;
+    }
+
+    private function lockManager(): ResultFormLockManager
+    {
+        return $this->lockManager ??= new ResultFormLockManager;
+    }
+
+    private function persister(): ResultFormPersister
+    {
+        return $this->persister ??= new ResultFormPersister;
+    }
+
+    private function frameRows(): array
+    {
+        return (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames);
     }
 }

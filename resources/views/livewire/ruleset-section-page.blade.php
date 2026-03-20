@@ -1,9 +1,3 @@
-@php
-    $contentPadding = in_array($activeTab, ['tables', 'averages'], true) ? 'pb-8 lg:pb-8' : 'pb-10 lg:pb-14';
-    $averageViewData = $this->averageViewData(false);
-    $fixtureRows = $this->fixtureRows(false);
-@endphp
-
 <div class="pt-[72px] {{ $contentPadding }}">
     <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
         data-section-shared-header>
@@ -31,7 +25,6 @@
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6"
             data-section-tabs-scroll
             data-section-tabs-track>
-            @php($tabs = $this->tabs())
             <nav class="-ml-3 flex gap-2">
                 @foreach ($tabs as $tabKey => $tabLabel)
                     <a href="{{ $this->tabUrl($tabKey) }}"
@@ -91,9 +84,9 @@
                     'page' => $page,
                     'perPage' => $perPage,
                     'totalPlayers' => $this->totalPlayers,
-                    'averageRows' => $averageViewData['averageRows'],
-                    'averageSummaryCopy' => $averageViewData['summaryCopy'],
-                    'lastPage' => $averageViewData['lastPage'],
+                    'averageRows' => $averageRows,
+                    'averageSummaryCopy' => $averageSummaryCopy,
+                    'lastPage' => $lastPage,
                 ])
             @endif
         </div>

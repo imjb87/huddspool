@@ -30,12 +30,11 @@ class NavigationComposer
             'rulesets' => $this->rulesets(),
             'past_seasons' => $this->pastSeasons(),
             'active_knockouts' => $this->activeKnockouts(),
-            'navigation_rulesets' => $this->navigationRulesets(),
-            'navigation_history_season_groups' => $this->historySeasonGroups(),
-            'navigation_active_knockouts' => $this->navigableActiveKnockouts(),
-            'navigation_view_data' => $this->navigationViewData(request()),
+            'navigationRulesets' => $this->navigationRulesets(),
+            'historySeasonGroups' => $this->historySeasonGroups(),
+            'navigableKnockouts' => $this->navigableActiveKnockouts(),
             'is_impersonating' => Impersonation::isImpersonating(),
-        ]);
+        ] + $this->navigationViewData(request()));
     }
 
     /**

@@ -36,7 +36,7 @@ class SectionPage extends BaseSectionPage
 
     public function render(): View
     {
-        return view('livewire.history.section-page');
+        return view('livewire.history.section-page', $this->sectionPageViewData(true));
     }
 
     protected function baseRouteParameters(): array
