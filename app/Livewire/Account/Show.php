@@ -4,9 +4,7 @@ namespace App\Livewire\Account;
 
 use App\Enums\UserRole;
 use App\KnockoutType;
-use App\Models\Fixture;
 use App\Models\KnockoutMatch;
-use App\Models\Result;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
@@ -14,10 +12,9 @@ use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerSeasonHistory;
 use App\Queries\GetTeamPlayers;
-use Illuminate\Database\Eloquent\Builder;
+use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -213,45 +210,9 @@ class Show extends Component
     #[Computed]
     public function resultSubmissionPrompt(): ?object
     {
-        if (! $this->user->isTeamAdmin() && ! $this->user->isCaptain()) {
-            return null;
-        }
+        $prompt = $this->resultSubmissionPromptResolver()->promptFor($this->user);
 
-        if (! $this->team) {
-            return null;
-        }
-
-        $fixture = Fixture::query()
-            ->with(['result', 'homeTeam', 'awayTeam'])
-            ->inOpenSeason()
-            ->forTeam($this->team)
-            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
-            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
-            ->whereDate('fixture_date', '<=', now()->toDateString())
-            ->orderBy('fixture_date')
-            ->orderBy('id')
-            ->get()
-            ->first(function (Fixture $fixture) {
-                if ($fixture->result instanceof Result) {
-                    return ! $fixture->result->is_confirmed && Gate::allows('resumeSubmission', $fixture->result);
-                }
-
-                return Gate::allows('createResult', $fixture);
-            });
-
-        if (! $fixture) {
-            return null;
-        }
-
-        return (object) [
-            'message' => 'A team result is ready to submit.',
-            'fixture_label' => sprintf(
-                '%s vs %s',
-                $fixture->homeTeam?->name ?? 'TBC',
-                $fixture->awayTeam?->name ?? 'TBC',
-            ),
-            'url' => route('result.create', $fixture),
-        ];
+        return $prompt ? (object) $prompt : null;
     }
 
     #[Computed]
@@ -267,6 +228,11 @@ class Show extends Component
     public function render(): View
     {
         return view('livewire.account.show');
+    }
+
+    private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
+    {
+        return app(ResultSubmissionPromptResolver::class);
     }
 
     private function captainTeamMember(int $playerId): User

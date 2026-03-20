@@ -6,15 +6,14 @@ use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
-use App\Models\Result;
 use App\Models\Section;
 use App\Models\Team as TeamModel;
 use App\Models\User;
 use App\Queries\GetTeamPlayers;
+use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -124,24 +123,12 @@ class Team extends Component
             ->orderBy('id')
             ->get()
             ->map(function (Fixture $fixture) {
-                $isDue = $fixture->fixture_date?->isPast() || $fixture->fixture_date?->isToday();
-                $actionUrl = null;
-                $actionLabel = null;
-
-                if ($isDue) {
-                    if ($fixture->result instanceof Result && ! $fixture->result->is_confirmed && Gate::allows('resumeSubmission', $fixture->result)) {
-                        $actionUrl = route('result.create', $fixture);
-                        $actionLabel = 'Submit result';
-                    } elseif (! $fixture->result && Gate::allows('createResult', $fixture)) {
-                        $actionUrl = route('result.create', $fixture);
-                        $actionLabel = 'Submit result';
-                    }
-                }
+                $actionUrl = $this->resultSubmissionPromptResolver()->actionUrlFor($this->user, $fixture);
 
                 return (object) [
                     'fixture' => $fixture,
                     'action_url' => $actionUrl,
-                    'action_label' => $actionLabel,
+                    'action_label' => $actionUrl ? 'Submit result' : null,
                 ];
             })
             ->values();
@@ -150,21 +137,9 @@ class Team extends Component
     #[Computed]
     public function resultSubmissionPrompt(): ?object
     {
-        $fixture = $this->fixtures->first(fn ($item) => $item->action_url);
+        $prompt = $this->resultSubmissionPromptResolver()->promptFor($this->user);
 
-        if (! $fixture) {
-            return null;
-        }
-
-        return (object) [
-            'message' => 'A team result is ready to submit.',
-            'fixture_label' => sprintf(
-                '%s vs %s',
-                $fixture->fixture->homeTeam?->name ?? 'TBC',
-                $fixture->fixture->awayTeam?->name ?? 'TBC',
-            ),
-            'url' => $fixture->action_url,
-        ];
+        return $prompt ? (object) $prompt : null;
     }
 
     #[Computed]
@@ -221,6 +196,11 @@ class Team extends Component
     public function render(): View
     {
         return view('livewire.account.team');
+    }
+
+    private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
+    {
+        return app(ResultSubmissionPromptResolver::class);
     }
 
     private function captainTeamMember(int $playerId): User

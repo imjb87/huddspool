@@ -4,18 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Fixture;
-use App\Models\Result;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(
+        private readonly ResultSubmissionPromptResolver $resultSubmissionPromptResolver,
+    ) {}
+
     /**
      * Display the login view.
      */
@@ -37,7 +38,9 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
 
         return redirect($user->getRedirectRoute())
-            ->with($this->resultSubmissionPrompt($user));
+            ->with([
+                'result_submission_prompt' => $this->resultSubmissionPromptResolver->promptFor($user),
+            ]);
     }
 
     /**
@@ -52,48 +55,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    /**
-     * @return array<string, array{message: string, url: string}|null>
-     */
-    private function resultSubmissionPrompt(User $user): array
-    {
-        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
-            return ['result_submission_prompt' => null];
-        }
-
-        if (! $user->team) {
-            return ['result_submission_prompt' => null];
-        }
-
-        $fixture = Fixture::query()
-            ->with(['result', 'homeTeam', 'awayTeam'])
-            ->inOpenSeason()
-            ->forTeam($user->team)
-            ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
-            ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
-            ->whereDate('fixture_date', '<=', now()->toDateString())
-            ->orderBy('fixture_date')
-            ->orderBy('id')
-            ->get()
-            ->first(function (Fixture $fixture) use ($user) {
-                if ($fixture->result instanceof Result) {
-                    return ! $fixture->result->is_confirmed && Gate::forUser($user)->allows('resumeSubmission', $fixture->result);
-                }
-
-                return Gate::forUser($user)->allows('createResult', $fixture);
-            });
-
-        if (! $fixture) {
-            return ['result_submission_prompt' => null];
-        }
-
-        return [
-            'result_submission_prompt' => [
-                'message' => 'A team result is ready to submit.',
-                'url' => route('result.create', $fixture),
-            ],
-        ];
     }
 }
