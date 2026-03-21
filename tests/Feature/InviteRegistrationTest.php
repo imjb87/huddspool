@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Auth\InviteController;
 use App\Models\User;
+use App\Notifications\InviteNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class InviteRegistrationTest extends TestCase
@@ -62,5 +66,30 @@ class InviteRegistrationTest extends TestCase
         $response = $this->post(route('invite.store', 'missing-token'), []);
 
         $response->assertNotFound();
+    }
+
+    public function test_sending_an_invite_queues_the_email_notification(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create([
+            'invitation_token' => null,
+        ]);
+
+        InviteController::send($user);
+
+        $user->refresh();
+
+        $this->assertNotNull($user->invitation_token);
+
+        Notification::assertSentTo(
+            $user,
+            InviteNotification::class,
+            function (InviteNotification $notification, array $channels) {
+                return $notification instanceof ShouldQueue
+                    && in_array('mail', $channels, true)
+                    && $notification->queue === 'emails';
+            }
+        );
     }
 }

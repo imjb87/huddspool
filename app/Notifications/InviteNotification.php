@@ -3,26 +3,26 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-class InviteNotification extends Notification
+class InviteNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $token;
-
-    public function __construct($token)
+    public function __construct(protected string $token)
     {
-        $this->token = $token;
+        $this->afterCommit();
+        $this->onQueue('emails');
     }
 
-    public function via ($notifiable) {
+    public function via(object $notifiable): array
+    {
         return ['mail'];
-    }    
+    }
 
-    public function toMail($notifiable)
+    public function toMail(object $notifiable): MailMessage
     {
         $url = route('invite.register', $this->token);
 
@@ -32,10 +32,8 @@ class InviteNotification extends Notification
             ->line('Thank you for using our application!');
     }
 
-    public function toArray($notifiable)
+    public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 }
