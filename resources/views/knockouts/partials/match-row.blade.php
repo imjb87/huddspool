@@ -1,10 +1,18 @@
 <article class="py-4" data-knockout-match-row>
     <div class="flex items-start justify-between gap-4" data-section-fixtures-band>
         <div class="min-w-0 flex-1">
-            <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
-                @if (count($matchRow->home_parts) > 1)
-                    <span>{{ $matchRow->home_label }}</span>
-                @else
+            @if (count($matchRow->home_parts) > 1 && count($matchRow->away_parts) > 1)
+                <div class="space-y-0.5 text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
+                    <p class="[overflow-wrap:anywhere]">
+                        <span>{{ $matchRow->home_label }}</span>
+                        <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
+                    </p>
+                    <p class="[overflow-wrap:anywhere] text-gray-700 dark:text-gray-300">
+                        {{ $matchRow->away_label }}
+                    </p>
+                </div>
+            @else
+                <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
                     @foreach ($matchRow->home_parts as $part)
                         @if ($part['url'])
                             <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
@@ -14,13 +22,9 @@
                             <span>{{ $part['label'] }}</span>
                         @endif
                     @endforeach
-                @endif
 
-                <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
+                    <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
 
-                @if (count($matchRow->away_parts) > 1)
-                    <span>{{ $matchRow->away_label }}</span>
-                @else
                     @foreach ($matchRow->away_parts as $part)
                         @if ($part['url'])
                             <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
@@ -30,8 +34,8 @@
                             <span>{{ $part['label'] }}</span>
                         @endif
                     @endforeach
-                @endif
-            </p>
+                </p>
+            @endif
 
             <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
                 @if ($matchRow->match_label)

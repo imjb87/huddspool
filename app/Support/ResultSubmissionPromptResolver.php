@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Fixture;
+use App\Models\KnockoutMatch;
 use App\Models\Result;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,24 +15,42 @@ class ResultSubmissionPromptResolver
     public function promptFor(User $user): ?array
     {
         $fixtures = $this->outstandingFixturesFor($user);
+        $knockoutMatches = $this->outstandingKnockoutMatchesFor($user);
 
-        if ($fixtures->isEmpty()) {
+        if ($fixtures->isEmpty() && $knockoutMatches->isEmpty()) {
             return null;
         }
 
-        /** @var Fixture $fixture */
-        $fixture = $fixtures->first();
         $fixtureCount = $fixtures->count();
+        $knockoutCount = $knockoutMatches->count();
+        $fixture = $fixtures->first();
 
-        return [
-            'message' => $fixtureCount === 1
+        $message = match (true) {
+            $fixtureCount > 0 && $knockoutCount > 0 => sprintf(
+                '%d team result%s and %d knockout result%s are ready to submit.',
+                $fixtureCount,
+                $fixtureCount === 1 ? '' : 's',
+                $knockoutCount,
+                $knockoutCount === 1 ? '' : 's',
+            ),
+            $fixtureCount > 0 => $fixtureCount === 1
                 ? 'A team result is ready to submit.'
                 : sprintf('%d team results are ready to submit.', $fixtureCount),
-            'fixture_label' => $fixtureCount === 1
+            default => $knockoutCount === 1
+                ? 'A knockout result is ready to submit.'
+                : sprintf('%d knockout results are ready to submit.', $knockoutCount),
+        };
+
+        return [
+            'message' => $message,
+            'fixture_label' => $fixtureCount === 1 && $knockoutCount === 0
                 ? sprintf('%s vs %s', $fixture->homeTeam?->name ?? 'TBC', $fixture->awayTeam?->name ?? 'TBC')
-                : 'Choose a fixture to submit:',
-            'url' => route('result.create', $fixture),
-            'button_label' => $fixtureCount === 1 ? 'Submit result' : 'Choose fixture',
+                : null,
+            'url' => $fixtureCount === 1 && $knockoutCount === 0 && $fixture instanceof Fixture
+                ? route('result.create', $fixture)
+                : null,
+            'button_label' => $fixtureCount === 1 && $knockoutCount === 0 ? 'Submit result' : null,
+            'fixtures_heading' => $fixtureCount > 0 ? 'League matches' : null,
             'fixtures' => $fixtures
                 ->map(fn (Fixture $outstandingFixture) => [
                     'label' => sprintf(
@@ -40,6 +59,18 @@ class ResultSubmissionPromptResolver
                         $outstandingFixture->awayTeam?->name ?? 'TBC',
                     ),
                     'url' => route('result.create', $outstandingFixture),
+                ])
+                ->all(),
+            'knockouts_heading' => $knockoutCount > 0 ? 'Knockouts' : null,
+            'knockouts' => $knockoutMatches
+                ->map(fn (KnockoutMatch $match) => [
+                    'label' => sprintf(
+                        '%s / %s: %s',
+                        $match->knockout?->name ?? 'Knockout',
+                        $match->round?->name ?? 'Round TBC',
+                        $match->title(),
+                    ),
+                    'url' => route('knockout.matches.submit', $match),
                 ])
                 ->all(),
         ];
@@ -71,6 +102,29 @@ class ResultSubmissionPromptResolver
             ->orderBy('id')
             ->get()
             ->filter(fn (Fixture $fixture) => $this->actionUrlFor($user, $fixture) !== null)
+            ->values();
+    }
+
+    public function outstandingKnockoutMatchesFor(User $user): Collection
+    {
+        return KnockoutMatch::query()
+            ->with([
+                'knockout.season',
+                'round',
+                'homeParticipant.playerOne',
+                'homeParticipant.playerTwo',
+                'homeParticipant.team',
+                'awayParticipant.playerOne',
+                'awayParticipant.playerTwo',
+                'awayParticipant.team',
+            ])
+            ->whereHas('knockout.season', fn (Builder $query) => $query->where('is_open', true))
+            ->whereNull('winner_participant_id')
+            ->orderByRaw('case when starts_at is null then 1 else 0 end')
+            ->orderBy('starts_at')
+            ->orderBy('id')
+            ->get()
+            ->filter(fn (KnockoutMatch $match) => $match->isDueForSubmission() && Gate::forUser($user)->allows('submitResult', $match))
             ->values();
     }
 

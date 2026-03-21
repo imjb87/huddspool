@@ -13,16 +13,15 @@ class KnockoutMatchPolicy
             return false;
         }
 
-        return $this->canSubmitResult($user, $match);
+        return $match->userCanSubmit($user);
     }
 
     public function submitResult(User $user, KnockoutMatch $match): bool
     {
-        return $this->canSubmitResult($user, $match);
-    }
+        if ($match->winner_participant_id) {
+            return false;
+        }
 
-    private function canSubmitResult(User $user, KnockoutMatch $match): bool
-    {
         return $match->userCanSubmit($user);
     }
 }

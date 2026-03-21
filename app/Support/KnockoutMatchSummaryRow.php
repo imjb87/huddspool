@@ -2,7 +2,9 @@
 
 namespace App\Support;
 
+use App\KnockoutType;
 use App\Models\KnockoutMatch;
+use App\Models\KnockoutParticipant;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +22,7 @@ class KnockoutMatchSummaryRow
         }
 
         $hasResult = self::hasResult($match);
-        $canSubmit = ! $hasResult && Gate::allows('submitResult', $match);
+        $canSubmit = ! $hasResult && Gate::allows('openSubmission', $match);
 
         return self::build(
             match: $match,
@@ -46,7 +48,7 @@ class KnockoutMatchSummaryRow
 
         return self::build(
             match: $match,
-            rowUrl: ! $hasResult && $allowSubmission && Gate::allows('submitResult', $match)
+            rowUrl: ! $hasResult && $allowSubmission && Gate::allows('openSubmission', $match)
                 ? route('knockout.matches.submit', $match)
                 : ($hasResult ? route('knockout.show', $match->round->knockout) : null),
             participantId: $participantId,
@@ -83,12 +85,56 @@ class KnockoutMatchSummaryRow
             'row_url' => $rowUrl,
             'home_label' => $match->homeParticipant?->display_name ?? 'TBC',
             'away_label' => $match->awayParticipant?->display_name ?? 'TBC',
+            'is_doubles' => $match->type() === KnockoutType::Doubles,
+            'home_parts' => self::participantParts($match->homeParticipant, $match->homeParticipant?->display_name ?? 'TBC', $match->type()),
+            'away_parts' => self::participantParts($match->awayParticipant, $match->awayParticipant?->display_name ?? 'TBC', $match->type()),
             'meta_label' => ($match->round?->knockout?->name ?? 'Knockout').' / '.($match->round?->name ?? 'Round TBC'),
             'has_result' => $hasResult,
             'home_score' => $match->home_score,
             'away_score' => $match->away_score,
             'result_pill_classes' => $resultPillClasses,
             'date_label' => $match->starts_at ? $match->starts_at->format('j M') : 'Date TBC',
+        ];
+    }
+
+    /**
+     * @return array<int, array{label: string, url: ?string}>
+     */
+    private static function participantParts(?KnockoutParticipant $participant, string $fallbackLabel, ?KnockoutType $type): array
+    {
+        if (! $participant) {
+            return [
+                ['label' => $fallbackLabel, 'url' => null],
+            ];
+        }
+
+        if ($type === KnockoutType::Doubles) {
+            return [
+                [
+                    'label' => $participant->playerOne?->name ?? 'TBC',
+                    'url' => $participant->playerOne ? route('player.show', $participant->playerOne) : null,
+                ],
+                [
+                    'label' => $participant->playerTwo?->name ?? 'TBC',
+                    'url' => $participant->playerTwo ? route('player.show', $participant->playerTwo) : null,
+                ],
+            ];
+        }
+
+        if ($participant->playerOne) {
+            return [
+                ['label' => $fallbackLabel, 'url' => route('player.show', $participant->playerOne)],
+            ];
+        }
+
+        if ($participant->team) {
+            return [
+                ['label' => $fallbackLabel, 'url' => route('team.show', $participant->team)],
+            ];
+        }
+
+        return [
+            ['label' => $fallbackLabel, 'url' => null],
         ];
     }
 

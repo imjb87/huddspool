@@ -12,7 +12,6 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class KnockoutResultAuthorizationTest extends TestCase
@@ -37,12 +36,15 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertSee('data-knockout-submit-page', false)
             ->assertSee('data-knockout-submit-header', false)
             ->assertSee('data-knockout-submit-context', false)
+            ->assertSee('data-knockout-submit-form-shell', false)
+            ->assertSee('inline-flex h-7 w-14 overflow-hidden rounded-full bg-gray-100', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:text-gray-100', false)
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Match details')
             ->assertSeeText('Match score')
             ->assertSee('data-knockout-submit-form', false)
+            ->assertSee('href="'.route('knockout.show', $match->round->knockout).'"', false)
             ->assertSeeLivewire(SubmitResult::class);
     }
 
@@ -53,6 +55,19 @@ class KnockoutResultAuthorizationTest extends TestCase
         $unrelatedUser = User::factory()->create();
 
         $this->actingAs($unrelatedUser)
+            ->get(route('knockout.matches.submit', $match))
+            ->assertForbidden();
+    }
+
+    public function test_admin_without_participant_access_receives_forbidden_for_knockout_submission_route(): void
+    {
+        ['match' => $match] = $this->createSinglesMatchContext();
+
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)
             ->get(route('knockout.matches.submit', $match))
             ->assertForbidden();
     }
@@ -107,7 +122,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_completed_knockout_match_is_forbidden_on_route_but_component_can_mount_for_authorized_user(): void
+    public function test_completed_knockout_match_is_forbidden_on_route(): void
     {
         ['match' => $match, 'homePlayer' => $homePlayer] = $this->createSinglesMatchContext();
 
@@ -117,11 +132,6 @@ class KnockoutResultAuthorizationTest extends TestCase
         $this->actingAs($homePlayer)
             ->get(route('knockout.matches.submit', $match))
             ->assertForbidden();
-
-        Livewire::actingAs($homePlayer)
-            ->test(SubmitResult::class, ['match' => $match])
-            ->assertSet('homeScore', 3)
-            ->assertSet('awayScore', 1);
     }
 
     public function test_team_captain_sees_submit_link_on_account_page(): void
@@ -188,6 +198,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
             'best_of' => 5,
+            'starts_at' => now()->subDay(),
         ]);
 
         return compact('match', 'homePlayer', 'awayPlayer');
@@ -224,6 +235,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
             'best_of' => 7,
+            'starts_at' => now()->subDay(),
         ]);
 
         return compact('match', 'homePlayerTwo');
@@ -256,6 +268,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
             'best_of' => 11,
+            'starts_at' => now()->subDay(),
         ]);
 
         return compact('match', 'homeTeam', 'awayTeam');

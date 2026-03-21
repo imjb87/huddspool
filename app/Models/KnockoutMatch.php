@@ -255,10 +255,6 @@ class KnockoutMatch extends Model
             return false;
         }
 
-        if ($user->isAdmin()) {
-            return true;
-        }
-
         $type = $this->type();
 
         return match ($type) {
@@ -269,6 +265,11 @@ class KnockoutMatch extends Model
             KnockoutType::Team => $this->userIsTeamRepresentative($user),
             default => false,
         };
+    }
+
+    public function isDueForSubmission(): bool
+    {
+        return $this->starts_at?->isPast() || $this->starts_at?->isToday() || false;
     }
 
     public function title(): string
