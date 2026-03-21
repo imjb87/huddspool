@@ -36,7 +36,7 @@ class LeagueResultSubmittedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mail.league-result-submitted',
+            markdown: 'mail.league-result-submitted',
         );
     }
 }

@@ -14,6 +14,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Markdown;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
@@ -252,6 +253,34 @@ class ResultSubmissionTest extends TestCase
         $response->assertDontSeeText('19:00');
 
         Carbon::setTestNow();
+    }
+
+    public function test_league_result_submitted_mail_uses_the_markdown_mail_template(): void
+    {
+        $result = Result::factory()->make([
+            'id' => 123,
+            'home_team_name' => 'Home',
+            'home_score' => 5,
+            'away_score' => 4,
+            'away_team_name' => 'Away',
+            'submitted_at' => Carbon::parse('2026-03-13 21:15:00'),
+        ]);
+
+        $result->setRelation('submittedBy', User::factory()->make(['name' => 'John Smith']));
+        $result->setRelation('fixture', Fixture::factory()->make([
+            'fixture_date' => Carbon::parse('2026-03-12'),
+        ]));
+        $result->fixture->setRelation('section', Section::factory()->make(['name' => 'Premier']));
+        $result->fixture->section->setRelation('ruleset', Ruleset::factory()->make(['name' => 'International']));
+
+        $html = app(Markdown::class)->render(
+            'mail.league-result-submitted',
+            ['result' => $result],
+        )->toHtml();
+
+        $this->assertStringContainsString('League result submitted', $html);
+        $this->assertStringContainsString('View submitted result', $html);
+        $this->assertStringContainsString('league result submitted', strtolower($html));
     }
 
     public function test_partial_autosave_does_not_delete_existing_frames_when_a_saved_frame_becomes_incomplete(): void
