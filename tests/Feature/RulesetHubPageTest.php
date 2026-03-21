@@ -324,7 +324,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSeeText('Backing the league every week');
         $tablesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $tablesResponse->assertSeeText('Standings');
-        $tablesResponse->assertSee('ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-4', false);
+        $tablesResponse->assertSee('ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3', false);
         $tablesResponse->assertDontSee('Print fixtures', false);
         $tablesResponse->assertDontSee('Current standings for this section.');
         $tablesResponse->assertDontSee('rounded-2xl border border-gray-200 bg-white shadow-sm', false);
@@ -357,7 +357,7 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
         $averagesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $averagesResponse->assertSeeText('Averages');
-        $averagesResponse->assertSee('flex items-center gap-3 sm:gap-4', false);
+        $averagesResponse->assertSee('flex items-center gap-3 rounded-lg py-3 sm:gap-4 sm:px-3 sm:py-4', false);
         $averagesResponse->assertSee('ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5', false);
         $averagesResponse->assertSee('data-section-averages-row-skeleton', false);
         $averagesResponse->assertSee('wire:target="previousPage, nextPage"', false);

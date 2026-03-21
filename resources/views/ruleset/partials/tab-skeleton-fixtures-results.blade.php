@@ -10,10 +10,10 @@
             <div class="lg:col-span-2">
                 <div>
                     @foreach (range(1, 5) as $row)
-                        <div class="py-4" data-section-tab-skeleton-row="fixtures-results">
-                            <div class="flex items-center justify-between gap-4" data-section-fixtures-band>
+                        <div data-section-tab-skeleton-row="fixtures-results">
+                            <div class="flex items-start justify-between gap-4 rounded-lg py-4 sm:px-3" data-section-fixtures-band>
                                 <div class="min-w-0 flex-1">
-                                    <div class="h-4 w-36 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                    <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                     <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                 </div>
 

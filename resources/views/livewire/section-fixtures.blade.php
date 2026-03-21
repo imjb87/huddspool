@@ -69,10 +69,10 @@
                     <div class="animate-pulse" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
                         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                             @foreach (range(1, 5) as $row)
-                                <div class="py-2" data-section-fixtures-row-skeleton-row>
-                                    <div class="flex items-center justify-between gap-4 py-4 sm:rounded-lg sm:px-3" data-section-fixtures-band>
+                                <div data-section-fixtures-row-skeleton-row>
+                                    <div class="flex items-start justify-between gap-4 rounded-lg py-4 sm:px-3" data-section-fixtures-band>
                                         <div class="min-w-0 flex-1">
-                                            <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                            <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                             <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                         </div>
 
