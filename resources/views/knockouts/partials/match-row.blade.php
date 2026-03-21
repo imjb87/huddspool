@@ -2,33 +2,35 @@
     <div class="flex items-start justify-between gap-4" data-section-fixtures-band>
         <div class="min-w-0 flex-1">
             <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
-                @foreach ($matchRow->home_parts as $part)
-                    @if (! $loop->first)
-                        <span class="text-gray-300 dark:text-zinc-600"> / </span>
-                    @endif
-                    @if ($part['url'])
-                        <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
-                            {{ $part['label'] }}
-                        </a>
-                    @else
-                        <span>{{ $part['label'] }}</span>
-                    @endif
-                @endforeach
+                @if (count($matchRow->home_parts) > 1)
+                    <span>{{ $matchRow->home_label }}</span>
+                @else
+                    @foreach ($matchRow->home_parts as $part)
+                        @if ($part['url'])
+                            <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
+                                {{ $part['label'] }}
+                            </a>
+                        @else
+                            <span>{{ $part['label'] }}</span>
+                        @endif
+                    @endforeach
+                @endif
 
                 <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
 
-                @foreach ($matchRow->away_parts as $part)
-                    @if (! $loop->first)
-                        <span class="text-gray-300 dark:text-zinc-600"> / </span>
-                    @endif
-                    @if ($part['url'])
-                        <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
-                            {{ $part['label'] }}
-                        </a>
-                    @else
-                        <span>{{ $part['label'] }}</span>
-                    @endif
-                @endforeach
+                @if (count($matchRow->away_parts) > 1)
+                    <span>{{ $matchRow->away_label }}</span>
+                @else
+                    @foreach ($matchRow->away_parts as $part)
+                        @if ($part['url'])
+                            <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
+                                {{ $part['label'] }}
+                            </a>
+                        @else
+                            <span>{{ $part['label'] }}</span>
+                        @endif
+                    @endforeach
+                @endif
             </p>
 
             <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-5 text-gray-500 dark:text-gray-400">

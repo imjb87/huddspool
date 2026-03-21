@@ -7,7 +7,7 @@
                 </div>
                 <div class="w-full space-y-1">
                     @foreach (range(1, 3) as $rowIndex)
-                        <div class="flex w-full items-center gap-4 rounded-xl border border-gray-200 px-4 py-3 dark:border-zinc-800/80"
+                        <div class="flex w-full items-center gap-4 rounded-lg border border-gray-200 px-4 py-3 dark:border-zinc-800/80"
                             wire:key="search-loading-group-{{ $groupIndex }}-row-{{ $rowIndex }}">
                             <div class="min-w-0 flex flex-1 items-start gap-3">
                                 <div class="h-9 w-9 shrink-0 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
@@ -16,7 +16,6 @@
                                     <div class="h-3 w-24 rounded-full bg-gray-100 dark:bg-zinc-800/70"></div>
                                 </div>
                             </div>
-                            <div class="ml-auto h-6 w-14 shrink-0 rounded-full bg-gray-100 dark:bg-zinc-800/70"></div>
                         </div>
                     @endforeach
                 </div>

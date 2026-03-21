@@ -12,9 +12,9 @@
                 <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                     @foreach ($this->frameRows as $frameRow)
                         <a href="{{ route('result.show', $frameRow->result_id) }}"
-                            class="block rounded-lg px-3 hover:bg-gray-100 dark:hover:bg-zinc-800/70"
+                            class="group block"
                             wire:key="account-frame-{{ $frameRow->result_id }}-{{ $loop->index }}">
-                            <div class="flex items-center gap-4 py-4">
+                            <div class="flex items-center gap-4 rounded-lg py-4 transition sm:px-3 group-hover:bg-gray-50 dark:group-hover:bg-zinc-800/70">
                                 <div class="shrink-0">
                                     <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $frameRow->result_pill_classes }}">
                                         {{ $frameRow->won_frame ? 'W' : 'L' }}

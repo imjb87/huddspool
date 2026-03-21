@@ -1,4 +1,4 @@
-<header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800 dark:bg-zinc-900"
+<header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:bg-zinc-900"
     x-data="{
         open: false,
         activeDrawer: 'root',
@@ -48,7 +48,7 @@
     x-init="syncTheme(); syncInstallAvailability(); updateHeaderHeight(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => updateHeaderHeight()); window.addEventListener('site-theme-changed', () => syncTheme()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
     x-ref="header">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8" aria-label="Global">
-        <div class="flex flex-1">
+        <div class="flex shrink-0">
             <a href="/" class="-m-1.5 p-1.5">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
                 <x-application-logo />

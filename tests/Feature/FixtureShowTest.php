@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\Ruleset;
@@ -33,8 +34,14 @@ class FixtureShowTest extends TestCase
         $section->teams()->attach($homeTeam->id, ['sort' => 1]);
         $section->teams()->attach($awayTeam->id, ['sort' => 2]);
 
-        $homePlayer = User::factory()->create(['team_id' => $homeTeam->id]);
-        $awayPlayer = User::factory()->create(['team_id' => $awayTeam->id]);
+        $homePlayer = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+        $awayPlayer = User::factory()->create([
+            'team_id' => $awayTeam->id,
+            'role' => UserRole::Player->value,
+        ]);
 
         $fixture = Fixture::factory()->create([
             'season_id' => $season->id,
@@ -73,6 +80,8 @@ class FixtureShowTest extends TestCase
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
         $response->assertSeeText($homePlayer->name);
         $response->assertSeeText($awayPlayer->name);
+        $response->assertSeeText(UserRole::labelFor($homePlayer->role));
+        $response->assertSeeText(UserRole::labelFor($awayPlayer->role));
         $response->assertSeeText('Played');
         $response->assertSeeText('Won');
         $response->assertSeeText('Lost');

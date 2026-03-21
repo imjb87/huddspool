@@ -60,8 +60,6 @@ class FixtureController extends Controller
             'fixture' => $fixture,
             'home_team_players' => $home_team_players,
             'away_team_players' => $away_team_players,
-            'canSubmitResult' => $pageData->can_submit_result,
-            'submissionIsOpen' => $pageData->submission_is_open,
             'standings' => $pageData->standings,
         ]);
     }

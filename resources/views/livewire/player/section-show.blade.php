@@ -26,33 +26,35 @@
                             </p>
                         </div>
                     @else
+                        <div class="divide-y divide-gray-300 dark:divide-zinc-800/80">
                         @foreach ($players as $player)
-                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 dark:border-zinc-800/80 dark:hover:bg-zinc-800/70"
+                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/70 sm:px-6"
                                 href="{{ route('player.show', $player->id) }}">
-                                <div class="flex w-1/2 pl-4 sm:pl-6 items-center">
-                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 dark:text-gray-100 w-2/12 font-semibold">
+                                <div class="flex w-1/2 items-center">
+                                    <div class="whitespace-nowrap py-3 text-sm text-gray-900 dark:text-gray-100 w-2/12 font-semibold">
                                         {{ $loop->iteration + ($page - 1) * $perPage }}
                                     </div>
-                                    <div class="whitespace-nowrap py-2 text-sm text-gray-900 dark:text-gray-100 w-10/12 flex gap-x-3 flex-col">
+                                    <div class="whitespace-nowrap py-3 text-sm text-gray-900 dark:text-gray-100 w-10/12 flex gap-x-3 flex-col">
                                         {{ $player->name }}
                                     </div>
                                 </div>
                                 <div class="flex w-1/2 items-center">
-                                    <div class="py-2 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center">
+                                    <div class="py-3 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center">
                                         {{ $player->frames_played }}
                                     </div>
-                                    <div class="py-2 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center relative">
+                                    <div class="py-3 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center relative">
                                         {{ $player->frames_won }}
                                         <span class="items-center rounded-md bg-green-100 px-1 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300 absolute left-full -translate-x-1/2">
                                             {{ \App\Support\PercentageFormatter::trimmedSingleDecimal($player->frames_won_percentage) }}%
                                         </span>
                                     </div>
-                                    <div class="py-2 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center">
+                                    <div class="py-3 text-sm text-gray-900 dark:text-gray-100 w-4/12 text-center">
                                         {{ $player->frames_lost }}
                                     </div>
                                 </div>
                             </a>
                         @endforeach
+                        </div>
                     @endif
                 </div>
             </div>

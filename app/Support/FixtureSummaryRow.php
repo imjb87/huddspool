@@ -14,7 +14,7 @@ class FixtureSummaryRow
             isBye: $fixture->isBye(),
             rowUrl: $fixture->isBye()
                 ? null
-                : ($fixture->result ? route('result.show', $fixture->result) : ($actionUrl ? null : route('fixture.show', $fixture))),
+                : ($actionUrl ?: ($fixture->result ? route('result.show', $fixture->result) : route('fixture.show', $fixture))),
             homeTeamId: $fixture->home_team_id,
             awayTeamId: $fixture->away_team_id,
             homeTeamName: $fixture->homeTeam?->name,
@@ -71,6 +71,7 @@ class FixtureSummaryRow
         int $teamId,
     ): object {
         $isDraw = $resultId !== null && (int) $homeScore === (int) $awayScore;
+        $isActionable = $actionUrl !== null;
         $teamWon = $resultId !== null
             && (($homeTeamId === $teamId && (int) $homeScore > (int) $awayScore)
             || ($awayTeamId === $teamId && (int) $awayScore > (int) $homeScore));
@@ -94,6 +95,8 @@ class FixtureSummaryRow
             'compact_date_label' => $compactDateLabel,
             'action_url' => $actionUrl,
             'action_label' => $actionLabel,
+            'shows_inline_action' => $isActionable && $rowUrl !== $actionUrl,
+            'is_actionable' => $isActionable,
             'is_bye' => $isBye,
         ];
     }

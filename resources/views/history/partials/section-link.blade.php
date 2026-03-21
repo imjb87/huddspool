@@ -1,5 +1,5 @@
 <a href="{{ route('history.section.show', ['season' => $group['season'], 'ruleset' => $rulesetGroup['ruleset'], 'section' => $section]) }}"
-    class="flex items-center justify-between gap-3 py-3 text-sm font-medium text-gray-700 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+    class="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/70 dark:hover:text-gray-100"
     data-history-section-link>
     <span>{{ $section->name }}</span>
     <svg class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

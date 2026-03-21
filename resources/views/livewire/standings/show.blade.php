@@ -20,72 +20,74 @@
                             </div>
                         </div>
                     @else
-                        <div class="flex items-center justify-between gap-2 pb-2" data-section-table-band>
+                        <div class="flex items-center justify-between gap-2 pb-0.5 sm:px-3" data-section-table-band>
                             <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
 
-                            <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-4">
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-12">Pl</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-12">W</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-12">D</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-12">L</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-12">Pts</div>
+                            <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3">
+                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pl</div>
+                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">W</div>
+                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">D</div>
+                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">L</div>
+                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pts</div>
                             </div>
                         </div>
 
-                        @foreach ($standingRows as $row)
-                            @if ($row->can_link)
-                                <a class="block rounded-lg py-3 {{ $row->withdrawn ? 'line-through' : '' }}"
-                                    wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
-                                    data-section-table-row-type="link"
-                                    href="{{ route('team.show', $row->id) }}">
-                            @else
-                                <div class="block rounded-lg py-3 {{ $row->withdrawn ? 'line-through' : '' }}"
-                                    wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
-                                    data-section-table-row-type="static">
-                            @endif
-                                <div class="flex items-center justify-between gap-2 sm:gap-3" data-section-table-band>
-                                    <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
-                                        <div class="w-4 shrink-0 text-sm font-semibold tabular-nums {{ $row->text_class }}">
-                                            {{ $row->position }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="truncate whitespace-nowrap text-sm font-semibold {{ $row->text_class }}">
-                                                <span class="{{ $row->shortname ? 'hidden md:inline' : '' }}">
-                                                    {{ $row->name }}
-                                                </span>
-                                                @if ($row->shortname)
-                                                    <span class="md:hidden whitespace-nowrap {{ $row->text_class }}">
-                                                        {{ $row->shortname }}
+                        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                            @foreach ($standingRows as $row)
+                                @if ($row->can_link)
+                                    <a class="group block {{ $row->withdrawn ? 'line-through' : '' }}"
+                                        wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
+                                        data-section-table-row-type="link"
+                                        href="{{ route('team.show', $row->id) }}">
+                                @else
+                                    <div class="block {{ $row->withdrawn ? 'line-through' : '' }}"
+                                        wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
+                                        data-section-table-row-type="static">
+                                @endif
+                                    <div class="flex items-center justify-between gap-2 rounded-lg py-2 sm:gap-3 sm:px-3 sm:py-3 sm:transition sm:group-hover:bg-gray-50 dark:sm:group-hover:bg-zinc-800/70" data-section-table-band>
+                                        <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
+                                            <div class="w-4 shrink-0 text-center text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400 sm:w-7">
+                                                {{ $row->position }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="truncate whitespace-nowrap text-sm font-semibold {{ $row->text_class }}">
+                                                    <span class="{{ $row->shortname ? 'hidden md:inline' : '' }}">
+                                                        {{ $row->name }}
                                                     </span>
-                                                @endif
-                                            </p>
+                                                    @if ($row->shortname)
+                                                        <span class="md:hidden whitespace-nowrap {{ $row->text_class }}">
+                                                            {{ $row->shortname }}
+                                                        </span>
+                                                    @endif
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-4">
-                                        <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
-                                        </div>
-                                        <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->wins }}</p>
-                                        </div>
-                                        <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->draws }}</p>
-                                        </div>
-                                        <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
-                                        </div>
-                                        <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $row->points_class }}">{{ $row->points }}</p>
+                                        <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3">
+                                            <div class="w-8 sm:w-10">
+                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
+                                            </div>
+                                            <div class="w-8 sm:w-10">
+                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->wins }}</p>
+                                            </div>
+                                            <div class="w-8 sm:w-10">
+                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->draws }}</p>
+                                            </div>
+                                            <div class="w-8 sm:w-10">
+                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
+                                            </div>
+                                            <div class="w-8 sm:w-10">
+                                                <p class="text-sm font-semibold {{ $row->points_class }}">{{ $row->points }}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @if ($row->can_link)
-                                </a>
-                            @else
-                                </div>
-                            @endif
-                        @endforeach
+                                @if ($row->can_link)
+                                    </a>
+                                @else
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
                     @endif
                 </div>
             </div>

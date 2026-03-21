@@ -1,14 +1,14 @@
 @if ($row['can_link'])
-    <a class="block rounded-lg py-4"
+    <a class="group block"
         wire:key="section-average-{{ $section->id }}-page-{{ $page }}-player-{{ $row['player']->id }}"
         data-section-averages-row-type="link"
         href="{{ route('player.show', $row['player']->id) }}">
 @else
-    <div class="block rounded-lg py-4"
+    <div class="block"
         wire:key="section-average-{{ $section->id }}-page-{{ $page }}-player-{{ $row['player']->id }}"
         data-section-averages-row-type="static">
 @endif
-    <div class="flex items-center gap-3 sm:gap-4" data-section-averages-band>
+    <div class="flex items-center gap-3 rounded-lg py-3 sm:gap-4 sm:px-3 sm:py-4 sm:transition sm:group-hover:bg-gray-50 dark:sm:group-hover:bg-zinc-800/70" data-section-averages-band>
         <div class="min-w-0 flex-1">
             <div class="flex items-center gap-3">
                 <span class="w-4 shrink-0 text-center text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400 sm:w-7">

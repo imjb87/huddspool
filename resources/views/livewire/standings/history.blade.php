@@ -28,14 +28,15 @@
                             </p>
                         </div>
                     @else
+                        <div class="divide-y divide-gray-300 dark:divide-zinc-800/80">
                         @foreach ($standingRows as $row)
-                            <a class="flex w-full border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 dark:border-zinc-800/80 dark:hover:bg-zinc-800/70 {{ $row->withdrawn ? 'line-through' : '' }}"
+                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/70 sm:px-6 {{ $row->withdrawn ? 'line-through' : '' }}"
                                 href="{{ route('team.show', $row->id) }}">
-                                <div class="flex w-1/2 items-center pl-4 sm:pl-6">
-                                    <div class="w-2/12 whitespace-nowrap py-2 text-sm font-semibold {{ $row->text_class }}">
+                                <div class="flex w-1/2 items-center">
+                                    <div class="w-2/12 whitespace-nowrap py-3 text-sm font-semibold {{ $row->text_class }}">
                                         {{ $row->position }}
                                     </div>
-                                    <div class="flex w-10/12 flex-col whitespace-nowrap py-2 text-sm {{ $row->text_class }}">
+                                    <div class="flex w-10/12 flex-col whitespace-nowrap py-3 text-sm {{ $row->text_class }}">
                                         <span class="{{ $row->shortname ? 'hidden md:inline' : '' }}">
                                             {{ $row->name }}
                                         </span>
@@ -47,24 +48,25 @@
                                     </div>
                                 </div>
                                 <div class="flex w-1/2 items-center">
-                                    <div class="w-1/5 py-2 text-center text-sm {{ $row->text_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm {{ $row->text_class }}">
                                         {{ $row->played }}
                                     </div>
-                                    <div class="w-1/5 py-2 text-center text-sm {{ $row->text_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm {{ $row->text_class }}">
                                         {{ $row->wins }}
                                     </div>
-                                    <div class="w-1/5 py-2 text-center text-sm {{ $row->text_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm {{ $row->text_class }}">
                                         {{ $row->draws }}
                                     </div>
-                                    <div class="w-1/5 py-2 text-center text-sm {{ $row->text_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm {{ $row->text_class }}">
                                         {{ $row->losses }}
                                     </div>
-                                    <div class="w-1/5 py-2 text-center text-sm font-semibold {{ $row->points_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm font-semibold {{ $row->points_class }}">
                                         {{ $row->points }}
                                     </div>
                                 </div>
                             </a>
                         @endforeach
+                        </div>
                     @endif
                 </div>
             </div>

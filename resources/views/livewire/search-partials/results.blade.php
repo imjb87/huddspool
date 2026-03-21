@@ -12,7 +12,7 @@
             <div class="space-y-1 text-sm text-gray-800 dark:text-gray-200" data-search-result-group>
                 @foreach ($group['results'] as $item)
                     @if (is_object($item))
-                        <a class="flex items-start justify-between gap-4 rounded-xl border border-transparent px-4 py-3 transition duration-200 hover:border-gray-200 hover:bg-gray-50 focus:border-gray-200 focus:bg-gray-50 focus:outline-none dark:hover:border-zinc-800 dark:hover:bg-zinc-800/80 dark:focus:border-zinc-800 dark:focus:bg-zinc-800/80"
+                        <a class="flex items-start justify-between gap-4 rounded-lg border border-transparent px-4 py-3 transition duration-200 hover:border-gray-200 hover:bg-gray-50 focus:border-gray-200 focus:bg-gray-50 focus:outline-none dark:hover:border-zinc-800 dark:hover:bg-zinc-800/80 dark:focus:border-zinc-800 dark:focus:bg-zinc-800/80"
                             href="{{ route($group['route'] . '.show', $item->id) }}"
                             data-search-result-link
                             wire:key="search-result-{{ $name }}-{{ $item->id }}"
@@ -41,9 +41,6 @@
                                     @endif
                                 </div>
                             </div>
-                            <span class="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-gray-500 dark:bg-zinc-700 dark:text-gray-400">
-                                {{ $group['badge'] }}
-                            </span>
                         </a>
                     @endif
                 @endforeach

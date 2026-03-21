@@ -18,10 +18,10 @@
                                 @if ($row->link === null || $row->is_bye)
                                     <div class="{{ $row->row_classes }}">
                                 @else
-                                    <a class="{{ $row->row_classes }}"
+                                    <a class="{{ trim($row->row_classes.' sm:hover:bg-gray-50 dark:sm:hover:bg-zinc-800/70') }}"
                                         href="{{ $row->link }}">
                                 @endif
-                                        <div class="flex items-start justify-between gap-4 py-4" data-section-fixtures-band>
+                                        <div class="flex items-start justify-between gap-4" data-section-fixtures-band>
                                             <div class="min-w-0 flex-1">
                                                 <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
                                                     {{ $row->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $row->away_team_name }}
@@ -69,8 +69,8 @@
                     <div class="animate-pulse" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
                         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                             @foreach (range(1, 5) as $row)
-                                <div class="py-4" data-section-fixtures-row-skeleton-row>
-                                    <div class="flex items-center justify-between gap-4" data-section-fixtures-band>
+                                <div class="py-2" data-section-fixtures-row-skeleton-row>
+                                    <div class="flex items-center justify-between gap-4 py-4 sm:rounded-lg sm:px-3" data-section-fixtures-band>
                                         <div class="min-w-0 flex-1">
                                             <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                             <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>

@@ -52,9 +52,9 @@ class SearchComponentTest extends TestCase
             ->assertSee('data-search-loading-state', false)
             ->assertSee('data-search-loading-skeleton', false)
             ->assertSee('data-search-results-shell', false)
+            ->assertSee('rounded-lg border border-transparent px-4 py-3', false)
             ->assertSeeText('Imperial Club')
             ->assertSeeText('12 West Street')
-            ->assertSeeText('Venue')
             ->assertSee('data-search-result-link', false);
     }
 
@@ -77,7 +77,7 @@ class SearchComponentTest extends TestCase
             ->set('searchTerm', 'Imperial')
             ->assertSeeText('Imperial Club')
             ->assertDontSeeText('Alex Carter')
-            ->assertSeeText('Team');
+            ->assertSee('data-search-result-link', false);
     }
 
     public function test_component_shows_player_avatars_in_player_results(): void

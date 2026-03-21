@@ -296,4 +296,60 @@ class KnockoutPageTest extends TestCase
             ->assertSee('href="'.route('team.show', $homeTeam).'"', false)
             ->assertSee('href="'.route('team.show', $awayTeam).'"', false);
     }
+
+    public function test_knockout_show_page_uses_ampersands_for_doubles_pair_names(): void
+    {
+        $season = Season::factory()->create();
+
+        $knockout = Knockout::create([
+            'season_id' => $season->id,
+            'name' => 'Doubles Cup',
+            'type' => KnockoutType::Doubles,
+            'best_of' => 7,
+        ]);
+
+        $round = KnockoutRound::create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Round 1',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $homePlayerOne = User::factory()->create(['name' => 'Amy A']);
+        $homePlayerTwo = User::factory()->create(['name' => 'Beth B']);
+        $awayPlayerOne = User::factory()->create(['name' => 'Cara C']);
+        $awayPlayerTwo = User::factory()->create(['name' => 'Dana D']);
+
+        $homeParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $homePlayerOne->id,
+            'player_two_id' => $homePlayerTwo->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $awayPlayerOne->id,
+            'player_two_id' => $awayPlayerTwo->id,
+        ]);
+
+        KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+        ]);
+
+        $response = $this->get(route('knockout.show', $knockout));
+
+        $response->assertOk()
+            ->assertSeeText('Amy A')
+            ->assertSeeText('Beth B')
+            ->assertSeeText('Cara C')
+            ->assertSeeText('Dana D')
+            ->assertSee('&amp;', false)
+            ->assertDontSee(' / ', false);
+    }
 }

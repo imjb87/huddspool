@@ -309,7 +309,7 @@ abstract class BaseSectionPage extends Component
                 'home_team_name' => $fixture->homeTeam->shortname && ! $isHistoryView ? $fixture->homeTeam->shortname : $homeDisplayName,
                 'away_team_name' => $fixture->awayTeam->shortname && ! $isHistoryView ? $fixture->awayTeam->shortname : $awayDisplayName,
                 'row_meta' => $fixture->fixture_date->format('j M Y'),
-                'row_classes' => 'block rounded-lg',
+                'row_classes' => 'block py-4 transition sm:rounded-lg sm:px-3',
             ];
         });
     }

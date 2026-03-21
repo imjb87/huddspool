@@ -152,6 +152,51 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $fixture), false);
     }
 
+    public function test_team_admin_prompt_accounts_for_multiple_outstanding_results(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $team = Team::factory()->create(['name' => 'Home']);
+        $firstOpponent = Team::factory()->create(['name' => 'First Opponent']);
+        $secondOpponent = Team::factory()->create(['name' => 'Second Opponent']);
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $firstFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $firstOpponent->id,
+            'fixture_date' => now()->subDays(2),
+        ]);
+
+        $secondFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $secondOpponent->id,
+            'away_team_id' => $team->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSeeText('2 team results are ready to submit.')
+            ->assertSeeText('Choose a fixture to submit:')
+            ->assertSeeText('Home vs First Opponent')
+            ->assertSeeText('Second Opponent vs Home')
+            ->assertSee(route('result.create', $firstFixture), false)
+            ->assertSee(route('result.create', $secondFixture), false);
+    }
+
     public function test_captain_sees_team_nav_link_on_account_page(): void
     {
         $homeTeam = Team::factory()->create();
@@ -296,12 +341,14 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-team-info-section', false)
             ->assertSee('data-account-team-section', false)
             ->assertSee('data-account-team-member-stats', false)
+            ->assertSee('data-player-stats-line', false)
             ->assertSee('data-account-team-fixtures-section', false)
             ->assertSee('data-account-team-knockout-section', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertSeeText('Team members')
             ->assertSeeText('Fixtures')
             ->assertSeeText('Team knockouts')
+            ->assertSeeText(UserRole::labelFor($teamAdmin->role))
             ->assertSeeText($team->name)
             ->assertSeeText('Premier Division')
             ->assertSeeText('Team Admin')
@@ -314,6 +361,8 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $dueFixture), false)
             ->assertSee(route('result.create', $continueFixture), false)
             ->assertDontSee(route('result.create', $futureFixture), false)
+            ->assertDontSee('href="'.route('fixture.show', $dueFixture).'"', false)
+            ->assertDontSee('href="'.route('result.show', $continueFixture->result).'"', false)
             ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
             ->assertSee(route('knockout.show', $teamKnockout), false)
             ->assertSee(route('knockout.matches.submit', $pendingTeamMatch), false)

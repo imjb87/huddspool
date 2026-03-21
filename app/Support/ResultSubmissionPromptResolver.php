@@ -6,37 +6,58 @@ use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
 class ResultSubmissionPromptResolver
 {
     public function promptFor(User $user): ?array
     {
-        $fixture = $this->pendingFixtureFor($user);
+        $fixtures = $this->outstandingFixturesFor($user);
 
-        if (! $fixture) {
+        if ($fixtures->isEmpty()) {
             return null;
         }
 
+        /** @var Fixture $fixture */
+        $fixture = $fixtures->first();
+        $fixtureCount = $fixtures->count();
+
         return [
-            'message' => 'A team result is ready to submit.',
-            'fixture_label' => sprintf(
-                '%s vs %s',
-                $fixture->homeTeam?->name ?? 'TBC',
-                $fixture->awayTeam?->name ?? 'TBC',
-            ),
+            'message' => $fixtureCount === 1
+                ? 'A team result is ready to submit.'
+                : sprintf('%d team results are ready to submit.', $fixtureCount),
+            'fixture_label' => $fixtureCount === 1
+                ? sprintf('%s vs %s', $fixture->homeTeam?->name ?? 'TBC', $fixture->awayTeam?->name ?? 'TBC')
+                : 'Choose a fixture to submit:',
             'url' => route('result.create', $fixture),
+            'button_label' => $fixtureCount === 1 ? 'Submit result' : 'Choose fixture',
+            'fixtures' => $fixtures
+                ->map(fn (Fixture $outstandingFixture) => [
+                    'label' => sprintf(
+                        '%s vs %s',
+                        $outstandingFixture->homeTeam?->name ?? 'TBC',
+                        $outstandingFixture->awayTeam?->name ?? 'TBC',
+                    ),
+                    'url' => route('result.create', $outstandingFixture),
+                ])
+                ->all(),
         ];
     }
 
     public function pendingFixtureFor(User $user): ?Fixture
     {
+        return $this->outstandingFixturesFor($user)->first();
+    }
+
+    public function outstandingFixturesFor(User $user): Collection
+    {
         if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
-            return null;
+            return collect();
         }
 
         if (! $user->team) {
-            return null;
+            return collect();
         }
 
         return Fixture::query()
@@ -49,7 +70,8 @@ class ResultSubmissionPromptResolver
             ->orderBy('fixture_date')
             ->orderBy('id')
             ->get()
-            ->first(fn (Fixture $fixture) => $this->actionUrlFor($user, $fixture) !== null);
+            ->filter(fn (Fixture $fixture) => $this->actionUrlFor($user, $fixture) !== null)
+            ->values();
     }
 
     public function actionUrlFor(User $user, Fixture $fixture): ?string

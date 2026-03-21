@@ -97,7 +97,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
-        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:border-b dark:border-zinc-800 dark:bg-zinc-900', false);
+        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:bg-zinc-900', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertDontSee('dark:backdrop-blur', false);

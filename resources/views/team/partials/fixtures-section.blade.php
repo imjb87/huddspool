@@ -12,9 +12,9 @@
                 @foreach ($fixtureRows as $fixtureRow)
                     <div wire:key="team-fixture-{{ $fixtureRow->fixture_id }}">
                         @if ($fixtureRow->row_url)
-                            <a href="{{ $fixtureRow->row_url }}" class="block rounded-lg transition">
+                            <a href="{{ $fixtureRow->row_url }}" class="block py-4 transition sm:rounded-lg sm:px-3 sm:hover:bg-gray-50 dark:sm:hover:bg-zinc-800/70">
                         @endif
-                        <div class="flex items-start justify-between gap-4 py-4">
+                        <div class="flex items-start justify-between gap-4 {{ $fixtureRow->row_url ? '' : 'py-4 sm:rounded-lg sm:px-3' }}">
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                     {{ $fixtureRow->home_team_name }}

@@ -76,7 +76,7 @@ class ResultAuthorizationTest extends TestCase
 
     public function test_placeholder_team_fixture_returns_not_found_on_result_create_route(): void
     {
-        $placeholderTeam = Team::factory()->create(['id' => 1]);
+        $placeholderTeam = Team::factory()->create(['name' => Team::BYE_NAME]);
         $awayTeam = Team::factory()->create();
 
         ['fixture' => $fixture] = $this->createResultFixtureContext(
@@ -92,7 +92,7 @@ class ResultAuthorizationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_site_admin_on_fixture_team_sees_submit_result_link_on_fixture_page_while_route_is_forbidden(): void
+    public function test_fixture_page_does_not_show_submit_result_entry_point_for_site_admin(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());
 
@@ -101,7 +101,8 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('fixture.show', $fixture))
             ->assertOk()
-            ->assertSeeText('Submit result');
+            ->assertDontSeeText('Result submission')
+            ->assertDontSeeText('Submit result');
 
         $this->actingAs($siteAdmin)
             ->get(route('result.create', $fixture))

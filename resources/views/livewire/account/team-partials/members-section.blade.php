@@ -9,48 +9,16 @@
 
         <div class="divide-y divide-gray-200 dark:divide-zinc-800/80 lg:col-span-2" data-account-team-management>
             @foreach ($this->teamMembers as $member)
-                <div class="py-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-3">
-                                <img class="h-8 w-8 shrink-0 rounded-full object-cover"
-                                    src="{{ $member->avatar_url }}"
-                                    alt="{{ $member->name }} avatar">
-                                <div class="min-w-0">
-                                    <a href="{{ route('player.show', $member->id) }}"
-                                        class="block truncate text-sm font-semibold text-gray-900 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-700 hover:decoration-gray-500 dark:text-gray-100 dark:decoration-zinc-600 dark:hover:text-gray-300 dark:hover:decoration-zinc-400">
-                                        {{ $member->name }}
-                                    </a>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ \App\Enums\UserRole::labelFor($member->role) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ml-auto flex shrink-0 items-center gap-2 text-center sm:gap-5"
-                            data-account-team-member-stats>
-                            <div class="w-14 sm:w-20">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
-                                <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ (int) $member->frames_played }}</p>
-                                    <span class="invisible inline-flex items-center rounded-md px-1 py-0.5 text-[10px] font-semibold">0%</span>
-                                </div>
-                            </div>
-                            <div class="w-14 sm:w-20">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Won</p>
-                                <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ (int) $member->frames_won }}</p>
-                                    <span class="inline-flex items-center rounded-md bg-green-100 px-1 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">{{ \App\Support\PercentageFormatter::ratio((int) $member->frames_won, (int) $member->frames_played) }}%</span>
-                                </div>
-                            </div>
-                            <div class="w-14 sm:w-20">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Lost</p>
-                                <div class="mt-1 flex flex-col items-center gap-1">
-                                    <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ (int) $member->frames_lost }}</p>
-                                    <span class="inline-flex items-center rounded-md bg-red-100 px-1 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300">{{ \App\Support\PercentageFormatter::ratio((int) $member->frames_lost, (int) $member->frames_played) }}%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <x-player-stats-line
+                    :href="route('player.show', $member)"
+                    :avatar-url="$member->avatar_url"
+                    :name="$member->name"
+                    :role-label="\App\Enums\UserRole::labelFor($member->role)"
+                    :frames-played="$member->frames_played"
+                    :frames-won="$member->frames_won"
+                    :frames-lost="$member->frames_lost"
+                    stats-marker="account-team-member-stats"
+                    wire:key="account-team-member-{{ $member->id }}" />
             @endforeach
         </div>
     </div>

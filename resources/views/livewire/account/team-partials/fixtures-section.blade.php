@@ -10,11 +10,11 @@
         <div class="lg:col-span-2">
             <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-account-team-fixtures-shell>
                 @forelse ($this->fixtures as $fixtureRow)
-                    <div class="py-4" wire:key="account-team-fixture-{{ $fixtureRow->fixture_id }}">
+                    <div wire:key="account-team-fixture-{{ $fixtureRow->fixture_id }}">
                         @if ($fixtureRow->row_url)
-                            <a class="block rounded-lg hover:cursor-pointer" href="{{ $fixtureRow->row_url }}">
+                            <a class="block py-4 transition hover:cursor-pointer sm:rounded-lg sm:px-3 sm:hover:bg-gray-50 dark:sm:hover:bg-zinc-800/70" href="{{ $fixtureRow->row_url }}">
                         @endif
-                        <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start justify-between gap-4 {{ $fixtureRow->row_url ? '' : 'py-4 sm:rounded-lg sm:px-3' }}">
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                     {{ $fixtureRow->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $fixtureRow->away_team_name }}
@@ -31,10 +31,10 @@
                                         <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                     </div>
                                 @elseif ($fixtureRow->action_url)
-                                    <a href="{{ $fixtureRow->action_url }}"
-                                        class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-linear-to-br from-red-700 via-red-600 to-red-500 px-3 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10 transition hover:brightness-110">
+                                    <span
+                                        class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-linear-to-br from-red-700 via-red-600 to-red-500 px-3 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
                                         {{ $fixtureRow->action_label }}
-                                    </a>
+                                    </span>
                                 @endif
                             </div>
                         </div>

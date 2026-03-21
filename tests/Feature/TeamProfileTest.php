@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\Frame;
@@ -49,7 +50,10 @@ class TeamProfileTest extends TestCase
             'away_team_id' => $opponent->id,
         ]);
 
-        $user = User::factory()->create(['team_id' => $team->id]);
+        $user = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
 
         $result = Result::factory()->create([
             'fixture_id' => $fixture->id,
@@ -84,6 +88,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
+        $response->assertSeeText(UserRole::labelFor($user->role));
         $response->assertSeeText('0%');
         $response->assertSee('href="'.route('result.show', $result).'"', false);
     }

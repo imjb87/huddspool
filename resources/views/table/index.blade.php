@@ -46,16 +46,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="bg-white">
+                                    <div class="divide-y divide-gray-300 bg-white">
                                         @foreach ($section->standings() as $team)
-                                            <a href="{{ route('team.show', $team->id) }}" class="border-t border-gray-300 hover:cursor-pointer hover:bg-gray-50 flex {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
-                                                <div class="flex w-6/12 pl-4">
+                                            <a href="{{ route('team.show', $team->id) }}" class="flex rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-50 {{ $team->pivot->withdrawn_at ? 'line-through' : '' }}">
+                                                <div class="flex w-6/12">
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-left font-semibold w-2/12">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-left font-semibold w-2/12">
                                                         {{$loop->iteration}}.
                                                     </div>
                                                     <div
-                                                        class="tooltip tooltip-top py-2 text-sm text-gray-900 w-10/12 truncate">
+                                                        class="tooltip tooltip-top py-3 text-sm text-gray-900 w-10/12 truncate">
                                                         <span class="{{ $team->shortname ? "hidden md:inline" : "" }}">{{ $team->name }}</span>
                                                         @if ($team->shortname)
                                                             <span class="md:hidden" href="{{ route('team.show', $team->id) }}">{{ $team->shortname }}</span>
@@ -69,19 +69,19 @@
                                                 </div>
                                                 <div class="flex w-6/12 pr-2">
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->played}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->wins}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->draws}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->losses}}</div>
                                                     <div
-                                                        class="whitespace-nowrap py-2 text-sm text-gray-900 text-center w-1/5">
+                                                        class="whitespace-nowrap py-3 text-sm text-gray-900 text-center w-1/5">
                                                         {{$team->points}}</div>
                                                 </div>
                                             </a>

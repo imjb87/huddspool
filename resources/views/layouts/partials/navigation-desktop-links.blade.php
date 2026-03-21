@@ -1,4 +1,4 @@
-<div class="hidden lg:flex lg:items-center lg:gap-x-6">
+<div class="hidden lg:ml-12 lg:flex lg:items-center lg:gap-x-6">
     @foreach ($navigationRulesets as $navigationRuleset)
         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
             <button type="button"

@@ -12,9 +12,9 @@
                 <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                     @foreach ($knockoutMatches as $match)
                         <a href="{{ route('knockout.show', $match->round->knockout) }}"
-                            class="block rounded-lg transition hover:bg-gray-50 dark:hover:bg-zinc-800/70"
+                            class="block rounded-xl px-3 py-4 transition hover:bg-gray-50 dark:hover:bg-zinc-800/70"
                             wire:key="player-knockout-{{ $match->id }}">
-                            <div class="flex items-start gap-3 py-4 sm:items-center sm:gap-4">
+                            <div class="flex items-start gap-3 sm:items-center sm:gap-4">
                                 <div class="min-w-0 flex-1">
                                     <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
                                         <span>{{ $match->homeParticipant?->display_name ?? 'TBC' }}</span>

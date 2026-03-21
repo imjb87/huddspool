@@ -8,7 +8,7 @@
         <div class="ml-4 divide-y divide-gray-200 dark:divide-zinc-800/80 sm:ml-6">
             @foreach ($group['knockouts'] as $knockout)
                 <a href="{{ route('knockout.show', $knockout) }}"
-                    class="flex items-center justify-between gap-3 py-3 text-sm font-medium text-gray-700 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                    class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/70 dark:hover:text-gray-100"
                     data-history-knockout-link>
                     <span>{{ $knockout->name }}</span>
                     <svg class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
