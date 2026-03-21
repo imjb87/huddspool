@@ -281,6 +281,8 @@ class ResultSubmissionTest extends TestCase
         $this->assertStringContainsString('League result submitted', $html);
         $this->assertStringContainsString('View submitted result', $html);
         $this->assertStringContainsString('league result submitted', strtolower($html));
+        $this->assertStringContainsString('images/logo.png', $html);
+        $this->assertStringNotContainsString('notification-logo.png', $html);
     }
 
     public function test_partial_autosave_does_not_delete_existing_frames_when_a_saved_frame_becomes_incomplete(): void
