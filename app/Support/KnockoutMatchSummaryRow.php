@@ -34,6 +34,28 @@ class KnockoutMatchSummaryRow
         );
     }
 
+    public static function forPlayer(KnockoutMatch $match, User $player, bool $allowSubmission): object
+    {
+        $participantId = null;
+
+        if ($match->homeParticipant?->includesPlayer($player)) {
+            $participantId = $match->homeParticipant?->id;
+        } elseif ($match->awayParticipant?->includesPlayer($player)) {
+            $participantId = $match->awayParticipant?->id;
+        }
+
+        $hasResult = self::hasResult($match);
+
+        return self::build(
+            match: $match,
+            rowUrl: ! $hasResult && $allowSubmission && Gate::allows('openSubmission', $match)
+                ? route('knockout.matches.submit', $match)
+                : route('knockout.show', $match->round->knockout),
+            participantId: $participantId,
+            neutralPill: false,
+        );
+    }
+
     public static function forTeam(KnockoutMatch $match, Team $team, bool $allowSubmission): object
     {
         $participantId = null;

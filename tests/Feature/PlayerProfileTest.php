@@ -229,6 +229,56 @@ class PlayerProfileTest extends TestCase
         $this->assertStringNotContainsString($teamKnockout->name, $knockoutSection);
     }
 
+    public function test_admin_sees_knockout_submission_link_on_public_player_profile(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $team = Team::factory()->create();
+        $player = User::factory()->create(['team_id' => $team->id]);
+        $opponent = User::factory()->create();
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Singles KO',
+            'type' => KnockoutType::Singles,
+        ]);
+
+        $round = KnockoutRound::query()->create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $player->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $opponent->id,
+        ]);
+
+        $match = KnockoutMatch::query()->create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+            'starts_at' => now()->subDay(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('player.show', $player))
+            ->assertOk()
+            ->assertSee(route('knockout.matches.submit', $match), false);
+    }
+
     public function test_guest_does_not_see_private_contact_details_on_player_profile(): void
     {
         $team = Team::factory()->create();

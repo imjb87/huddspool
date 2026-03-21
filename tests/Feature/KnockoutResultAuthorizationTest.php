@@ -59,7 +59,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_admin_without_participant_access_receives_forbidden_for_knockout_submission_route(): void
+    public function test_admin_without_participant_access_can_open_knockout_submission_route(): void
     {
         ['match' => $match] = $this->createSinglesMatchContext();
 
@@ -69,7 +69,8 @@ class KnockoutResultAuthorizationTest extends TestCase
 
         $this->actingAs($admin)
             ->get(route('knockout.matches.submit', $match))
-            ->assertForbidden();
+            ->assertOk()
+            ->assertSeeLivewire(SubmitResult::class);
     }
 
     public function test_admin_on_participant_team_can_open_team_knockout_submission_route(): void

@@ -47,8 +47,9 @@ class PlayerController extends Controller
         $history = (new GetPlayerSeasonHistory($player))();
 
         $knockoutMatches = new GetPlayerKnockoutMatches($player)();
+        $allowKnockoutSubmission = auth()->user()?->isAdmin() ?? false;
         $frameRows = $frames?->map(fn ($frame) => FrameSummaryRow::fromFrame($frame, $player->id));
-        $knockoutRows = $knockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::neutral($match));
+        $knockoutRows = $knockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forPlayer($match, $player, $allowKnockoutSubmission));
 
         return view('player.show', compact('player', 'averages', 'frames', 'frameRows', 'history', 'knockoutMatches', 'knockoutRows'));
     }

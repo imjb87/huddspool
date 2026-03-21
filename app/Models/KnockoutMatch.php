@@ -256,6 +256,10 @@ class KnockoutMatch extends Model
             return false;
         }
 
+        if ($user->isAdmin() && $user->can(PermissionName::SubmitKnockoutResults->value)) {
+            return true;
+        }
+
         $type = $this->type();
 
         return match ($type) {

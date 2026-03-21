@@ -277,4 +277,62 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText('6');
         $response->assertSeeText('4');
     }
+
+    public function test_admin_sees_team_knockout_submission_link_on_public_team_profile(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Team KO',
+            'type' => KnockoutType::Team,
+        ]);
+
+        $round = KnockoutRound::query()->create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Semi-finals',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'team_id' => $team->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'team_id' => $opponent->id,
+        ]);
+
+        $match = KnockoutMatch::query()->create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 11,
+            'starts_at' => now()->subDay(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('team.show', $team))
+            ->assertOk()
+            ->assertSee(route('knockout.matches.submit', $match), false);
+    }
 }

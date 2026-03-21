@@ -37,7 +37,8 @@ class TeamController extends Controller
         $historyRows = $history->map(fn (array $entry) => TeamHistoryRow::fromEntry($entry));
 
         $teamKnockoutMatches = new GetTeamKnockoutMatches($team)();
-        $teamKnockoutRows = $teamKnockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $team, false));
+        $allowKnockoutSubmission = auth()->user()?->isAdmin() ?? false;
+        $teamKnockoutRows = $teamKnockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $team, $allowKnockoutSubmission));
 
         return view('team.show', compact('team', 'fixtures', 'fixtureRows', 'players', 'section', 'history', 'historyRows', 'teamKnockoutMatches', 'teamKnockoutRows'));
     }
