@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\KnockoutResource\Pages;
+namespace App\Filament\Resources\ExpulsionResource\Pages;
 
-use App\Filament\Resources\KnockoutResource;
+use App\Filament\Resources\ExpulsionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListKnockouts extends ListRecords
+class ListExpulsions extends ListRecords
 {
-    protected static string $resource = KnockoutResource::class;
+    protected static string $resource = ExpulsionResource::class;
 
     public static function getNavigationLabel(): string
     {
-        return 'Knockouts';
+        return 'Expulsions';
     }
 
     protected function getHeaderActions(): array

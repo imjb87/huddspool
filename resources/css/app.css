@@ -38,6 +38,20 @@
     display: none !important;
   }
 
+  button:not(:disabled),
+  [type='button']:not(:disabled),
+  [type='submit']:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [type='button']:disabled,
+  [type='submit']:disabled,
+  [role='button'][disabled] {
+    cursor: not-allowed;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     html.theme-transitioning *,
     html.theme-transitioning *::before,
@@ -57,12 +71,6 @@
     --site-dark-700: oklch(37% 0.013 285.805);
     --site-dark-600: oklch(44.2% 0.017 285.786);
   }
-
-  .site-header a,
-  .site-header button {
-    cursor: pointer;
-  }
-
   .dark .bg-gray-50 {
     background-color: var(--site-dark-950);
   }

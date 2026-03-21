@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
+use App\Models\Season;
 use App\Models\Section;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use App\Models\Season;
 
 class SectionResource extends Resource
 {
@@ -28,7 +28,7 @@ class SectionResource extends Resource
         return $schema
             ->schema([
                 \Filament\Schemas\Components\Section::make('Section information')
-                ->columnSpanFull()
+                    ->columnSpanFull()
                     ->description('Enter the basic information for the section.')
                     ->columns(2)
                     ->schema([
@@ -62,13 +62,25 @@ class SectionResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('ruleset.name')
+                    ->label('Ruleset')
+                    ->badge()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('teams_count')
+                    ->label('Teams')
+                    ->counts('teams'),
+                Tables\Columns\TextColumn::make('fixtures_count')
+                    ->label('Fixtures')
+                    ->counts('fixtures'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()->color('warning'),
             ])
             ->bulkActions([
             ]);
@@ -90,5 +102,4 @@ class SectionResource extends Resource
             'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
     }
-
 }

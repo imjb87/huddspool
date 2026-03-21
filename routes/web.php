@@ -6,6 +6,7 @@ use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\KnockoutMatchController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RulesetController;
+use App\Http\Controllers\SeasonEntryController;
 use App\Http\Controllers\SupportTicketController;
 use App\Models\Ruleset;
 use App\Models\Section;
@@ -68,6 +69,9 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::KNOCKOUTS]))->gro
     Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
     Route::get('/knockouts/{knockout:slug}', [KnockoutController::class, 'show'])->name('knockout.show');
 });
+Route::get('/seasons/{season}/sign-up', [SeasonEntryController::class, 'show'])->name('season.entry.show');
+Route::get('/seasons/{season}/sign-up/orders/{entry:reference}', [SeasonEntryController::class, 'confirmation'])->name('season.entry.confirmation');
+Route::get('/seasons/{season}/sign-up/orders/{entry:reference}/invoice', [SeasonEntryController::class, 'invoice'])->name('season.entry.invoice');
 Route::get('/manifest.json', [LaravelPWAController::class, 'manifestJson'])->name('laravelpwa.manifest');
 Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelpwa.offline');
 Route::middleware('auth')->group(function () {

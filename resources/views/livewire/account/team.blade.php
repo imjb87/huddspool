@@ -15,7 +15,7 @@
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
             <nav class="-ml-3 flex gap-2">
                 <a href="{{ route('account.show') }}"
-                    class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
+                    class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
                     Profile
                 </a>
                 <a href="{{ route('account.team') }}"
@@ -23,7 +23,7 @@
                     Team
                 </a>
                 <a href="{{ route('support.tickets') }}"
-                    class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
+                    class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
                     Support
                 </a>
             </nav>

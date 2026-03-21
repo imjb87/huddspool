@@ -5,8 +5,8 @@ namespace App\Models;
 use App\KnockoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Knockout extends Model
@@ -19,12 +19,14 @@ class Knockout extends Model
         'slug',
         'type',
         'best_of',
+        'entry_fee',
         'published_at',
     ];
 
     protected $casts = [
         'type' => KnockoutType::class,
         'best_of' => 'integer',
+        'entry_fee' => 'decimal:2',
         'published_at' => 'datetime',
     ];
 

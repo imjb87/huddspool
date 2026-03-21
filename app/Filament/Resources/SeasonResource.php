@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ExpulsionResource\Pages\ListExpulsions;
+use App\Filament\Resources\KnockoutResource\Pages\ListKnockouts;
+use App\Filament\Resources\SeasonEntryResource\Pages\ListSeasonEntries;
 use App\Filament\Resources\SeasonResource\Pages;
-use App\Filament\Resources\SeasonResource\RelationManagers;
+use App\Filament\Resources\SectionResource\Pages\ListSections;
 use App\Models\Season;
 use App\Support\CompetitionCacheInvalidator;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -31,11 +35,24 @@ class SeasonResource extends Resource
                 // Main section spanning 2 columns
                 Section::make('Season information')
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Name')
                             ->required()
                             ->placeholder('Season name'),
+                        Forms\Components\TextInput::make('team_entry_fee')
+                            ->label('Team entry fee')
+                            ->numeric()
+                            ->prefix('£')
+                            ->default(0)
+                            ->required(),
+                        Forms\Components\DateTimePicker::make('signup_opens_at')
+                            ->label('Sign-up opens at')
+                            ->seconds(false),
+                        Forms\Components\DateTimePicker::make('signup_closes_at')
+                            ->label('Sign-up closes at')
+                            ->seconds(false),
                     ]),
 
                 // Dates on the right in a smaller section spanning 1 column
@@ -67,6 +84,15 @@ class SeasonResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('team_entry_fee')
+                    ->label('Team fee')
+                    ->money('GBP')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('signup_closes_at')
+                    ->label('Sign-up closes')
+                    ->dateTime('j M Y H:i')
+                    ->sortable()
+                    ->placeholder('Not set'),
                 Tables\Columns\ToggleColumn::make('is_open')
                     ->label('Is Open?')
                     ->alignCenter()
@@ -92,11 +118,18 @@ class SeasonResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            'sections' => RelationManagers\SectionsRelationManager::class,
-            'knockouts' => RelationManagers\KnockoutsRelationManager::class,
-            'expulsions' => RelationManagers\ExpulsionsRelationManager::class,
-        ];
+        return [];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\EditSeason::class,
+            ListSections::class,
+            ListKnockouts::class,
+            ListSeasonEntries::class,
+            ListExpulsions::class,
+        ]);
     }
 
     public static function getPages(): array

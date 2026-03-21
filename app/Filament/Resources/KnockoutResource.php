@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\KnockoutResource\Pages;
 use App\Filament\Resources\KnockoutResource\RelationManagers;
 use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\Season;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -29,8 +30,8 @@ class KnockoutResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Knockout details')
-                ->columnSpanFull()
+                Section::make('Knockout details')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -64,6 +65,12 @@ class KnockoutResource extends Resource
                                 KnockoutType::Doubles->value,
                             ]))
                             ->helperText('First to half this number (rounded up). Leave blank for default.'),
+                        Forms\Components\TextInput::make('entry_fee')
+                            ->label('Entry fee')
+                            ->numeric()
+                            ->prefix('£')
+                            ->default(0)
+                            ->helperText('Charge this amount when someone registers for this knockout.'),
                     ]),
             ]);
     }
@@ -82,6 +89,10 @@ class KnockoutResource extends Resource
 
                         return $state ? KnockoutType::from($state)->getLabel() : 'Unknown';
                     }),
+                Tables\Columns\TextColumn::make('entry_fee')
+                    ->label('Entry fee')
+                    ->money('GBP')
+                    ->sortable(),
             ])
             ->actions([
                 Actions\EditAction::make(),

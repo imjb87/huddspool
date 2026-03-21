@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Models\Result;
+use App\Models\Season;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -18,10 +20,26 @@ class HomeController extends Controller
         return view('home', [
             'title' => 'Home',
             'liveScores' => $this->liveScores(),
+            'entrySeason' => $this->entrySeason(),
+            'entrySeasonCountdown' => $this->entrySeasonCountdown(),
             'featuredArticle' => $news->first(),
             'featuredParagraphs' => $this->featuredArticleParagraphs($news->first()),
             'secondaryArticles' => $news->slice(1),
         ]);
+    }
+
+    private function entrySeason(): ?Season
+    {
+        $now = now();
+
+        return Season::query()
+            ->whereNotNull('signup_opens_at')
+            ->whereNotNull('signup_closes_at')
+            ->where('signup_opens_at', '<=', $now)
+            ->where('signup_closes_at', '>=', $now)
+            ->orderBy('signup_opens_at')
+            ->orderBy('signup_closes_at')
+            ->first();
     }
 
     private function liveScores(): Collection
@@ -67,5 +85,50 @@ class HomeController extends Controller
             ->filter(fn (?string $paragraph): bool => filled(Str::of((string) $paragraph)->trim()))
             ->take(3)
             ->values();
+    }
+
+    /**
+     * @return array{mode: 'closes', target_iso: string, target_label: string, headline: string, body: string, cta_label: string, cta_url: string}|null
+     */
+    private function entrySeasonCountdown(): ?array
+    {
+        $season = $this->entrySeason();
+
+        if (! $season) {
+            return null;
+        }
+
+        return $this->makeEntrySeasonCountdown(
+            season: $season,
+            mode: 'closes',
+            target: $season->signup_closes_at,
+            headline: 'Season sign-up is open',
+            body: 'Register teams and knockout entries for '.$season->name.' before the window closes.',
+            ctaLabel: 'Register now',
+            ctaUrl: route('season.entry.show', ['season' => $season]),
+        );
+    }
+
+    /**
+     * @return array{mode: 'closes', target_iso: string, target_label: string, headline: string, body: string, cta_label: string, cta_url: string}
+     */
+    private function makeEntrySeasonCountdown(
+        Season $season,
+        string $mode,
+        CarbonInterface $target,
+        string $headline,
+        string $body,
+        ?string $ctaLabel,
+        ?string $ctaUrl,
+    ): array {
+        return [
+            'mode' => $mode,
+            'target_iso' => $target->toIso8601String(),
+            'target_label' => $target->format('D j M \\a\\t H:i'),
+            'headline' => $headline,
+            'body' => $body,
+            'cta_label' => $ctaLabel,
+            'cta_url' => $ctaUrl,
+        ];
     }
 }

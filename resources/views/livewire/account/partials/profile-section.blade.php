@@ -28,7 +28,7 @@
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="inline-flex cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200 hover:text-gray-900 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
+                            <label class="inline-flex cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200/70 hover:text-gray-900 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-gray-100">
                                 <span>Change avatar</span>
                                 <input type="file" wire:model="avatarUpload" class="hidden" accept="image/*">
                             </label>

@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Season;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Season>
+ * @extends Factory<Season>
  */
 class SeasonFactory extends Factory
 {
@@ -21,6 +22,9 @@ class SeasonFactory extends Factory
             'name' => $this->faker->name,
             'slug' => Str::slug($this->faker->unique()->sentence(3)),
             'dates' => [],
+            'signup_opens_at' => now()->subDay(),
+            'signup_closes_at' => now()->addWeek(),
+            'team_entry_fee' => 25,
             'is_open' => true,
         ];
     }

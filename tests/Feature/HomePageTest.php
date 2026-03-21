@@ -83,6 +83,61 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('Pending actions');
     }
 
+    public function test_home_page_shows_active_season_entry_countdown_in_the_hero(): void
+    {
+        $season = Season::factory()->create([
+            'name' => 'Summer 2026',
+            'signup_opens_at' => now()->subDay(),
+            'signup_closes_at' => now()->addDays(5),
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('data-home-hero-entry-countdown', false);
+        $response->assertSeeText('Closes in');
+        $response->assertSeeText('Registration for the next season is now open');
+        $response->assertSeeText('League registration is now open for Summer 2026 until');
+        $response->assertSeeText('Registration covers your teams, knockout entries and the key details needed for the upcoming season.');
+        $response->assertSeeText('Register now');
+        $response->assertSee(route('season.entry.show', ['season' => $season]), false);
+        $response->assertDontSee('data-home-hero-account-link', false);
+    }
+
+    public function test_home_page_does_not_show_registration_hero_for_a_season_that_has_not_opened_yet(): void
+    {
+        Season::factory()->create([
+            'name' => 'Autumn 2026',
+            'signup_opens_at' => now()->addDays(3),
+            'signup_closes_at' => now()->addDays(10),
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertDontSee('data-home-hero-entry-countdown', false);
+        $response->assertDontSeeText('Registration for the next season is now open');
+        $response->assertDontSeeText('Autumn 2026');
+        $response->assertSee('data-home-hero-account-link', false);
+    }
+
+    public function test_home_page_does_not_show_registration_hero_for_a_season_without_signup_dates(): void
+    {
+        Season::factory()->create([
+            'name' => 'Winter 2026',
+            'signup_opens_at' => null,
+            'signup_closes_at' => null,
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertDontSee('data-home-hero-entry-countdown', false);
+        $response->assertDontSeeText('Registration for the next season is now open');
+        $response->assertDontSeeText('Winter 2026');
+        $response->assertSee('data-home-hero-account-link', false);
+    }
+
     public function test_home_page_shows_live_scores_for_results_in_progress(): void
     {
         $data = $this->createLiveScoreFixtureData();

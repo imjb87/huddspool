@@ -36,6 +36,9 @@ class Season extends Model
         'name',
         'slug',
         'dates',
+        'signup_opens_at',
+        'signup_closes_at',
+        'team_entry_fee',
         'is_open',
     ];
 
@@ -46,6 +49,9 @@ class Season extends Model
      */
     protected $casts = [
         'dates' => 'array',
+        'signup_opens_at' => 'datetime',
+        'signup_closes_at' => 'datetime',
+        'team_entry_fee' => 'decimal:2',
         'is_open' => 'boolean',
     ];
 
@@ -151,8 +157,26 @@ class Season extends Model
         return $this->hasMany(Expulsion::class);
     }
 
+    public function entries(): HasMany
+    {
+        return $this->hasMany(SeasonEntry::class);
+    }
+
     public function hasRecordedResults(): bool
     {
         return $this->fixtures()->whereHas('result')->exists();
+    }
+
+    public function acceptingEntries(): bool
+    {
+        if ($this->signup_opens_at && now()->lt($this->signup_opens_at)) {
+            return false;
+        }
+
+        if ($this->signup_closes_at === null) {
+            return false;
+        }
+
+        return now()->lte($this->signup_closes_at);
     }
 }
