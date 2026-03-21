@@ -14,6 +14,8 @@ class ResultController extends Controller
         $result->load([
             'fixture' => fn ($query) => $query->with([
                 'season',
+                'homeTeam',
+                'awayTeam',
                 'section' => fn ($sectionQuery) => $sectionQuery->withTrashed()->with('ruleset'),
                 'venue' => fn ($venueQuery) => $venueQuery->withTrashed(),
             ]),

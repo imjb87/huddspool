@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\PermissionName;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
 use App\Models\Result;
@@ -35,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('viewPulse', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->can(PermissionName::ViewPulse->value);
         });
     }
 }

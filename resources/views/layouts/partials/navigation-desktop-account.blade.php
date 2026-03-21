@@ -51,7 +51,7 @@
                         Install app
                     </button>
                 </div>
-                @if (auth()->user()->is_admin)
+                @if (auth()->user()->isAdmin())
                     <div class="py-1">
                         <a href="{{ route('filament.admin.pages.dashboard') }}"
                             class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">

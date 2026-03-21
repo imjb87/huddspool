@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Enums\UserRole;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Result;
 use App\Models\Team;
@@ -76,7 +75,7 @@ class LeagueResultSubmissionMailer
         $captain = $team->relationLoaded('captain') ? $team->captain : $team->captain()->first();
 
         return $players
-            ->filter(fn (User $user) => $user->roleEnum() === UserRole::TeamAdmin)
+            ->filter(fn (User $user) => $user->isTeamAdmin())
             ->when($captain instanceof User, fn (Collection $users) => $users->push($captain));
     }
 }

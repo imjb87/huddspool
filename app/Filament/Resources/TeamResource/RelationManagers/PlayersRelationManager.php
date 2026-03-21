@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\TeamResource\RelationManagers;
 
-use App\Enums\UserRole;
+use App\Enums\RoleName;
+use App\Models\User;
+use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -24,10 +26,11 @@ class PlayersRelationManager extends RelationManager
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->maxLength(255),
-                // Role
-                Forms\Components\Select::make('role')
+                Forms\Components\Select::make('site_role')
+                    ->label('Role')
                     ->required()
-                    ->options(UserRole::options()),
+                    ->options(SiteAuthorization::roleOptions(includeAdmin: false))
+                    ->default(RoleName::Player->value),
                 Forms\Components\TextInput::make('telephone')
                     ->tel()
                     ->maxLength(255),
@@ -40,20 +43,54 @@ class PlayersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('role')
-                    ->formatStateUsing(fn (string|int|null $state): string => UserRole::labelFor($state))
+                Tables\Columns\TextColumn::make('site_role')
+                    ->getStateUsing(fn (User $record): string => $record->roleLabel())
                     ->badge(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Actions\CreateAction::make(),
+                Actions\CreateAction::make()
+                    ->mutateDataUsing(function (array $data): array {
+                        $role = RoleName::from((string) ($data['site_role'] ?? RoleName::Player->value));
+                        unset($data['site_role']);
+
+                        return SiteAuthorization::applyLegacyColumnsForRole($data, $role);
+                    })
+                    ->using(function (array $data) {
+                        /** @var User $record */
+                        $record = $this->getRelationship()->create($data);
+                        SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
+
+                        return $record;
+                    }),
                 Actions\AssociateAction::make(),
             ])
             ->actions([
                 Actions\ActionGroup::make([
-                    Actions\EditAction::make(),
+                    Actions\EditAction::make()
+                        ->fillForm(fn (User $record): array => [
+                            'name' => $record->name,
+                            'email' => $record->email,
+                            'site_role' => SiteAuthorization::inferRoleNameFromLegacy(
+                                $record->role !== null ? (string) $record->role : null,
+                                (bool) $record->is_admin,
+                            )->value,
+                            'telephone' => $record->telephone,
+                        ])
+                        ->mutateDataUsing(function (array $data): array {
+                            $role = RoleName::from((string) ($data['site_role'] ?? RoleName::Player->value));
+                            unset($data['site_role']);
+
+                            return SiteAuthorization::applyLegacyColumnsForRole($data, $role);
+                        })
+                        ->using(function (User $record, array $data): User {
+                            $record->update($data);
+                            SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
+
+                            return $record;
+                        }),
                     Actions\DissociateAction::make(),
                 ]),
             ])

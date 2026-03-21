@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\PermissionName;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
 use App\Models\Result;
@@ -83,11 +84,11 @@ class ResultSubmissionPromptResolver
 
     public function outstandingFixturesFor(User $user): Collection
     {
-        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
+        if (! $user->team) {
             return collect();
         }
 
-        if (! $user->team) {
+        if (! $user->can(PermissionName::SubmitLeagueResults->value)) {
             return collect();
         }
 

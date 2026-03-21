@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionName;
 use App\Models\Result;
 use App\Models\User;
 
@@ -9,11 +10,7 @@ class ResultPolicy
 {
     public function resumeSubmission(User $user, Result $result): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
+        if (! $user->can(PermissionName::SubmitLeagueResults->value)) {
             return false;
         }
 

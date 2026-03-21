@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Account;
 
+use App\Enums\PermissionName;
 use App\Models\Fixture;
 use App\Queries\GetTeamKnockoutMatches;
 use App\Support\FixtureSummaryRow;
@@ -25,7 +26,7 @@ class Team extends BaseAccountComponent
     #[Computed]
     public function canManageTeam(): bool
     {
-        return $this->user->isCaptain() || $this->user->isTeamAdmin();
+        return $this->user->can(PermissionName::SubmitLeagueResults->value);
     }
 
     #[Computed]

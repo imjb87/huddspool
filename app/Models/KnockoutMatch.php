@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PermissionName;
 use App\KnockoutType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -436,6 +437,7 @@ class KnockoutMatch extends Model
             return false;
         }
 
-        return $teamIds->contains($user->team_id) && ($user->isCaptain() || $user->isTeamAdmin());
+        return $teamIds->contains($user->team_id)
+            && $user->can(PermissionName::SubmitKnockoutResults->value);
     }
 }

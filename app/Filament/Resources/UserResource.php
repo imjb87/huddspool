@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\UserRole;
+use App\Enums\RoleName;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,7 +30,7 @@ class UserResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
+                Section::make('Information')
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
@@ -48,9 +50,10 @@ class UserResource extends Resource
                             ->label('Telephone')
                             ->placeholder('0123456789')
                             ->tel(),
-                        Forms\Components\Select::make('role')
+                        Forms\Components\Select::make('site_role')
                             ->label('Role')
-                            ->options(UserRole::options())
+                            ->options(SiteAuthorization::roleOptions())
+                            ->default(RoleName::Player->value)
                             ->required(),
                     ]),
             ]);
@@ -78,11 +81,9 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->placeholder('No team'),
-                Tables\Columns\TextColumn::make('role')
+                Tables\Columns\TextColumn::make('site_role')
                     ->label('Role')
-                    ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(fn (string|int|null $state): string => UserRole::labelFor($state))
+                    ->getStateUsing(fn (User $record): string => $record->roleLabel())
                     ->badge(),
             ])
             ->filters([

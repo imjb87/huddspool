@@ -2,13 +2,17 @@
 
 namespace Tests\Unit;
 
+use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class UserRoleTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_exposes_role_labels_and_options(): void
     {
         $this->assertSame('Player', UserRole::Player->label());
@@ -21,13 +25,11 @@ class UserRoleTest extends TestCase
 
     public function test_user_role_helpers_use_the_enum_values(): void
     {
-        $teamAdmin = new User([
-            'id' => 1,
+        $teamAdmin = User::factory()->create([
             'role' => UserRole::TeamAdmin->value,
             'is_admin' => true,
         ]);
-        $player = new User([
-            'id' => 2,
+        $player = User::factory()->create([
             'role' => UserRole::Player->value,
             'is_admin' => false,
         ]);
@@ -37,7 +39,8 @@ class UserRoleTest extends TestCase
 
         $this->assertTrue($teamAdmin->isTeamAdmin());
         $this->assertTrue($teamAdmin->isAdmin());
-        $this->assertSame('Team Admin', $teamAdmin->roleLabel());
+        $this->assertTrue($teamAdmin->hasRole(RoleName::Admin->value));
+        $this->assertSame('Admin', $teamAdmin->roleLabel());
 
         $this->assertFalse($player->isTeamAdmin());
         $this->assertFalse($player->isAdmin());

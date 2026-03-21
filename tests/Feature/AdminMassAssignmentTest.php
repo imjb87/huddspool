@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Filament\Resources\TeamResource\Pages\EditTeam;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -36,7 +37,7 @@ class AdminMassAssignmentTest extends TestCase
                 'email' => $player->email,
                 'team_id' => $player->team_id,
                 'telephone' => $player->telephone,
-                'role' => UserRole::TeamAdmin->value,
+                'site_role' => RoleName::TeamAdmin->value,
             ])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -45,6 +46,7 @@ class AdminMassAssignmentTest extends TestCase
             'id' => $player->id,
             'role' => UserRole::TeamAdmin->value,
         ]);
+        $this->assertTrue($player->fresh()->hasRole(RoleName::TeamAdmin->value));
     }
 
     public function test_admin_can_update_a_teams_captain_from_the_filament_edit_page(): void
@@ -96,5 +98,30 @@ class AdminMassAssignmentTest extends TestCase
 
         $this->assertAuthenticatedAs($player);
         $this->assertSame($admin->id, session('impersonated_by'));
+    }
+
+    public function test_filament_banner_uses_app_impersonation_leave_route(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $impersonatedAdmin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        Filament::setCurrentPanel('admin');
+
+        $this->actingAs($impersonatedAdmin);
+        session([
+            'impersonated_by' => $admin->id,
+            'impersonator_guard' => 'web',
+            'impersonator_guard_using' => 'web',
+        ]);
+
+        $response = $this->get(route('filament.admin.pages.dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('impersonation.leave').'"', false);
+        $response->assertDontSee('href="'.route('filament-impersonate.leave').'"', false);
     }
 }

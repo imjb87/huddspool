@@ -72,7 +72,22 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_team_captain_can_open_team_knockout_submission_route(): void
+    public function test_admin_on_participant_team_can_open_team_knockout_submission_route(): void
+    {
+        ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
+
+        $admin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('knockout.matches.submit', $match))
+            ->assertOk()
+            ->assertSeeLivewire(SubmitResult::class);
+    }
+
+    public function test_team_captain_receives_forbidden_for_team_knockout_submission_route(): void
     {
         ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
 
@@ -86,9 +101,7 @@ class KnockoutResultAuthorizationTest extends TestCase
 
         $this->actingAs($captain)
             ->get(route('knockout.matches.submit', $match))
-            ->assertOk()
-            ->assertSee('data-knockout-submit-shell', false)
-            ->assertSeeLivewire(SubmitResult::class);
+            ->assertForbidden();
     }
 
     public function test_team_admin_can_open_team_knockout_submission_route(): void
@@ -134,7 +147,7 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_team_captain_sees_submit_link_on_account_page(): void
+    public function test_team_captain_does_not_see_submit_link_on_account_page(): void
     {
         ['match' => $match, 'homeTeam' => $homeTeam] = $this->createTeamMatchContext();
 
@@ -148,9 +161,9 @@ class KnockoutResultAuthorizationTest extends TestCase
         $match->update(['starts_at' => now()->addDay()]);
 
         $this->actingAs($captain)
-            ->get(route('account.team'))
+            ->get(route('account.show'))
             ->assertOk()
-            ->assertSee(route('knockout.matches.submit', $match), false);
+            ->assertDontSee(route('knockout.matches.submit', $match), false);
     }
 
     public function test_regular_team_member_does_not_see_submit_link_on_account_page(): void

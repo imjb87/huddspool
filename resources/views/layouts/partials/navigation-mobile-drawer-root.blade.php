@@ -55,7 +55,7 @@
                     class="{{ $mobileDrawerTextLinkClasses }}">
                     Account
                 </a>
-                @if (auth()->user()->is_admin)
+                @if (auth()->user()->isAdmin())
                     <a href="{{ route('filament.admin.pages.dashboard') }}"
                         class="{{ $mobileDrawerTextLinkClasses }}">
                         Admin

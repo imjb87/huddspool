@@ -12,6 +12,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Support\SiteAuthorization;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -243,10 +244,12 @@ class HuddspoolSeeder extends Seeder
                 ['name' => $playerName, 'team_id' => $team->id],
                 ['role' => UserRole::Player->value],
             );
+            SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
 
             if ($captainName && $playerName === $captainName) {
                 $user->role = UserRole::TeamAdmin->value;
                 $user->save();
+                SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
                 $captainUser = $user;
             }
         }
@@ -256,6 +259,7 @@ class HuddspoolSeeder extends Seeder
                 ['name' => $captainName, 'team_id' => $team->id],
                 ['role' => UserRole::TeamAdmin->value],
             );
+            SiteAuthorization::syncSpatieRoleFromLegacyColumns($captainUser);
         }
 
         if ($captainUser && ! $team->captain_id) {
@@ -293,9 +297,13 @@ class HuddspoolSeeder extends Seeder
 
     private function getOrCreatePlayer(string $playerName, Team $team): User
     {
-        return User::query()->firstOrCreate(
+        $user = User::query()->firstOrCreate(
             ['name' => $playerName, 'team_id' => $team->id],
             ['role' => UserRole::Player->value],
         );
+
+        SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
+
+        return $user;
     }
 }

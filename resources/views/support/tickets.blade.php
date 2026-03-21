@@ -19,7 +19,7 @@
                             class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/70 dark:hover:text-gray-100">
                             Profile
                         </a>
-                        @if (auth()->user()?->isCaptain() || auth()->user()?->isTeamAdmin())
+                        @if (auth()->user()?->can(\App\Enums\PermissionName::SubmitLeagueResults->value))
                             <a href="{{ route('account.team') }}"
                                 class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/70 dark:hover:text-gray-100">
                                 Team

@@ -12,8 +12,15 @@
                 <div class="sm:col-span-2">
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Match</p>
                     <p class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {{ $fixture->homeTeam->name }} <span class="font-normal text-gray-400 dark:text-zinc-500">vs</span>
-                        {{ $fixture->awayTeam->name }}
+                        <a href="{{ route('team.show', $fixture->homeTeam) }}"
+                            class="inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                            {{ $fixture->homeTeam->name }}
+                        </a>
+                        <span class="font-normal text-gray-400 dark:text-zinc-500">vs</span>
+                        <a href="{{ route('team.show', $fixture->awayTeam) }}"
+                            class="inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                            {{ $fixture->awayTeam->name }}
+                        </a>
                     </p>
                 </div>
 

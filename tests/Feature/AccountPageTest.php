@@ -48,6 +48,7 @@ class AccountPageTest extends TestCase
             ->assertSee('dark:bg-zinc-800/75', false)
             ->assertSee('dark:ring-zinc-700/80', false)
             ->assertSee('dark:text-gray-100', false)
+            ->assertSee('href="'.route('player.show', $user).'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertSeeText('Email address');
     }
@@ -398,7 +399,7 @@ class AccountPageTest extends TestCase
             ->assertSee(route('knockout.matches.submit', $teamMatch), false);
     }
 
-    public function test_captain_sees_team_nav_link_on_account_page(): void
+    public function test_captain_does_not_see_team_nav_link_on_account_page(): void
     {
         $homeTeam = Team::factory()->create();
 
@@ -418,9 +419,7 @@ class AccountPageTest extends TestCase
         $this->actingAs($captain)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('href="'.route('account.team').'"', false)
-            ->assertSee('href="'.route('support.tickets').'"', false)
-            ->assertSeeText('Team')
+            ->assertDontSee('href="'.route('account.team').'"', false)
             ->assertDontSee('data-account-team-section', false);
     }
 

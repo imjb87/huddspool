@@ -55,7 +55,10 @@
                 <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                     <div class="sm:col-span-2">
                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Name</p>
-                        <p class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->user->name }}</p>
+                        <a href="{{ route('player.show', $this->user) }}"
+                            class="mt-2 inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                            {{ $this->user->name }}
+                        </a>
                     </div>
 
                     <div>

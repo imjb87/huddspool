@@ -12,7 +12,6 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class ResultAuthorizationTest extends TestCase
@@ -39,7 +38,7 @@ class ResultAuthorizationTest extends TestCase
             ->assertSeeLivewire(ResultForm::class);
     }
 
-    public function test_team_captain_on_fixture_team_can_open_result_create_route(): void
+    public function test_team_captain_on_fixture_team_receives_forbidden_when_opening_result_create_route(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());
 
@@ -48,8 +47,7 @@ class ResultAuthorizationTest extends TestCase
 
         $this->actingAs($captain)
             ->get(route('result.create', $fixture))
-            ->assertOk()
-            ->assertSeeLivewire(ResultForm::class);
+            ->assertForbidden();
     }
 
     public function test_regular_player_on_fixture_team_receives_forbidden_when_opening_result_create_route(): void
@@ -103,13 +101,21 @@ class ResultAuthorizationTest extends TestCase
             ->assertOk()
             ->assertDontSeeText('Result submission')
             ->assertDontSeeText('Submit result');
+    }
+
+    public function test_site_admin_on_fixture_team_can_open_result_create_route(): void
+    {
+        ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());
+
+        $siteAdmin = $this->createUserForTeam($homeTeam, isAdmin: true);
 
         $this->actingAs($siteAdmin)
             ->get(route('result.create', $fixture))
-            ->assertForbidden();
+            ->assertOk()
+            ->assertSeeLivewire(ResultForm::class);
     }
 
-    public function test_site_admin_on_fixture_team_sees_continue_link_but_route_is_forbidden_while_component_mounts(): void
+    public function test_site_admin_on_fixture_team_does_not_see_a_public_result_submission_link(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
 
@@ -133,19 +139,10 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('result.show', $result))
             ->assertOk()
-            ->assertSeeText('Continue submitting result');
-
-        $this->actingAs($siteAdmin)
-            ->get(route('result.create', $fixture))
-            ->assertForbidden();
-
-        Livewire::actingAs($siteAdmin)
-            ->test(ResultForm::class, ['fixture' => $fixture])
-            ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
+            ->assertDontSeeText('Continue submitting result');
     }
 
-    public function test_site_admin_not_on_fixture_team_still_sees_continue_link_on_result_page(): void
+    public function test_site_admin_not_on_fixture_team_does_not_see_a_public_result_submission_link_on_result_page(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
 
@@ -171,7 +168,7 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('result.show', $result))
             ->assertOk()
-            ->assertSeeText('Continue submitting result');
+            ->assertDontSeeText('Continue submitting result');
     }
 
     /**

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\PermissionName;
+use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Support\PercentageFormatter;
+use App\Support\SiteAuthorization;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,10 +18,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -68,9 +72,18 @@ class User extends Authenticatable implements FilamentUser
         'avatar_url',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (self $user): void {
+            if ($user->wasRecentlyCreated || $user->wasChanged(['role', 'is_admin'])) {
+                SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
+            }
+        });
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin();
+        return $this->can(PermissionName::AccessAdminPanel->value);
     }
 
     public function getRedirectRoute(): string
@@ -171,12 +184,14 @@ class User extends Authenticatable implements FilamentUser
 
     public function isTeamAdmin(): bool
     {
-        return $this->roleEnum() === UserRole::TeamAdmin;
+        return $this->hasRole(RoleName::TeamAdmin->value)
+            || $this->roleEnum() === UserRole::TeamAdmin;
     }
 
     public function isAdmin(): bool
     {
-        return (bool) $this->is_admin;
+        return $this->hasRole(RoleName::Admin->value)
+            || (bool) $this->is_admin;
     }
 
     public function isCaptain(): bool
@@ -186,8 +201,8 @@ class User extends Authenticatable implements FilamentUser
 
     public function roleLabel(): string
     {
-        if ($this->isCaptain()) {
-            return 'Captain';
+        if ($this->isAdmin()) {
+            return 'Admin';
         }
 
         return $this->roleEnum()?->label() ?? UserRole::Player->label();

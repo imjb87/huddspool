@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Resources\SupportTicketResource;
 use App\Http\Middleware\AdminMiddleware;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +40,9 @@ class CpPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->plugins([
+                FilamentSpatieRolesPermissionsPlugin::make(),
+            ])
             ->resources([
                 SupportTicketResource::class,
             ])

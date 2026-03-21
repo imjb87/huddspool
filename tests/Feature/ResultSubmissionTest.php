@@ -511,7 +511,7 @@ class ResultSubmissionTest extends TestCase
 
         $response = $this->get(route('result.show', $result));
         $response->assertOk();
-        $response->assertSeeText('Continue submitting result');
+        $response->assertDontSeeText('Continue submitting result');
 
         // Non-admin team member should not see the link
         $nonAdmin = User::factory()->create([

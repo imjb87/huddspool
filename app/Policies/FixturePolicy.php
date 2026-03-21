@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PermissionName;
 use App\Models\Fixture;
 use App\Models\User;
 
@@ -9,7 +10,7 @@ class FixturePolicy
 {
     public function createResult(User $user, Fixture $fixture): bool
     {
-        if (! $user->isTeamAdmin() && ! $user->isCaptain()) {
+        if (! $user->can(PermissionName::SubmitLeagueResults->value)) {
             return false;
         }
 
@@ -22,7 +23,7 @@ class FixturePolicy
             return false;
         }
 
-        return $user->isTeamAdmin() || $user->isCaptain() || $user->isAdmin();
+        return $user->can(PermissionName::SubmitLeagueResults->value);
     }
 
     private function isOnFixtureTeam(User $user, Fixture $fixture): bool

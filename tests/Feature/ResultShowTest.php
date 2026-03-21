@@ -23,8 +23,10 @@ class ResultShowTest extends TestCase
         $season = null;
         $ruleset = null;
         $section = null;
+        $homeTeam = null;
+        $awayTeam = null;
 
-        Model::withoutEvents(function () use (&$result, &$season, &$ruleset, &$section): void {
+        Model::withoutEvents(function () use (&$result, &$season, &$ruleset, &$section, &$homeTeam, &$awayTeam): void {
             $season = Season::factory()->create(['is_open' => false]);
             $ruleset = Ruleset::factory()->create();
             $section = Section::factory()->create([
@@ -85,6 +87,8 @@ class ResultShowTest extends TestCase
             ->assertOk()
             ->assertSeeText('International Premier')
             ->assertSeeText('Archived Venue')
+            ->assertSee('href="'.route('team.show', $homeTeam).'"', false)
+            ->assertSee('href="'.route('team.show', $awayTeam).'"', false)
             ->assertSee('href="'.route('history.section.show', [
                 'season' => $season,
                 'ruleset' => $ruleset,
@@ -96,8 +100,10 @@ class ResultShowTest extends TestCase
     public function test_result_show_eager_loads_relations_used_by_the_view(): void
     {
         $result = null;
+        $homeTeam = null;
+        $awayTeam = null;
 
-        Model::withoutEvents(function () use (&$result): void {
+        Model::withoutEvents(function () use (&$result, &$homeTeam, &$awayTeam): void {
             $season = Season::factory()->create(['is_open' => true]);
             $ruleset = Ruleset::factory()->create();
             $section = Section::factory()->create([
@@ -161,9 +167,13 @@ class ResultShowTest extends TestCase
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Result information')
             ->assertSeeText('Result card')
+            ->assertSee('href="'.route('team.show', $homeTeam).'"', false)
+            ->assertSee('href="'.route('team.show', $awayTeam).'"', false)
             ->assertViewHas('result', function (Result $viewResult): bool {
                 return $viewResult->relationLoaded('fixture')
                     && $viewResult->fixture->relationLoaded('season')
+                    && $viewResult->fixture->relationLoaded('homeTeam')
+                    && $viewResult->fixture->relationLoaded('awayTeam')
                     && $viewResult->fixture->relationLoaded('section')
                     && $viewResult->fixture->section->relationLoaded('ruleset')
                     && $viewResult->fixture->relationLoaded('venue')

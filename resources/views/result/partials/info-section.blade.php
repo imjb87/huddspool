@@ -8,31 +8,27 @@
         </div>
 
         <div class="space-y-5 lg:col-span-2">
-            @if (! $result->is_confirmed)
-                @can('resumeSubmission', $result)
-                    <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900/60 dark:bg-red-950/40">
-                        <div class="min-w-0">
-                            <p class="text-sm font-medium text-red-700 dark:text-red-300">Result submission</p>
-                            <p class="text-sm text-red-900 dark:text-red-100">
-                                {{ $result->home_team_name }} vs {{ $result->away_team_name }}
-                            </p>
-                        </div>
-
-                        <a href="{{ route('result.create', $result->fixture_id) }}"
-                            class="inline-flex items-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-black/10 transition hover:brightness-110">
-                            Continue submitting result
-                        </a>
-                    </div>
-                @endcan
-            @endif
-
             <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                 <div class="sm:col-span-2">
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Match</p>
                     <p class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {{ $result->home_team_name }}
+                        @if ($fixture->homeTeam)
+                            <a href="{{ route('team.show', $fixture->homeTeam) }}"
+                                class="inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                                {{ $result->home_team_name }}
+                            </a>
+                        @else
+                            {{ $result->home_team_name }}
+                        @endif
                         <span class="font-normal text-gray-400 dark:text-zinc-500">vs</span>
-                        {{ $result->away_team_name }}
+                        @if ($fixture->awayTeam)
+                            <a href="{{ route('team.show', $fixture->awayTeam) }}"
+                                class="inline-flex text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
+                                {{ $result->away_team_name }}
+                            </a>
+                        @else
+                            {{ $result->away_team_name }}
+                        @endif
                     </p>
                 </div>
 

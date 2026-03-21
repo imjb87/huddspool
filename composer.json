@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "althinect/filament-spatie-roles-permissions": "^3.2",
         "awobaz/compoships": "^2.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "daacreators/creators-ticketing": "^1.1.8",
@@ -21,6 +22,7 @@
         "livewire/livewire": "^4.0",
         "sentry/sentry-laravel": "^4.13",
         "silviolleite/laravelpwa": "^2.0",
+        "spatie/laravel-permission": "^6.10",
         "spatie/laravel-responsecache": "^8.3",
         "stechstudio/filament-impersonate": "^5.0"
     },

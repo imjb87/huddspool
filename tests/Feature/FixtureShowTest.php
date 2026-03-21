@@ -78,6 +78,8 @@ class FixtureShowTest extends TestCase
         $response->assertSeeText('Fixture information');
         $response->assertSeeText('Head to head');
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
+        $response->assertSee('href="'.route('team.show', $homeTeam).'"', false);
+        $response->assertSee('href="'.route('team.show', $awayTeam).'"', false);
         $response->assertSeeText($homePlayer->name);
         $response->assertSeeText($awayPlayer->name);
         $response->assertSeeText(UserRole::labelFor($homePlayer->role));
