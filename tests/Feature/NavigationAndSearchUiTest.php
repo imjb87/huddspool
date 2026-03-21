@@ -100,6 +100,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:bg-zinc-900', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
         $response->assertSee('dark:bg-zinc-900', false);
+        $response->assertSee('rounded-lg px-3 py-2 text-sm font-semibold leading-6 transition', false);
+        $response->assertSee('hover:bg-gray-100', false);
+        $response->assertSee('dark:hover:bg-zinc-800', false);
         $response->assertDontSee('dark:backdrop-blur', false);
         $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
         $response->assertSee('aria-label="Toggle main menu"', false);

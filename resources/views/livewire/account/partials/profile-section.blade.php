@@ -76,8 +76,8 @@
                     </div>
 
                     <div class="pt-2 pb-2 sm:col-span-2">
-                        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
-                            <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-zinc-800/80">
+                        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-zinc-700/80">
+                            <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-zinc-700">
                                 <div class="px-4 py-4 sm:px-5">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
                                     <p class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $this->record->frames_played }}</p>

@@ -2,7 +2,7 @@
     @foreach ($navigationRulesets as $navigationRuleset)
         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
             <button type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $navigationRuleset['is_active'] ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
+                class="flex items-center gap-x-1 rounded-lg px-3 py-2 text-sm font-semibold leading-6 transition {{ $navigationRuleset['is_active'] ? 'bg-gray-100 text-green-700 dark:bg-zinc-800 dark:text-green-500' : 'text-gray-900 hover:bg-gray-100 hover:text-green-700 dark:text-gray-100 dark:hover:bg-zinc-800 dark:hover:text-green-500' }}"
                 @click="open = ! open" :aria-expanded="open">
                 {{ $navigationRuleset['ruleset']->name }}
                 <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -36,7 +36,7 @@
 
     <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
         <button type="button"
-            class="flex items-center gap-x-1 text-sm font-semibold leading-6 {{ $knockoutNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
+            class="flex items-center gap-x-1 rounded-lg px-3 py-2 text-sm font-semibold leading-6 transition {{ $knockoutNavIsActive ? 'bg-gray-100 text-green-700 dark:bg-zinc-800 dark:text-green-500' : 'text-gray-900 hover:bg-gray-100 hover:text-green-700 dark:text-gray-100 dark:hover:bg-zinc-800 dark:hover:text-green-500' }}"
             @click="open = ! open" :aria-expanded="open">
             Knockouts
             <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -70,11 +70,11 @@
         </div>
     </div>
     <a href="{{ route('history.index') }}"
-        class="text-sm font-semibold leading-6 {{ $historyNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
+        class="rounded-lg px-3 py-2 text-sm font-semibold leading-6 transition {{ $historyNavIsActive ? 'bg-gray-100 text-green-700 dark:bg-zinc-800 dark:text-green-500' : 'text-gray-900 hover:bg-gray-100 hover:text-green-700 dark:text-gray-100 dark:hover:bg-zinc-800 dark:hover:text-green-500' }}">
         History
     </a>
     <a href="{{ route('page.show', 'handbook') }}"
-        class="text-sm font-semibold leading-6 {{ $handbookNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}">
+        class="rounded-lg px-3 py-2 text-sm font-semibold leading-6 transition {{ $handbookNavIsActive ? 'bg-gray-100 text-green-700 dark:bg-zinc-800 dark:text-green-500' : 'text-gray-900 hover:bg-gray-100 hover:text-green-700 dark:text-gray-100 dark:hover:bg-zinc-800 dark:hover:text-green-500' }}">
         Handbook
     </a>
 </div>

@@ -44,8 +44,9 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-header', false)
             ->assertSee('data-account-profile-section', false)
             ->assertSee('dark:bg-zinc-900', false)
-            ->assertSee('dark:border-zinc-800/80', false)
+            ->assertSee('dark:border-zinc-700', false)
             ->assertSee('dark:bg-zinc-800/75', false)
+            ->assertSee('dark:ring-zinc-700/80', false)
             ->assertSee('dark:text-gray-100', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertSeeText('Email address');
