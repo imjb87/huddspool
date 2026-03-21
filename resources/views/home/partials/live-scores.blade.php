@@ -20,7 +20,7 @@
                         data-home-live-scores-shell
                         data-home-live-scores-list>
                         @foreach ($liveScores as $result)
-                            <div class="py-1" data-home-live-score-row>
+                            <div data-home-live-score-row>
                                 <a href="{{ route('result.show', $result) }}"
                                     class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
                                     <div class="flex items-start justify-between gap-4">
