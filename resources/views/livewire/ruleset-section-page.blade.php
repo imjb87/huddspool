@@ -32,7 +32,7 @@
                         wire:key="section-tab-{{ $tabKey }}"
                         data-section-tab="{{ $tabKey }}"
                         @if ($activeTab === $tabKey) aria-current="page" @endif
-                        class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition data-loading:opacity-60 {{ $activeTab === $tabKey ? 'bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/70 dark:hover:text-gray-100' }}">
+                        class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition data-loading:opacity-60 {{ $activeTab === $tabKey ? 'bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100' }}">
                         {{ $tabLabel }}
                     </a>
                 @endforeach
