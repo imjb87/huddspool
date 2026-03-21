@@ -7,6 +7,7 @@ use App\Models\Fixture;
 use App\Models\FixtureResultLock;
 use App\Models\Result;
 use App\Support\ResultFormDraftStore;
+use App\Support\ResultFormDraftSynchronizer;
 use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormLockManager;
@@ -45,6 +46,8 @@ class ResultForm extends Component
     protected int $lockTimeoutMinutes = 10;
 
     protected ?ResultFormDraftStore $draftStore = null;
+
+    protected ?ResultFormDraftSynchronizer $draftSynchronizer = null;
 
     protected ?ResultFormLockManager $lockManager = null;
 
@@ -129,9 +132,11 @@ class ResultForm extends Component
     {
         $this->result = $result?->load(['frames' => fn ($query) => $query->orderBy('id')]);
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
-        $this->form->syncFromResultAndDraft(
+        $this->draftSynchronizer()->syncForm(
+            $this->form,
             $this->result,
-            $this->draftStore()->get($this->authenticatedUserId(), (int) $this->fixture->getKey()),
+            $this->authenticatedUserId(),
+            (int) $this->fixture->getKey(),
         );
     }
 
@@ -233,12 +238,12 @@ class ResultForm extends Component
 
     private function persistDraftFramesToSession(): void
     {
-        $this->draftStore()->put($this->authenticatedUserId(), (int) $this->fixture->getKey(), $this->form->frames);
+        $this->draftSynchronizer()->persist($this->form->frames, $this->authenticatedUserId(), (int) $this->fixture->getKey());
     }
 
     private function clearDraftFramesFromSession(): void
     {
-        $this->draftStore()->forget($this->authenticatedUserId(), (int) $this->fixture->getKey());
+        $this->draftSynchronizer()->clear($this->authenticatedUserId(), (int) $this->fixture->getKey());
     }
 
     private function redirectToFixtureOrResult(): Redirector
@@ -260,6 +265,11 @@ class ResultForm extends Component
     private function lockManager(): ResultFormLockManager
     {
         return $this->lockManager ??= new ResultFormLockManager;
+    }
+
+    private function draftSynchronizer(): ResultFormDraftSynchronizer
+    {
+        return $this->draftSynchronizer ??= new ResultFormDraftSynchronizer($this->draftStore());
     }
 
     private function persister(): ResultFormPersister

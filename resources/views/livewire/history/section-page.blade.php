@@ -57,6 +57,8 @@
                 @include('livewire.standings.show', [
                     'section' => $section,
                     'standings' => $this->standings,
+                    'standingRows' => $standingRows,
+                    'summaryCopy' => $standingsSummaryCopy,
                     'history' => true,
                 ])
             @elseif ($activeTab === 'fixtures-results')

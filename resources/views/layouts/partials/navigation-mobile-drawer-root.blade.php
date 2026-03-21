@@ -11,14 +11,11 @@
     <div class="{{ $mobileDrawerPanelContentClasses }}">
         <div class="{{ $mobileDrawerListClasses }}">
             @foreach ($navigationRulesets as $navigationRuleset)
-                @php
-                    $ruleset = $navigationRuleset['ruleset'];
-                @endphp
                 <button type="button"
                     class="{{ $mobileDrawerLinkClasses }}"
                     data-mobile-ruleset-trigger
-                    @click="openDrawer('ruleset-{{ $ruleset->id }}')">
-                    <span>{{ $ruleset->name }}</span>
+                    @click="openDrawer('ruleset-{{ $navigationRuleset['id'] }}')">
+                    <span>{{ $navigationRuleset['name'] }}</span>
                     <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
                     </svg>

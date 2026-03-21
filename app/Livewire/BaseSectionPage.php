@@ -7,6 +7,7 @@ use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
 use App\Support\SectionAveragesViewData;
+use App\Support\StandingSummaryRow;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -315,9 +316,29 @@ abstract class BaseSectionPage extends Component
 
     /**
      * @return array{
+     *     summaryCopy: string,
+     *     standingRows: SupportCollection<int, object>
+     * }
+     */
+    protected function standingsViewData(bool $isHistoryView): array
+    {
+        return [
+            'summaryCopy' => $isHistoryView
+                ? 'Archived positions, results and points for this section.'
+                : 'Current positions, results and points for this section.',
+            'standingRows' => $this->standings
+                ->values()
+                ->map(fn ($team, $index) => StandingSummaryRow::fromStanding($team, $index + 1, $isHistoryView)),
+        ];
+    }
+
+    /**
+     * @return array{
      *     contentPadding: string,
      *     tabs: array<string, string>,
      *     fixtureRows: SupportCollection<int, object>,
+     *     standingRows: SupportCollection<int, object>,
+     *     standingsSummaryCopy: string,
      *     averageRows: Collection<int, array{
      *         player: mixed,
      *         can_link: bool,
@@ -331,11 +352,14 @@ abstract class BaseSectionPage extends Component
     protected function sectionPageViewData(bool $isHistoryView): array
     {
         $averageViewData = $this->averageViewData($isHistoryView);
+        $standingsViewData = $this->standingsViewData($isHistoryView);
 
         return [
             'contentPadding' => $this->contentPadding(),
             'tabs' => $this->tabs(),
             'fixtureRows' => $this->fixtureRows($isHistoryView),
+            'standingRows' => $standingsViewData['standingRows'],
+            'standingsSummaryCopy' => $standingsViewData['summaryCopy'],
             'averageRows' => $averageViewData['averageRows'],
             'averageSummaryCopy' => $averageViewData['summaryCopy'],
             'lastPage' => $averageViewData['lastPage'],

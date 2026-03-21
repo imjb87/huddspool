@@ -69,6 +69,8 @@
                 @include('livewire.standings.show', [
                     'section' => $section,
                     'standings' => $this->standings,
+                    'standingRows' => $standingRows,
+                    'summaryCopy' => $standingsSummaryCopy,
                 ])
             @elseif ($activeTab === 'fixtures-results')
                 @include('livewire.section-fixtures', [

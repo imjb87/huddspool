@@ -1,14 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    @php
-        $canSubmitResult = auth()->check() && auth()->user()->can('submitResult', $fixture) && (! $fixture->result || ! $fixture->result->is_confirmed);
-        $submissionIsOpen = $canSubmitResult && $fixture->fixture_date->lte(now());
-        $standings = $fixture->section->standings()->filter(function ($standing) use ($fixture) {
-            return (int) $standing->id === (int) $fixture->home_team_id || (int) $standing->id === (int) $fixture->away_team_id;
-        })->values();
-    @endphp
-
     <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
         <div class="pb-10 lg:pb-14" data-fixture-page>
             @include('fixture.partials.submission-prompt')

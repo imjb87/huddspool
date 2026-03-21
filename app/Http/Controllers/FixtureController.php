@@ -7,6 +7,7 @@ use App\Models\Ruleset;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Queries\GetTeamPlayers;
+use App\Support\FixtureShowPageData;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -53,8 +54,16 @@ class FixtureController extends Controller
 
         $home_team_players = new GetTeamPlayers($homeTeam, $section)();
         $away_team_players = new GetTeamPlayers($awayTeam, $section)();
+        $pageData = (new FixtureShowPageData)->build($fixture);
 
-        return view('fixture.show', compact('fixture', 'home_team_players', 'away_team_players'));
+        return view('fixture.show', [
+            'fixture' => $fixture,
+            'home_team_players' => $home_team_players,
+            'away_team_players' => $away_team_players,
+            'canSubmitResult' => $pageData->can_submit_result,
+            'submissionIsOpen' => $pageData->submission_is_open,
+            'standings' => $pageData->standings,
+        ]);
     }
 
     public function download(Section $section): Response

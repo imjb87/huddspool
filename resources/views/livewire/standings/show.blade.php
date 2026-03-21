@@ -1,10 +1,4 @@
 <section data-section-table-view class="mt-0">
-    @php
-        $isHistoryView = $history ?? false;
-        $summaryCopy = $isHistoryView
-            ? 'Archived positions, results and points for this section.'
-            : 'Current positions, results and points for this section.';
-    @endphp
     <div class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
             <div class="space-y-2">
@@ -38,39 +32,30 @@
                             </div>
                         </div>
 
-                        @foreach ($standings as $index => $team)
-                            @php
-                                $withdrawn = (bool) ($team->pivot->withdrawn_at ?? false);
-                                $textClass = $withdrawn ? 'text-gray-400 dark:text-zinc-500' : 'text-gray-900 dark:text-gray-100';
-                                $pointsClass = $withdrawn ? 'text-gray-400 dark:text-zinc-500' : 'text-green-700 dark:text-green-400';
-                                $displayName = $isHistoryView ? ($team->archived_name ?? $team->name) : $team->name;
-                            @endphp
-                            @php
-                                $canLinkTeam = ! ($isHistoryView && ($team->trashed ?? false));
-                            @endphp
-                            @if ($canLinkTeam)
-                                <a class="block rounded-lg py-3 {{ $withdrawn ? 'line-through' : '' }}"
-                                    wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
+                        @foreach ($standingRows as $row)
+                            @if ($row->can_link)
+                                <a class="block rounded-lg py-3 {{ $row->withdrawn ? 'line-through' : '' }}"
+                                    wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
                                     data-section-table-row-type="link"
-                                    href="{{ route('team.show', $team->id) }}">
+                                    href="{{ route('team.show', $row->id) }}">
                             @else
-                                <div class="block rounded-lg py-3 {{ $withdrawn ? 'line-through' : '' }}"
-                                    wire:key="section-standing-{{ $section->id }}-{{ $team->id }}"
+                                <div class="block rounded-lg py-3 {{ $row->withdrawn ? 'line-through' : '' }}"
+                                    wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
                                     data-section-table-row-type="static">
                             @endif
                                 <div class="flex items-center justify-between gap-2 sm:gap-3" data-section-table-band>
                                     <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
-                                        <div class="w-4 shrink-0 text-sm font-semibold tabular-nums {{ $textClass }}">
-                                            {{ $index + 1 }}
+                                        <div class="w-4 shrink-0 text-sm font-semibold tabular-nums {{ $row->text_class }}">
+                                            {{ $row->position }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="truncate whitespace-nowrap text-sm font-semibold {{ $textClass }}">
-                                                <span class="{{ $team->shortname ? 'hidden md:inline' : '' }}">
-                                                    {{ $displayName }}
+                                            <p class="truncate whitespace-nowrap text-sm font-semibold {{ $row->text_class }}">
+                                                <span class="{{ $row->shortname ? 'hidden md:inline' : '' }}">
+                                                    {{ $row->name }}
                                                 </span>
-                                                @if ($team->shortname)
-                                                    <span class="md:hidden whitespace-nowrap {{ $textClass }}">
-                                                        {{ $isHistoryView ? $displayName : $team->shortname }}
+                                                @if ($row->shortname)
+                                                    <span class="md:hidden whitespace-nowrap {{ $row->text_class }}">
+                                                        {{ $row->shortname }}
                                                     </span>
                                                 @endif
                                             </p>
@@ -79,23 +64,23 @@
 
                                     <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-4">
                                         <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $textClass }}">{{ $team->played }}</p>
+                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
                                         </div>
                                         <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $textClass }}">{{ $team->wins }}</p>
+                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->wins }}</p>
                                         </div>
                                         <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $textClass }}">{{ $team->draws }}</p>
+                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->draws }}</p>
                                         </div>
                                         <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $textClass }}">{{ $team->losses }}</p>
+                                            <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
                                         </div>
                                         <div class="w-8 sm:w-12">
-                                            <p class="text-sm font-semibold {{ $pointsClass }}">{{ $team->points }}</p>
+                                            <p class="text-sm font-semibold {{ $row->points_class }}">{{ $row->points }}</p>
                                         </div>
                                     </div>
                                 </div>
-                            @if ($canLinkTeam)
+                            @if ($row->can_link)
                                 </a>
                             @else
                                 </div>
