@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\ResultForm;
+use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Fixture;
 use App\Models\FixtureResultLock;
 use App\Models\Result;
@@ -14,6 +15,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -48,6 +50,7 @@ class ResultSubmissionTest extends TestCase
     public function test_team_admin_can_save_partial_frames(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
+        Mail::fake();
 
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -109,6 +112,7 @@ class ResultSubmissionTest extends TestCase
         $this->assertNull($result->submitted_at);
         $this->assertCount(1, $result->frames);
         $this->assertEquals((int) $homePlayers[0]->id, $result->frames->first()->home_player_id);
+        Mail::assertNothingQueued();
 
         $component->assertSet('form.homeScore', 1);
         $component->assertSet('form.awayScore', 0);
@@ -119,6 +123,7 @@ class ResultSubmissionTest extends TestCase
     public function test_locking_result_requires_all_frames_and_confirms_result(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
+        Mail::fake();
 
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -148,6 +153,32 @@ class ResultSubmissionTest extends TestCase
             'team_id' => $homeTeam->id,
             'role' => 2,
             'is_admin' => false,
+            'email' => 'submitter@example.com',
+        ]);
+        $homeTeam->update(['captain_id' => User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+            'email' => 'home-captain@example.com',
+        ])->id]);
+        $homeSecondaryAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+            'email' => 'home-admin@example.com',
+        ]);
+        $awayCaptain = User::factory()->create([
+            'team_id' => $awayTeam->id,
+            'role' => 1,
+            'is_admin' => false,
+            'email' => 'away-captain@example.com',
+        ]);
+        $awayTeam->update(['captain_id' => $awayCaptain->id]);
+        $awayAdmin = User::factory()->create([
+            'team_id' => $awayTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+            'email' => 'away-admin@example.com',
         ]);
 
         $homePlayers = User::factory()->count(5)->create([
@@ -204,6 +235,14 @@ class ResultSubmissionTest extends TestCase
         $this->assertTrue($result->created_at->equalTo($draftCreatedAt));
         $this->assertFalse($result->submitted_at->equalTo($result->created_at));
         $this->assertSame(10, $result->frames()->count());
+        Mail::assertQueued(LeagueResultSubmittedMail::class, function (LeagueResultSubmittedMail $mail) use ($teamAdmin, $homeSecondaryAdmin, $awayCaptain, $awayAdmin, $result) {
+            return $mail->hasTo($teamAdmin->email)
+                && $mail->hasCc($homeSecondaryAdmin->email)
+                && $mail->hasCc($awayCaptain->email)
+                && $mail->hasCc($awayAdmin->email)
+                && ! $mail->hasCc($teamAdmin->email)
+                && $mail->result->is($result);
+        });
 
         $component->assertRedirect(route('result.show', $result));
 
