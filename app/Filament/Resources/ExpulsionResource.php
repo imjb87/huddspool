@@ -6,6 +6,7 @@ use App\Filament\Resources\ExpulsionResource\Pages;
 use App\Models\Expulsion;
 use App\Models\Team;
 use App\Models\User;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Resources\Resource;
@@ -64,7 +65,7 @@ class ExpulsionResource extends Resource
                     ->placeholder('-'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->color('warning'),
+                EditAction::make()->color('warning'),
             ]);
     }
 
