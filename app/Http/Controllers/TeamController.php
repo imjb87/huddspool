@@ -7,6 +7,9 @@ use App\Queries\GetTeamFixtures;
 use App\Queries\GetTeamKnockoutMatches;
 use App\Queries\GetTeamPlayers;
 use App\Queries\GetTeamSeasonHistory;
+use App\Support\FixtureSummaryRow;
+use App\Support\KnockoutMatchSummaryRow;
+use App\Support\TeamHistoryRow;
 use Illuminate\Contracts\View\View;
 
 class TeamController extends Controller
@@ -28,11 +31,14 @@ class TeamController extends Controller
 
         // Retrieve fixtures for this team with related result, homeTeam, and awayTeam eager loaded.
         $fixtures = new GetTeamFixtures($team, $section)();
+        $fixtureRows = $fixtures->map(fn ($fixture) => FixtureSummaryRow::fromTeamFixtureData($fixture, $team->id));
 
         $history = (new GetTeamSeasonHistory($team))();
+        $historyRows = $history->map(fn (array $entry) => TeamHistoryRow::fromEntry($entry));
 
         $teamKnockoutMatches = new GetTeamKnockoutMatches($team)();
+        $teamKnockoutRows = $teamKnockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $team, false));
 
-        return view('team.show', compact('team', 'fixtures', 'players', 'section', 'history', 'teamKnockoutMatches'));
+        return view('team.show', compact('team', 'fixtures', 'fixtureRows', 'players', 'section', 'history', 'historyRows', 'teamKnockoutMatches', 'teamKnockoutRows'));
     }
 }

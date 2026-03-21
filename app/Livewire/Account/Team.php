@@ -4,6 +4,8 @@ namespace App\Livewire\Account;
 
 use App\Models\Fixture;
 use App\Queries\GetTeamKnockoutMatches;
+use App\Support\FixtureSummaryRow;
+use App\Support\KnockoutMatchSummaryRow;
 use App\Support\OrdinalFormatter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -45,11 +47,7 @@ class Team extends BaseAccountComponent
             ->map(function (Fixture $fixture) {
                 $actionUrl = $this->resultSubmissionPromptResolver()->actionUrlFor($this->user, $fixture);
 
-                return (object) [
-                    'fixture' => $fixture,
-                    'action_url' => $actionUrl,
-                    'action_label' => $actionUrl ? 'Submit result' : null,
-                ];
+                return FixtureSummaryRow::fromFixture($fixture, $this->team->id, $actionUrl, $actionUrl ? 'Submit result' : null);
             })
             ->values();
     }
@@ -61,7 +59,8 @@ class Team extends BaseAccountComponent
             return collect();
         }
 
-        return new GetTeamKnockoutMatches($this->team)();
+        return (new GetTeamKnockoutMatches($this->team))()
+            ->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $this->team, true));
     }
 
     #[Computed]

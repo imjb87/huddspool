@@ -113,6 +113,10 @@ abstract class BaseSectionPage extends Component
 
     public function nextWeek(): void
     {
+        if (! $this->canAdvanceWeek()) {
+            return;
+        }
+
         $this->week++;
 
         unset($this->fixtures);
@@ -265,6 +269,21 @@ abstract class BaseSectionPage extends Component
             : 'pb-10 lg:pb-14';
     }
 
+    protected function maxWeek(): int
+    {
+        $seasonWeekCount = collect($this->section->season->dates ?? [])->flatten()->filter()->count();
+        $fixtureWeekCount = (clone $this->fixturesQuery())
+            ->where('section_id', $this->section->id)
+            ->max('week');
+
+        return max(1, (int) max($seasonWeekCount, $fixtureWeekCount ?? 1));
+    }
+
+    protected function canAdvanceWeek(): bool
+    {
+        return $this->week < $this->maxWeek();
+    }
+
     /**
      * @return SupportCollection<int, object>
      */
@@ -305,7 +324,8 @@ abstract class BaseSectionPage extends Component
      *         ranking: int
      *     }>,
      *     averageSummaryCopy: string,
-     *     lastPage: int
+     *     lastPage: int,
+     *     canAdvanceWeek: bool
      * }
      */
     protected function sectionPageViewData(bool $isHistoryView): array
@@ -319,6 +339,7 @@ abstract class BaseSectionPage extends Component
             'averageRows' => $averageViewData['averageRows'],
             'averageSummaryCopy' => $averageViewData['summaryCopy'],
             'lastPage' => $averageViewData['lastPage'],
+            'canAdvanceWeek' => $this->canAdvanceWeek(),
         ];
     }
 

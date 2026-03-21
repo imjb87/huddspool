@@ -5,6 +5,7 @@ namespace App\Livewire\Knockout;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutRound;
+use App\Support\KnockoutRoundMatchViewDataBuilder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -119,6 +120,24 @@ class Show extends Component
         return $this->knockout->rounds
             ->filter(fn (KnockoutRound $round): bool => $round->position <= $latestPublishedRound->position)
             ->values();
+    }
+
+    /**
+     * @return Collection<int, object>
+     */
+    #[Computed]
+    public function currentRoundRows(): Collection
+    {
+        if (! $this->currentRound) {
+            return collect();
+        }
+
+        return (new KnockoutRoundMatchViewDataBuilder)->build(
+            $this->currentRound->matches,
+            $this->knockout,
+            $this->matchNumbers,
+            fn (KnockoutMatch $match, string $slot): string => $this->slotLabel($match, $slot),
+        );
     }
 
     public function slotLabel(KnockoutMatch $match, string $slot): string

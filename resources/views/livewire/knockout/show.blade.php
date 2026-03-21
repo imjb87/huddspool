@@ -14,40 +14,22 @@
 
     <div wire:loading.remove wire:target="previousRound, nextRound" data-knockout-round-panel>
         @if ($this->currentRound)
-            @php
-                $round = $this->currentRound;
-            @endphp
             <section class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6" data-knockout-round-shell>
                 <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
                     <div class="space-y-2">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $round->name }}</h2>
+                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->currentRound->name }}</h2>
                         <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                            {{ $round->scheduled_for?->format('j F Y') ?? 'Date TBC' }}
+                            {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'Date TBC' }}
                             <span class="text-gray-300 dark:text-zinc-600">/</span>
-                            Best of {{ $round->bestOfValue() }} frames
+                            Best of {{ $this->currentRound->bestOfValue() }} frames
                         </p>
                     </div>
 
                     <div class="lg:col-span-2">
-                        @if ($round->matches->isNotEmpty())
+                        @if ($this->currentRoundRows->isNotEmpty())
                             <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-knockout-round-body>
-                                @foreach ($round->matches as $match)
-                                    @php
-                                        $matchLabel = isset($matchNumbers[$match->id]) ? 'Match '.$matchNumbers[$match->id] : null;
-                                        $homeLabel = $this->slotLabel($match, 'home');
-                                        $awayLabel = $this->slotLabel($match, 'away');
-                                        $hasBye = ($match->home_participant_id && ! $match->away_participant_id)
-                                            || ($match->away_participant_id && ! $match->home_participant_id);
-                                    @endphp
-
-                                    @include('knockouts.partials.match-row', [
-                                        'knockout' => $knockout,
-                                        'match' => $match,
-                                        'matchLabel' => $matchLabel,
-                                        'homeLabel' => $homeLabel,
-                                        'awayLabel' => $awayLabel,
-                                        'hasBye' => $hasBye,
-                                    ])
+                                @foreach ($this->currentRoundRows as $matchRow)
+                                    @include('knockouts.partials.match-row', ['matchRow' => $matchRow])
                                 @endforeach
                             </div>
                         @else

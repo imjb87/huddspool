@@ -45,13 +45,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForRulesetContent(?string $slug, ?int $sectionId, ?int $seasonId, ?int $rulesetId): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::FIXTURES,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-        ], $this->fallbackRulesetPaths($slug));
+        $this->clearResponseCacheTags(ResponseCacheTagSet::rulesetContent(), $this->fallbackRulesetPaths($slug));
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
         $this->forgetSectionRelatedCaches($sectionId, $seasonId, $rulesetId);
@@ -59,12 +53,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForResult(Result $result): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::HOME,
-            ResponseCacheTags::RESULTS,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::resultContent(), ['/']);
         $this->forgetTeamSeasonHistories([
             $result->home_team_id,
             $result->away_team_id,
@@ -81,15 +70,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForFrame(Frame $frame): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::HOME,
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::FIXTURES,
-            ResponseCacheTags::RESULTS,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::frameContent(), ['/']);
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(self::SEASON_SERIES_CACHE_KEYS);
         $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
@@ -113,26 +94,14 @@ class CompetitionCacheInvalidator
 
     public function forgetForSection(Section $section): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::sectionContent(), ['/']);
         $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
         $this->forgetSectionRelatedCaches($section->id, $section->season_id, $section->ruleset_id);
     }
 
     public function forgetForSectionTeam(SectionTeam $sectionTeam): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::sectionContent(), ['/']);
         if (! $sectionTeam->section_id) {
             return;
         }
@@ -150,11 +119,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForExpulsion(Expulsion $expulsion): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::TEAMS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::expulsionContent(), ['/']);
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
 
@@ -168,15 +133,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForSeason(Season $season): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::HOME,
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::seasonContent(), ['/']);
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(self::SEASON_SERIES_CACHE_KEYS);
         $this->forgetKeys(self::NAVIGATION_CACHE_KEYS);
@@ -188,14 +145,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForTeam(Team $team): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::teamContent(), ['/']);
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetKeys(['nav:past-seasons']);
         $this->forgetTeamSeasonHistories([$team->id]);
@@ -204,14 +154,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForUser(User $user): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::RULESETS,
-            ResponseCacheTags::HISTORY,
-            ResponseCacheTags::RESULTS,
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::userContent(), ['/']);
         $this->forgetKeys(self::OPEN_SEASON_STATS_CACHE_KEYS);
         $this->forgetPlayerSeasonHistories([$user->id]);
 
@@ -228,38 +171,22 @@ class CompetitionCacheInvalidator
 
     public function forgetForNews(): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::HOME,
-        ], ['/']);
+        $this->clearResponseCacheTags([ResponseCacheTags::HOME], ['/']);
     }
 
     public function forgetForVenue(Venue $venue): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::FIXTURES,
-            ResponseCacheTags::RESULTS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::VENUES,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::venueContent(), ['/']);
     }
 
     public function forgetForKnockout(Knockout $knockout): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::knockoutContent(), ['/']);
     }
 
     public function forgetForKnockoutMatch(KnockoutMatch $match): void
     {
-        $this->clearResponseCacheTags([
-            ResponseCacheTags::PLAYERS,
-            ResponseCacheTags::TEAMS,
-            ResponseCacheTags::KNOCKOUTS,
-        ], ['/']);
+        $this->clearResponseCacheTags(ResponseCacheTagSet::knockoutContent(), ['/']);
     }
 
     public function forgetForPage(Page $page): void

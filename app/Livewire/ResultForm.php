@@ -7,10 +7,10 @@ use App\Models\Fixture;
 use App\Models\FixtureResultLock;
 use App\Models\Result;
 use App\Support\ResultFormDraftStore;
+use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormLockManager;
 use App\Support\ResultFormPersister;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -50,11 +50,12 @@ class ResultForm extends Component
 
     protected ?ResultFormPersister $persister = null;
 
+    protected ?ResultFormFixtureAccess $fixtureAccess = null;
+
     public function mount(Fixture $fixture): void
     {
-        $this->fixture = $this->loadFixture($fixture);
-
-        $this->ensureFixtureCanBeSubmitted();
+        $this->fixture = $this->fixtureAccess()->load($fixture);
+        $this->result = $this->fixtureAccess()->ensureSubmittable($this->fixture);
         $this->hydrateResultState();
         $this->initializeLock();
     }
@@ -102,47 +103,10 @@ class ResultForm extends Component
         ]);
     }
 
-    private function ensureFixtureCanBeSubmitted(): void
-    {
-        $this->ensureFixtureIsAccessible();
-
-        $this->result = $this->fixture->result;
-
-        if ($this->result && $this->result->is_confirmed) {
-            abort(404);
-        }
-    }
-
-    private function ensureFixtureIsAccessible(): void
-    {
-        if ($this->isHomeOrAwayTeam(1)) {
-            abort(404);
-        }
-
-        Gate::authorize('submitResult', $this->fixture);
-
-        if ($this->fixture->fixture_date->gte(now())) {
-            abort(404);
-        }
-    }
-
-    private function loadFixture(Fixture $fixture): Fixture
-    {
-        return Fixture::query()
-            ->with([
-                'section',
-                'venue',
-                'homeTeam.players',
-                'awayTeam.players',
-                'result.frames' => fn ($query) => $query->orderBy('id'),
-            ])
-            ->findOrFail($fixture->getKey());
-    }
-
     private function refreshActionState(): void
     {
-        $this->fixture = $this->loadFixture($this->fixture);
-        $this->ensureFixtureIsAccessible();
+        $this->fixture = $this->fixtureAccess()->load($this->fixture);
+        $this->fixtureAccess()->ensureAccessible($this->fixture);
 
         $this->result = $this->fixture->result;
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
@@ -218,11 +182,6 @@ class ResultForm extends Component
             : $this->result->frames()->count();
 
         return count($frames) < $existingFrameCount;
-    }
-
-    private function isHomeOrAwayTeam(int $teamId): bool
-    {
-        return $this->fixture->homeTeam->id === $teamId || $this->fixture->awayTeam->id === $teamId;
     }
 
     private function initializeLock(): void
@@ -306,6 +265,11 @@ class ResultForm extends Component
     private function persister(): ResultFormPersister
     {
         return $this->persister ??= new ResultFormPersister;
+    }
+
+    private function fixtureAccess(): ResultFormFixtureAccess
+    {
+        return $this->fixtureAccess ??= new ResultFormFixtureAccess;
     }
 
     private function frameRows(): array

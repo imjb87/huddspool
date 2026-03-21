@@ -9,6 +9,8 @@ use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
+use App\Support\FrameSummaryRow;
+use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,8 +47,10 @@ class PlayerController extends Controller
         $history = (new GetPlayerSeasonHistory($player))();
 
         $knockoutMatches = new GetPlayerKnockoutMatches($player)();
+        $frameRows = $frames?->map(fn ($frame) => FrameSummaryRow::fromFrame($frame, $player->id));
+        $knockoutRows = $knockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::neutral($match));
 
-        return view('player.show', compact('player', 'averages', 'frames', 'history', 'knockoutMatches'));
+        return view('player.show', compact('player', 'averages', 'frames', 'frameRows', 'history', 'knockoutMatches', 'knockoutRows'));
     }
 
     public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player): RedirectResponse

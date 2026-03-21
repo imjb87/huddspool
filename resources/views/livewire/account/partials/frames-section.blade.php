@@ -10,31 +10,24 @@
 
             <div class="lg:col-span-2">
                 <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
-                    @foreach ($this->frames as $frame)
-                        @php
-                            $wonFrame = $frame->home_player_id === $this->user->id
-                                ? $frame->home_score > $frame->away_score
-                                : $frame->away_score > $frame->home_score;
-                            $opponentName = $frame->home_player_id === $this->user->id ? $frame->away_player_name : $frame->home_player_name;
-                            $opponentTeam = $frame->home_player_id === $this->user->id ? $frame->away_team_name : $frame->home_team_name;
-                        @endphp
-                        <a href="{{ route('result.show', $frame->result_id) }}"
+                    @foreach ($this->frameRows as $frameRow)
+                        <a href="{{ route('result.show', $frameRow->result_id) }}"
                             class="block rounded-lg px-3 hover:bg-gray-100 dark:hover:bg-zinc-800/70"
-                            wire:key="account-frame-{{ $frame->result_id }}-{{ $loop->index }}">
+                            wire:key="account-frame-{{ $frameRow->result_id }}-{{ $loop->index }}">
                             <div class="flex items-center gap-4 py-4">
                                 <div class="shrink-0">
-                                    <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $wonFrame ? 'bg-linear-to-br from-green-900 via-green-800 to-green-700' : 'bg-linear-to-br from-red-800 via-red-700 to-red-600' }}">
-                                        {{ $wonFrame ? 'W' : 'L' }}
+                                    <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $frameRow->result_pill_classes }}">
+                                        {{ $frameRow->won_frame ? 'W' : 'L' }}
                                     </span>
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $opponentName }}</p>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $opponentTeam }}</p>
+                                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $frameRow->opponent_name }}</p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $frameRow->opponent_team }}</p>
                                 </div>
 
                                 <div class="shrink-0 text-right text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $frame->fixture_date->format('j M') }}
+                                    {{ $frameRow->fixture_date_label }}
                                 </div>
                             </div>
                         </a>

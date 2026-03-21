@@ -5,6 +5,8 @@ namespace App\View\Composers;
 use App\Models\Knockout;
 use App\Models\Ruleset;
 use App\Models\Season;
+use App\Support\NavigationViewClasses;
+use App\Support\NavigationViewState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -36,40 +38,7 @@ class NavigationComposer
             'historySeasonGroups' => $this->historySeasonGroups(),
             'navigableKnockouts' => $this->navigableActiveKnockouts(),
             'is_impersonating' => Impersonation::isImpersonating(),
-        ] + $this->navigationViewData($request));
-    }
-
-    /**
-     * @return array{
-     *     knockoutNavIsActive: bool,
-     *     historyNavIsActive: bool,
-     *     handbookNavIsActive: bool,
-     *     mobileDrawerPanelClasses: string,
-     *     mobileDrawerPanelContentClasses: string,
-     *     mobileDrawerListClasses: string,
-     *     mobileDrawerBackButtonClasses: string,
-     *     mobileDrawerBackLabelClasses: string,
-     *     mobileDrawerLinkClasses: string,
-     *     mobileDrawerTextLinkClasses: string
-     * }
-     */
-    protected function navigationViewData(Request $request): array
-    {
-        $currentPage = $request->route('page');
-
-        return [
-            'knockoutNavIsActive' => $request->routeIs('knockout.*')
-                || ($request->routeIs('page.show') && $currentPage === 'knockout-dates'),
-            'historyNavIsActive' => $request->routeIs('history.*'),
-            'handbookNavIsActive' => $request->routeIs('page.show') && $currentPage === 'handbook',
-            'mobileDrawerPanelClasses' => 'absolute inset-0 overflow-y-auto bg-white px-4 py-4 dark:bg-zinc-900',
-            'mobileDrawerPanelContentClasses' => 'space-y-5',
-            'mobileDrawerListClasses' => 'space-y-1',
-            'mobileDrawerBackButtonClasses' => 'block w-full border-b border-gray-200 pb-3 text-left dark:border-gray-800',
-            'mobileDrawerBackLabelClasses' => 'flex items-center gap-3 py-3 text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200',
-            'mobileDrawerLinkClasses' => 'flex w-full items-center justify-between rounded-lg px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200',
-            'mobileDrawerTextLinkClasses' => 'block rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200',
-        ];
+        ] + NavigationViewClasses::defaults() + NavigationViewState::fromRequest($request));
     }
 
     protected function rulesets(): Collection|array

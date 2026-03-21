@@ -6,6 +6,8 @@ use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
+use App\Support\FrameSummaryRow;
+use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -101,6 +103,18 @@ class Show extends BaseAccountComponent
     public function knockoutMatches(): Collection
     {
         return new GetPlayerKnockoutMatches($this->user)();
+    }
+
+    #[Computed]
+    public function frameRows(): Collection
+    {
+        return $this->frames->map(fn ($frame) => FrameSummaryRow::fromFrame($frame, $this->user->id));
+    }
+
+    #[Computed]
+    public function knockoutRows(): Collection
+    {
+        return $this->knockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forUser($match, $this->user));
     }
 
     public function render(): View

@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Support;
+
+use App\Data\TeamFixtureData;
+use App\Models\Fixture;
+
+class FixtureSummaryRow
+{
+    public static function fromFixture(Fixture $fixture, int $teamId, ?string $actionUrl = null, ?string $actionLabel = null): object
+    {
+        return self::build(
+            fixtureId: $fixture->id,
+            isBye: $fixture->isBye(),
+            rowUrl: $fixture->isBye()
+                ? null
+                : ($fixture->result ? route('result.show', $fixture->result) : ($actionUrl ? null : route('fixture.show', $fixture))),
+            homeTeamId: $fixture->home_team_id,
+            awayTeamId: $fixture->away_team_id,
+            homeTeamName: $fixture->homeTeam?->name,
+            awayTeamName: $fixture->awayTeam?->name,
+            resultId: $fixture->result?->id,
+            homeScore: $fixture->result?->home_score,
+            awayScore: $fixture->result?->away_score,
+            fixtureDateLabel: optional($fixture->fixture_date)->format('j M Y') ?? 'Date TBC',
+            compactDateLabel: optional($fixture->fixture_date)->format('j M') ?? 'TBC',
+            actionUrl: $actionUrl,
+            actionLabel: $actionLabel,
+            teamId: $teamId,
+        );
+    }
+
+    public static function fromTeamFixtureData(TeamFixtureData $fixture, int $teamId): object
+    {
+        return self::build(
+            fixtureId: $fixture->id,
+            isBye: $fixture->isBye(),
+            rowUrl: $fixture->isBye()
+                ? null
+                : ($fixture->result_id ? route('result.show', $fixture->result_id) : route('fixture.show', $fixture->id)),
+            homeTeamId: $fixture->home_team_id,
+            awayTeamId: $fixture->away_team_id,
+            homeTeamName: $fixture->home_team_name,
+            awayTeamName: $fixture->away_team_name,
+            resultId: $fixture->result_id,
+            homeScore: $fixture->home_score,
+            awayScore: $fixture->away_score,
+            fixtureDateLabel: optional($fixture->fixture_date)->format('j M Y') ?? 'Date TBC',
+            compactDateLabel: optional($fixture->fixture_date)->format('j M') ?? 'TBC',
+            actionUrl: null,
+            actionLabel: null,
+            teamId: $teamId,
+        );
+    }
+
+    private static function build(
+        int $fixtureId,
+        bool $isBye,
+        ?string $rowUrl,
+        int $homeTeamId,
+        int $awayTeamId,
+        ?string $homeTeamName,
+        ?string $awayTeamName,
+        ?int $resultId,
+        ?int $homeScore,
+        ?int $awayScore,
+        string $fixtureDateLabel,
+        string $compactDateLabel,
+        ?string $actionUrl,
+        ?string $actionLabel,
+        int $teamId,
+    ): object {
+        $isDraw = $resultId !== null && (int) $homeScore === (int) $awayScore;
+        $teamWon = $resultId !== null
+            && (($homeTeamId === $teamId && (int) $homeScore > (int) $awayScore)
+            || ($awayTeamId === $teamId && (int) $awayScore > (int) $homeScore));
+
+        $resultPillClasses = $isDraw
+            ? 'bg-linear-to-br from-gray-600 via-gray-500 to-gray-400'
+            : ($teamWon
+                ? 'bg-linear-to-br from-green-900 via-green-800 to-green-700'
+                : 'bg-linear-to-br from-red-800 via-red-700 to-red-600');
+
+        return (object) [
+            'fixture_id' => $fixtureId,
+            'row_url' => $rowUrl,
+            'home_team_name' => $homeTeamName,
+            'away_team_name' => $awayTeamName,
+            'result_id' => $resultId,
+            'home_score' => $homeScore,
+            'away_score' => $awayScore,
+            'result_pill_classes' => $resultPillClasses,
+            'fixture_date_label' => $fixtureDateLabel,
+            'compact_date_label' => $compactDateLabel,
+            'action_url' => $actionUrl,
+            'action_label' => $actionLabel,
+            'is_bye' => $isBye,
+        ];
+    }
+}

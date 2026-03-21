@@ -100,7 +100,7 @@
                         <button wire:click="nextWeek" wire:loading.attr="disabled"
                             class="inline-flex w-24 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                             aria-label="Next"
-                            {{ $week >= 18 ? 'disabled' : '' }}>
+                            @disabled(! $canAdvanceWeek)>
                             Next
                         </button>
                     </div>
