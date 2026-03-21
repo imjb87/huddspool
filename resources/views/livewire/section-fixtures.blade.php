@@ -18,7 +18,7 @@
                                 @if ($row->link === null || $row->is_bye)
                                     <div class="{{ $row->row_classes }}">
                                 @else
-                                    <a class="{{ trim($row->row_classes.' sm:hover:bg-gray-50 dark:sm:hover:bg-zinc-800/70') }}"
+                                    <a class="{{ trim($row->row_classes.' sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70') }}"
                                         href="{{ $row->link }}">
                                 @endif
                                         <div class="flex items-start justify-between gap-4" data-section-fixtures-band>

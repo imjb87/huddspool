@@ -11,7 +11,7 @@
             <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                 @forelse ($venueTeams as $teamRow)
                     <a href="{{ route('team.show', $teamRow['team']) }}"
-                        class="block rounded-xl px-3 py-4 transition hover:bg-gray-50 dark:hover:bg-zinc-800/70"
+                        class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70"
                         wire:key="venue-team-{{ $teamRow['team']->id }}">
                         <div class="flex items-start justify-between gap-4">
                             <div class="min-w-0 flex-1">

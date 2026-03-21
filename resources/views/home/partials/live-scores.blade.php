@@ -22,7 +22,7 @@
                         @foreach ($liveScores as $result)
                             <div class="py-1" data-home-live-score-row>
                                 <a href="{{ route('result.show', $result) }}"
-                                    class="block rounded-xl px-3 py-4 transition hover:bg-gray-50 dark:hover:bg-zinc-800/70">
+                                    class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="min-w-0 flex-1">
                                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">

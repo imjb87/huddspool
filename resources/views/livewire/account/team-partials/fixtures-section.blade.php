@@ -12,7 +12,7 @@
                 @forelse ($this->fixtures as $fixtureRow)
                     <div wire:key="account-team-fixture-{{ $fixtureRow->fixture_id }}">
                         @if ($fixtureRow->row_url)
-                            <a class="block py-4 transition hover:cursor-pointer sm:rounded-lg sm:px-3 sm:hover:bg-gray-50 dark:sm:hover:bg-zinc-800/70" href="{{ $fixtureRow->row_url }}">
+                            <a class="block py-4 transition hover:cursor-pointer sm:rounded-lg sm:px-3 sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70" href="{{ $fixtureRow->row_url }}">
                         @endif
                         <div class="flex items-start justify-between gap-4 {{ $fixtureRow->row_url ? '' : 'py-4 sm:rounded-lg sm:px-3' }}">
                             <div class="min-w-0 flex-1">

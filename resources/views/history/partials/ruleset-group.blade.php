@@ -1,7 +1,7 @@
 <div class="ml-4 border-t border-gray-200 first:border-t-0 dark:border-zinc-800/80 sm:ml-6"
     data-history-ruleset-shell>
     <button type="button"
-        class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-3 py-3 text-left transition hover:bg-gray-50 hover:text-gray-700 dark:hover:bg-zinc-800/70 dark:hover:text-gray-200"
+        class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-3 py-3 text-left transition hover:bg-gray-200/70 hover:text-gray-700 dark:hover:bg-zinc-800/70 dark:hover:text-gray-200"
         @click="openRuleset = openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' ? null : 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
         :aria-expanded="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
         data-history-ruleset-trigger>

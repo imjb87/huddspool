@@ -27,7 +27,7 @@
 @endphp
 
 <{{ $tag }} {{ $attributes }}>
-    <div class="flex items-center gap-3 rounded-lg py-4 transition sm:gap-4 sm:px-3 sm:group-hover:bg-gray-50 dark:sm:group-hover:bg-zinc-800/70">
+    <div class="flex items-center gap-3 rounded-lg py-4 transition sm:gap-4 sm:px-3 sm:group-hover:bg-gray-200/70 dark:sm:group-hover:bg-zinc-800/70">
         <div class="shrink-0">
             <img class="h-8 w-8 rounded-full object-cover"
                 src="{{ $avatarUrl }}"
