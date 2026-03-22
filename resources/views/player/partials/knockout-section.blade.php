@@ -13,15 +13,27 @@
                     @foreach ($knockoutRows as $knockoutRow)
                         <div wire:key="player-knockout-{{ $knockoutRow->id }}">
                             @if ($knockoutRow->row_url)
-                                <a href="{{ $knockoutRow->row_url }}" class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
+                                <a href="{{ $knockoutRow->row_url }}" class="block transition hover:bg-gray-200/70 sm:rounded-xl sm:px-3 sm:py-4 dark:hover:bg-zinc-800/70">
                             @endif
-                            <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'rounded-xl px-3 py-4' }} sm:items-center sm:gap-4">
+                            <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'sm:rounded-xl sm:px-3 sm:py-4' }} sm:items-center sm:gap-4">
                                 <div class="min-w-0 flex-1">
-                                    <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
-                                        <span>{{ $knockoutRow->home_label }}</span>
-                                        <span class="px-1 font-normal text-gray-400 dark:text-zinc-500">vs</span>
-                                        <span>{{ $knockoutRow->away_label }}</span>
-                                    </p>
+                                    @if ($knockoutRow->is_doubles)
+                                        <div class="space-y-0.5 text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
+                                            <p class="[overflow-wrap:anywhere]">
+                                                <span>{{ $knockoutRow->home_label }}</span>
+                                                <span class="px-1 font-normal text-gray-400 dark:text-zinc-500">vs</span>
+                                            </p>
+                                            <p class="[overflow-wrap:anywhere] text-gray-700 dark:text-gray-300">
+                                                {{ $knockoutRow->away_label }}
+                                            </p>
+                                        </div>
+                                    @else
+                                        <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
+                                            <span>{{ $knockoutRow->home_label }}</span>
+                                            <span class="px-1 font-normal text-gray-400 dark:text-zinc-500">vs</span>
+                                            <span>{{ $knockoutRow->away_label }}</span>
+                                        </p>
+                                    @endif
                                     <p class="mt-1 [overflow-wrap:anywhere] text-xs leading-5 text-gray-500 dark:text-gray-400">
                                         {{ $knockoutRow->meta_label }}
                                     </p>
