@@ -13,9 +13,9 @@
                     @foreach ($historyRows as $historyRow)
                         <div wire:key="team-history-{{ $historyRow->season_id }}-{{ $historyRow->ruleset_id }}">
                             @if ($historyRow->history_link)
-                                <a href="{{ $historyRow->history_link }}" class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
+                                <a href="{{ $historyRow->history_link }}" class="block transition hover:bg-gray-200/70 sm:rounded-xl sm:px-3 py-4 dark:hover:bg-zinc-800/70">
                             @endif
-                            <div class="flex items-center gap-4 {{ $historyRow->history_link ? '' : 'rounded-xl px-3 py-4' }}">
+                            <div class="flex items-center {{ $historyRow->history_link ? '' : 'sm:rounded-xl sm:px-3' }}">
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->season_name }}</p>
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $historyRow->ruleset_name }}</p>

@@ -33,7 +33,9 @@ class TeamController extends Controller
         $fixtures = new GetTeamFixtures($team, $section)();
         $fixtureRows = $fixtures->map(fn ($fixture) => FixtureSummaryRow::fromTeamFixtureData($fixture, $team->id));
 
-        $history = (new GetTeamSeasonHistory($team))();
+        $history = (new GetTeamSeasonHistory($team))()
+            ->filter(fn (array $entry): bool => $entry['season_id'] !== $section->season_id)
+            ->values();
         $historyRows = $history->map(fn (array $entry) => TeamHistoryRow::fromEntry($entry));
 
         $teamKnockoutMatches = new GetTeamKnockoutMatches($team)();

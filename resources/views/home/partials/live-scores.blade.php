@@ -9,7 +9,7 @@
             </div>
             <div class="lg:col-span-2">
                 @if ($liveScores->isEmpty())
-                    <div class="mt-6 rounded-[1.75rem] border border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center dark:border-zinc-700 dark:bg-zinc-900/70">
+                    <div class="rounded-[1.75rem] border border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center dark:border-zinc-700 dark:bg-zinc-900/70">
                         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">No current matches in progress right now.</p>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             Check back during league night to follow the latest scores as they come in.
@@ -22,7 +22,7 @@
                         @foreach ($liveScores as $result)
                             <div data-home-live-score-row>
                                 <a href="{{ route('result.show', $result) }}"
-                                    class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
+                                    class="block rounded-xl sm:px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="min-w-0 flex-1">
                                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">

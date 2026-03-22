@@ -13,9 +13,9 @@
                     @foreach ($teamKnockoutRows as $knockoutRow)
                         <div wire:key="team-knockout-{{ $knockoutRow->id }}">
                             @if ($knockoutRow->row_url)
-                                <a href="{{ $knockoutRow->row_url }}" class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
+                                <a href="{{ $knockoutRow->row_url }}" class="block transition hover:bg-gray-200/70 sm:rounded-xl sm:px-3 sm:py-4 dark:hover:bg-zinc-800/70">
                             @endif
-                            <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'rounded-xl px-3 py-4' }} sm:items-center sm:gap-4">
+                            <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'sm:rounded-xl sm:px-3 sm:py-4' }} sm:items-center sm:gap-4">
                                 <div class="min-w-0 flex-1">
                                     <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
                                         <span>{{ $knockoutRow->home_label }}</span>
