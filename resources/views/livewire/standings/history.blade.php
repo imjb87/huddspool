@@ -60,7 +60,7 @@
                                     <div class="w-1/5 py-3 text-center text-sm {{ $row->text_class }}">
                                         {{ $row->losses }}
                                     </div>
-                                    <div class="w-1/5 py-3 text-center text-sm font-semibold {{ $row->points_class }}">
+                                    <div class="w-1/5 py-3 text-center text-sm font-semibold {{ $row->withdrawn ? $row->points_class : 'bg-linear-to-r from-green-700 via-green-800 to-green-900 dark:from-green-500 dark:via-green-600 dark:to-green-700 bg-clip-text text-transparent' }}">
                                         {{ $row->points }}
                                     </div>
                                 </div>
