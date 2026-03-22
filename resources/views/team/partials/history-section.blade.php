@@ -9,6 +9,18 @@
             </div>
 
             <div class="lg:col-span-2">
+                <div class="flex items-center justify-between gap-2 pb-0.5 sm:px-3">
+                    <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
+
+                    <div class="ml-auto grid shrink-0 grid-cols-5 gap-1.5 text-center sm:gap-2">
+                        <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-9">Pl</div>
+                        <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-9">W</div>
+                        <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-9">D</div>
+                        <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-9">L</div>
+                        <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-9">Pts</div>
+                    </div>
+                </div>
+
                 <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
                     @foreach ($historyRows as $historyRow)
                         <div wire:key="team-history-{{ $historyRow->season_id }}-{{ $historyRow->ruleset_id }}">
@@ -21,26 +33,21 @@
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $historyRow->ruleset_name }}</p>
                                 </div>
 
-                                <div class="ml-auto flex shrink-0 items-center gap-2 text-center">
-                                    <div class="w-11">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pl</p>
-                                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->played }}</p>
+                                <div class="ml-auto grid shrink-0 grid-cols-5 gap-1.5 text-center sm:gap-2">
+                                    <div class="w-8 sm:w-9">
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->played }}</p>
                                     </div>
-                                    <div class="w-11">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">W</p>
-                                        <p class="mt-1 text-sm font-semibold text-green-700 dark:text-green-400">{{ $historyRow->wins }}</p>
+                                    <div class="w-8 sm:w-9">
+                                        <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ $historyRow->wins }}</p>
                                     </div>
-                                    <div class="w-11">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">D</p>
-                                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->draws }}</p>
+                                    <div class="w-8 sm:w-9">
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->draws }}</p>
                                     </div>
-                                    <div class="w-11">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">L</p>
-                                        <p class="mt-1 text-sm font-semibold text-red-700 dark:text-red-400">{{ $historyRow->losses }}</p>
+                                    <div class="w-8 sm:w-9">
+                                        <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $historyRow->losses }}</p>
                                     </div>
-                                    <div class="w-11">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pts</p>
-                                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->points }}</p>
+                                    <div class="w-8 sm:w-9">
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $historyRow->points }}</p>
                                     </div>
                                 </div>
                             </div>
