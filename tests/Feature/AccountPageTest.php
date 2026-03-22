@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Account\Show as AccountShow;
@@ -17,6 +18,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -397,6 +399,61 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Team KO / Semi-finals')
             ->assertSee(route('result.create', $fixture), false)
             ->assertSee(route('knockout.matches.submit', $teamMatch), false);
+    }
+
+    public function test_admin_is_not_prompted_for_unrelated_knockout_results_on_account_page(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $adminTeam = Team::factory()->create();
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+        $admin = User::factory()->create([
+            'team_id' => $adminTeam->id,
+            'role' => UserRole::Player->value,
+        ]);
+        SiteAuthorization::assignRole($admin, RoleName::Admin);
+
+        $teamKnockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Team KO',
+            'type' => KnockoutType::Team,
+        ]);
+
+        $teamRound = KnockoutRound::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'name' => 'Semi-finals',
+            'position' => 1,
+            'is_visible' => true,
+        ]);
+
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'team_id' => $team->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'team_id' => $opponentTeam->id,
+        ]);
+
+        $match = KnockoutMatch::query()->create([
+            'knockout_id' => $teamKnockout->id,
+            'knockout_round_id' => $teamRound->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 11,
+            'starts_at' => now()->subDay(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSee('data-account-result-submission-prompt', false);
+
+        $this->actingAs($admin)
+            ->get(route('knockout.matches.submit', $match))
+            ->assertOk();
     }
 
     public function test_captain_does_not_see_team_nav_link_on_account_page(): void

@@ -6,6 +6,7 @@ use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,17 +28,18 @@ class UserRoleTest extends TestCase
     {
         $teamAdmin = User::factory()->create([
             'role' => UserRole::TeamAdmin->value,
-            'is_admin' => true,
         ]);
         $player = User::factory()->create([
             'role' => UserRole::Player->value,
-            'is_admin' => false,
         ]);
+
+        SiteAuthorization::assignRole($teamAdmin, RoleName::Admin);
+        SiteAuthorization::assignRole($player, RoleName::Player);
 
         $teamAdmin->setRelation('team', new Team(['captain_id' => 99]));
         $player->setRelation('team', new Team(['captain_id' => 99]));
 
-        $this->assertTrue($teamAdmin->isTeamAdmin());
+        $this->assertFalse($teamAdmin->isTeamAdmin());
         $this->assertTrue($teamAdmin->isAdmin());
         $this->assertTrue($teamAdmin->hasRole(RoleName::Admin->value));
         $this->assertSame('Admin', $teamAdmin->roleLabel());

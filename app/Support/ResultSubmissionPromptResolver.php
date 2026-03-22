@@ -125,7 +125,7 @@ class ResultSubmissionPromptResolver
             ->orderBy('starts_at')
             ->orderBy('id')
             ->get()
-            ->filter(fn (KnockoutMatch $match) => $match->isDueForSubmission() && Gate::forUser($user)->allows('submitResult', $match))
+            ->filter(fn (KnockoutMatch $match) => $match->isDueForSubmission() && $match->userShouldBePromptedToSubmit($user))
             ->values();
     }
 

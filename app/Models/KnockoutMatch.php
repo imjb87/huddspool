@@ -272,6 +272,24 @@ class KnockoutMatch extends Model
         };
     }
 
+    public function userShouldBePromptedToSubmit(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        $type = $this->type();
+
+        return match ($type) {
+            KnockoutType::Singles => $this->homeParticipant?->includesPlayer($user)
+                || $this->awayParticipant?->includesPlayer($user),
+            KnockoutType::Doubles => $this->homeParticipant?->includesPlayer($user)
+                || $this->awayParticipant?->includesPlayer($user),
+            KnockoutType::Team => $this->userIsTeamRepresentative($user),
+            default => false,
+        };
+    }
+
     public function isDueForSubmission(): bool
     {
         return $this->starts_at?->isPast() || $this->starts_at?->isToday() || false;
