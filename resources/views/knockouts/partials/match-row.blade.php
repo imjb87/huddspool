@@ -37,16 +37,16 @@
                 </p>
             @endif
 
-            <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
+            <p class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
                 @if ($matchRow->match_label)
                     <span data-knockout-match-label>{{ $matchRow->match_label }}</span>
                 @endif
 
                 @if (! $matchRow->has_bye)
-                    <span class="text-gray-300 dark:text-zinc-600">/</span>
+                    <span class="px-1 text-gray-300 dark:text-zinc-600">/</span>
                     @if ($matchRow->match->venue)
                         <a href="{{ route('venue.show', $matchRow->match->venue) }}"
-                            class="max-w-full truncate transition hover:text-gray-700 dark:hover:text-gray-300"
+                            class="transition hover:text-gray-700 dark:hover:text-gray-300"
                             title="{{ $matchRow->match->venue->name }}">
                             {{ $matchRow->match->venue->name }}
                         </a>
@@ -56,10 +56,10 @@
                 @endif
 
                 @if ($matchRow->match->referee)
-                    <span class="text-gray-300 dark:text-zinc-600">/</span>
+                    <span class="px-1 text-gray-300 dark:text-zinc-600">/</span>
                     <span>Referee: {{ $matchRow->match->referee }}</span>
                 @endif
-            </div>
+            </p>
         </div>
 
         <div class="ml-auto flex shrink-0 self-center items-center text-right" data-knockout-score-state>
