@@ -77,7 +77,7 @@
                                                 <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
                                             </div>
                                             <div class="w-8 sm:w-10">
-                                                <p class="text-sm font-semibold {{ $row->withdrawn ? $row->points_class : 'bg-linear-to-r from-green-700 via-green-800 to-green-900 dark:from-green-500 dark:via-green-600 dark:to-green-700 bg-clip-text text-transparent' }}">{{ $row->points }}</p>
+                                                <p class="text-sm font-semibold {{ $row->points_class }}">{{ $row->points }}</p>
                                             </div>
                                         </div>
                                     </div>
