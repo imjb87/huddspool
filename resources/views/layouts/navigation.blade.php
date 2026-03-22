@@ -60,33 +60,33 @@
         <div class="flex items-center gap-x-4 lg:hidden">
             <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
                 data-site-search-trigger aria-label="Open search">
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                        clip-rule="evenodd" />
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
             </button>
             <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
                 @click="toggleTheme()" aria-label="Toggle dark mode" data-theme-toggle>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" x-cloak x-show="theme !== 'dark'">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" x-cloak x-show="theme === 'dark'">
-                    <path fill-rule="evenodd" d="M10 2.75a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V3.5a.75.75 0 01.75-.75zM10 14a4 4 0 100-8 4 4 0 000 8zm0 3.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75zM4.166 4.166a.75.75 0 011.06 0l1.06 1.061a.75.75 0 11-1.06 1.06L4.166 5.23a.75.75 0 010-1.06zm9.548 9.548a.75.75 0 011.06 0l1.06 1.06a.75.75 0 01-1.06 1.061l-1.06-1.06a.75.75 0 010-1.061zM2.75 10a.75.75 0 01.75-.75H5a.75.75 0 010 1.5H3.5A.75.75 0 012.75 10zm12.25 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5H15.75A.75.75 0 0115 10zM5.227 13.713a.75.75 0 011.06 1.061l-1.06 1.06a.75.75 0 11-1.061-1.06l1.061-1.06zm10.607-9.547a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z" clip-rule="evenodd" />
-                </svg>
+                <span class="block w-6 flex items-center justify-center" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5" x-cloak x-show="theme !== 'dark'" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                    <svg class="size-6" fill="none" aria-hidden="true" x-cloak x-show="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                </span>
             </button>
             <button type="button" class="-m-2.5 inline-flex p-2.5 items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
                 @click="open ? closeMenu() : openMenu()" :aria-expanded="open" aria-label="Toggle main menu"
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>
                 <span class="block h-6 w-6 flex items-center justify-center" aria-hidden="true">
-                    <span class="relative block h-[18px] w-[18px]">
-                        <span class="absolute left-0 top-[3px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
-                            :class="open ? '!top-[9px] -rotate-135' : ''"></span>
-                        <span class="absolute left-0 top-[8px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
+                    <span class="relative block h-[20px] w-[20px]">
+                        <span class="absolute left-0 top-[4px] block h-[1.5px] w-[20px] rounded-full bg-current transition-all duration-200"
+                            :class="open ? '!top-[10px] -rotate-135' : ''"></span>
+                        <span class="absolute left-0 top-[10px] block h-[1.5px] w-[20px] rounded-full bg-current transition-all duration-200"
                             :class="open ? 'opacity-0' : 'opacity-100'"></span>
-                        <span class="absolute left-0 top-[13px] block h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-200"
-                            :class="open ? '!top-[9px] rotate-135' : ''"></span>
+                        <span class="absolute left-0 top-[16px] block h-[1.5px] w-[20px] rounded-full bg-current transition-all duration-200"
+                            :class="open ? '!top-[10px] rotate-135' : ''"></span>
                     </span>
                 </span>
             </button>
