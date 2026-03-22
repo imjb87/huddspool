@@ -6,7 +6,7 @@
         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-    <div class="fixed inset-x-0 right-0 z-30 bg-white shadow-2xl ring-1 ring-black/5 dark:bg-zinc-900 dark:ring-white/10"
+    <div class="fixed inset-x-0 right-0 z-30 bg-white shadow-2xl ring-1 ring-black/5 dark:bg-zinc-900"
         @click.stop
         :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
         data-mobile-menu-drawer
