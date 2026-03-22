@@ -6,7 +6,6 @@ use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Season;
 use App\Models\Section;
-use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -69,19 +68,15 @@ class SectionResource extends Resource
                     ->label('Ruleset')
                     ->badge()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('teams_count')
-                    ->label('Teams')
-                    ->counts('teams'),
-                Tables\Columns\TextColumn::make('fixtures_count')
-                    ->label('Fixtures')
-                    ->counts('fixtures'),
             ])
+            ->recordUrl(fn (Section $record): string => static::getUrl('edit', [
+                'record' => $record,
+                'season' => $record->season,
+            ]))
             ->filters([
                 //
             ])
-            ->actions([
-                Actions\EditAction::make()->color('warning'),
-            ])
+            ->actions([])
             ->bulkActions([
             ]);
     }

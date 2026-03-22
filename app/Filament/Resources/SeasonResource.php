@@ -9,11 +9,14 @@ use App\Filament\Resources\SeasonResource\Pages;
 use App\Filament\Resources\SectionResource\Pages\ListSections;
 use App\Models\Season;
 use App\Support\CompetitionCacheInvalidator;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -60,6 +63,18 @@ class SeasonResource extends Resource
                     ->columnSpanFull()
                     ->columnSpan(2)
                     ->schema([
+                        Forms\Components\DatePicker::make('first_week_date')
+                            ->label('First week date')
+                            ->dehydrated(false)
+                            ->helperText('Select the first week date, then generate the 18 weekly dates.')
+                            ->formatStateUsing(fn (Get $get): ?string => static::firstScheduledDate($get('dates')))
+                            ->hintAction(
+                                Actions\Action::make('generateWeeks')
+                                    ->label('Generate weeks')
+                                    ->action(function (Get $get, Set $set): void {
+                                        $set('dates', static::generateWeeklyDates($get('first_week_date')));
+                                    })
+                            ),
                         Forms\Components\Repeater::make('dates')
                             ->label(false)
                             ->simple(
@@ -139,5 +154,40 @@ class SeasonResource extends Resource
             'create' => Pages\CreateSeason::route('/create'),
             'edit' => Pages\EditSeason::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * @param  array<int, string|array<string, string>|null>|null  $dates
+     * @return list<array{date: string|null}>
+     */
+    public static function generateWeeklyDates(?string $startDate): array
+    {
+        if (blank($startDate)) {
+            return collect(range(1, 18))
+                ->map(fn (): array => ['date' => null])
+                ->all();
+        }
+
+        $start = Carbon::parse($startDate)->startOfDay();
+
+        return collect(range(0, 17))
+            ->map(fn (int $week): array => ['date' => $start->copy()->addWeeks($week)->toDateString()])
+            ->all();
+    }
+
+    /**
+     * @param  array<int, string|array<string, string>|null>|null  $dates
+     */
+    public static function firstScheduledDate(?array $dates): ?string
+    {
+        if (! is_array($dates)) {
+            return null;
+        }
+
+        return collect($dates)
+            ->map(fn (mixed $item): ?string => is_array($item) ? ($item['date'] ?? null) : $item)
+            ->filter(fn (?string $date): bool => filled($date))
+            ->sort()
+            ->first();
     }
 }

@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\SeasonResource\Pages;
 
 use App\Filament\Resources\SeasonResource;
+use BackedEnum;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditSeason extends EditRecord
 {
@@ -14,6 +16,11 @@ class EditSeason extends EditRecord
     public static function getNavigationLabel(): string
     {
         return 'Season';
+    }
+
+    public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
+    {
+        return null;
     }
 
     public function getSubNavigationParameters(): array
