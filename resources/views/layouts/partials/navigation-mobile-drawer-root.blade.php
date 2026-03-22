@@ -9,6 +9,27 @@
     x-transition:leave-start="translate-x-0"
     x-transition:leave-end="-translate-x-1/4 opacity-0">
     <div class="{{ $mobileDrawerPanelContentClasses }}">
+        @if (@auth()->user())
+            <div class="border-b border-gray-200 pb-3 dark:border-gray-800">
+                <a href="{{ route('account.show') }}"
+                    class="flex items-center gap-3 px-0 py-1">
+                    <img
+                        src="{{ auth()->user()->avatar_url }}"
+                        alt="{{ auth()->user()->name }} avatar"
+                        class="h-9 w-9 rounded-full object-cover"
+                    >
+                    <span class="{{ $mobileDrawerTextLinkClasses }}">{{ auth()->user()->name }}</span>
+                </a>
+            </div>
+        @else
+            <div class="border-b border-gray-200 pb-3 dark:border-gray-800">
+                <a href="{{ route('login') }}"
+                    class="{{ $mobileDrawerTextLinkClasses }}">
+                    Log in
+                </a>
+            </div>
+        @endif
+
         <div class="{{ $mobileDrawerListClasses }}">
             @foreach ($navigationRulesets as $navigationRuleset)
                 <button type="button"
@@ -50,17 +71,20 @@
 
         <div class="space-y-1 border-t border-gray-200 pt-3 dark:border-gray-800">
             @if (@auth()->user())
-                <span class="block px-0 text-sm font-semibold leading-7 text-gray-500 dark:text-gray-400">{{ auth()->user()->name }}</span>
-                <a href="{{ route('account.show') }}"
-                    class="{{ $mobileDrawerTextLinkClasses }}">
-                    Account
-                </a>
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('filament.admin.pages.dashboard') }}"
                         class="{{ $mobileDrawerTextLinkClasses }}">
                         Admin
                     </a>
                 @endif
+                <button type="button"
+                    class="block w-full px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200"
+                    x-cloak
+                    x-show="canInstallApp"
+                    @click="installApp()"
+                    data-mobile-install-app-trigger>
+                    Install app
+                </button>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <a href="{{ route('logout') }}"
@@ -70,19 +94,15 @@
                     </a>
                 </form>
             @else
-                <a href="{{ route('login') }}"
-                    class="{{ $mobileDrawerTextLinkClasses }}">
-                    Log in
-                </a>
+                <button type="button"
+                    class="block w-full px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200"
+                    x-cloak
+                    x-show="canInstallApp"
+                    @click="installApp()"
+                    data-mobile-install-app-trigger>
+                    Install app
+                </button>
             @endif
-            <button type="button"
-                class="block w-full px-0 py-3 text-left text-base font-semibold leading-7 text-gray-900 transition hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-200"
-                x-cloak
-                x-show="canInstallApp"
-                @click="installApp()"
-                data-mobile-install-app-trigger>
-                Install app
-            </button>
         </div>
     </div>
 </div>

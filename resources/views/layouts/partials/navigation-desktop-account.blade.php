@@ -21,7 +21,11 @@
             <button type="button"
                 class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
                 aria-expanded="false" @click="open = !open" :aria-expanded="open">
-                {{ auth()->user()->name }}
+                <img
+                    src="{{ auth()->user()->avatar_url }}"
+                    alt="{{ auth()->user()->name }} avatar"
+                    class="h-8 w-8 rounded-full object-cover"
+                >
                 <svg class="h-5 w-5 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor"
                     aria-hidden="true">
                     <path fill-rule="evenodd"

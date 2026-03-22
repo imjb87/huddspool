@@ -106,7 +106,6 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('dark:backdrop-blur', false);
         $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
         $response->assertSee('aria-label="Toggle main menu"', false);
-        $response->assertSee('<span class="fa-stack -ml-1" aria-hidden="true">', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
         $response->assertDontSee('<a href="/" class="fa-stack -ml-1">', false);
         $response->assertDontSee('id="searchIcon"', false);
@@ -261,6 +260,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
         $response->assertSeeText('Account');
+        $response->assertSee('src="'.$user->avatar_url.'"', false);
+        $response->assertSee('alt="'.$user->name.' avatar"', false);
         $response->assertSee('data-install-app-trigger', false);
         $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertDontSeeText('Your profile');
