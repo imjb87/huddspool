@@ -9,6 +9,7 @@ use App\Queries\GetTeamPlayers;
 use App\Queries\GetTeamSeasonHistory;
 use App\Support\FixtureSummaryRow;
 use App\Support\KnockoutMatchSummaryRow;
+use App\Support\OrdinalFormatter;
 use App\Support\TeamHistoryRow;
 use Illuminate\Contracts\View\View;
 
@@ -33,6 +34,17 @@ class TeamController extends Controller
         $fixtures = new GetTeamFixtures($team, $section)();
         $fixtureRows = $fixtures->map(fn ($fixture) => FixtureSummaryRow::fromTeamFixtureData($fixture, $team->id));
 
+        $standings = $section->standings()->values();
+        $standingIndex = $standings->search(fn ($standing) => (int) $standing->id === (int) $team->id);
+        $currentStanding = $standingIndex === false
+            ? null
+            : (object) [
+                'position' => $standingIndex + 1,
+                'label' => OrdinalFormatter::format($standingIndex + 1).' of '.$standings->count(),
+                'points' => (int) ($standings->get($standingIndex)->points ?? 0),
+                'played' => (int) ($standings->get($standingIndex)->played ?? 0),
+            ];
+
         $history = (new GetTeamSeasonHistory($team))()
             ->filter(fn (array $entry): bool => $entry['season_id'] !== $section->season_id)
             ->values();
@@ -42,6 +54,6 @@ class TeamController extends Controller
         $allowKnockoutSubmission = auth()->user()?->isAdmin() ?? false;
         $teamKnockoutRows = $teamKnockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $team, $allowKnockoutSubmission));
 
-        return view('team.show', compact('team', 'fixtures', 'fixtureRows', 'players', 'section', 'history', 'historyRows', 'teamKnockoutMatches', 'teamKnockoutRows'));
+        return view('team.show', compact('team', 'fixtures', 'fixtureRows', 'players', 'section', 'currentStanding', 'history', 'historyRows', 'teamKnockoutMatches', 'teamKnockoutRows'));
     }
 }

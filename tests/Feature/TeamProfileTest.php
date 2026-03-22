@@ -84,6 +84,9 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText('Team information');
         $response->assertSeeText('Players');
         $response->assertSeeText('Fixtures');
+        $response->assertSeeText('Current standing');
+        $response->assertSeeText('1st of 2');
+        $response->assertSeeText('6 pts from 1 played');
         $response->assertSeeTextInOrder([$team->name, $opponent->name]);
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);

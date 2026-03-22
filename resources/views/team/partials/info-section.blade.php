@@ -3,7 +3,7 @@
         <div class="space-y-2">
             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Team information</h3>
             <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                Current details for this team in the open season, including section, venue, and captain.
+                Current details for this team in the open season, including section, standing, venue, and captain.
             </p>
         </div>
 
@@ -47,6 +47,18 @@
                         </a>
                     @else
                         <p class="mt-2 text-sm text-gray-900 dark:text-gray-100">Captain TBC</p>
+                    @endif
+                </div>
+
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Current standing</p>
+                    @if ($currentStanding)
+                        <p class="mt-2 text-sm text-gray-900 dark:text-gray-100">
+                            {{ $currentStanding->label }}
+                            <span class="text-gray-500 dark:text-gray-400">· {{ $currentStanding->points }} pts from {{ $currentStanding->played }} played</span>
+                        </p>
+                    @else
+                        <p class="mt-2 text-sm text-gray-900 dark:text-gray-100">No standing available yet</p>
                     @endif
                 </div>
             </div>
