@@ -1,21 +1,4 @@
-<div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
-    <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
-        @click="toggleTheme()" aria-label="Toggle dark mode" data-theme-toggle>
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" x-cloak x-show="theme !== 'dark'">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-        </svg>
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" x-cloak x-show="theme === 'dark'">
-            <path fill-rule="evenodd" d="M10 2.75a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V3.5a.75.75 0 01.75-.75zM10 14a4 4 0 100-8 4 4 0 000 8zm0 3.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75zM4.166 4.166a.75.75 0 011.06 0l1.06 1.061a.75.75 0 11-1.06 1.06L4.166 5.23a.75.75 0 010-1.06zm9.548 9.548a.75.75 0 011.06 0l1.06 1.06a.75.75 0 01-1.06 1.061l-1.06-1.06a.75.75 0 010-1.061zM2.75 10a.75.75 0 01.75-.75H5a.75.75 0 010 1.5H3.5A.75.75 0 012.75 10zm12.25 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5H15.75A.75.75 0 0115 10zM5.227 13.713a.75.75 0 011.06 1.061l-1.06 1.06a.75.75 0 11-1.061-1.06l1.061-1.06zm10.607-9.547a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z" clip-rule="evenodd" />
-        </svg>
-    </button>
-    <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
-        data-site-search-trigger aria-label="Open search">
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd" />
-        </svg>
-    </button>
+<div class="hidden lg:flex lg:justify-end lg:gap-x-6">
     @if (@auth()->user())
         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false" @close.stop="open = false">
             <button type="button"
@@ -24,8 +7,8 @@
                 <img
                     src="{{ auth()->user()->avatar_url }}"
                     alt="{{ auth()->user()->name }} avatar"
-                    class="h-8 w-8 rounded-full object-cover"
-                >
+                    class="h-8 w-8 rounded-full object-cover bg-gray-50">
+                <span class="sr-only">Open user menu for {{ auth()->user()->name }}</span>
                 <svg class="h-5 w-5 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor"
                     aria-hidden="true">
                     <path fill-rule="evenodd"
