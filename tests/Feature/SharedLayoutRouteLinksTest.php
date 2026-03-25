@@ -37,14 +37,14 @@ class SharedLayoutRouteLinksTest extends TestCase
 
         $response->assertSee('href="'.route('ruleset.show', $ruleset).'"', false);
         $response->assertSee(route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]), false);
-        $response->assertDontSee("/rulesets/{$ruleset->slug}", false);
-        $response->assertDontSee("/rulesets/{$ruleset->slug}/{$section->slug}", false);
+        $response->assertDontSee('href="/'.$ruleset->slug.'"', false);
+        $response->assertDontSee('href="/'.$ruleset->slug.'/'.$section->slug.'"', false);
         $response->assertDontSee("/rulesets/{$ruleset->slug}/{$section->id}", false);
 
-        $response->assertDontSee('href="'.route('ruleset.index').'"', false);
-        $response->assertDontSee(route('table.index', $ruleset), false);
-        $response->assertDontSee(route('fixture.index', $ruleset), false);
-        $response->assertDontSee(route('player.index', $ruleset), false);
+        $response->assertDontSee('href="/rulesets"', false);
+        $response->assertDontSee("/tables/{$ruleset->slug}", false);
+        $response->assertDontSee("/fixtures-and-results/{$ruleset->slug}", false);
+        $response->assertDontSee("/players/averages/{$ruleset->slug}", false);
         $response->assertDontSee('href="'.route('ruleset.show', $ruleset->id).'"', false);
     }
 

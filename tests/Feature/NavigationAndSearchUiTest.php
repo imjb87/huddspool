@@ -121,7 +121,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('activeAccordion', false);
         $response->assertDontSee('data-mobile-menu-home', false);
         $response->assertDontSee('data-mobile-menu-close', false);
-        $response->assertDontSee('href="'.route('ruleset.index').'"', false);
+        $response->assertDontSee('href="/rulesets"', false);
         $response->assertDontSee('aria-label="Primary mobile"', false);
     }
 

@@ -107,18 +107,18 @@ class HistoryPageTest extends TestCase
         ]).'"', false);
     }
 
-    public function test_history_season_route_redirects_to_history_index(): void
+    public function test_history_season_route_is_not_defined(): void
     {
         $season = Season::factory()->create([
             'name' => '2020/21 Season',
             'is_open' => false,
         ]);
 
-        $this->get(route('history.season', $season))
-            ->assertRedirect(route('history.index'));
+        $this->get("/history/{$season->slug}")
+            ->assertNotFound();
     }
 
-    public function test_history_ruleset_route_redirects_to_first_available_historical_section(): void
+    public function test_history_ruleset_route_is_not_defined(): void
     {
         $ruleset = Ruleset::factory()->create(['name' => 'World Rules']);
         $season = Season::factory()->create([
@@ -127,7 +127,7 @@ class HistoryPageTest extends TestCase
             'is_open' => false,
         ]);
 
-        $firstSection = Section::factory()->create([
+        Section::factory()->create([
             'ruleset_id' => $ruleset->id,
             'season_id' => $season->id,
             'name' => 'Division A',
@@ -139,11 +139,11 @@ class HistoryPageTest extends TestCase
             'name' => 'Division B',
         ]);
 
-        $this->get(route('history.show', [$season, $ruleset]))
-            ->assertRedirect(route('history.section.show', [$season, $ruleset, $firstSection]));
+        $this->get("/history/{$season->slug}/{$ruleset->slug}")
+            ->assertNotFound();
     }
 
-    public function test_history_routes_drop_the_history_prefix_for_canonical_pages(): void
+    public function test_history_routes_use_prefixed_canonical_pages(): void
     {
         $ruleset = Ruleset::factory()->create([
             'slug' => 'world-rules',
@@ -160,44 +160,12 @@ class HistoryPageTest extends TestCase
         ]);
 
         $this->assertSame(
-            '/202122-season/world-rules',
-            route('history.show', [$season, $ruleset], false)
-        );
-        $this->assertSame(
-            '/202122-season/world-rules/division-a',
+            '/history/202122-season/world-rules/division-a',
             route('history.section.show', [$season, $ruleset, $section], false)
         );
     }
 
-    public function test_legacy_history_routes_redirect_to_prefix_free_canonical_pages(): void
-    {
-        $ruleset = Ruleset::factory()->create([
-            'slug' => 'world-rules',
-        ]);
-        $season = Season::factory()->create([
-            'name' => '2021/22 Season',
-            'slug' => '2021-22-season',
-            'is_open' => false,
-        ]);
-        $section = Section::factory()->create([
-            'ruleset_id' => $ruleset->id,
-            'season_id' => $season->id,
-            'name' => 'Division A',
-        ]);
-
-        $this->get("/history/{$season->slug}/{$ruleset->slug}")
-            ->assertRedirect(route('history.show', [$season, $ruleset]));
-
-        $this->get("/history/{$season->slug}/{$ruleset->slug}/{$section->slug}?tab=averages")
-            ->assertRedirect(route('history.section.show', [
-                'season' => $season,
-                'ruleset' => $ruleset,
-                'section' => $section,
-                'tab' => 'averages',
-            ]));
-    }
-
-    public function test_history_knockout_routes_drop_the_history_prefix_for_canonical_pages(): void
+    public function test_history_knockout_routes_use_prefixed_canonical_pages(): void
     {
         $season = Season::factory()->create([
             'name' => '2021/22 Season',
@@ -212,34 +180,12 @@ class HistoryPageTest extends TestCase
         ]);
 
         $this->assertSame(
-            '/202122-season/knockouts/singles-cup',
+            '/history/202122-season/knockouts/singles-cup',
             route('history.knockout.show', ['season' => $season, 'knockout' => $knockout], false)
         );
     }
 
-    public function test_legacy_history_knockout_routes_redirect_to_prefix_free_canonical_pages(): void
-    {
-        $season = Season::factory()->create([
-            'name' => '2021/22 Season',
-            'slug' => '2021-22-season',
-            'is_open' => false,
-        ]);
-        $knockout = Knockout::query()->create([
-            'season_id' => $season->id,
-            'name' => 'Singles Cup',
-            'slug' => 'singles-cup',
-            'type' => KnockoutType::Singles->value,
-        ]);
-
-        $this->get("/history/{$season->slug}/knockouts/{$knockout->slug}?tab=rounds")
-            ->assertRedirect(route('history.knockout.show', [
-                'season' => $season,
-                'knockout' => $knockout,
-                'tab' => 'rounds',
-            ]));
-    }
-
-    public function test_history_show_displays_dark_mode_ready_historical_overview(): void
+    public function test_history_section_route_displays_dark_mode_ready_historical_overview(): void
     {
         $ruleset = Ruleset::factory()->create(['name' => 'World Rules']);
         $season = Season::factory()->create([
@@ -252,9 +198,9 @@ class HistoryPageTest extends TestCase
             'name' => 'Division A',
         ]);
 
-        $response = $this->get(route('history.show', [$season, $ruleset]));
+        $response = $this->get(route('history.section.show', [$season, $ruleset, $section]));
 
-        $response->assertRedirect(route('history.section.show', [$season, $ruleset, $section]));
+        $response->assertOk();
     }
 
     public function test_history_section_page_replicates_section_tabs_and_displays_trashed_records(): void

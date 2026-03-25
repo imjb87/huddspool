@@ -14,10 +14,10 @@ class RulesetHubPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_rulesets_index_redirects_home(): void
+    public function test_rulesets_index_is_not_defined(): void
     {
-        $this->get(route('ruleset.index'))
-            ->assertRedirect(route('home'));
+        $this->get('/rulesets')
+            ->assertNotFound();
     }
 
     public function test_ruleset_show_renders_ruleset_content_page(): void
@@ -40,20 +40,7 @@ class RulesetHubPageTest extends TestCase
         $response->assertSee('dark:prose-invert', false);
         $response->assertSee('World rules guidance.', false);
         $response->assertDontSeeLivewire(RulesetSectionPage::class);
-        $this->assertSame('/international-rules', route('ruleset.show', $ruleset, false));
-    }
-
-    public function test_legacy_ruleset_show_route_redirects_to_canonical_ruleset_url(): void
-    {
-        $ruleset = Ruleset::factory()->create([
-            'slug' => 'international-rules',
-        ]);
-
-        $this->get("/rulesets/{$ruleset->slug}?tab=fixtures-results")
-            ->assertRedirect(route('ruleset.show', [
-                'ruleset' => $ruleset,
-                'tab' => 'fixtures-results',
-            ]));
+        $this->assertSame('/rulesets/international-rules', route('ruleset.show', $ruleset, false));
     }
 
     public function test_ruleset_section_route_uses_section_slug(): void
@@ -69,7 +56,7 @@ class RulesetHubPageTest extends TestCase
         ]);
 
         $this->assertSame(
-            '/blackball-rules/blackball-premier',
+            '/rulesets/blackball-rules/blackball-premier',
             route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section], false)
         );
     }
@@ -103,7 +90,7 @@ class RulesetHubPageTest extends TestCase
         $this->assertSame('premier-division', $archivedSection->slug);
         $this->assertSame('premier-division', $currentSection->slug);
         $this->assertSame(
-            '/international-rules/premier-division',
+            '/rulesets/international-rules/premier-division',
             route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $currentSection], false)
         );
     }
@@ -137,7 +124,7 @@ class RulesetHubPageTest extends TestCase
         $this->assertSame('premier-division-archived-'.$originalSection->id, $originalSection->slug);
         $this->assertSame('premier-division', $replacementSection->slug);
         $this->assertSame(
-            '/international-rules/premier-division',
+            '/rulesets/international-rules/premier-division',
             route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $replacementSection], false)
         );
     }
@@ -168,31 +155,11 @@ class RulesetHubPageTest extends TestCase
             'name' => 'Premier Division',
         ]);
 
-        $response = $this->get('/international-rules/premier-division');
+        $response = $this->get('/rulesets/international-rules/premier-division');
 
         $response->assertOk();
         $response->assertSeeText($openSeason->name);
         $response->assertSeeText($currentSection->name);
-    }
-
-    public function test_legacy_ruleset_section_route_redirects_to_canonical_section_url(): void
-    {
-        $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->toDateString()]]);
-        $ruleset = Ruleset::factory()->create([
-            'slug' => 'international-rules',
-        ]);
-        $section = Section::factory()->create([
-            'season_id' => $season->id,
-            'ruleset_id' => $ruleset->id,
-            'name' => 'International Premier',
-        ]);
-
-        $this->get("/rulesets/{$ruleset->slug}/{$section->slug}?tab=fixtures-results")
-            ->assertRedirect(route('ruleset.section.show', [
-                'ruleset' => $ruleset,
-                'section' => $section,
-                'tab' => 'fixtures-results',
-            ]));
     }
 
     public function test_fixture_download_route_is_scoped_by_ruleset_and_section_slug(): void
@@ -264,7 +231,7 @@ class RulesetHubPageTest extends TestCase
         ]));
     }
 
-    public function test_legacy_metric_routes_redirect_to_canonical_hub_tabs(): void
+    public function test_ruleset_hub_uses_canonical_tab_urls(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -273,14 +240,18 @@ class RulesetHubPageTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
-        $this->get(route('table.index', $ruleset))
-            ->assertRedirect(route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]));
-
-        $this->get(route('fixture.index', $ruleset))
-            ->assertRedirect(route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section, 'tab' => 'fixtures-results']));
-
-        $this->get(route('player.index', $ruleset))
-            ->assertRedirect(route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section, 'tab' => 'averages']));
+        $this->assertSame(
+            "/rulesets/{$ruleset->slug}/{$section->slug}",
+            route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section], false)
+        );
+        $this->assertSame(
+            "/rulesets/{$ruleset->slug}/{$section->slug}?tab=fixtures-results",
+            route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section, 'tab' => 'fixtures-results'], false)
+        );
+        $this->assertSame(
+            "/rulesets/{$ruleset->slug}/{$section->slug}?tab=averages",
+            route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section, 'tab' => 'averages'], false)
+        );
     }
 
     public function test_ruleset_show_renders_empty_state_without_content(): void

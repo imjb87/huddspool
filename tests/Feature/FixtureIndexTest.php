@@ -20,7 +20,7 @@ class FixtureIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_fixture_index_eager_loads_section_seasons(): void
+    public function test_fixtures_results_tab_uses_the_canonical_ruleset_hub_route(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -29,13 +29,14 @@ class FixtureIndexTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
-        $response = $this->get(route('fixture.index', $ruleset));
-
-        $response->assertRedirect(route('ruleset.section.show', [
-            'ruleset' => $ruleset,
-            'section' => $section,
-            'tab' => 'fixtures-results',
-        ]));
+        $this->assertSame(
+            "/rulesets/{$ruleset->slug}/{$section->slug}?tab=fixtures-results",
+            route('ruleset.section.show', [
+                'ruleset' => $ruleset,
+                'section' => $section,
+                'tab' => 'fixtures-results',
+            ], false)
+        );
     }
 
     public function test_section_fixtures_eager_loads_fixture_relations(): void

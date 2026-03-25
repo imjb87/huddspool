@@ -23,6 +23,7 @@ class GetTeamSeasonHistory
             $rows = Result::query()
                 ->selectRaw(
                     'seasons.id as season_id, seasons.name as season_name, seasons.slug as season_slug, seasons.dates as season_dates, seasons.is_open,
+                    sections.id as section_id, sections.slug as section_slug,
                     rulesets.id as ruleset_id, rulesets.name as ruleset_name, rulesets.slug as ruleset_slug,
                     COUNT(*) as played,
                     SUM(CASE WHEN (results.home_team_id = ? AND results.home_score > results.away_score)
@@ -36,12 +37,24 @@ class GetTeamSeasonHistory
                         + SUM(CASE WHEN results.away_team_id = ? THEN results.away_score ELSE 0 END) as raw_points', [$teamId, $teamId, $teamId, $teamId, $teamId, $teamId])
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
+                ->leftJoin('sections', 'sections.id', '=', 'fixtures.section_id')
                 ->leftJoin('rulesets', 'rulesets.id', '=', 'fixtures.ruleset_id')
                 ->where(function ($query) use ($teamId) {
                     $query->where('results.home_team_id', $teamId)
                         ->orWhere('results.away_team_id', $teamId);
                 })
-                ->groupBy('seasons.id', 'seasons.name', 'seasons.slug', 'seasons.dates', 'seasons.is_open', 'rulesets.id', 'rulesets.name', 'rulesets.slug')
+                ->groupBy(
+                    'seasons.id',
+                    'seasons.name',
+                    'seasons.slug',
+                    'seasons.dates',
+                    'seasons.is_open',
+                    'sections.id',
+                    'sections.slug',
+                    'rulesets.id',
+                    'rulesets.name',
+                    'rulesets.slug'
+                )
                 ->orderByDesc('seasons.is_open')
                 ->orderByDesc('seasons.id')
                 ->orderByDesc('rulesets.name')
@@ -77,6 +90,8 @@ class GetTeamSeasonHistory
                     'season_name' => $row->season_name,
                     'season_slug' => $row->season_slug,
                     'season_label' => SeasonLabelFormatter::format($row->season_name, $row->season_dates ?? []),
+                    'section_id' => $row->section_id,
+                    'section_slug' => $row->section_slug,
                     'ruleset_id' => $row->ruleset_id,
                     'ruleset_name' => $row->ruleset_name,
                     'ruleset_slug' => $row->ruleset_slug,

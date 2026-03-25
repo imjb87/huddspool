@@ -64,7 +64,7 @@ class TablePageTest extends TestCase
             ->assertSeeText($awayTeam->name);
     }
 
-    public function test_legacy_table_page_redirects_to_the_canonical_ruleset_hub(): void
+    public function test_table_page_uses_the_canonical_ruleset_hub_route(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -73,11 +73,13 @@ class TablePageTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
-        $this->get(route('table.index', $ruleset))
-            ->assertRedirect(route('ruleset.section.show', [
+        $this->assertSame(
+            "/rulesets/{$ruleset->slug}/{$section->slug}",
+            route('ruleset.section.show', [
                 'ruleset' => $ruleset,
                 'section' => $section,
-            ]));
+            ], false)
+        );
     }
 
     public function test_table_page_does_not_issue_per_section_result_queries_when_building_standings(): void
