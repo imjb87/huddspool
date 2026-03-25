@@ -90,6 +90,69 @@ class FixtureShowTest extends TestCase
         $response->assertSeeText('0%');
     }
 
+    public function test_fixture_show_uses_actual_section_positions_in_head_to_head(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        Team::factory()->create();
+
+        $topTeam = Team::factory()->create(['name' => 'Leaders']);
+        $homeTeam = Team::factory()->create(['name' => 'Home Team']);
+        $awayTeam = Team::factory()->create(['name' => 'Away Team']);
+
+        $section->teams()->attach($topTeam->id, ['sort' => 1]);
+        $section->teams()->attach($homeTeam->id, ['sort' => 2]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 3]);
+
+        $homePlayer = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $topTeam->id,
+            'away_team_id' => $homeTeam->id,
+        ]);
+
+        Result::factory()->create([
+            'home_team_id' => $topTeam->id,
+            'home_team_name' => $topTeam->name,
+            'away_team_id' => $homeTeam->id,
+            'away_team_name' => $homeTeam->name,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_score' => 7,
+            'away_score' => 2,
+            'submitted_by' => $homePlayer->id,
+        ]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+
+        $this->actingAs($homePlayer);
+
+        $response = $this->get(route('fixture.show', $fixture));
+        $content = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($content);
+        $this->assertMatchesRegularExpression('/<div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">\s*2\s*<\/div>[\s\S]*?Home Team/', $content);
+        $this->assertMatchesRegularExpression('/<div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">\s*3\s*<\/div>[\s\S]*?Away Team/', $content);
+    }
+
     public function test_fixture_show_returns_not_found_when_a_team_relation_is_missing(): void
     {
         $season = Season::factory()->create(['is_open' => true]);

@@ -15,7 +15,7 @@
                         wire:key="fixture-standing-{{ $standing->id }}">
                         <div class="flex items-center gap-4 py-4">
                             <div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">
-                                {{ $loop->iteration }}
+                                {{ $standing->position }}
                             </div>
 
                             <div class="min-w-0 flex-1">

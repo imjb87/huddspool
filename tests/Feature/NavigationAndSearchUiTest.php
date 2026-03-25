@@ -51,7 +51,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('bg-gray-500/40', false);
         $response->assertSee('ring-black/5', false);
         $response->assertSee('data-site-search-trigger', false);
+        $response->assertSee('aria-label="Open search"', false);
         $response->assertSee('data-theme-toggle', false);
+        $response->assertSee('aria-label="Toggle dark mode"', false);
         $response->assertSee('focus-first-search-result', false);
         $response->assertSee('site-theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
@@ -268,6 +270,26 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSeeText('Your team');
         $response->assertDontSee('href="'.route('player.show', $user).'"', false);
         $response->assertDontSee('href="'.route('support.tickets').'"', false);
+        $response->assertSee('Open user menu for '.$user->name, false);
+        $response->assertSeeText('Install app');
+        $response->assertSeeText('Log out');
+        $response->assertDontSee('href="'.route('filament.admin.pages.dashboard').'"', false);
+        $response->assertDontSeeText('Log in');
+    }
+
+    public function test_admin_users_see_admin_link_in_authenticated_navigation(): void
+    {
+        $user = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('filament.admin.pages.dashboard').'"', false);
+        $response->assertSeeText('Admin');
+        $response->assertSee('Open user menu for '.$user->name, false);
+        $response->assertSeeText('Log out');
     }
 
     public function test_frontend_footer_shows_stop_impersonating_link_when_impersonating(): void
