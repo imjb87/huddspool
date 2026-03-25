@@ -61,6 +61,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('pl-11 pr-4', false);
         $response->assertSee('sm:pr-24', false);
+        $response->assertSee('justify-between gap-4', false);
+        $response->assertSee('min-w-0 flex-1 items-center justify-end gap-x-4', false);
+        $response->assertSee('class="h-5 w-5 shrink-0"', false);
+        $response->assertSee('class="h-6 w-6 shrink-0"', false);
         $response->assertSee('<a href="/" class="-m-1.5 p-1.5">', false);
         $response->assertSeeText('International Rules');
         $response->assertSeeText('Blackball Rules');
