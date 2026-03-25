@@ -75,7 +75,7 @@
                 @endforeach
 
                 @foreach ($historySeasonGroup['knockouts'] ?? [] as $historyKnockout)
-                    <a href="{{ route('knockout.show', $historyKnockout) }}"
+                    <a href="{{ route('history.knockout.show', ['season' => $historySeasonGroup['season'], 'knockout' => $historyKnockout]) }}"
                         class="{{ $mobileDrawerTextLinkClasses }}"
                         data-mobile-history-knockout-link>
                         {{ $historyKnockout->name }}

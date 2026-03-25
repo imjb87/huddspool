@@ -64,8 +64,14 @@ class FixtureController extends Controller
         ]);
     }
 
-    public function download(Section $section): Response
+    public function download(Ruleset $ruleset, string $section): Response
     {
+        $section = Section::query()
+            ->where('ruleset_id', $ruleset->id)
+            ->where('slug', $section)
+            ->whereHas('season', fn ($query) => $query->where('is_open', true))
+            ->firstOrFail();
+
         $fixtures = $section->fixtures()->get();
         $teams = $section->teams()->get()->sortBy('pivot.sort');
         $dates = $section->season->dates;

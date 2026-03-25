@@ -90,6 +90,7 @@ class SitemapBuilder
             })
             ->with([
                 'sections' => fn ($query) => $query->withTrashed()->with('ruleset'),
+                'knockouts',
             ])
             ->orderByDesc('id')
             ->get()
@@ -103,6 +104,15 @@ class SitemapBuilder
                             'ruleset' => $section->ruleset,
                             'section' => $section->slug,
                         ], false), $section));
+                    });
+
+                $season->knockouts
+                    ->filter(fn (Knockout $knockout): bool => filled($knockout->slug))
+                    ->each(function (Knockout $knockout) use ($season, $sitemap): void {
+                        $sitemap->add($this->makeModelUrl(route('history.knockout.show', [
+                            'season' => $season,
+                            'knockout' => $knockout,
+                        ], false), $knockout));
                     });
             });
     }
@@ -121,6 +131,8 @@ class SitemapBuilder
     {
         Knockout::query()
             ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->whereHas('season', fn ($query) => $query->where('is_open', true))
             ->orderBy('id')
             ->get()
             ->each(function (Knockout $knockout) use ($sitemap): void {

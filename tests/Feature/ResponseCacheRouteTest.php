@@ -30,6 +30,7 @@ class ResponseCacheRouteTest extends TestCase
             'history.season' => ['history.season'],
             'history.show' => ['history.show'],
             'history.section.show' => ['history.section.show'],
+            'history.knockout.show' => ['history.knockout.show'],
             'venue.show' => ['venue.show'],
             'knockout.index' => ['knockout.index'],
             'knockout.show' => ['knockout.show'],

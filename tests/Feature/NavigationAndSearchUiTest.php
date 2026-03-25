@@ -208,7 +208,10 @@ class NavigationAndSearchUiTest extends TestCase
             'href="'.route('history.section.show', ['season' => $historySeason, 'ruleset' => $ruleset, 'section' => $historySection]).'"',
             false
         );
-        $response->assertSee('href="'.route('knockout.show', $historyKnockout).'"', false);
+        $response->assertSee('href="'.route('history.knockout.show', [
+            'season' => $historySeason,
+            'knockout' => $historyKnockout,
+        ]).'"', false);
     }
 
     public function test_knockout_index_redirects_to_knockout_dates_page(): void

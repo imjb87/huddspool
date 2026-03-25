@@ -47,12 +47,13 @@ class Knockout extends Model
 
     private function generateSlug(string $name, ?int $ignoreId = null): string
     {
-        $slug = Str::slug($name);
+        $slug = Str::slug($name) ?: 'knockout';
         $original = $slug;
         $i = 1;
 
         while (self::query()
             ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->where('season_id', $this->season_id)
             ->where('slug', $slug)
             ->exists()) {
             $slug = "{$original}-{$i}";

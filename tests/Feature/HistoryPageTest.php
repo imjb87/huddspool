@@ -95,7 +95,10 @@ class HistoryPageTest extends TestCase
             'ruleset' => $ruleset,
             'section' => $archivedSection,
         ]).'"', false);
-        $response->assertSee('href="'.route('knockout.show', $archivedKnockout).'"', false);
+        $response->assertSee('href="'.route('history.knockout.show', [
+            'season' => $archivedSeason,
+            'knockout' => $archivedKnockout,
+        ]).'"', false);
         $response->assertDontSeeText('2026/27 Season');
         $response->assertDontSee('href="'.route('history.section.show', [
             'season' => $futureSeason,
@@ -120,6 +123,7 @@ class HistoryPageTest extends TestCase
         $ruleset = Ruleset::factory()->create(['name' => 'World Rules']);
         $season = Season::factory()->create([
             'name' => '2021/22 Season',
+            'slug' => '2021-22-season',
             'is_open' => false,
         ]);
 
@@ -137,6 +141,102 @@ class HistoryPageTest extends TestCase
 
         $this->get(route('history.show', [$season, $ruleset]))
             ->assertRedirect(route('history.section.show', [$season, $ruleset, $firstSection]));
+    }
+
+    public function test_history_routes_drop_the_history_prefix_for_canonical_pages(): void
+    {
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'world-rules',
+        ]);
+        $season = Season::factory()->create([
+            'name' => '2021/22 Season',
+            'slug' => '2021-22-season',
+            'is_open' => false,
+        ]);
+        $section = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $season->id,
+            'name' => 'Division A',
+        ]);
+
+        $this->assertSame(
+            '/202122-season/world-rules',
+            route('history.show', [$season, $ruleset], false)
+        );
+        $this->assertSame(
+            '/202122-season/world-rules/division-a',
+            route('history.section.show', [$season, $ruleset, $section], false)
+        );
+    }
+
+    public function test_legacy_history_routes_redirect_to_prefix_free_canonical_pages(): void
+    {
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'world-rules',
+        ]);
+        $season = Season::factory()->create([
+            'name' => '2021/22 Season',
+            'slug' => '2021-22-season',
+            'is_open' => false,
+        ]);
+        $section = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $season->id,
+            'name' => 'Division A',
+        ]);
+
+        $this->get("/history/{$season->slug}/{$ruleset->slug}")
+            ->assertRedirect(route('history.show', [$season, $ruleset]));
+
+        $this->get("/history/{$season->slug}/{$ruleset->slug}/{$section->slug}?tab=averages")
+            ->assertRedirect(route('history.section.show', [
+                'season' => $season,
+                'ruleset' => $ruleset,
+                'section' => $section,
+                'tab' => 'averages',
+            ]));
+    }
+
+    public function test_history_knockout_routes_drop_the_history_prefix_for_canonical_pages(): void
+    {
+        $season = Season::factory()->create([
+            'name' => '2021/22 Season',
+            'slug' => '2021-22-season',
+            'is_open' => false,
+        ]);
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Singles Cup',
+            'slug' => 'singles-cup',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
+        $this->assertSame(
+            '/202122-season/knockouts/singles-cup',
+            route('history.knockout.show', ['season' => $season, 'knockout' => $knockout], false)
+        );
+    }
+
+    public function test_legacy_history_knockout_routes_redirect_to_prefix_free_canonical_pages(): void
+    {
+        $season = Season::factory()->create([
+            'name' => '2021/22 Season',
+            'slug' => '2021-22-season',
+            'is_open' => false,
+        ]);
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Singles Cup',
+            'slug' => 'singles-cup',
+            'type' => KnockoutType::Singles->value,
+        ]);
+
+        $this->get("/history/{$season->slug}/knockouts/{$knockout->slug}?tab=rounds")
+            ->assertRedirect(route('history.knockout.show', [
+                'season' => $season,
+                'knockout' => $knockout,
+                'tab' => 'rounds',
+            ]));
     }
 
     public function test_history_show_displays_dark_mode_ready_historical_overview(): void

@@ -20,9 +20,90 @@ class KnockoutPageTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_knockout_slugs_are_scoped_per_season(): void
+    {
+        $archivedSeason = Season::factory()->create([
+            'name' => 'Winter 2025',
+            'is_open' => false,
+        ]);
+        $openSeason = Season::factory()->create([
+            'name' => 'Summer 2026',
+            'is_open' => true,
+            'dates' => [now()->addWeek()->toDateString()],
+        ]);
+
+        $archivedKnockout = Knockout::query()->create([
+            'season_id' => $archivedSeason->id,
+            'name' => 'Doubles Knockout',
+            'type' => KnockoutType::Doubles,
+        ]);
+        $currentKnockout = Knockout::query()->create([
+            'season_id' => $openSeason->id,
+            'name' => 'Doubles Knockout',
+            'type' => KnockoutType::Doubles,
+        ]);
+
+        $this->assertSame('doubles-knockout', $archivedKnockout->slug);
+        $this->assertSame('doubles-knockout', $currentKnockout->slug);
+    }
+
+    public function test_current_knockout_route_resolves_the_open_season_when_history_uses_the_same_slug(): void
+    {
+        $archivedSeason = Season::factory()->create([
+            'name' => 'Winter 2025',
+            'is_open' => false,
+        ]);
+        $openSeason = Season::factory()->create([
+            'name' => 'Summer 2026',
+            'is_open' => true,
+        ]);
+
+        Knockout::query()->create([
+            'season_id' => $archivedSeason->id,
+            'name' => 'Archived Cup',
+            'slug' => 'shared-knockout',
+            'type' => KnockoutType::Singles,
+        ]);
+
+        $currentKnockout = Knockout::query()->create([
+            'season_id' => $openSeason->id,
+            'name' => 'Current Cup',
+            'slug' => 'shared-knockout',
+            'type' => KnockoutType::Singles,
+        ]);
+
+        $this->get('/knockouts/shared-knockout')
+            ->assertOk()
+            ->assertSeeText('Current Cup');
+
+        $this->assertSame('/knockouts/shared-knockout', route('knockout.show', $currentKnockout, false));
+    }
+
+    public function test_historical_knockout_pages_have_canonical_season_scoped_urls(): void
+    {
+        $season = Season::factory()->create([
+            'name' => 'Winter 2025',
+            'is_open' => false,
+        ]);
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Archived Cup',
+            'slug' => 'archived-cup',
+            'type' => KnockoutType::Singles,
+        ]);
+
+        $this->get(route('history.knockout.show', ['season' => $season, 'knockout' => $knockout]))
+            ->assertOk()
+            ->assertSeeText('Archived Cup');
+    }
+
     public function test_knockout_show_page_renders_the_livewire_round_pager_and_defaults_to_the_current_published_round(): void
     {
-        $season = Season::factory()->create(['name' => '2026 Season']);
+        $season = Season::factory()->create([
+            'name' => '2026 Season',
+            'is_open' => true,
+            'dates' => [now()->addWeek()->toDateString()],
+        ]);
 
         $knockout = Knockout::create([
             'season_id' => $season->id,
@@ -138,7 +219,10 @@ class KnockoutPageTest extends TestCase
 
     public function test_knockout_round_pager_can_navigate_between_published_rounds_and_hides_future_rounds(): void
     {
-        $season = Season::factory()->create();
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [now()->addWeek()->toDateString()],
+        ]);
 
         $knockout = Knockout::create([
             'season_id' => $season->id,
@@ -235,7 +319,10 @@ class KnockoutPageTest extends TestCase
 
     public function test_knockout_show_page_keeps_team_links_and_empty_round_state_for_the_active_round(): void
     {
-        $season = Season::factory()->create();
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [now()->addWeek()->toDateString()],
+        ]);
 
         $knockout = Knockout::create([
             'season_id' => $season->id,
@@ -299,7 +386,10 @@ class KnockoutPageTest extends TestCase
 
     public function test_knockout_show_page_uses_ampersands_for_doubles_pair_names(): void
     {
-        $season = Season::factory()->create();
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [now()->addWeek()->toDateString()],
+        ]);
 
         $knockout = Knockout::create([
             'season_id' => $season->id,

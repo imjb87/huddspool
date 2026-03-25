@@ -46,10 +46,13 @@ class RulesetController extends Controller
         ]);
     }
 
-    public function section(Request $request, Ruleset $ruleset, Section $section): View
+    public function section(Request $request, Ruleset $ruleset, string $section): View
     {
-        abort_unless($section->ruleset_id === $ruleset->id, 404);
-        abort_unless($section->season()->where('is_open', true)->exists(), 404);
+        $section = Section::query()
+            ->where('ruleset_id', $ruleset->id)
+            ->where('slug', $section)
+            ->whereHas('season', fn ($query) => $query->where('is_open', true))
+            ->firstOrFail();
 
         $activeTab = $this->resolveActiveTab($request->string('tab')->toString());
 

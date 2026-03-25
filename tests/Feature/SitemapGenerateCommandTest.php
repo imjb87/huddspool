@@ -72,10 +72,15 @@ class SitemapGenerateCommandTest extends TestCase
                 'updated_at' => $pageTimestamp,
             ]);
 
-            $knockout = Knockout::factory()->create([
+            $currentKnockout = Knockout::factory()->create([
                 'season_id' => $openSeason->id,
                 'name' => 'Champion of Champions',
                 'slug' => 'champion-of-champions',
+            ]);
+            $historicalKnockout = Knockout::factory()->create([
+                'season_id' => $historySeason->id,
+                'name' => 'Winter Cup',
+                'slug' => 'winter-cup',
             ]);
 
             $venue = Venue::factory()->create([
@@ -146,8 +151,17 @@ class SitemapGenerateCommandTest extends TestCase
                 'ruleset' => $ruleset,
                 'section' => $historySection->slug,
             ]), $xml);
+            $this->assertStringNotContainsString(
+                $this->absoluteUrl("/history/{$historySeason->slug}/{$ruleset->slug}/{$historySection->slug}"),
+                $xml
+            );
             $this->assertStringContainsString($this->absoluteRoute('page.show', $page), $xml);
-            $this->assertStringContainsString($this->absoluteRoute('knockout.show', $knockout), $xml);
+            $this->assertStringContainsString($this->absoluteRoute('knockout.show', $currentKnockout), $xml);
+            $this->assertStringContainsString($this->absoluteRoute('history.knockout.show', [
+                'season' => $historySeason,
+                'knockout' => $historicalKnockout,
+            ]), $xml);
+            $this->assertStringNotContainsString($this->absoluteRoute('knockout.show', $historicalKnockout), $xml);
             $this->assertStringContainsString($this->absoluteRoute('team.show', $homeTeam), $xml);
             $this->assertStringContainsString($this->absoluteRoute('player.show', ['player' => $player]), $xml);
             $this->assertStringContainsString($this->absoluteRoute('venue.show', $venue), $xml);
@@ -161,7 +175,10 @@ class SitemapGenerateCommandTest extends TestCase
             $this->assertStringNotContainsString($this->absoluteUrl('/register/'), $xml);
             $this->assertStringNotContainsString($this->absoluteRoute('password.request'), $xml);
             $this->assertStringNotContainsString($this->absoluteRoute('support.tickets'), $xml);
-            $this->assertStringNotContainsString($this->absoluteRoute('fixture.download', $openSection), $xml);
+            $this->assertStringNotContainsString($this->absoluteRoute('fixture.download', [
+                'ruleset' => $ruleset,
+                'section' => $openSection,
+            ]), $xml);
             $this->assertStringNotContainsString($this->absoluteRoute('laravelpwa.manifest'), $xml);
             $this->assertStringNotContainsString($this->absoluteRoute('laravelpwa.offline'), $xml);
         } finally {

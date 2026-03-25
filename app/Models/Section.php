@@ -253,6 +253,8 @@ class Section extends Model
 
         while (self::withTrashed()
             ->when($ignoreId, fn (Builder $query) => $query->where('id', '!=', $ignoreId))
+            ->where('season_id', $this->season_id)
+            ->where('ruleset_id', $this->ruleset_id)
             ->where('slug', $slug)
             ->exists()) {
             $slug = "{$original}-{$suffix}";

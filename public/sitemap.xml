@@ -7,19 +7,19 @@
     <loc>https://www.huddspool.co.uk/history</loc>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/rulesets/international-rules</loc>
+    <loc>https://www.huddspool.co.uk/international-rules</loc>
     <lastmod>2026-03-19T12:03:14+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/rulesets/blackball-rules</loc>
+    <loc>https://www.huddspool.co.uk/blackball-rules</loc>
     <lastmod>2026-03-19T12:14:10+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/rulesets/epa-rules</loc>
+    <loc>https://www.huddspool.co.uk/epa-rules</loc>
     <lastmod>2026-03-19T12:16:07+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/international-rules/international-premier-8</loc>
+    <loc>https://www.huddspool.co.uk/international-rules/international-premier-1</loc>
     <lastmod>2026-01-16T12:37:44+00:00</lastmod>
             </url>
     <url>
@@ -31,7 +31,7 @@
     <lastmod>2026-01-16T12:57:11+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/blackball-rules/blackball-premier-6</loc>
+    <loc>https://www.huddspool.co.uk/blackball-rules/blackball-premier</loc>
     <lastmod>2026-01-16T12:59:46+00:00</lastmod>
             </url>
     <url>
@@ -47,7 +47,7 @@
     <lastmod>2026-01-16T13:15:33+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/epa-rules/epa-premier-5</loc>
+    <loc>https://www.huddspool.co.uk/epa-rules/epa-premier</loc>
     <lastmod>2026-01-16T13:17:53+00:00</lastmod>
             </url>
     <url>
@@ -75,263 +75,275 @@
     <lastmod>2026-01-16T13:36:48+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/international-rules/international-premier-6</loc>
+    <loc>https://www.huddspool.co.uk/august-2026/knockouts/singles-knockout</loc>
+    <lastmod>2026-03-21T19:11:56+00:00</lastmod>
+            </url>
+    <url>
+    <loc>https://www.huddspool.co.uk/august-2026/knockouts/doubles-knockout-1</loc>
+    <lastmod>2026-03-21T19:12:21+00:00</lastmod>
+            </url>
+    <url>
+    <loc>https://www.huddspool.co.uk/august-2026/knockouts/team-knockout</loc>
+    <lastmod>2026-03-21T19:12:40+00:00</lastmod>
+            </url>
+    <url>
+    <loc>https://www.huddspool.co.uk/august-2025/international-rules/international-premier</loc>
     <lastmod>2025-07-30T22:52:03+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/international-rules/international-section-1-5</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/international-rules/international-section-1</loc>
     <lastmod>2025-07-30T23:37:05+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/blackball-rules/blackball-premier-5</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/blackball-rules/blackball-premier</loc>
     <lastmod>2025-08-01T22:07:15+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/blackball-rules/blackball-section-1-5</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/blackball-rules/blackball-section-1</loc>
     <lastmod>2025-08-01T22:12:38+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/blackball-rules/blackball-section-2-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/blackball-rules/blackball-section-2</loc>
     <lastmod>2025-08-02T10:33:56+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/blackball-rules/blackball-section-3-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/blackball-rules/blackball-section-3</loc>
     <lastmod>2025-08-02T10:36:53+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-premier-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-premier</loc>
     <lastmod>2025-08-02T10:59:39+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-1-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-1</loc>
     <lastmod>2025-08-02T11:02:15+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-2-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-2</loc>
     <lastmod>2025-08-02T11:25:54+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-3-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-3</loc>
     <lastmod>2025-08-02T11:28:16+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-4-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-4</loc>
     <lastmod>2025-08-02T11:31:50+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-5-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-5</loc>
     <lastmod>2025-08-02T11:50:48+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2025/epa-rules/epa-section-6-1</loc>
+    <loc>https://www.huddspool.co.uk/august-2025/epa-rules/epa-section-6</loc>
     <lastmod>2025-08-02T11:54:33+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/international-rules/international-premier-5</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/international-rules/international-premier</loc>
     <lastmod>2025-01-09T11:47:26+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/international-rules/international-section-1-4</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/international-rules/international-section-1</loc>
     <lastmod>2025-01-09T12:13:37+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/blackball-rules/blackball-premier-4</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/blackball-rules/blackball-premier</loc>
     <lastmod>2025-01-09T14:55:46+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/blackball-rules/blackball-section-1-4</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/blackball-rules/blackball-section-1</loc>
     <lastmod>2025-01-09T15:10:43+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/blackball-rules/blackball-section-2-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/blackball-rules/blackball-section-2</loc>
     <lastmod>2025-01-10T12:26:33+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/blackball-rules/blackball-section-3-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/blackball-rules/blackball-section-3</loc>
     <lastmod>2025-01-10T13:25:19+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-premier-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-premier</loc>
     <lastmod>2025-01-18T16:13:31+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-1-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-1</loc>
     <lastmod>2025-01-18T16:19:34+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-2-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-2</loc>
     <lastmod>2025-01-18T16:23:04+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-3-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-3</loc>
     <lastmod>2025-01-18T16:27:27+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-4-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-4</loc>
     <lastmod>2025-01-18T16:32:06+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-5-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-5</loc>
     <lastmod>2025-01-18T16:51:12+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2025/epa-rules/epa-section-6</loc>
+    <loc>https://www.huddspool.co.uk/february-2025/epa-rules/epa-section-6</loc>
     <lastmod>2025-01-18T17:07:30+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/international-rules/international-premier-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/international-rules/international-premier</loc>
     <lastmod>2024-07-12T14:52:25+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/international-rules/international-section-1-3</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/international-rules/international-section-1</loc>
     <lastmod>2024-07-12T14:54:34+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/blackball-rules/blackball-premier-3</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/blackball-rules/blackball-premier</loc>
     <lastmod>2024-07-12T14:57:03+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/blackball-rules/blackball-section-1-3</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/blackball-rules/blackball-section-1</loc>
     <lastmod>2024-07-12T14:59:49+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/blackball-rules/blackball-section-2-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/blackball-rules/blackball-section-2</loc>
     <lastmod>2024-07-12T15:02:15+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/blackball-rules/blackball-section-3-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/blackball-rules/blackball-section-3</loc>
     <lastmod>2024-07-12T15:09:08+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-premier-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-premier</loc>
     <lastmod>2024-07-12T15:33:59+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-section-1-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-section-1</loc>
     <lastmod>2024-07-12T15:36:34+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-section-2-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-section-2</loc>
     <lastmod>2024-07-12T15:39:48+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-section-3-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-section-3</loc>
     <lastmod>2024-07-12T15:42:09+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-section-4-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-section-4</loc>
     <lastmod>2024-07-12T15:54:57+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2024/epa-rules/epa-section-5</loc>
+    <loc>https://www.huddspool.co.uk/august-2024/epa-rules/epa-section-5</loc>
     <lastmod>2024-07-12T15:56:53+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/international-rules/international-premier-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/international-rules/international-premier</loc>
     <lastmod>2024-01-05T12:55:23+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/international-rules/international-section-1-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/international-rules/international-section-1</loc>
     <lastmod>2024-01-05T12:55:22+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-premier-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-premier</loc>
     <lastmod>2024-01-05T12:55:20+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-section-1-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-section-1</loc>
     <lastmod>2024-01-05T12:55:18+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/international-rules/international-premier-2</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/international-rules/international-premier-1</loc>
     <lastmod>2024-01-05T12:58:15+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/international-rules/international-premier-3</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/international-rules/international-premier-2</loc>
     <lastmod>2024-01-05T12:59:32+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/international-rules/international-section-1-2</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/international-rules/international-section-1-1</loc>
     <lastmod>2024-01-05T13:20:15+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-premier-2</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-premier-1</loc>
     <lastmod>2024-01-05T13:26:27+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-section-1-2</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-section-1-1</loc>
     <lastmod>2024-01-05T13:33:49+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-section-2-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-section-2</loc>
     <lastmod>2024-01-05T13:37:08+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/blackball-rules/blackball-section-3-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/blackball-rules/blackball-section-3</loc>
     <lastmod>2024-01-05T13:47:08+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/epa-rules/epa-premier-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/epa-rules/epa-premier</loc>
     <lastmod>2024-01-05T13:49:53+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/epa-rules/epa-section-1-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/epa-rules/epa-section-1</loc>
     <lastmod>2024-01-05T13:51:32+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/epa-rules/epa-section-2-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/epa-rules/epa-section-2</loc>
     <lastmod>2024-01-05T13:57:30+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/epa-rules/epa-section-3-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/epa-rules/epa-section-3</loc>
     <lastmod>2024-01-05T13:59:28+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/february-2024/epa-rules/epa-section-4-1</loc>
+    <loc>https://www.huddspool.co.uk/february-2024/epa-rules/epa-section-4</loc>
     <lastmod>2024-01-05T14:10:18+00:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/international-rules/international-premier</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/international-rules/international-premier</loc>
     <lastmod>2023-07-13T15:41:21+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/international-rules/international-section-1</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/international-rules/international-section-1</loc>
     <lastmod>2023-07-13T16:01:32+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/blackball-rules/blackball-premier</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/blackball-rules/blackball-premier</loc>
     <lastmod>2023-07-13T22:06:54+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/blackball-rules/blackball-section-1</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/blackball-rules/blackball-section-1</loc>
     <lastmod>2023-07-13T22:51:30+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/blackball-rules/blackball-section-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/blackball-rules/blackball-section-2</loc>
     <lastmod>2023-07-13T23:03:13+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/blackball-rules/blackball-section-3</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/blackball-rules/blackball-section-3</loc>
     <lastmod>2023-07-15T14:27:56+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/epa-rules/epa-premier</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/epa-rules/epa-premier</loc>
     <lastmod>2023-07-15T22:14:44+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/epa-rules/epa-section-1</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/epa-rules/epa-section-1</loc>
     <lastmod>2023-07-15T22:21:50+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/epa-rules/epa-section-2</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/epa-rules/epa-section-2</loc>
     <lastmod>2023-07-15T22:32:55+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/epa-rules/epa-section-3</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/epa-rules/epa-section-3</loc>
     <lastmod>2023-07-15T22:38:18+01:00</lastmod>
             </url>
     <url>
-    <loc>https://www.huddspool.co.uk/history/august-2023/epa-rules/epa-section-4</loc>
+    <loc>https://www.huddspool.co.uk/august-2023/epa-rules/epa-section-4</loc>
     <lastmod>2023-07-15T22:45:23+01:00</lastmod>
             </url>
     <url>
@@ -369,18 +381,6 @@
     <url>
     <loc>https://www.huddspool.co.uk/knockouts/epa-team-knockout</loc>
     <lastmod>2026-01-06T14:17:37+00:00</lastmod>
-            </url>
-    <url>
-    <loc>https://www.huddspool.co.uk/knockouts/singles-knockout</loc>
-    <lastmod>2026-03-21T19:11:56+00:00</lastmod>
-            </url>
-    <url>
-    <loc>https://www.huddspool.co.uk/knockouts/doubles-knockout-1</loc>
-    <lastmod>2026-03-21T19:12:21+00:00</lastmod>
-            </url>
-    <url>
-    <loc>https://www.huddspool.co.uk/knockouts/team-knockout</loc>
-    <lastmod>2026-03-21T19:12:40+00:00</lastmod>
             </url>
     <url>
     <loc>https://www.huddspool.co.uk/teams/3</loc>

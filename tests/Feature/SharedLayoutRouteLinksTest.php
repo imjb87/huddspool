@@ -37,6 +37,7 @@ class SharedLayoutRouteLinksTest extends TestCase
 
         $response->assertSee('href="'.route('ruleset.show', $ruleset).'"', false);
         $response->assertSee(route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]), false);
+        $response->assertDontSee("/rulesets/{$ruleset->slug}", false);
         $response->assertDontSee("/rulesets/{$ruleset->slug}/{$section->slug}", false);
         $response->assertDontSee("/rulesets/{$ruleset->slug}/{$section->id}", false);
 

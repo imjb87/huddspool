@@ -24,6 +24,7 @@ class RulesetHubPageTest extends TestCase
     {
         $ruleset = Ruleset::factory()->create([
             'name' => 'International Rules',
+            'slug' => 'international-rules',
             'content' => '<p>World rules guidance.</p>',
         ]);
 
@@ -39,6 +40,20 @@ class RulesetHubPageTest extends TestCase
         $response->assertSee('dark:prose-invert', false);
         $response->assertSee('World rules guidance.', false);
         $response->assertDontSeeLivewire(RulesetSectionPage::class);
+        $this->assertSame('/international-rules', route('ruleset.show', $ruleset, false));
+    }
+
+    public function test_legacy_ruleset_show_route_redirects_to_canonical_ruleset_url(): void
+    {
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'international-rules',
+        ]);
+
+        $this->get("/rulesets/{$ruleset->slug}?tab=fixtures-results")
+            ->assertRedirect(route('ruleset.show', [
+                'ruleset' => $ruleset,
+                'tab' => 'fixtures-results',
+            ]));
     }
 
     public function test_ruleset_section_route_uses_section_slug(): void
@@ -59,6 +74,73 @@ class RulesetHubPageTest extends TestCase
         );
     }
 
+    public function test_same_section_name_in_a_new_season_keeps_the_same_slug(): void
+    {
+        $closedSeason = Season::factory()->create([
+            'is_open' => false,
+            'slug' => 'winter-2025',
+        ]);
+        $openSeason = Season::factory()->create([
+            'is_open' => true,
+            'slug' => 'summer-2026',
+            'dates' => [now()->toDateString()],
+        ]);
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'international-rules',
+        ]);
+
+        $archivedSection = Section::factory()->create([
+            'season_id' => $closedSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+        $currentSection = Section::factory()->create([
+            'season_id' => $openSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $this->assertSame('premier-division', $archivedSection->slug);
+        $this->assertSame('premier-division', $currentSection->slug);
+        $this->assertSame(
+            '/international-rules/premier-division',
+            route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $currentSection], false)
+        );
+    }
+
+    public function test_current_ruleset_section_route_resolves_the_open_season_when_history_uses_the_same_slug(): void
+    {
+        $closedSeason = Season::factory()->create([
+            'is_open' => false,
+            'slug' => 'winter-2025',
+        ]);
+        $openSeason = Season::factory()->create([
+            'is_open' => true,
+            'slug' => 'summer-2026',
+            'dates' => [now()->toDateString()],
+        ]);
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'international-rules',
+        ]);
+
+        Section::factory()->create([
+            'season_id' => $closedSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+        $currentSection = Section::factory()->create([
+            'season_id' => $openSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $response = $this->get('/international-rules/premier-division');
+
+        $response->assertOk();
+        $response->assertSeeText($openSeason->name);
+        $response->assertSeeText($currentSection->name);
+    }
+
     public function test_legacy_ruleset_section_route_redirects_to_canonical_section_url(): void
     {
         $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->toDateString()]]);
@@ -77,6 +159,24 @@ class RulesetHubPageTest extends TestCase
                 'section' => $section,
                 'tab' => 'fixtures-results',
             ]));
+    }
+
+    public function test_fixture_download_route_is_scoped_by_ruleset_and_section_slug(): void
+    {
+        $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->toDateString()]]);
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'international-rules',
+        ]);
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $this->assertSame(
+            '/fixtures/download/international-rules/premier-division',
+            route('fixture.download', ['ruleset' => $ruleset, 'section' => $section], false)
+        );
     }
 
     public function test_ruleset_show_respects_tab_and_section_query_parameters(): void

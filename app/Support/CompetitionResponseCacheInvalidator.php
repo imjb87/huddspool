@@ -94,6 +94,7 @@ class CompetitionResponseCacheInvalidator
 
         return [
             '/',
+            "/{$slug}",
             "/rulesets/{$slug}",
             "/tables/{$slug}/",
             "/fixtures-and-results/{$slug}/",
