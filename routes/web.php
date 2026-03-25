@@ -59,32 +59,6 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::KNOCKOUTS]))->gro
     Route::get('/knockouts', [KnockoutController::class, 'index'])->name('knockout.index');
     Route::get('/knockouts/{knockout}', [KnockoutController::class, 'show'])->name('knockout.show');
 });
-Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::HISTORY]))->group(function () {
-    Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
-    Route::get('/history/{season}', [HistoryController::class, 'season'])->name('history.season');
-    Route::get('/history/{season}/knockouts/{knockout}', function (Season $season, string $knockout) {
-        return redirect()->route('history.knockout.show', array_merge(request()->query(), [
-            'season' => $season,
-            'knockout' => $knockout,
-        ]));
-    });
-    Route::get('/history/{season}/{ruleset}', function (Season $season, Ruleset $ruleset) {
-        return redirect()->route('history.show', array_merge(request()->query(), [
-            'season' => $season,
-            'ruleset' => $ruleset,
-        ]));
-    });
-    Route::get('/history/{season}/{ruleset}/{section}', function (Season $season, Ruleset $ruleset, string $section) {
-        return redirect()->route('history.section.show', array_merge(request()->query(), [
-            'season' => $season,
-            'ruleset' => $ruleset,
-            'section' => $section,
-        ]));
-    });
-    Route::get('/{season}/knockouts/{knockout}', [KnockoutController::class, 'history'])->name('history.knockout.show');
-    Route::get('/{season}/{ruleset}', [HistoryController::class, 'show'])->name('history.show');
-    Route::get('/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
-});
 Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::VENUES]))
     ->name('venue.show');
@@ -131,6 +105,32 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->grou
     })->scopeBindings();
     Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
     Route::get('/{ruleset}/{section}', [RulesetController::class, 'section'])->name('ruleset.section.show');
+});
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::HISTORY]))->group(function () {
+    Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/{season}', [HistoryController::class, 'season'])->name('history.season');
+    Route::get('/history/{season}/knockouts/{knockout}', function (Season $season, string $knockout) {
+        return redirect()->route('history.knockout.show', array_merge(request()->query(), [
+            'season' => $season,
+            'knockout' => $knockout,
+        ]));
+    });
+    Route::get('/history/{season}/{ruleset}', function (Season $season, Ruleset $ruleset) {
+        return redirect()->route('history.show', array_merge(request()->query(), [
+            'season' => $season,
+            'ruleset' => $ruleset,
+        ]));
+    });
+    Route::get('/history/{season}/{ruleset}/{section}', function (Season $season, Ruleset $ruleset, string $section) {
+        return redirect()->route('history.section.show', array_merge(request()->query(), [
+            'season' => $season,
+            'ruleset' => $ruleset,
+            'section' => $section,
+        ]));
+    });
+    Route::get('/{season}/knockouts/{knockout}', [KnockoutController::class, 'history'])->name('history.knockout.show');
+    Route::get('/{season}/{ruleset}', [HistoryController::class, 'show'])->name('history.show');
+    Route::get('/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
 });
 Route::get('/{page}', 'App\Http\Controllers\PageController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PAGES]))

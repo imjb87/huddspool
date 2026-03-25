@@ -108,6 +108,40 @@ class RulesetHubPageTest extends TestCase
         );
     }
 
+    public function test_soft_deleted_section_releases_the_clean_slug_for_replacement(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'slug' => 'summer-2026',
+            'dates' => [now()->toDateString()],
+        ]);
+        $ruleset = Ruleset::factory()->create([
+            'slug' => 'international-rules',
+        ]);
+
+        $originalSection = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $originalSection->delete();
+        $originalSection->refresh();
+
+        $replacementSection = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $this->assertSame('premier-division-archived-'.$originalSection->id, $originalSection->slug);
+        $this->assertSame('premier-division', $replacementSection->slug);
+        $this->assertSame(
+            '/international-rules/premier-division',
+            route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $replacementSection], false)
+        );
+    }
+
     public function test_current_ruleset_section_route_resolves_the_open_season_when_history_uses_the_same_slug(): void
     {
         $closedSeason = Season::factory()->create([

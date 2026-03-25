@@ -41,10 +41,19 @@ class Section extends Model
         };
 
         static::saved($flush);
-        static::deleted($flush);
+        static::deleted(function (Section $section) use ($flush): void {
+            if ($section->trashed()) {
+                $section->releaseArchivedSlug();
+            }
+
+            $flush($section);
+        });
 
         if (in_array(SoftDeletes::class, class_uses_recursive(static::class), true)) {
-            static::restored($flush);
+            static::restored(function (Section $section) use ($flush): void {
+                $section->refreshSlug();
+                $flush($section);
+            });
             static::forceDeleted($flush);
         }
     }
@@ -251,7 +260,7 @@ class Section extends Model
         $original = $slug;
         $suffix = 1;
 
-        while (self::withTrashed()
+        while (self::query()
             ->when($ignoreId, fn (Builder $query) => $query->where('id', '!=', $ignoreId))
             ->where('season_id', $this->season_id)
             ->where('ruleset_id', $this->ruleset_id)
@@ -267,5 +276,27 @@ class Section extends Model
     protected function standingsCacheKey(): string
     {
         return sprintf('section:%d:standings', $this->id);
+    }
+
+    private function releaseArchivedSlug(): void
+    {
+        $archivedSlug = sprintf('%s-archived-%d', Str::slug($this->name) ?: 'section', $this->id);
+
+        if ($this->slug === $archivedSlug) {
+            return;
+        }
+
+        $this->forceFill(['slug' => $archivedSlug])->saveQuietly();
+    }
+
+    private function refreshSlug(): void
+    {
+        $slug = $this->generateSlug($this->name, $this->id);
+
+        if ($this->slug === $slug) {
+            return;
+        }
+
+        $this->forceFill(['slug' => $slug])->saveQuietly();
     }
 }
