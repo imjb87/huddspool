@@ -9,12 +9,16 @@
 
     const currentTheme = () => document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
+    const applyThemeMetadata = (theme) => {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+    };
+
     const applyTheme = (theme) => {
         const isDark = theme === 'dark';
 
         document.documentElement.classList.toggle('dark', isDark);
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        applyThemeMetadata(theme);
     };
 
     const persistTheme = (theme) => {
@@ -45,7 +49,9 @@
     new MutationObserver(() => {
         const theme = currentTheme();
 
-        applyTheme(theme);
+        if (document.documentElement.dataset.theme !== theme) {
+            applyThemeMetadata(theme);
+        }
 
         if (getStoredTheme() !== theme) {
             persistTheme(theme);
