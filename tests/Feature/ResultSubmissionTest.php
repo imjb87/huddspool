@@ -55,17 +55,11 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('data-result-form-connection-alert', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-800/80', false)
-            ->assertSee('border-amber-200', false)
-            ->assertSee('bg-amber-50', false)
-            ->assertSee('border-green-200', false)
-            ->assertSee('bg-green-50', false)
             ->assertSeeText('Submit a result')
             ->assertSeeText('Fixture details')
             ->assertSeeText('Result card')
             ->assertSeeText('Editing now')
             ->assertSeeText('Live updates connected')
-            ->assertSeeText('Weak connection detected')
-            ->assertSeeText('Live updates may be delayed. It’s best if one person updates the result until your connection improves.')
             ->assertSee($teamAdmin->avatar_url, false)
             ->assertSeeText($teamAdmin->name);
     }

@@ -48,9 +48,9 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         return classes[status] ?? classes.healthy;
     },
     updateConnectionState(state) {
-        const nextState = typeof state === 'string' ? state : state?.current;
+        const connectionState = typeof state === 'string' ? state : state?.current;
 
-        switch (nextState) {
+        switch (connectionState) {
             case 'connected':
                 this.connectionHealth = 'healthy';
                 this.connectionBadgeText = 'Live updates connected';
@@ -75,8 +75,13 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
                 break;
         }
     },
+    echoConnection() {
+        // Reverb currently uses Echo's Pusher-compatible connector, so the raw
+        // connection state is read from the underlying Pusher connection here.
+        return window.Echo?.connector?.pusher?.connection ?? null;
+    },
     bindConnectionStatus() {
-        const connection = window.Echo?.connector?.pusher?.connection;
+        const connection = this.echoConnection();
 
         if (!connection) {
             this.updateConnectionState('failed');
