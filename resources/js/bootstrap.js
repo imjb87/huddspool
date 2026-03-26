@@ -42,6 +42,10 @@ if (import.meta.env.VITE_REVERB_APP_KEY) {
 window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
     init() {
         if (!window.Echo || !window.Livewire) {
+            console.warn('[result-collaboration] Echo or Livewire is unavailable; collaboration channel was not initialized.', {
+                channelName,
+            });
+
             return;
         }
 
@@ -50,7 +54,14 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         window.Echo.leave(channelName);
 
         window.Echo.join(channelName)
-            .here((members) => component()?.call('syncCollaborators', members))
+            .here((members) => {
+                console.info('[result-collaboration] Connected to broadcast channel.', {
+                    channelName,
+                    members,
+                });
+
+                component()?.call('syncCollaborators', members);
+            })
             .joining((member) => component()?.call('collaboratorJoined', member))
             .leaving((member) => component()?.call('collaboratorLeft', member))
             .listen('.league-result.draft-updated', (event) => {
