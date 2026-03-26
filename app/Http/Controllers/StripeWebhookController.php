@@ -36,12 +36,11 @@ class StripeWebhookController extends Controller
 
         match ($event['type'] ?? null) {
             'checkout.session.completed' => $entry->markPaid('stripe', [
-                'payment_provider' => 'stripe',
                 'payment_status' => SeasonEntry::PAYMENT_STATUS_PAID,
                 'stripe_checkout_session_id' => $session['id'] ?? $entry->stripe_checkout_session_id,
                 'stripe_payment_intent_id' => $session['payment_intent'] ?? $entry->stripe_payment_intent_id,
                 'payment_currency' => strtoupper((string) ($session['currency'] ?? $entry->payment_currency ?? config('services.stripe.currency', 'gbp'))),
-                'payment_amount' => isset($session['amount_total']) ? number_format(((int) $session['amount_total']) / 100, 2, '.', '') : $entry->payment_amount ?? $entry->total_amount,
+                'payment_amount' => isset($session['amount_total']) ? SeasonEntry::amountFromMinorUnits((int) $session['amount_total']) : $entry->payment_amount ?? $entry->total_amount,
                 'payment_metadata' => $session['metadata'] ?? $entry->payment_metadata,
             ]),
             'checkout.session.expired' => $this->markStatus($entry, SeasonEntry::PAYMENT_STATUS_EXPIRED, $session),
@@ -89,7 +88,7 @@ class StripeWebhookController extends Controller
             'stripe_checkout_session_id' => $session['id'] ?? $entry->stripe_checkout_session_id,
             'stripe_payment_intent_id' => $session['payment_intent'] ?? $entry->stripe_payment_intent_id,
             'payment_currency' => strtoupper((string) ($session['currency'] ?? $entry->payment_currency ?? config('services.stripe.currency', 'gbp'))),
-            'payment_amount' => isset($session['amount_total']) ? number_format(((int) $session['amount_total']) / 100, 2, '.', '') : $entry->payment_amount ?? $entry->total_amount,
+            'payment_amount' => isset($session['amount_total']) ? SeasonEntry::amountFromMinorUnits((int) $session['amount_total']) : $entry->payment_amount ?? $entry->total_amount,
             'payment_metadata' => $session['metadata'] ?? $entry->payment_metadata,
         ])->save();
     }

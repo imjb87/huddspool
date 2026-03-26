@@ -102,6 +102,15 @@ class SeasonEntry extends Model
         return (int) round((float) $this->total_amount * 100);
     }
 
+    public static function amountFromMinorUnits(?int $amount): ?string
+    {
+        if ($amount === null) {
+            return null;
+        }
+
+        return number_format($amount / 100, 2, '.', '');
+    }
+
     /**
      * @return array<string, string>
      */
@@ -124,7 +133,7 @@ class SeasonEntry extends Model
     public function markPaid(string $provider = 'manual', array $attributes = []): void
     {
         $this->forceFill([
-            'payment_provider' => $attributes['payment_provider'] ?? $provider,
+            'payment_provider' => $provider,
             'payment_status' => $attributes['payment_status'] ?? self::PAYMENT_STATUS_PAID,
             'payment_completed_at' => $attributes['payment_completed_at'] ?? $this->payment_completed_at ?? now(),
             'paid_at' => $attributes['paid_at'] ?? $this->paid_at ?? now(),

@@ -63,7 +63,7 @@
                         <p class="status-row muted">
                             Payment status: {{ $entry->paymentStatusLabel() }}
                             @if ($entry->payment_completed_at)
-                                · Paid {{ $entry->payment_completed_at->format('j M Y H:i') }}
+                                (paid {{ $entry->payment_completed_at->format('j M Y H:i') }})
                             @endif
                         </p>
                     </div>

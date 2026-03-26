@@ -77,7 +77,7 @@ class StripeCheckoutService
                 ];
             });
 
-        $timestamp = (int) optional($parts->firstWhere('key', 't'))['value'];
+        $timestamp = (int) (($parts->firstWhere('key', 't')['value'] ?? 0));
         $signatures = $parts
             ->where('key', 'v1')
             ->pluck('value')
@@ -105,7 +105,7 @@ class StripeCheckoutService
             'season-entry',
             $entry->id,
             $entry->payment_status ?: SeasonEntry::PAYMENT_STATUS_PENDING,
-            optional($entry->updated_at)->timestamp ?? 0,
+            $entry->updated_at?->timestamp ?? 0,
         ]));
     }
 }
