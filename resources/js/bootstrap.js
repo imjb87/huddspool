@@ -49,7 +49,9 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
             return;
         }
 
-        const component = () => window.Livewire.find(componentId);
+        const syncUi = (members) => this.syncCollaboratorsUi?.(members);
+        const joinUi = (member) => this.collaboratorJoinedUi?.(member);
+        const leaveUi = (member) => this.collaboratorLeftUi?.(member);
 
         window.Echo.leave(channelName);
 
@@ -60,16 +62,20 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
                     members,
                 });
 
-                component()?.call('syncCollaborators', members);
+                syncUi(members);
             })
-            .joining((member) => component()?.call('collaboratorJoined', member))
-            .leaving((member) => component()?.call('collaboratorLeft', member))
+            .joining((member) => {
+                joinUi(member);
+            })
+            .leaving((member) => {
+                leaveUi(member);
+            })
             .listen('.league-result.draft-updated', (event) => {
                 if (event.client_id === clientId) {
                     return;
                 }
 
-                component()?.call('syncDraftFromBroadcast', event);
+                window.Livewire.find(componentId)?.call('syncDraftFromBroadcast', event);
             })
             .listen('.league-result.submitted', (event) => {
                 if (event.client_id === clientId || !event.result_url) {
@@ -102,5 +108,70 @@ window.resultFormFlashRow = (frameNumber) => ({
                 this.isFlashing = false;
             }, 1200);
         });
+    },
+});
+
+window.resultFormEditors = (initialCollaborators = []) => ({
+    collaboratorsUi: [],
+    initEditors() {
+        this.collaboratorsUi = [];
+        this.syncCollaboratorsUi(initialCollaborators);
+    },
+    syncCollaboratorsUi(members = []) {
+        const incomingIds = members.map((member) => Number(member.id));
+
+        this.collaboratorsUi.forEach((collaborator) => {
+            if (!incomingIds.includes(collaborator.id)) {
+                this.collaboratorLeftUi({ id: collaborator.id });
+            }
+        });
+
+        members.forEach((member) => this.collaboratorJoinedUi(member));
+    },
+    collaboratorJoinedUi(member) {
+        const collaboratorId = Number(member.id);
+
+        if (!collaboratorId) {
+            return;
+        }
+
+        const existingCollaborator = this.collaboratorsUi.find((collaborator) => collaborator.id === collaboratorId);
+
+        if (existingCollaborator) {
+            existingCollaborator.name = member.name ?? existingCollaborator.name;
+            existingCollaborator.avatar_url = member.avatar_url ?? existingCollaborator.avatar_url;
+            existingCollaborator.isVisible = true;
+
+            return;
+        }
+
+        this.collaboratorsUi.push({
+            id: collaboratorId,
+            name: member.name ?? 'Team admin',
+            avatar_url: member.avatar_url ?? '/images/user.jpg',
+            isVisible: false,
+        });
+
+        this.$nextTick(() => {
+            const collaborator = this.collaboratorsUi.find((entry) => entry.id === collaboratorId);
+
+            if (collaborator) {
+                collaborator.isVisible = true;
+            }
+        });
+    },
+    collaboratorLeftUi(member) {
+        const collaboratorId = Number(member.id);
+        const collaborator = this.collaboratorsUi.find((entry) => entry.id === collaboratorId);
+
+        if (!collaborator) {
+            return;
+        }
+
+        collaborator.isVisible = false;
+
+        window.setTimeout(() => {
+            this.collaboratorsUi = this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId);
+        }, 220);
     },
 });

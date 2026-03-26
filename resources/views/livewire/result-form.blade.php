@@ -1,57 +1,66 @@
 <form
     class="space-y-6"
     wire:submit.prevent="submit"
-    x-data="resultFormCollaboration({
-        componentId: @js($this->getId()),
-        channelName: @js($this->broadcastChannelName()),
-        clientId: @js($clientId),
-    })"
-    x-init="init()"
+    x-data="{
+        ...resultFormCollaboration({
+            componentId: @js($this->getId()),
+            channelName: @js($this->broadcastChannelName()),
+            clientId: @js($clientId),
+        }),
+        ...resultFormEditors(@js($collaborators)),
+    }"
+    x-init="initEditors(); init()"
     data-result-form
 >
     @if (! $isLocked)
         <div>
             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Editing now</p>
-            <div class="mt-3 flex items-center">
+            <div class="mt-3 flex items-center" wire:ignore>
                 <div class="isolate flex -space-x-3">
-                @foreach ($collaborators as $collaborator)
-                    <div
-                        class="relative"
-                        x-data="{ open: false }"
-                        x-on:mouseenter="open = true"
-                        x-on:mouseleave="open = false"
-                        x-on:focusin="open = true"
-                        x-on:focusout="open = false"
-                        x-on:click.prevent="open = true"
-                        x-on:click.outside="open = false"
-                    >
-                        <button
-                            type="button"
-                            class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-zinc-900 dark:focus:ring-offset-zinc-900"
-                            aria-label="{{ $collaborator['name'] }}"
-                        >
-                            <img
-                                src="{{ $collaborator['avatar_url'] }}"
-                                alt="{{ $collaborator['name'] }} avatar"
-                                class="h-9 w-9 rounded-full object-cover"
-                            >
-                        </button>
-
+                    <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
                         <div
-                            x-cloak
-                            x-show="open"
-                            x-transition:enter="transition ease-out duration-150"
-                            x-transition:enter-start="opacity-0 translate-y-1"
-                            x-transition:enter-end="opacity-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-100"
-                            x-transition:leave-start="opacity-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 translate-y-1"
-                            class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2.5 py-1 text-xs font-medium text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                            class="relative transition duration-200 ease-out"
+                            x-data="{ open: false }"
+                            x-show="collaborator.isVisible"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-95"
+                            x-on:mouseenter="open = true"
+                            x-on:mouseleave="open = false"
+                            x-on:focusin="open = true"
+                            x-on:focusout="open = false"
+                            x-on:click.prevent="open = true"
+                            x-on:click.outside="open = false"
                         >
-                            {{ $collaborator['name'] }}
+                            <button
+                                type="button"
+                                class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-zinc-900 dark:focus:ring-offset-zinc-900"
+                                :aria-label="collaborator.name"
+                            >
+                                <img
+                                    :src="collaborator.avatar_url"
+                                    :alt="`${collaborator.name} avatar`"
+                                    class="h-9 w-9 rounded-full object-cover"
+                                >
+                            </button>
+
+                            <div
+                                x-cloak
+                                x-show="open"
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-1"
+                                class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2.5 py-1 text-xs font-medium text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                                x-text="collaborator.name"
+                            ></div>
                         </div>
-                    </div>
-                @endforeach
+                    </template>
                 </div>
             </div>
             @if ($lastEditedAt)

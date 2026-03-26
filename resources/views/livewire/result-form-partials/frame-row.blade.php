@@ -14,6 +14,20 @@
     }
 @endphp
 
+@once
+    <style>
+        @keyframes result-avatar-fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+@endonce
+
 <div
     class="rounded-xl px-3 py-4 -mx-3 transition-colors duration-1000"
     wire:key="result-frame-{{ $row['number'] }}"
@@ -26,13 +40,29 @@
     <div class="space-y-3">
         <div class="flex items-center gap-3">
             @if ($row['home_selected_player'])
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                    src="{{ $row['home_selected_player']->avatar_url }}"
-                    alt="{{ $row['home_selected_player']->name }} avatar">
+                <div
+                    class="h-6 w-6 shrink-0"
+                    wire:key="result-frame-{{ $row['number'] }}-home-avatar-{{ $row['home_selected_player']->id }}"
+                >
+                    <img
+                        class="h-6 w-6 rounded-full object-cover"
+                        src="{{ $row['home_selected_player']->avatar_url }}"
+                        alt="{{ $row['home_selected_player']->name }} avatar"
+                        style="animation: result-avatar-fade-in 300ms ease-out;"
+                    >
+                </div>
             @elseif ($row['home_is_awarded'])
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                    src="{{ asset('/images/user.jpg') }}"
-                    alt="Awarded">
+                <div
+                    class="h-6 w-6 shrink-0"
+                    wire:key="result-frame-{{ $row['number'] }}-home-avatar-awarded"
+                >
+                    <img
+                        class="h-6 w-6 rounded-full object-cover"
+                        src="{{ asset('/images/user.jpg') }}"
+                        alt="Awarded"
+                        style="animation: result-avatar-fade-in 300ms ease-out;"
+                    >
+                </div>
             @else
                 <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
             @endif
@@ -66,13 +96,29 @@
 
         <div class="flex items-center gap-3">
             @if ($row['away_selected_player'])
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                    src="{{ $row['away_selected_player']->avatar_url }}"
-                    alt="{{ $row['away_selected_player']->name }} avatar">
+                <div
+                    class="h-6 w-6 shrink-0"
+                    wire:key="result-frame-{{ $row['number'] }}-away-avatar-{{ $row['away_selected_player']->id }}"
+                >
+                    <img
+                        class="h-6 w-6 rounded-full object-cover"
+                        src="{{ $row['away_selected_player']->avatar_url }}"
+                        alt="{{ $row['away_selected_player']->name }} avatar"
+                        style="animation: result-avatar-fade-in 300ms ease-out;"
+                    >
+                </div>
             @elseif ($row['away_is_awarded'])
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
-                    src="{{ asset('/images/user.jpg') }}"
-                    alt="Awarded">
+                <div
+                    class="h-6 w-6 shrink-0"
+                    wire:key="result-frame-{{ $row['number'] }}-away-avatar-awarded"
+                >
+                    <img
+                        class="h-6 w-6 rounded-full object-cover"
+                        src="{{ asset('/images/user.jpg') }}"
+                        alt="Awarded"
+                        style="animation: result-avatar-fade-in 300ms ease-out;"
+                    >
+                </div>
             @else
                 <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
             @endif
