@@ -18,7 +18,7 @@
                             <div class="space-y-2">
                                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixture details</h3>
                                 <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                    Enter the match card below. The draft stays live and in sync while you work.
+                                    Review the fixture details before entering the result.
                                 </p>
                             </div>
 
@@ -56,9 +56,9 @@
                     <section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-result-create-form-section>
                         <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
                             <div class="space-y-2">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result card</h3>
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Enter result</h3>
                                 <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                    Complete each frame exactly as it appears on the card, then submit once everything is signed off.
+                                    Complete each frame accurately, then submit the result when you're ready.
                                 </p>
                             </div>
 
