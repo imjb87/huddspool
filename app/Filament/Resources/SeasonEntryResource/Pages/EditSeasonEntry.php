@@ -29,8 +29,8 @@ class EditSeasonEntry extends EditRecord
                     /** @var SeasonEntry $entry */
                     $entry = $this->getRecord();
 
-                    $entry->markPaid();
-                    $this->refreshFormData(['paid_at']);
+                    $entry->markPaid('manual');
+                    $this->refreshFormData(['paid_at', 'payment_status', 'payment_provider', 'payment_completed_at']);
                 }),
         ];
     }

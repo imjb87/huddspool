@@ -7,8 +7,11 @@ use App\Http\Controllers\KnockoutMatchController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RulesetController;
 use App\Http\Controllers\SeasonEntryController;
+use App\Http\Controllers\SeasonEntryPaymentController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\SupportTicketController;
 use App\Support\ResponseCacheTags;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use LaravelPWA\Http\Controllers\LaravelPWAController;
 use Spatie\ResponseCache\Middlewares\CacheResponse;
@@ -72,6 +75,12 @@ Route::get('/venues/{venue}', 'App\Http\Controllers\VenueController@show')
 Route::get('/seasons/{season}/sign-up', [SeasonEntryController::class, 'show'])->name('season.entry.show');
 Route::get('/seasons/{season}/sign-up/orders/{entry:reference}', [SeasonEntryController::class, 'confirmation'])->name('season.entry.confirmation');
 Route::get('/seasons/{season}/sign-up/orders/{entry:reference}/invoice', [SeasonEntryController::class, 'invoice'])->name('season.entry.invoice');
+Route::get('/season-entry/{entry:reference}/pay', [SeasonEntryPaymentController::class, 'checkout'])->name('season.entry.payment.checkout');
+Route::get('/season-entry/{entry:reference}/payment/success', [SeasonEntryPaymentController::class, 'success'])->name('season.entry.payment.success');
+Route::get('/season-entry/{entry:reference}/payment/cancel', [SeasonEntryPaymentController::class, 'cancel'])->name('season.entry.payment.cancel');
+Route::post('/stripe/webhook', StripeWebhookController::class)
+    ->withoutMiddleware([VerifyCsrfToken::class])
+    ->name('stripe.webhook');
 Route::get('/manifest.json', [LaravelPWAController::class, 'manifestJson'])->name('laravelpwa.manifest');
 Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelpwa.offline');
 Route::middleware('auth')->group(function () {

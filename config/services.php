@@ -65,4 +65,12 @@ return [
         'user_agent' => env('NOMINATIM_USER_AGENT', env('APP_NAME', 'HuddsPool').' geocoder'),
     ],
 
+    'stripe' => [
+        'publishable_key' => env('STRIPE_PUBLISHABLE_KEY'),
+        'secret_key' => env('STRIPE_SECRET_KEY'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'currency' => env('STRIPE_CURRENCY', 'gbp'),
+        'webhook_tolerance' => (int) env('STRIPE_WEBHOOK_TOLERANCE', 300),
+    ],
+
 ];

@@ -20,6 +20,7 @@
         .reference-box { width: 228px; border: 1px solid #bbf7d0; background: #f0fdf4; padding: 12px 14px; }
         .reference-label { color: #166534; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
         .reference-value { color: #14532d; font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .status-row { margin-top: 10px; font-size: 11px; }
         .info-grid { width: 100%; margin-bottom: 26px; border-collapse: collapse; }
         .info-grid td { width: 50%; vertical-align: top; padding-right: 20px; }
         .section-title { color: #166534; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
@@ -59,6 +60,12 @@
                     <div class="reference-box">
                         <p class="reference-label">Reference number</p>
                         <p class="reference-value">{{ $entry->reference }}</p>
+                        <p class="status-row muted">
+                            Payment status: {{ $entry->paymentStatusLabel() }}
+                            @if ($entry->payment_completed_at)
+                                · Paid {{ $entry->payment_completed_at->format('j M Y H:i') }}
+                            @endif
+                        </p>
                     </div>
                 </td>
             </tr>

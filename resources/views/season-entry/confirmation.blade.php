@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $stripeAvailable = \App\Models\Setting::stripePaymentsAvailable();
+    @endphp
+
     <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-zinc-900">
         <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-8">
@@ -9,17 +13,62 @@
                         <p class="text-sm font-medium text-green-700 dark:text-green-400">Registration confirmed</p>
                         <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $season->name }}</h1>
                         <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">
-                            Your registration has been recorded. Use the reference below for your bank transfer. A copy of the invoice has been sent to {{ $entry->contact_email }}.
+                            Your registration has been recorded. A copy of the invoice has been sent to {{ $entry->contact_email }}.
                         </p>
                     </div>
 
                     <div class="space-y-8 lg:col-span-2">
+                        @if (session('payment_notice'))
+                            <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-200">
+                                {{ session('payment_notice') }}
+                            </div>
+                        @endif
+
+                        @if (session('payment_error'))
+                            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
+                                {{ session('payment_error') }}
+                            </div>
+                        @endif
+
+                        @if ($entry->isPaid())
+                            <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-4 dark:border-green-900/60 dark:bg-green-950/40">
+                                <p class="text-sm font-medium text-green-800 dark:text-green-200">Payment received</p>
+                                <p class="mt-1 text-sm text-green-700 dark:text-green-300">
+                                    This registration was marked as paid{{ $entry->payment_completed_at ? ' on '.$entry->payment_completed_at->format('j M Y H:i') : '' }}.
+                                </p>
+                            </div>
+                        @elseif ($stripeAvailable)
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 dark:border-amber-900/60 dark:bg-amber-950/40">
+                                <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Payment pending</p>
+                                <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                                    Complete payment with Stripe below. Your registration is marked as paid only after Stripe confirms the payment by webhook.
+                                </p>
+                            </div>
+                        @else
+                            <div class="rounded-xl border border-gray-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Manual payment</p>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    Stripe payments are currently unavailable. Please use the invoice reference below when arranging manual or offline payment.
+                                </p>
+                            </div>
+                        @endif
+
                         <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-4 dark:border-green-900/60 dark:bg-green-950/40">
                             <p class="text-sm font-medium text-green-800 dark:text-green-200">Reference number</p>
                             <p class="mt-1 text-2xl font-semibold tracking-wide text-green-900 dark:text-green-100">{{ $entry->reference }}</p>
+                            <p class="mt-3 text-sm text-green-800 dark:text-green-200">
+                                Payment status: {{ $entry->paymentStatusLabel() }}
+                            </p>
                         </div>
 
-                        <div class="flex justify-end">
+                        <div class="flex flex-wrap justify-end gap-3">
+                            @if ($entry->requiresPayment() && $stripeAvailable)
+                                <a href="{{ route('season.entry.payment.checkout', ['entry' => $entry->reference]) }}"
+                                   class="inline-flex items-center rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">
+                                    Pay with Stripe
+                                </a>
+                            @endif
+
                             <a href="{{ route('season.entry.invoice', ['season' => $season, 'entry' => $entry->reference]) }}"
                                target="_blank"
                                rel="noopener"

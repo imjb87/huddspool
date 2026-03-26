@@ -267,6 +267,9 @@ class Wizard extends Component
 
             $entry->update([
                 'total_amount' => $totalAmount,
+                'payment_status' => SeasonEntry::PAYMENT_STATUS_PENDING,
+                'payment_currency' => strtoupper((string) config('services.stripe.currency', 'gbp')),
+                'payment_amount' => $totalAmount,
             ]);
 
             return $entry->fresh([

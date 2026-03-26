@@ -66,9 +66,32 @@ class SeasonEntryResource extends Resource
                             ->prefix('£')
                             ->disabled()
                             ->dehydrated(false),
+                        Forms\Components\TextInput::make('payment_status')
+                            ->label('Payment status')
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\TextInput::make('payment_provider')
+                            ->label('Payment provider')
+                            ->disabled()
+                            ->dehydrated(false),
                         Forms\Components\DateTimePicker::make('paid_at')
                             ->label('Paid at')
                             ->seconds(false),
+                        Forms\Components\DateTimePicker::make('payment_completed_at')
+                            ->label('Payment completed at')
+                            ->seconds(false)
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\TextInput::make('stripe_checkout_session_id')
+                            ->label('Stripe checkout session')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('stripe_payment_intent_id')
+                            ->label('Stripe payment intent')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('notes')
                             ->disabled()
                             ->dehydrated(false)
@@ -97,6 +120,17 @@ class SeasonEntryResource extends Resource
                     ->label('Total')
                     ->money('GBP')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('payment_status')
+                    ->label('Payment status')
+                    ->badge()
+                    ->formatStateUsing(fn (SeasonEntry $record): string => $record->paymentStatusLabel())
+                    ->color(fn (?string $state): string => match ($state) {
+                        SeasonEntry::PAYMENT_STATUS_PAID => 'success',
+                        SeasonEntry::PAYMENT_STATUS_CHECKOUT_CREATED => 'warning',
+                        SeasonEntry::PAYMENT_STATUS_EXPIRED,
+                        SeasonEntry::PAYMENT_STATUS_FAILED => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\IconColumn::make('paid_at')
                     ->label('Paid')
                     ->getStateUsing(fn (SeasonEntry $record): bool => $record->isPaid())
@@ -113,8 +147,12 @@ class SeasonEntryResource extends Resource
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (SeasonEntry $record): bool => ! $record->isPaid())
-                    ->action(fn (SeasonEntry $record) => $record->markPaid()),
+                    ->action(fn (SeasonEntry $record) => $record->markPaid('manual')),
                 EditAction::make()->color('warning'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('payment_status')
+                    ->options(SeasonEntry::paymentStatusOptions()),
             ])
             ->defaultSort('created_at', 'desc');
     }
