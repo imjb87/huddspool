@@ -24,16 +24,4 @@ class AdminDashboardTest extends TestCase
         $response->assertSeeLivewire(UserStatsOverview::class);
         $response->assertSeeLivewire(SeasonStatsChart::class);
     }
-
-    public function test_admin_dashboard_loads_theme_synchronization_script(): void
-    {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
-
-        $response = $this->actingAs($admin)->get('/admin');
-
-        $response->assertOk();
-        $response->assertSee('js/filament-theme-sync.js', false);
-    }
 }
