@@ -11,6 +11,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -36,6 +37,8 @@ class CpPanelProvider extends PanelProvider
             ->assets([
                 Css::make('filament-overrides', public_path('css/filament-overrides.css'))
                     ->relativePublicPath('css/filament-overrides.css'),
+                Js::make('filament-theme-sync', public_path('js/filament-theme-sync.js'))
+                    ->relativePublicPath('js/filament-theme-sync.js'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
