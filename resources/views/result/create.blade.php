@@ -18,7 +18,7 @@
                             <div class="space-y-2">
                                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixture details</h3>
                                 <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                    Enter the match card below. The draft stays live for both team admins while you work.
+                                    Enter the match card below. The draft stays live and in sync while you work.
                                 </p>
                             </div>
 
