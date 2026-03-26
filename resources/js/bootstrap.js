@@ -175,3 +175,38 @@ window.resultFormEditors = (initialCollaborators = []) => ({
         }, 220);
     },
 });
+
+window.resultFormPresenceTooltip = () => ({
+    open: false,
+    isPositioned: false,
+    tooltipStyle: '',
+    showTooltip() {
+        this.open = true;
+        this.isPositioned = false;
+
+        this.$nextTick(() => {
+            this.positionTooltip();
+            this.isPositioned = true;
+        });
+    },
+    hideTooltip() {
+        this.open = false;
+        this.isPositioned = false;
+    },
+    positionTooltip() {
+        if (!this.$refs.trigger || !this.$refs.tooltip) {
+            return;
+        }
+
+        const viewportPadding = 8;
+        const triggerBounds = this.$refs.trigger.getBoundingClientRect();
+        const tooltipWidth = this.$refs.tooltip.offsetWidth;
+        const centeredLeft = triggerBounds.left + (triggerBounds.width / 2);
+        const clampedLeft = Math.max(
+            viewportPadding + (tooltipWidth / 2),
+            Math.min(window.innerWidth - viewportPadding - (tooltipWidth / 2), centeredLeft),
+        );
+
+        this.tooltipStyle = `left:${clampedLeft}px;top:${triggerBounds.top - 8}px;`;
+    },
+});

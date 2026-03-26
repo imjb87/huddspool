@@ -14,7 +14,7 @@
 >
     @if (! $isLocked)
         <div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 <span x-text="collaboratorsUi.length === 1 ? '1 person is here' : `${collaboratorsUi.length} people are here`"></span>
             </p>
             <div class="mt-3 flex items-center" wire:ignore>
@@ -22,7 +22,7 @@
                     <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
                         <div
                             class="relative transition duration-200 ease-out"
-                            x-data="{ open: false }"
+                            x-data="resultFormPresenceTooltip()"
                             x-show="collaborator.isVisible"
                             x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 scale-95"
@@ -30,17 +30,18 @@
                             x-transition:leave="transition ease-in duration-200"
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95"
-                            x-on:mouseenter="open = true"
-                            x-on:mouseleave="open = false"
-                            x-on:focusin="open = true"
-                            x-on:focusout="open = false"
-                            x-on:click.prevent="open = true"
-                            x-on:click.outside="open = false"
+                            x-on:mouseenter="showTooltip()"
+                            x-on:mouseleave="hideTooltip()"
+                            x-on:focusin="showTooltip()"
+                            x-on:focusout="hideTooltip()"
+                            x-on:click.prevent="showTooltip()"
+                            x-on:click.outside="hideTooltip()"
                         >
                             <button
                                 type="button"
                                 class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-zinc-900 dark:focus:ring-offset-zinc-900"
                                 :aria-label="collaborator.name"
+                                x-ref="trigger"
                             >
                                 <img
                                     :src="collaborator.avatar_url"
@@ -49,18 +50,16 @@
                                 >
                             </button>
 
-                            <div
-                                x-cloak
-                                x-show="open"
-                                x-transition:enter="transition ease-out duration-150"
-                                x-transition:enter-start="opacity-0 translate-y-1"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-100"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2.5 py-1 text-xs font-medium text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
-                                x-text="collaborator.name"
-                            ></div>
+                            <template x-teleport="body">
+                                <div
+                                    x-cloak
+                                    x-show="open"
+                                    x-ref="tooltip"
+                                    class="fixed z-[100] max-w-[min(18rem,calc(100vw-1rem))] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium text-white break-words shadow-sm transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
+                                    :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
+                                    x-text="collaborator.name"
+                                ></div>
+                            </template>
                         </div>
                     </template>
                 </div>
