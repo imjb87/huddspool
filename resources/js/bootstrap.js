@@ -40,14 +40,65 @@ if (import.meta.env.VITE_REVERB_APP_KEY) {
 }
 
 window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
+    connectionHealth: 'healthy',
+    connectionBadgeText: 'Live updates connected',
+    connectionHeading: 'Live syncing is healthy',
+    connectionMessage: '',
+    statusClassName(status, classes) {
+        return classes[status] ?? classes.healthy;
+    },
+    updateConnectionState(state) {
+        const nextState = typeof state === 'string' ? state : state?.current;
+
+        switch (nextState) {
+            case 'connected':
+                this.connectionHealth = 'healthy';
+                this.connectionBadgeText = 'Live updates connected';
+                this.connectionHeading = 'Live syncing is healthy';
+                this.connectionMessage = '';
+                break;
+            case 'connecting':
+            case 'initialized':
+            case 'unavailable':
+                this.connectionHealth = 'weak';
+                this.connectionBadgeText = 'Weak connection';
+                this.connectionHeading = 'Weak connection detected';
+                this.connectionMessage = 'Live updates may be delayed. It’s best if one person updates the result until your connection improves.';
+                break;
+            case 'disconnected':
+            case 'failed':
+            default:
+                this.connectionHealth = 'lost';
+                this.connectionBadgeText = 'Live updates disconnected';
+                this.connectionHeading = 'Connection lost';
+                this.connectionMessage = 'Live syncing is currently offline. Changes may be delayed or overwritten until the connection returns, so it’s best if one person updates the result for now.';
+                break;
+        }
+    },
+    bindConnectionStatus() {
+        const connection = window.Echo?.connector?.pusher?.connection;
+
+        if (!connection) {
+            this.updateConnectionState('failed');
+
+            return;
+        }
+
+        this.updateConnectionState(connection.state);
+        connection.bind('state_change', (states) => this.updateConnectionState(states.current));
+        connection.bind('error', () => this.updateConnectionState('failed'));
+    },
     init() {
         if (!window.Echo || !window.Livewire) {
+            this.updateConnectionState('failed');
             console.warn('[result-collaboration] Echo or Livewire is unavailable; collaboration channel was not initialized.', {
                 channelName,
             });
 
             return;
         }
+
+        this.bindConnectionStatus();
 
         const syncUi = (members) => this.syncCollaboratorsUi?.(members);
         const joinUi = (member) => this.collaboratorJoinedUi?.(member);
