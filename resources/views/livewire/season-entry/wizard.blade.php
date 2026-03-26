@@ -55,7 +55,7 @@
                                 <p class="{{ $sectionBodyClasses }}">Add any knockout entries you want to include in this registration.</p>
                             @else
                                 <h2 class="{{ $sectionHeadingClasses }}">Review</h2>
-                                <p class="{{ $sectionBodyClasses }}">Review the details and total before you confirm the registration.</p>
+                                <p class="{{ $sectionBodyClasses }}">Review the details, choose how you want to pay, and then confirm the registration.</p>
                                 <div class="mt-4 max-w-sm space-y-2 text-sm leading-6 text-amber-700 dark:text-amber-300">
                                     <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M18 10A8 8 0 11.001 10 8 8 0 0118 10zm-8.75-3.75a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zM10 13a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
@@ -331,9 +331,51 @@
                                         </div>
                                     </section>
 
+                                    <section class="space-y-4">
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Checkout</h3>
+                                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose whether to pay offline with the reference or continue to Stripe after you submit.</p>
+                                        </div>
+
+                                        <div class="space-y-3">
+                                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                                <input
+                                                    wire:model.live="paymentMethod"
+                                                    type="radio"
+                                                    value="{{ \App\Models\SeasonEntry::PAYMENT_METHOD_OFFLINE }}"
+                                                    class="mt-1 h-4 w-4 border-gray-300 text-green-700 focus:ring-green-700 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:ring-green-500"
+                                                >
+                                                <span class="space-y-1">
+                                                    <span class="block text-sm font-semibold text-gray-900 dark:text-gray-100">Offline payment</span>
+                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">Finish registration now and use the reference number on the confirmation page and invoice.</span>
+                                                </span>
+                                            </label>
+
+                                            @if ($stripeAvailable)
+                                                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                                    <input
+                                                        wire:model.live="paymentMethod"
+                                                        type="radio"
+                                                        value="{{ \App\Models\SeasonEntry::PAYMENT_METHOD_ONLINE }}"
+                                                        class="mt-1 h-4 w-4 border-gray-300 text-green-700 focus:ring-green-700 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:ring-green-500"
+                                                    >
+                                                    <span class="space-y-1">
+                                                        <span class="block text-sm font-semibold text-gray-900 dark:text-gray-100">Online payment</span>
+                                                        <span class="block text-sm text-gray-500 dark:text-gray-400">Submit the registration and continue straight to Stripe Checkout to pay online.</span>
+                                                    </span>
+                                                </label>
+                                            @else
+                                                <div class="rounded-xl border border-gray-200 bg-white px-4 py-4 text-sm text-gray-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-gray-400">
+                                                    Online payment is not available right now, so this registration will be submitted for offline payment.
+                                                </div>
+                                            @endif
+                                        </div>
+                                        @error('paymentMethod') <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                                    </section>
+
                                     <div class="flex justify-end">
                                         <button type="button" wire:click="submit" class="{{ $buttonClasses }}">
-                                            Confirm registration
+                                            {{ $paymentMethod === \App\Models\SeasonEntry::PAYMENT_METHOD_ONLINE ? 'Continue to payment' : 'Confirm registration' }}
                                         </button>
                                     </div>
                                 </div>

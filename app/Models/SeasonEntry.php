@@ -23,6 +23,10 @@ class SeasonEntry extends Model
 
     public const PAYMENT_STATUS_FAILED = 'failed';
 
+    public const PAYMENT_METHOD_OFFLINE = 'offline';
+
+    public const PAYMENT_METHOD_ONLINE = 'online';
+
     protected $fillable = [
         'season_id',
         'reference',
@@ -34,6 +38,7 @@ class SeasonEntry extends Model
         'venue_address',
         'venue_telephone',
         'notes',
+        'payment_method',
         'payment_provider',
         'payment_status',
         'stripe_checkout_session_id',
@@ -95,6 +100,16 @@ class SeasonEntry extends Model
     public function requiresPayment(): bool
     {
         return ! $this->isPaid() && $this->totalAmountInMinorUnits() > 0;
+    }
+
+    public function selectedOnlinePayment(): bool
+    {
+        return $this->payment_method === self::PAYMENT_METHOD_ONLINE;
+    }
+
+    public function selectedOfflinePayment(): bool
+    {
+        return $this->payment_method === self::PAYMENT_METHOD_OFFLINE;
     }
 
     public function totalAmountInMinorUnits(): int

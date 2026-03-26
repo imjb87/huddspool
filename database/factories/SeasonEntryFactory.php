@@ -30,6 +30,7 @@ class SeasonEntryFactory extends Factory
             'venue_address' => fake()->address(),
             'venue_telephone' => fake()->phoneNumber(),
             'notes' => fake()->optional()->sentence(),
+            'payment_method' => SeasonEntry::PAYMENT_METHOD_OFFLINE,
             'total_amount' => 25,
             'paid_at' => null,
         ];

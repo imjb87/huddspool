@@ -3,6 +3,7 @@
 @section('content')
     @php
         $stripeAvailable = \App\Models\Setting::stripePaymentsAvailable();
+        $showStripeRetry = $entry->requiresPayment() && $stripeAvailable && ! $entry->selectedOfflinePayment();
     @endphp
 
     <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-zinc-900">
@@ -37,7 +38,7 @@
                                     This registration was marked as paid{{ $entry->payment_completed_at ? ' on '.$entry->payment_completed_at->format('j M Y H:i') : '' }}.
                                 </p>
                             </div>
-                        @elseif ($stripeAvailable)
+                        @elseif ($showStripeRetry)
                             <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 dark:border-amber-900/60 dark:bg-amber-950/40">
                                 <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Payment pending</p>
                                 <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
@@ -46,9 +47,11 @@
                             </div>
                         @else
                             <div class="rounded-xl border border-gray-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Manual payment</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $entry->selectedOfflinePayment() ? 'Offline payment selected' : 'Manual payment' }}</p>
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    Stripe payments are currently unavailable. Please use the invoice reference below when arranging manual or offline payment.
+                                    {{ $entry->selectedOfflinePayment()
+                                        ? 'This registration was submitted for offline payment. Please use the invoice reference below when arranging payment.'
+                                        : 'Stripe payments are currently unavailable. Please use the invoice reference below when arranging manual or offline payment.' }}
                                 </p>
                             </div>
                         @endif
@@ -62,10 +65,10 @@
                         </div>
 
                         <div class="flex flex-wrap justify-end gap-3">
-                            @if ($entry->requiresPayment() && $stripeAvailable)
+                            @if ($showStripeRetry)
                                 <a href="{{ route('season.entry.payment.checkout', ['entry' => $entry->reference]) }}"
                                    class="inline-flex items-center rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">
-                                    Pay with Stripe
+                                    Complete online payment
                                 </a>
                             @endif
 

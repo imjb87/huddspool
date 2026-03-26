@@ -25,6 +25,11 @@ class SeasonEntryPaymentController extends Controller
                 ->with('payment_notice', 'This registration does not currently require an online payment.');
         }
 
+        if ($entry->selectedOfflinePayment()) {
+            return $this->redirectToConfirmation($entry)
+                ->with('payment_notice', 'This registration was submitted for offline payment. Use the reference on the confirmation page.');
+        }
+
         if (! Setting::stripePaymentsAvailable()) {
             return $this->redirectToConfirmation($entry)
                 ->with('payment_error', 'Stripe payments are currently unavailable. Please use the invoice reference for manual payment.');

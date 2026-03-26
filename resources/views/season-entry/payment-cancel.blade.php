@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $stripeAvailable = \App\Models\Setting::stripePaymentsAvailable();
+    @endphp
+
     <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-zinc-900">
         <div class="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-6">
@@ -21,6 +25,12 @@
                        class="inline-flex items-center rounded-full bg-green-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 dark:bg-green-600 dark:hover:bg-green-500">
                         Back to registration
                     </a>
+                    @if ($entry->requiresPayment() && $stripeAvailable && ! $entry->selectedOfflinePayment())
+                        <a href="{{ route('season.entry.payment.checkout', ['entry' => $entry->reference]) }}"
+                           class="inline-flex items-center rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">
+                            Try Stripe again
+                        </a>
+                    @endif
                     <a href="{{ route('season.entry.invoice', ['season' => $entry->season, 'entry' => $entry->reference]) }}"
                        class="inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-200 dark:hover:bg-zinc-800">
                         Invoice

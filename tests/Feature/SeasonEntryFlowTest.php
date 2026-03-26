@@ -131,6 +131,7 @@ class SeasonEntryFlowTest extends TestCase
                     'entrant_name' => 'Newcomers',
                 ],
             ])
+            ->set('paymentMethod', SeasonEntry::PAYMENT_METHOD_OFFLINE)
             ->call('submit');
 
         $entry = SeasonEntry::query()
@@ -143,6 +144,7 @@ class SeasonEntryFlowTest extends TestCase
         ]));
 
         $this->assertNotNull($entry->reference);
+        $this->assertSame(SeasonEntry::PAYMENT_METHOD_OFFLINE, $entry->payment_method);
         $this->assertSame('66.00', $entry->total_amount);
         $this->assertSame(SeasonEntry::PAYMENT_STATUS_PENDING, $entry->payment_status);
         $this->assertSame('GBP', $entry->payment_currency);
