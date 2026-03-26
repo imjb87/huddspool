@@ -14,7 +14,9 @@
 >
     @if (! $isLocked)
         <div>
-            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Editing now</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                <span x-text="collaboratorsUi.length === 1 ? '1 person is here' : `${collaboratorsUi.length} people are here`"></span>
+            </p>
             <div class="mt-3 flex items-center" wire:ignore>
                 <div class="isolate flex -space-x-3">
                     <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
