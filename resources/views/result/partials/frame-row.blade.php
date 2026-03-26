@@ -8,12 +8,14 @@
             'playerId' => $frame->home_player_id,
             'player' => $frame->homePlayer,
             'score' => $frame->home_score,
+            'opponentScore' => $frame->away_score,
         ])
 
         @include('result.partials.frame-side', [
             'playerId' => $frame->away_player_id,
             'player' => $frame->awayPlayer,
             'score' => $frame->away_score,
+            'opponentScore' => $frame->home_score,
         ])
     </div>
 </div>

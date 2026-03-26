@@ -163,6 +163,8 @@ class ResultShowTest extends TestCase
             ->assertSee('data-result-card-frames', false)
             ->assertSee('data-result-score-pill', false)
             ->assertSee('data-result-frame-score-pill', false)
+            ->assertSee('from-green-900 via-green-800 to-green-700', false)
+            ->assertSee('from-red-900 via-red-800 to-red-700', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Result information')

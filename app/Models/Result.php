@@ -46,6 +46,9 @@ class Result extends Model
         'is_overridden',
         'submitted_by',
         'submitted_at',
+        'draft_version',
+        'draft_updated_by',
+        'draft_state',
         'section_id',
         'ruleset_id',
     ];
@@ -59,6 +62,7 @@ class Result extends Model
         'is_confirmed' => 'boolean',
         'is_overridden' => 'boolean',
         'submitted_at' => 'datetime',
+        'draft_state' => 'array',
     ];
 
     /**
@@ -80,6 +84,11 @@ class Result extends Model
     public function submittedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'submitted_by')->withTrashed();
+    }
+
+    public function draftUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'draft_updated_by')->withTrashed();
     }
 
     public function section(): BelongsTo

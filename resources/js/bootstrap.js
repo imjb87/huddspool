@@ -10,7 +10,11 @@ window._ = _;
  */
 
 import axios from 'axios';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
 window.axios = axios;
+window.Pusher = Pusher;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -20,20 +24,72 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * allows your team to easily build robust real-time web applications.
  */
 
-// import Echo from 'laravel-echo';
+if (import.meta.env.VITE_REVERB_APP_KEY) {
+    const reverbScheme = import.meta.env.VITE_REVERB_SCHEME ?? 'https';
+    const forceTls = reverbScheme === 'https' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
-// import Pusher from 'pusher-js';
-// window.Pusher = Pusher;
+    window.Echo = new Echo({
+        broadcaster: 'reverb',
+        key: import.meta.env.VITE_REVERB_APP_KEY,
+        wsHost: import.meta.env.VITE_REVERB_HOST,
+        wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 80),
+        wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
+        forceTLS: forceTls,
+        enabledTransports: ['ws', 'wss'],
+    });
+}
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: import.meta.env.VITE_PUSHER_APP_KEY,
-//     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-//     wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-//     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-//     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-//     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-//     enabledTransports: ['ws', 'wss'],
-// });
+window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
+    init() {
+        if (!window.Echo || !window.Livewire) {
+            return;
+        }
 
+        const component = () => window.Livewire.find(componentId);
 
+        window.Echo.leave(channelName);
+
+        window.Echo.join(channelName)
+            .here((members) => component()?.call('syncCollaborators', members))
+            .joining((member) => component()?.call('collaboratorJoined', member))
+            .leaving((member) => component()?.call('collaboratorLeft', member))
+            .listen('.league-result.draft-updated', (event) => {
+                if (event.client_id === clientId) {
+                    return;
+                }
+
+                component()?.call('syncDraftFromBroadcast', event);
+            })
+            .listen('.league-result.submitted', (event) => {
+                if (event.client_id === clientId || !event.result_url) {
+                    return;
+                }
+
+                window.location.assign(event.result_url);
+            });
+    },
+});
+
+window.resultFormFlashRow = (frameNumber) => ({
+    isFlashing: false,
+    flashTimeoutId: null,
+    flashIfIncluded(frameNumbers) {
+        if (!Array.isArray(frameNumbers) || !frameNumbers.includes(frameNumber)) {
+            return;
+        }
+
+        this.isFlashing = false;
+
+        window.requestAnimationFrame(() => {
+            this.isFlashing = true;
+
+            if (this.flashTimeoutId) {
+                window.clearTimeout(this.flashTimeoutId);
+            }
+
+            this.flashTimeoutId = window.setTimeout(() => {
+                this.isFlashing = false;
+            }, 1200);
+        });
+    },
+});

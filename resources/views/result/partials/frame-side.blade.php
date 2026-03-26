@@ -1,3 +1,13 @@
+@php
+    $scorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
+
+    if ((int) $score === 1 && (int) $opponentScore === 0) {
+        $scorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
+    } elseif ((int) $score === 0 && (int) $opponentScore === 1) {
+        $scorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
+    }
+@endphp
+
 <div class="flex items-center gap-3">
     <div class="min-w-0 flex-1">
         @if ($playerId)
@@ -19,7 +29,7 @@
     </div>
 
     <div class="shrink-0">
-        <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700"
+        <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full text-center text-xs font-extrabold {{ $scorePillClasses }}"
             data-result-frame-score-pill>
             {{ $score }}
         </div>

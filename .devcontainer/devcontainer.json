@@ -14,6 +14,7 @@
   "overrideCommand": false,
   "updateRemoteUserUID": false,
   "shutdownAction": "stopCompose",
+  "forwardPorts": [80, 5173, 8081],
   "customizations": {
     "vscode": {
       "extensions": [],

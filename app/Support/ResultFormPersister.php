@@ -10,25 +10,60 @@ use Illuminate\Support\Facades\DB;
 class ResultFormPersister
 {
     /**
-     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
+     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
      */
-    public function persist(Fixture $fixture, ?Result $result, array $frames, bool $lock): Result
+    public function persistDraft(Fixture $fixture, ?Result $result, array $draftFrames, int $updatedBy): Result
     {
-        $isOverridden = $result?->is_overridden ?? 0;
-        $scores = $this->scoresFromFrames($frames);
+        return $this->persist(
+            fixture: $fixture,
+            result: $result,
+            draftFrames: $draftFrames,
+            completedFrames: $this->completedFramesFromDraft($draftFrames),
+            confirmResult: false,
+            updatedBy: $updatedBy,
+        );
+    }
 
-        return DB::transaction(function () use ($fixture, $result, $frames, $lock, $isOverridden, $scores) {
+    /**
+     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
+     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $completedFrames
+     */
+    public function submit(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, int $updatedBy): Result
+    {
+        return $this->persist(
+            fixture: $fixture,
+            result: $result,
+            draftFrames: $draftFrames,
+            completedFrames: $completedFrames,
+            confirmResult: true,
+            updatedBy: $updatedBy,
+        );
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
+     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $completedFrames
+     */
+    private function persist(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, bool $confirmResult, int $updatedBy): Result
+    {
+        $isOverridden = $result?->is_overridden ?? false;
+        $scores = $this->scoresFromFrames($completedFrames);
+
+        return DB::transaction(function () use ($fixture, $result, $draftFrames, $completedFrames, $confirmResult, $updatedBy, $isOverridden, $scores) {
             $attributes = [
                 'home_score' => $scores['home_score'],
                 'away_score' => $scores['away_score'],
-                'is_confirmed' => $lock,
+                'is_confirmed' => $confirmResult,
                 'is_overridden' => $isOverridden,
+                'draft_version' => (int) ($result?->draft_version ?? 0) + 1,
+                'draft_updated_by' => $updatedBy,
+                'draft_state' => $draftFrames,
                 'section_id' => $fixture->section_id,
                 'ruleset_id' => $fixture->ruleset_id,
             ];
 
-            if ($lock) {
-                $attributes['submitted_by'] = auth()->id();
+            if ($confirmResult) {
+                $attributes['submitted_by'] = $updatedBy;
                 $attributes['submitted_at'] = now();
             }
 
@@ -44,9 +79,12 @@ class ResultFormPersister
                 $result->update($attributes);
             }
 
-            $this->syncPersistedFrames($result, array_values($frames));
+            $this->syncPersistedFrames($result, array_values($completedFrames));
 
-            return $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
+            return $result->fresh([
+                'frames' => fn ($query) => $query->orderBy('id'),
+                'draftUpdatedBy',
+            ]);
         });
     }
 
@@ -60,6 +98,41 @@ class ResultFormPersister
             'home_score' => array_sum(array_column($frames, 'home_score')),
             'away_score' => array_sum(array_column($frames, 'away_score')),
         ];
+    }
+
+    /**
+     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
+     * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
+     */
+    private function completedFramesFromDraft(array $draftFrames): array
+    {
+        $frames = [];
+
+        foreach ($draftFrames as $frame) {
+            $homePlayerId = $this->normalizePlayerId($frame['home_player_id'] ?? null);
+            $awayPlayerId = $this->normalizePlayerId($frame['away_player_id'] ?? null);
+            $homeScore = (int) ($frame['home_score'] ?? 0);
+            $awayScore = (int) ($frame['away_score'] ?? 0);
+
+            $isComplete = $homePlayerId !== null
+                && $awayPlayerId !== null
+                && in_array($homeScore, [0, 1], true)
+                && in_array($awayScore, [0, 1], true)
+                && ($homeScore + $awayScore) === 1;
+
+            if (! $isComplete) {
+                continue;
+            }
+
+            $frames[] = [
+                'home_player_id' => $homePlayerId,
+                'away_player_id' => $awayPlayerId,
+                'home_score' => $homeScore,
+                'away_score' => $awayScore,
+            ];
+        }
+
+        return $frames;
     }
 
     /**
@@ -85,5 +158,14 @@ class ResultFormPersister
             ->slice(count($frames))
             ->each
             ->delete();
+    }
+
+    private function normalizePlayerId(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (int) $value;
     }
 }

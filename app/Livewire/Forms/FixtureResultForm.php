@@ -32,6 +32,7 @@ class FixtureResultForm extends Form
 
     public function updatedFrames($value, $key): void
     {
+        $this->syncOpposingFrameScore($value, $key);
         $this->recalculateScores();
     }
 
@@ -165,6 +166,54 @@ class FixtureResultForm extends Form
         return true;
     }
 
+    /**
+     * @return array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>
+     */
+    public function draftFrames(): array
+    {
+        $draftFrames = [];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $frame = $this->frames[$i] ?? [];
+
+            $draftFrames[$i] = [
+                'home_player_id' => $frame['home_player_id'] ?? null,
+                'away_player_id' => $frame['away_player_id'] ?? null,
+                'home_score' => $this->normalizeScore($frame['home_score'] ?? 0),
+                'away_score' => $this->normalizeScore($frame['away_score'] ?? 0),
+            ];
+        }
+
+        return $draftFrames;
+    }
+
+    public function draftFramesAreEmpty(): bool
+    {
+        foreach ($this->draftFrames() as $frame) {
+            if (($frame['home_player_id'] ?? null) !== null && ($frame['home_player_id'] ?? null) !== '') {
+                return false;
+            }
+
+            if (($frame['away_player_id'] ?? null) !== null && ($frame['away_player_id'] ?? null) !== '') {
+                return false;
+            }
+
+            if (($frame['home_score'] ?? 0) > 0 || ($frame['away_score'] ?? 0) > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null  $draftFrames
+     */
+    public function matchesDraftState(?array $draftFrames): bool
+    {
+        return $this->draftFrames() === $this->normalizeDraftFrames($draftFrames);
+    }
+
     private function validateSharedRules(array $frames): void
     {
         $rules = [
@@ -219,6 +268,22 @@ class FixtureResultForm extends Form
         return (int) $value;
     }
 
+    private function syncOpposingFrameScore(mixed $value, mixed $key): void
+    {
+        if (! is_string($key) || ! is_numeric($value) || (int) $value !== 1) {
+            return;
+        }
+
+        if (! preg_match('/^(?<frame>\d+)\.(?<side>home|away)_score$/', $key, $matches)) {
+            return;
+        }
+
+        $frameNumber = (int) $matches['frame'];
+        $opposingSide = $matches['side'] === 'home' ? 'away' : 'home';
+
+        $this->frames[$frameNumber]["{$opposingSide}_score"] = 0;
+    }
+
     /**
      * @param  Collection<int, Frame>  $frames
      * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
@@ -268,11 +333,11 @@ class FixtureResultForm extends Form
     private function mergeDraftFramesIntoState(array $state, array $draftFrames): array
     {
         for ($i = 1; $i <= 10; $i++) {
-            if (! array_key_exists($i, $draftFrames)) {
+            $draftFrame = $draftFrames[$i] ?? $draftFrames[(string) $i] ?? null;
+
+            if (! is_array($draftFrame)) {
                 continue;
             }
-
-            $draftFrame = $draftFrames[$i];
 
             $state[$i] = [
                 'home_player_id' => $draftFrame['home_player_id'] ?? null,
@@ -283,6 +348,15 @@ class FixtureResultForm extends Form
         }
 
         return $state;
+    }
+
+    /**
+     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null  $draftFrames
+     * @return array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>
+     */
+    private function normalizeDraftFrames(?array $draftFrames): array
+    {
+        return $this->mergeDraftFramesIntoState($this->emptyFrames(), $draftFrames ?? []);
     }
 
     private function recalculateScores(): void

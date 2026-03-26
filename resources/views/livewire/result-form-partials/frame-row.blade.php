@@ -1,4 +1,26 @@
-<div class="py-4" wire:key="result-frame-{{ $row['number'] }}">
+@php
+    $homeScore = (int) data_get($form->frames, $row['number'].'.home_score', 0);
+    $awayScore = (int) data_get($form->frames, $row['number'].'.away_score', 0);
+
+    $homeScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
+    $awayScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
+
+    if ($homeScore === 1 && $awayScore === 0) {
+        $homeScorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
+        $awayScorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
+    } elseif ($homeScore === 0 && $awayScore === 1) {
+        $homeScorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
+        $awayScorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
+    }
+@endphp
+
+<div
+    class="rounded-xl px-3 py-4 -mx-3 transition-colors duration-1000"
+    wire:key="result-frame-{{ $row['number'] }}"
+    x-data="resultFormFlashRow({{ $row['number'] }})"
+    x-on:result-frames-synced.window="flashIfIncluded($event.detail.frameNumbers ?? [])"
+    :class="isFlashing ? 'bg-gray-100 dark:bg-zinc-800/80' : 'bg-transparent'"
+>
     <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">Frame {{ $row['number'] }}</p>
 
     <div class="space-y-3">
@@ -28,11 +50,11 @@
             </select>
 
             <div class="shrink-0">
-                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700">
+                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $homeScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.home_score"
                         name="form.frames.{{ $row['number'] }}.home_score"
-                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-gray-700 [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-200 dark:[color-scheme:dark]"
+                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
                         <option value="0">0</option>
@@ -68,11 +90,11 @@
             </select>
 
             <div class="shrink-0">
-                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700">
+                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $awayScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.away_score"
                         name="form.frames.{{ $row['number'] }}.away_score"
-                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-gray-700 [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:text-gray-200 dark:[color-scheme:dark]"
+                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
                         <option value="0">0</option>

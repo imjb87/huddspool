@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Events\LeagueResultDraftUpdated;
+use App\Events\LeagueResultSubmitted;
 use App\Livewire\ResultForm;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Fixture;
-use App\Models\FixtureResultLock;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Markdown;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
@@ -24,6 +27,13 @@ use Tests\TestCase;
 class ResultSubmissionTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Http::fake();
+    }
 
     public function test_result_create_route_displays_the_redesigned_submission_layout(): void
     {
@@ -43,14 +53,22 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('data-result-form-frames', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-800/80', false)
+            ->assertDontSee('border-amber-200', false)
+            ->assertDontSee('bg-amber-50', false)
+            ->assertDontSee('border-green-200', false)
+            ->assertDontSee('bg-green-50', false)
             ->assertSeeText('Submit a result')
             ->assertSeeText('Fixture details')
-            ->assertSeeText('Result card');
+            ->assertSeeText('Result card')
+            ->assertSeeText('Editing now')
+            ->assertSee($teamAdmin->avatar_url, false)
+            ->assertSeeText($teamAdmin->name);
     }
 
     public function test_team_admin_can_save_partial_frames(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
+        Event::fake([LeagueResultDraftUpdated::class]);
         Mail::fake();
 
         $season = Season::factory()->create(['is_open' => true]);
@@ -111,9 +129,13 @@ class ResultSubmissionTest extends TestCase
         $this->assertSame(0, $result->away_score);
         $this->assertSame(0, $result->submitted_by);
         $this->assertNull($result->submitted_at);
+        $this->assertGreaterThan(0, $result->draft_version);
+        $this->assertSame($teamAdmin->id, $result->draft_updated_by);
+        $this->assertSame((int) $homePlayers[0]->id, (int) data_get($result->draft_state, '1.home_player_id'));
         $this->assertCount(1, $result->frames);
         $this->assertEquals((int) $homePlayers[0]->id, $result->frames->first()->home_player_id);
         Mail::assertNothingQueued();
+        Event::assertDispatched(LeagueResultDraftUpdated::class);
 
         $component->assertSet('form.homeScore', 1);
         $component->assertSet('form.awayScore', 0);
@@ -124,6 +146,7 @@ class ResultSubmissionTest extends TestCase
     public function test_locking_result_requires_all_frames_and_confirms_result(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
+        Event::fake([LeagueResultSubmitted::class]);
         Mail::fake();
 
         $season = Season::factory()->create(['is_open' => true]);
@@ -244,6 +267,12 @@ class ResultSubmissionTest extends TestCase
                 && ! $mail->hasCc($teamAdmin->email)
                 && $mail->result->is($result);
         });
+        Event::assertDispatched(LeagueResultSubmitted::class, function (LeagueResultSubmitted $event) use ($fixture, $result, $teamAdmin) {
+            return $event->payload['fixture_id'] === $fixture->id
+                && $event->payload['result_id'] === $result->id
+                && $event->payload['updated_by_id'] === $teamAdmin->id
+                && $event->payload['is_confirmed'] === true;
+        });
 
         $component->assertRedirect(route('result.show', $result));
 
@@ -285,7 +314,7 @@ class ResultSubmissionTest extends TestCase
         $this->assertStringNotContainsString('notification-logo.png', $html);
     }
 
-    public function test_partial_autosave_does_not_delete_existing_frames_when_a_saved_frame_becomes_incomplete(): void
+    public function test_partial_draft_keeps_incomplete_frame_state_without_leaving_stale_persisted_frames(): void
     {
         [
             'fixture' => $fixture,
@@ -308,19 +337,17 @@ class ResultSubmissionTest extends TestCase
         $component->set('form.frames.2.away_player_id', (string) $awayPlayers[1]->id);
         $component->set('form.frames.2.home_score', 1);
 
-        $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
-
-        $this->assertCount(2, $result->frames);
-        $this->assertSame($firstFrameId, $result->frames[0]->id);
-
         $component->set('form.frames.2.home_score', 0);
 
         $result = $result->fresh(['frames' => fn ($query) => $query->orderBy('id')]);
 
-        $this->assertCount(2, $result->frames);
+        $this->assertCount(1, $result->frames);
         $this->assertSame($firstFrameId, $result->frames[0]->id);
-        $this->assertSame(2, $result->home_score);
+        $this->assertSame(1, $result->home_score);
         $this->assertSame(0, $result->away_score);
+        $this->assertSame((int) $homePlayers[1]->id, (int) data_get($result->draft_state, '2.home_player_id'));
+        $this->assertSame((int) $awayPlayers[1]->id, (int) data_get($result->draft_state, '2.away_player_id'));
+        $this->assertSame(0, (int) data_get($result->draft_state, '2.home_score'));
     }
 
     public function test_partial_autosave_persists_the_completed_follow_up_after_an_incomplete_edit(): void
@@ -401,6 +428,140 @@ class ResultSubmissionTest extends TestCase
             ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
             ->assertSee($homePlayers[0]->avatar_url, false)
             ->assertSee($awayPlayers[0]->avatar_url, false);
+    }
+
+    public function test_result_form_shows_every_collaborator_with_avatar_and_last_edited_timestamp(): void
+    {
+        Carbon::setTestNow('2026-03-13 19:00:00');
+
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $component = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->call('syncCollaborators', [
+                [
+                    'id' => $primaryAdmin->id,
+                    'name' => $primaryAdmin->name,
+                    'avatar_url' => $primaryAdmin->avatar_url,
+                ],
+                [
+                    'id' => $secondaryAdmin->id,
+                    'name' => $secondaryAdmin->name,
+                    'avatar_url' => $secondaryAdmin->avatar_url,
+                ],
+            ])
+            ->assertSee($primaryAdmin->avatar_url, false)
+            ->assertSee($secondaryAdmin->avatar_url, false)
+            ->assertSee('isolate flex -space-x-3', false)
+            ->assertSee('aria-label="'.$primaryAdmin->name.'"', false)
+            ->assertSee('aria-label="'.$secondaryAdmin->name.'"', false)
+            ->assertSeeText($primaryAdmin->name)
+            ->assertSeeText($secondaryAdmin->name)
+            ->assertDontSeeText('(You)');
+
+        $component
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->set('form.frames.1.home_score', 1)
+            ->assertSeeText('Last edited by '.$primaryAdmin->name.' Fri 13 Mar 2026 at 19:00');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_remote_frame_sync_dispatches_a_flash_event_for_changed_rows(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->call('syncDraftFromBroadcast', [
+                'fixture_id' => $fixture->id,
+                'result_id' => 1,
+                'draft_version' => 1,
+                'frames' => [
+                    1 => [
+                        'home_player_id' => (string) $homePlayers[0]->id,
+                        'away_player_id' => (string) $awayPlayers[0]->id,
+                        'home_score' => 1,
+                        'away_score' => 0,
+                    ],
+                ],
+                'home_score' => 1,
+                'away_score' => 0,
+                'updated_by_id' => $primaryAdmin->id,
+                'updated_by_name' => $primaryAdmin->name,
+                'client_id' => 'remote-client-id',
+                'is_confirmed' => false,
+                'result_url' => route('fixture.show', $fixture),
+            ])
+            ->assertDispatched('result-frames-synced')
+            ->assertSet('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSet('form.frames.1.home_score', 1)
+            ->assertSet('form.frames.1.away_score', 0);
+    }
+
+    public function test_winning_and_losing_frame_score_pills_use_gradient_backgrounds_in_the_form(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_score', 1)
+            ->set('form.frames.1.away_score', 0)
+            ->assertSee('from-green-900 via-green-800 to-green-700', false)
+            ->assertSee('from-red-900 via-red-800 to-red-700', false);
+    }
+
+    public function test_setting_one_frame_score_to_one_resets_the_opposing_score_to_zero(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.away_score', 1)
+            ->assertSet('form.frames.1.home_score', 0)
+            ->assertSet('form.frames.1.away_score', 1)
+            ->set('form.frames.1.home_score', 1)
+            ->assertSet('form.frames.1.home_score', 1)
+            ->assertSet('form.frames.1.away_score', 0);
+    }
+
+    public function test_result_form_submission_errors_render_with_the_refreshed_alert_styling(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->call('submit')
+            ->assertHasErrors(['form.frames.1'])
+            ->assertSee('rounded-2xl border border-red-200/80 bg-red-50/80', false)
+            ->assertSee('dark:border-red-950/60 dark:bg-red-950/20', false)
+            ->assertSeeText('There is 1 problem with your submission');
     }
 
     public function test_result_create_route_redirects_when_result_is_locked(): void
@@ -578,7 +739,7 @@ class ResultSubmissionTest extends TestCase
         $response->assertDontSeeText('Continue submitting result');
     }
 
-    public function test_only_one_team_admin_can_hold_the_edit_lock_at_a_time(): void
+    public function test_multiple_team_admins_can_edit_the_same_shared_draft(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -619,61 +780,47 @@ class ResultSubmissionTest extends TestCase
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
-
-        $this->assertDatabaseHas('fixture_result_locks', [
-            'fixture_id' => $fixture->id,
-            'locked_by' => $primaryAdmin->id,
-        ]);
-
-        Livewire::actingAs($secondaryAdmin)
-            ->test(ResultForm::class, ['fixture' => $fixture])
-            ->assertSet('canEdit', false)
-            ->assertSet('lockedByAnother', true);
-
-        FixtureResultLock::query()->update(['locked_until' => now()->subMinute()]);
+            ->assertSet('isLocked', false);
 
         Livewire::actingAs($secondaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
+            ->assertSet('isLocked', false);
     }
 
-    public function test_keep_lock_alive_detects_when_another_team_admin_takes_over_after_lock_expiry(): void
+    public function test_stale_editor_refreshes_to_the_latest_shared_draft_state(): void
     {
         [
             'fixture' => $fixture,
             'primaryAdmin' => $primaryAdmin,
             'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
         ] = $this->createResultFormLockContext();
 
         $primaryComponent = Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
-
-        FixtureResultLock::query()->update(['locked_until' => now()->subMinute()]);
+            ->assertSet('draftVersion', 0);
 
         Livewire::actingAs($secondaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id);
 
-        $this->actingAs($primaryAdmin);
+        $result = Result::firstOrFail();
 
         $primaryComponent
-            ->call('keepLockAlive')
-            ->assertSet('canEdit', false)
-            ->assertSet('lockedByAnother', true)
-            ->assertSet('lockOwnerName', $secondaryAdmin->name);
+            ->set('form.frames.2.home_player_id', (string) $homePlayers[1]->id)
+            ->assertSet('draftVersion', $result->draft_version)
+            ->assertSet('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSet('form.frames.2.home_player_id', null);
 
-        $this->assertDatabaseHas('fixture_result_locks', [
-            'fixture_id' => $fixture->id,
-            'locked_by' => $secondaryAdmin->id,
-        ]);
+        $this->assertSame($result->draft_version, Result::firstOrFail()->draft_version);
     }
 
-    public function test_submit_rechecks_edit_lock_before_confirming_result(): void
+    public function test_submit_redirects_when_result_has_already_been_confirmed(): void
     {
         [
             'fixture' => $fixture,
@@ -690,42 +837,6 @@ class ResultSubmissionTest extends TestCase
 
         $draftResult = Result::firstOrFail();
 
-        FixtureResultLock::query()->update(['locked_until' => now()->subMinute()]);
-
-        Livewire::actingAs($secondaryAdmin)
-            ->test(ResultForm::class, ['fixture' => $fixture])
-            ->assertSet('canEdit', true)
-            ->assertSet('lockedByAnother', false);
-
-        $this->actingAs($primaryAdmin);
-
-        $primaryComponent
-            ->call('submit')
-            ->assertRedirect(route('result.show', $draftResult));
-
-        $draftResult->refresh();
-
-        $this->assertFalse($draftResult->is_confirmed);
-        $this->assertSame(0, $draftResult->submitted_by);
-        $this->assertNull($draftResult->submitted_at);
-    }
-
-    public function test_submit_detects_when_result_has_been_confirmed_by_another_admin(): void
-    {
-        [
-            'fixture' => $fixture,
-            'primaryAdmin' => $primaryAdmin,
-            'secondaryAdmin' => $secondaryAdmin,
-            'homePlayers' => $homePlayers,
-            'awayPlayers' => $awayPlayers,
-        ] = $this->createResultFormLockContext();
-
-        $primaryComponent = Livewire::actingAs($primaryAdmin)
-            ->test(ResultForm::class, ['fixture' => $fixture]);
-
-        $this->fillCompletedFrames($primaryComponent, $homePlayers, $awayPlayers);
-
-        $draftResult = Result::firstOrFail();
         $draftResult->update([
             'is_confirmed' => true,
             'submitted_by' => $secondaryAdmin->id,
