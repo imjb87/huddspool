@@ -100,7 +100,7 @@
             <div
                 x-cloak
                 x-show="connectionHealth !== 'healthy'"
-                class="mt-4 rounded-2xl border px-4 py-3"
+                class="mt-4 rounded-xl border px-4 py-3"
                 data-result-form-connection-alert
                 :class="statusClassName(connectionHealth, {
                     healthy: 'border-green-200 bg-green-50/80 text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200',
