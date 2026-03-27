@@ -13,6 +13,20 @@ class SeasonEntry extends Model
     /** @use HasFactory<SeasonEntryFactory> */
     use HasFactory;
 
+    public const PAYMENT_STATUS_PENDING = 'pending';
+
+    public const PAYMENT_STATUS_CHECKOUT_CREATED = 'checkout_created';
+
+    public const PAYMENT_STATUS_PAID = 'paid';
+
+    public const PAYMENT_STATUS_EXPIRED = 'expired';
+
+    public const PAYMENT_STATUS_FAILED = 'failed';
+
+    public const PAYMENT_METHOD_OFFLINE = 'offline';
+
+    public const PAYMENT_METHOD_ONLINE = 'online';
+
     protected $fillable = [
         'season_id',
         'reference',
@@ -24,11 +38,23 @@ class SeasonEntry extends Model
         'venue_address',
         'venue_telephone',
         'notes',
+        'payment_method',
+        'payment_provider',
+        'payment_status',
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
+        'payment_completed_at',
+        'payment_currency',
+        'payment_amount',
+        'payment_metadata',
         'total_amount',
         'paid_at',
     ];
 
     protected $casts = [
+        'payment_completed_at' => 'datetime',
+        'payment_amount' => 'decimal:2',
+        'payment_metadata' => 'array',
         'total_amount' => 'decimal:2',
         'paid_at' => 'datetime',
     ];
@@ -71,10 +97,66 @@ class SeasonEntry extends Model
         return $this->paid_at !== null;
     }
 
-    public function markPaid(): void
+    public function requiresPayment(): bool
+    {
+        return ! $this->isPaid() && $this->totalAmountInMinorUnits() > 0;
+    }
+
+    public function selectedOnlinePayment(): bool
+    {
+        return $this->payment_method === self::PAYMENT_METHOD_ONLINE;
+    }
+
+    public function selectedOfflinePayment(): bool
+    {
+        return $this->payment_method === self::PAYMENT_METHOD_OFFLINE;
+    }
+
+    public function totalAmountInMinorUnits(): int
+    {
+        return (int) round((float) $this->total_amount * 100);
+    }
+
+    public static function amountFromMinorUnits(?int $amount): ?string
+    {
+        if ($amount === null) {
+            return null;
+        }
+
+        return number_format($amount / 100, 2, '.', '');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function paymentStatusOptions(): array
+    {
+        return [
+            self::PAYMENT_STATUS_PENDING => 'Pending',
+            self::PAYMENT_STATUS_CHECKOUT_CREATED => 'Checkout created',
+            self::PAYMENT_STATUS_PAID => 'Paid',
+            self::PAYMENT_STATUS_EXPIRED => 'Expired',
+            self::PAYMENT_STATUS_FAILED => 'Failed',
+        ];
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        return self::paymentStatusOptions()[$this->payment_status] ?? 'Pending';
+    }
+
+    public function markPaid(string $provider = 'manual', array $attributes = []): void
     {
         $this->forceFill([
-            'paid_at' => now(),
+            'payment_provider' => $provider,
+            'payment_status' => $attributes['payment_status'] ?? self::PAYMENT_STATUS_PAID,
+            'payment_completed_at' => $attributes['payment_completed_at'] ?? $this->payment_completed_at ?? now(),
+            'paid_at' => $attributes['paid_at'] ?? $this->paid_at ?? now(),
+            'stripe_checkout_session_id' => $attributes['stripe_checkout_session_id'] ?? $this->stripe_checkout_session_id,
+            'stripe_payment_intent_id' => $attributes['stripe_payment_intent_id'] ?? $this->stripe_payment_intent_id,
+            'payment_currency' => $attributes['payment_currency'] ?? $this->payment_currency,
+            'payment_amount' => $attributes['payment_amount'] ?? $this->payment_amount ?? $this->total_amount,
+            'payment_metadata' => $attributes['payment_metadata'] ?? $this->payment_metadata,
         ])->save();
     }
 

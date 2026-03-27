@@ -7,6 +7,7 @@ use App\Models\Knockout;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\SeasonEntry;
+use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,8 @@ class Wizard extends Component
      */
     public array $knockoutRegistrations = [];
 
+    public string $paymentMethod = SeasonEntry::PAYMENT_METHOD_OFFLINE;
+
     public function mount(Season $season): void
     {
         $this->season = $season->load([
@@ -69,6 +72,7 @@ class Wizard extends Component
             $this->teamRegistrations = $this->normaliseTeamRegistrations($state['teamRegistrations'] ?? []);
             $this->knockoutDraft = $this->normaliseKnockoutDraft($state['knockoutDraft'] ?? []);
             $this->knockoutRegistrations = $this->normaliseKnockoutRegistrations($state['knockoutRegistrations'] ?? []);
+            $this->paymentMethod = $this->normalisePaymentMethod((string) ($state['paymentMethod'] ?? $this->defaultPaymentMethod()));
         } else {
             $this->contact = $this->defaultContact();
             $this->registrationVenue = $this->defaultRegistrationVenue();
@@ -76,6 +80,7 @@ class Wizard extends Component
             $this->teamRegistrations = [];
             $this->knockoutDraft = $this->defaultKnockoutDraft();
             $this->knockoutRegistrations = [];
+            $this->paymentMethod = $this->defaultPaymentMethod();
         }
 
     }
@@ -202,6 +207,7 @@ class Wizard extends Component
         $this->validateVenue();
         $this->validateTeamStep();
         $this->validateKnockoutStep();
+        $this->validatePaymentMethod();
 
         if (count($this->teamRegistrations) === 0 && count($this->knockoutRegistrations) === 0) {
             $this->addError('cart', 'Add at least one team or knockout registration before you confirm.');
@@ -222,6 +228,7 @@ class Wizard extends Component
                 'venue_address' => $venuePayload['venue_address'],
                 'venue_telephone' => $venuePayload['venue_telephone'],
                 'notes' => trim((string) $this->contact['notes']) ?: null,
+                'payment_method' => $this->paymentMethod,
                 'total_amount' => 0,
             ]);
 
@@ -267,6 +274,9 @@ class Wizard extends Component
 
             $entry->update([
                 'total_amount' => $totalAmount,
+                'payment_status' => SeasonEntry::PAYMENT_STATUS_PENDING,
+                'payment_currency' => strtoupper((string) config('services.stripe.currency', 'gbp')),
+                'payment_amount' => $totalAmount,
             ]);
 
             return $entry->fresh([
@@ -281,6 +291,12 @@ class Wizard extends Component
         Mail::to($entry->contact_email)->queue(new SeasonEntryInvoiceMail($entry));
 
         session()->forget($this->sessionKey());
+
+        if ($entry->selectedOnlinePayment()) {
+            return redirect()->route('season.entry.payment.checkout', [
+                'entry' => $entry->reference,
+            ]);
+        }
 
         return redirect()->route('season.entry.confirmation', [
             'season' => $this->season,
@@ -297,6 +313,7 @@ class Wizard extends Component
             'teamSubtotal' => $this->teamSubtotal(),
             'knockoutSubtotal' => $this->knockoutSubtotal(),
             'grandTotal' => $this->grandTotal(),
+            'stripeAvailable' => Setting::stripePaymentsAvailable(),
         ]);
     }
 
@@ -422,6 +439,7 @@ class Wizard extends Component
             'teamRegistrations' => $this->normaliseTeamRegistrations($this->teamRegistrations),
             'knockoutDraft' => $this->normaliseKnockoutDraft($this->knockoutDraft),
             'knockoutRegistrations' => $this->normaliseKnockoutRegistrations($this->knockoutRegistrations),
+            'paymentMethod' => $this->normalisePaymentMethod($this->paymentMethod),
         ]);
     }
 
@@ -514,6 +532,41 @@ class Wizard extends Component
                 "knockoutRegistrations.{$index}.entrant_name" => ['required', 'string', 'max:255'],
             ]);
         }
+    }
+
+    private function validatePaymentMethod(): void
+    {
+        $this->validate([
+            'paymentMethod' => ['required', Rule::in($this->allowedPaymentMethods())],
+        ]);
+
+        $this->paymentMethod = $this->normalisePaymentMethod($this->paymentMethod);
+    }
+
+    private function defaultPaymentMethod(): string
+    {
+        return SeasonEntry::PAYMENT_METHOD_OFFLINE;
+    }
+
+    private function normalisePaymentMethod(string $paymentMethod): string
+    {
+        return in_array($paymentMethod, $this->allowedPaymentMethods(), true)
+            ? $paymentMethod
+            : $this->defaultPaymentMethod();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function allowedPaymentMethods(): array
+    {
+        $allowedMethods = [SeasonEntry::PAYMENT_METHOD_OFFLINE];
+
+        if (Setting::stripePaymentsAvailable()) {
+            $allowedMethods[] = SeasonEntry::PAYMENT_METHOD_ONLINE;
+        }
+
+        return $allowedMethods;
     }
 
     private function teamSubtotal(): float

@@ -9,6 +9,7 @@ use App\Filament\Resources\SeasonEntryResource\Pages\EditSeasonEntry;
 use App\Filament\Resources\SeasonEntryResource\RelationManagers\KnockoutRegistrationsRelationManager;
 use App\Filament\Resources\SeasonEntryResource\RelationManagers\TeamsRelationManager;
 use App\Filament\Resources\SeasonResource\Pages\EditSeason;
+use App\Filament\Pages\PaymentSettings;
 use App\Filament\Resources\SectionResource;
 use App\Models\Knockout;
 use App\Models\Season;
@@ -88,6 +89,7 @@ class SeasonEntryAdminTest extends TestCase
             ->callAction('markPaid');
 
         $this->assertNotNull($entry->fresh()->paid_at);
+        $this->assertSame('manual', $entry->fresh()->payment_provider);
     }
 
     public function test_admin_can_view_entry_teams_and_knockout_entries_in_filament(): void
@@ -159,5 +161,19 @@ class SeasonEntryAdminTest extends TestCase
             ->assertSet('data.dates.0.date', '2026-08-04')
             ->assertSet('data.dates.1.date', '2026-08-11')
             ->assertSet('data.dates.17.date', '2026-12-01');
+    }
+
+    public function test_admin_can_open_payment_settings_page(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        Filament::setCurrentPanel('admin');
+
+        $this->actingAs($admin)
+            ->get(PaymentSettings::getUrl())
+            ->assertOk()
+            ->assertSeeText('Stripe payments');
     }
 }
