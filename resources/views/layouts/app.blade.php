@@ -5,11 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
-    <meta property="og:description" content="{{ config('app.description') }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ config('app.frontend_url') }}" />
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
+    @hasSection('meta')
+        @yield('meta')
+    @else
+        <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
+        <meta property="og:description" content="{{ config('app.description') }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ config('app.frontend_url') }}" />
+        <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
+    @endif
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
@@ -81,6 +85,7 @@
         @include('layouts.footer')
         <livewire:search />
     </div>
+    @stack('scripts')
     @livewireScripts
 </body>
 

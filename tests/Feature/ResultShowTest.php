@@ -9,8 +9,11 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Support\ResultShareImageGenerator;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ResultShowTest extends TestCase
@@ -184,5 +187,171 @@ class ResultShowTest extends TestCase
                     && $viewResult->frames->every(fn ($frame): bool => $frame->relationLoaded('awayPlayer'))
                     && $viewResult->relationLoaded('submittedBy');
             });
+    }
+
+    public function test_result_show_outputs_result_specific_social_meta_tags(): void
+    {
+        $result = $this->createShareableResult([
+            'home_team_name' => 'Shoulder of Mutton',
+            'away_team_name' => 'Junction Inn',
+            'home_score' => 8,
+            'away_score' => 3,
+            'updated_at' => Carbon::parse('2026-03-12 22:15:00'),
+        ]);
+
+        $shareImageUrl = app(ResultShareImageGenerator::class)->url($result->fresh());
+
+        $this->get(route('result.show', $result))
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="Shoulder of Mutton 8-3 Junction Inn" />', false)
+            ->assertSee('<meta property="og:description" content="Premier Division • International Rules • 12 Mar 2026 • Dog & Duck" />', false)
+            ->assertSee('<meta property="og:image" content="'.$shareImageUrl.'" />', false)
+            ->assertSee('<meta name="twitter:card" content="summary_large_image" />', false)
+            ->assertSee('<meta name="twitter:image" content="'.$shareImageUrl.'" />', false)
+            ->assertSee('data-result-share-button', false);
+    }
+
+    public function test_result_share_image_endpoint_returns_png_and_caches_the_current_version(): void
+    {
+        $generator = app(ResultShareImageGenerator::class);
+
+        if (! $generator->isAvailable()) {
+            $this->markTestSkipped('A headless browser is required for share image rendering.');
+        }
+
+        Storage::fake('local');
+
+        $result = $this->createShareableResult([
+            'updated_at' => Carbon::parse('2026-03-12 22:15:00'),
+        ]);
+
+        $currentPath = $generator->cachePath($result->fresh());
+
+        $this->assertFalse(Storage::disk('local')->exists($currentPath));
+
+        $this->get(route('result.share-image.versioned', [
+            'result' => $result,
+            'version' => $generator->version($result->fresh()),
+        ]))
+            ->assertOk()
+            ->assertHeader('content-type', 'image/png')
+            ->assertHeader('cache-control', 'public, max-age=31536000, immutable');
+
+        $this->assertTrue(Storage::disk('local')->exists($currentPath));
+
+        $this->get(route('result.share-image', $result))
+            ->assertOk()
+            ->assertHeader('content-type', 'image/png')
+            ->assertHeader('cache-control', 'public, max-age=300');
+    }
+
+    public function test_result_share_image_url_and_cache_path_change_when_the_result_is_updated(): void
+    {
+        $generator = app(ResultShareImageGenerator::class);
+
+        if (! $generator->isAvailable()) {
+            $this->markTestSkipped('A headless browser is required for share image rendering.');
+        }
+
+        Storage::fake('local');
+
+        $result = $this->createShareableResult([
+            'home_score' => 7,
+            'away_score' => 4,
+            'updated_at' => Carbon::parse('2026-03-12 22:15:00'),
+        ]);
+
+        $initialUrl = $generator->url($result->fresh());
+        $initialPath = $generator->cachePath($result->fresh());
+
+        $this->get($initialUrl)->assertOk();
+        $this->assertTrue(Storage::disk('local')->exists($initialPath));
+
+        $result->forceFill([
+            'home_score' => 8,
+            'updated_at' => Carbon::parse('2026-03-13 09:30:00'),
+        ])->save();
+
+        $updatedResult = $result->fresh();
+        $updatedUrl = $generator->url($updatedResult);
+        $updatedPath = $generator->cachePath($updatedResult);
+
+        $this->assertNotSame($initialUrl, $updatedUrl);
+        $this->assertNotSame($initialPath, $updatedPath);
+
+        $this->get(route('result.show', $updatedResult))
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="Shoulder of Mutton 8-4 Junction Inn" />', false)
+            ->assertSee('<meta property="og:image" content="'.$updatedUrl.'" />', false);
+
+        $this->get($updatedUrl)->assertOk();
+
+        $this->assertTrue(Storage::disk('local')->exists($updatedPath));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     */
+    private function createShareableResult(array $overrides = []): Result
+    {
+        $result = null;
+
+        Model::withoutEvents(function () use (&$result, $overrides): void {
+            $season = Season::factory()->create(['is_open' => true]);
+            $ruleset = Ruleset::factory()->create(['name' => 'International Rules']);
+            $section = Section::factory()->create([
+                'season_id' => $season->id,
+                'ruleset_id' => $ruleset->id,
+                'name' => 'Premier Division',
+                'slug' => 'premier-division',
+            ]);
+
+            Team::factory()->create();
+
+            $homeTeam = Team::factory()->create(['name' => 'Shoulder of Mutton']);
+            $awayTeam = Team::factory()->create(['name' => 'Junction Inn']);
+
+            $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+            $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+            $homePlayer = User::factory()->create(['team_id' => $homeTeam->id]);
+            $awayPlayer = User::factory()->create(['team_id' => $awayTeam->id]);
+            $submitter = User::factory()->create(['team_id' => $homeTeam->id]);
+            $venue = Venue::factory()->create(['name' => 'Dog & Duck']);
+
+            $fixture = $section->fixtures()->create([
+                'week' => 1,
+                'fixture_date' => Carbon::parse('2026-03-12'),
+                'home_team_id' => $homeTeam->id,
+                'away_team_id' => $awayTeam->id,
+                'season_id' => $season->id,
+                'venue_id' => $venue->id,
+                'ruleset_id' => $ruleset->id,
+            ]);
+
+            $result = Result::factory()->create(array_merge([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $homeTeam->id,
+                'home_team_name' => $homeTeam->name,
+                'home_score' => 7,
+                'away_team_id' => $awayTeam->id,
+                'away_team_name' => $awayTeam->name,
+                'away_score' => 4,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'submitted_by' => $submitter->id,
+                'is_confirmed' => true,
+                'updated_at' => Carbon::parse('2026-03-12 21:00:00'),
+            ], $overrides));
+
+            $result->frames()->create([
+                'home_player_id' => $homePlayer->id,
+                'home_score' => 1,
+                'away_player_id' => $awayPlayer->id,
+                'away_score' => 0,
+            ]);
+        });
+
+        return $result;
     }
 }

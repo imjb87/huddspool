@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\KnockoutMatchController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RulesetController;
 use App\Http\Controllers\SeasonEntryController;
 use App\Http\Controllers\SupportTicketController;
@@ -42,10 +43,15 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::FIXTURES]))->grou
     Route::get('/fixtures/{fixture}', 'App\Http\Controllers\FixtureController@show')->name('fixture.show');
     Route::get('/fixtures/download/{ruleset}/{section}', 'App\Http\Controllers\FixtureController@download')->name('fixture.download');
 });
-Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')
+Route::get('/results/{result}/share-image-{version}.png', [ResultController::class, 'shareImage'])
+    ->whereNumber('version')
+    ->name('result.share-image.versioned');
+Route::get('/results/{result}/share-image.png', [ResultController::class, 'shareImage'])
+    ->name('result.share-image');
+Route::get('/results/{result}', [ResultController::class, 'show'])
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::RESULTS]))
     ->name('result.show');
-Route::get('/results/create/{fixture}', 'App\Http\Controllers\ResultController@create')->name('result.create');
+Route::get('/results/create/{fixture}', [ResultController::class, 'create'])->name('result.create');
 Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PLAYERS]))
     ->name('player.show');
