@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Result;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Symfony\Component\Process\Process;
@@ -151,7 +152,7 @@ class ResultShareImageGenerator
         return null;
     }
 
-    private function hasCachedImage(string $path, $disk): bool
+    private function hasCachedImage(string $path, Filesystem $disk): bool
     {
         return $disk->exists($path) && (int) $disk->size($path) > 0;
     }
