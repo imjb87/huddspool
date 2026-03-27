@@ -32,98 +32,90 @@
         .canvas {
             width: 1200px;
             height: 630px;
-            padding: 32px 42px;
+            padding: 52px 56px 44px;
             background:
-                radial-gradient(circle at top left, rgba(34, 197, 94, 0.18), transparent 34%),
-                radial-gradient(circle at top right, rgba(20, 83, 45, 0.22), transparent 28%),
-                linear-gradient(180deg, #18181b 0%, #0f172a 54%, #052e16 100%);
+                radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 32%),
+                linear-gradient(180deg, #18181b 0%, #111827 58%, #052e16 100%);
         }
 
         .frame {
             width: 100%;
             height: 100%;
-            padding: 10px 8px 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .brand {
-            margin-bottom: 24px;
-        }
-
-        .brand-logo {
-            width: 72px;
-            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 38px;
         }
 
         .brand-mark {
-            margin: 0 0 6px;
-            font-size: 13px;
+            margin: 0 0 12px;
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.24em;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             color: rgba(228, 228, 231, 0.74);
         }
 
-        .eyebrow {
+        .title {
             margin: 0;
-            font-size: 21px;
+            font-size: 24px;
             font-weight: 600;
             color: rgba(244, 244, 245, 0.9);
         }
 
-        .title {
-            margin: 10px 0 0;
-            max-width: 760px;
-            font-size: 42px;
-            font-weight: 600;
-            line-height: 1.02;
-            letter-spacing: -0.03em;
-        }
-
         .meta {
-            margin-top: 14px;
-            font-size: 18px;
+            margin: 8px 0 0;
+            font-size: 16px;
             color: rgba(212, 212, 216, 0.8);
         }
 
-        .scoreboard {
-            margin-top: 28px;
-        }
-
-        .team-row {
-            display: table;
-            width: 100%;
-            margin-bottom: 14px;
-        }
-
-        .team-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .team-copy,
-        .team-score {
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .team-score {
-            width: 128px;
+        .ruleset {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(228, 228, 231, 0.84);
             text-align: right;
         }
 
-        .team-label {
-            margin: 0 0 6px;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(161, 161, 170, 0.9);
+        .scoreboard {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .team-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 18px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .team-row:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .team-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .team-score {
+            flex-shrink: 0;
         }
 
         .team-name {
             margin: 0;
-            font-size: 35px;
+            font-size: 34px;
             font-weight: 600;
-            line-height: 1.05;
+            line-height: 1.08;
             letter-spacing: -0.03em;
         }
 
@@ -131,11 +123,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 104px;
-            height: 72px;
-            padding: 0 24px;
+            min-width: 92px;
+            height: 56px;
+            padding: 0 22px;
             border-radius: 999px;
-            font-size: 38px;
+            font-size: 30px;
             font-weight: 800;
             line-height: 1;
             color: #fff;
@@ -155,33 +147,24 @@
         }
 
         .details {
-            margin-top: 28px;
-            padding-top: 18px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-top: auto;
+            padding-top: 22px;
             border-top: 1px solid rgba(255, 255, 255, 0.14);
-            font-size: 19px;
+            font-size: 16px;
             color: rgba(244, 244, 245, 0.9);
         }
 
         .details-line {
-            margin: 0 0 10px;
-        }
-
-        .details-line:last-child {
-            margin-bottom: 0;
+            margin: 0;
         }
 
         .detail-label {
             display: inline-block;
-            min-width: 78px;
+            margin-right: 8px;
             color: rgba(161, 161, 170, 0.92);
-        }
-
-        .footer {
-            margin-top: 26px;
-            padding-top: 18px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 17px;
-            color: rgba(212, 212, 216, 0.74);
         }
     </style>
 </head>
@@ -190,19 +173,18 @@
     <div class="canvas">
         <div class="frame">
             <div class="brand">
-                @if ($logoDataUri)
-                    <img src="{{ $logoDataUri }}" alt="" class="brand-logo">
-                @endif
-                <p class="brand-mark">Huddspool</p>
-                <p class="eyebrow">{{ $ruleset?->name ?? 'League result' }}</p>
-                <h1 class="title">{{ $section?->name ?? 'Archived section' }}</h1>
-                <p class="meta">Result • {{ $fixture?->fixture_date?->format('l j F Y') ?? 'Date TBC' }}</p>
+                <div>
+                    <p class="brand-mark">Huddspool</p>
+                    <h1 class="title">Result</h1>
+                    <p class="meta">{{ $section?->name ?? 'Archived section' }}</p>
+                </div>
+
+                <p class="ruleset">{{ $ruleset?->name ?? 'League result' }}</p>
             </div>
 
             <div class="scoreboard">
                 <div class="team-row">
                     <div class="team-copy">
-                        <p class="team-label">Home</p>
                         <p class="team-name">{{ $result->home_team_name }}</p>
                     </div>
                     <div class="team-score">
@@ -212,7 +194,6 @@
 
                 <div class="team-row">
                     <div class="team-copy">
-                        <p class="team-label">Away</p>
                         <p class="team-name">{{ $result->away_team_name }}</p>
                     </div>
                     <div class="team-score">
@@ -223,17 +204,11 @@
 
             <div class="details">
                 <p class="details-line">
-                    <span class="detail-label">Venue</span>
-                    {{ $venue?->name ?? 'Venue TBC' }}
+                    <span class="detail-label">Date</span>{{ $fixture?->fixture_date?->format('l j F Y') ?? 'Date TBC' }}
                 </p>
                 <p class="details-line">
-                    <span class="detail-label">Fixture</span>
-                    {{ $result->home_team_name }} v {{ $result->away_team_name }}
+                    <span class="detail-label">Venue</span>{{ $venue?->name ?? 'Venue TBC' }}
                 </p>
-            </div>
-
-            <div class="footer">
-                View the full frame-by-frame result on {{ parse_url(config('app.frontend_url'), PHP_URL_HOST) ?: config('app.frontend_url') }}.
             </div>
         </div>
     </div>
