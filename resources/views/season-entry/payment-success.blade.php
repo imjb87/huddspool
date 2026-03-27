@@ -5,7 +5,7 @@
         <div class="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <p class="text-sm font-medium text-green-700 dark:text-green-400">Stripe checkout</p>
+                    <p class="text-sm font-medium text-green-700 dark:text-green-400">Online card payment</p>
                     <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $entry->season->name }}</h1>
                 </div>
 
@@ -13,14 +13,14 @@
                     <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-4 dark:border-green-900/60 dark:bg-green-950/40">
                         <p class="text-sm font-medium text-green-800 dark:text-green-200">Payment confirmed</p>
                         <p class="mt-1 text-sm text-green-700 dark:text-green-300">
-                            Stripe has confirmed payment for registration {{ $entry->reference }}.
+                            Online payment has been confirmed for registration {{ $entry->reference }}.
                         </p>
                     </div>
                 @else
                     <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 dark:border-amber-900/60 dark:bg-amber-950/40">
                         <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Payment confirmation pending</p>
                         <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
-                            Stripe has redirected you back successfully, but the registration is only marked as paid once the webhook arrives.
+                            Your card payment page has redirected you back successfully, but the registration is only marked as paid once the payment confirmation arrives.
                         </p>
                     </div>
                 @endif

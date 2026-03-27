@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <p class="text-sm font-medium text-amber-700 dark:text-amber-400">Stripe checkout</p>
+                    <p class="text-sm font-medium text-amber-700 dark:text-amber-400">Online card payment</p>
                     <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $entry->season->name }}</h1>
                 </div>
 
@@ -28,7 +28,7 @@
                     @if ($entry->requiresPayment() && $stripeAvailable && ! $entry->selectedOfflinePayment())
                         <a href="{{ route('season.entry.payment.checkout', ['entry' => $entry->reference]) }}"
                            class="inline-flex items-center rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400">
-                            Try Stripe again
+                            Try online payment again
                         </a>
                     @endif
                     <a href="{{ route('season.entry.invoice', ['season' => $entry->season, 'entry' => $entry->reference]) }}"

@@ -32,7 +32,7 @@ class SeasonEntryPaymentController extends Controller
 
         if (! Setting::stripePaymentsAvailable()) {
             return $this->redirectToConfirmation($entry)
-                ->with('payment_error', 'Stripe payments are currently unavailable. Please use the invoice reference for manual payment.');
+                ->with('payment_error', 'Online card payments are currently unavailable. Please use the invoice reference for manual payment.');
         }
 
         try {
@@ -41,7 +41,7 @@ class SeasonEntryPaymentController extends Controller
             report($throwable);
 
             return $this->redirectToConfirmation($entry)
-                ->with('payment_error', 'Unable to start Stripe checkout right now. Please try again in a moment.');
+                ->with('payment_error', 'Unable to start online card payment right now. Please try again in a moment.');
         }
 
         $entry->forceFill([

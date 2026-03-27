@@ -42,7 +42,7 @@
                             <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 dark:border-amber-900/60 dark:bg-amber-950/40">
                                 <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Payment pending</p>
                                 <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
-                                    Complete payment with Stripe below. Your registration is marked as paid only after Stripe confirms the payment by webhook.
+                                    Complete your card payment below. Your registration will be marked as paid as soon as the payment is confirmed.
                                 </p>
                             </div>
                         @else
@@ -51,7 +51,7 @@
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                     {{ $entry->selectedOfflinePayment()
                                         ? 'This registration was submitted for offline payment. Please use the invoice reference below when arranging payment.'
-                                        : 'Stripe payments are currently unavailable. Please use the invoice reference below when arranging manual or offline payment.' }}
+                                        : 'Online card payments are currently unavailable. Please use the invoice reference below when arranging manual or offline payment.' }}
                                 </p>
                             </div>
                         @endif

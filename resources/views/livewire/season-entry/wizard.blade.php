@@ -334,7 +334,7 @@
                                     <section class="space-y-4">
                                         <div>
                                             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Checkout</h3>
-                                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose whether to pay offline with the reference or continue to Stripe after you submit.</p>
+                                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose whether to pay offline with the reference or pay by card online after you submit.</p>
                                         </div>
 
                                         <div class="space-y-3">
@@ -361,7 +361,7 @@
                                                     >
                                                     <span class="space-y-1">
                                                         <span class="block text-sm font-semibold text-gray-900 dark:text-gray-100">Online payment</span>
-                                                        <span class="block text-sm text-gray-500 dark:text-gray-400">Submit the registration and continue straight to Stripe Checkout to pay online.</span>
+                                                        <span class="block text-sm text-gray-500 dark:text-gray-400">Submit the registration and continue straight to the online card payment page.</span>
                                                     </span>
                                                 </label>
                                             @else
