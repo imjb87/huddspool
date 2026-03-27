@@ -172,7 +172,7 @@
 <body>
     <div class="canvas">
         <div class="frame">
-            <div class="brand">
+            <header class="brand">
                 <div>
                     <p class="brand-mark">Huddspool</p>
                     <h1 class="title">Result</h1>
@@ -180,7 +180,7 @@
                 </div>
 
                 <p class="ruleset">{{ $ruleset?->name ?? 'League result' }}</p>
-            </div>
+            </header>
 
             <div class="scoreboard">
                 <div class="team-row">
@@ -204,10 +204,10 @@
 
             <div class="details">
                 <p class="details-line">
-                    <span class="detail-label">Date</span>{{ $fixture?->fixture_date?->format('l j F Y') ?? 'Date TBC' }}
+                    <span class="detail-label">Date</span> {{ $fixture?->fixture_date?->format('l j F Y') ?? 'Date TBC' }}
                 </p>
                 <p class="details-line">
-                    <span class="detail-label">Venue</span>{{ $venue?->name ?? 'Venue TBC' }}
+                    <span class="detail-label">Venue</span> {{ $venue?->name ?? 'Venue TBC' }}
                 </p>
             </div>
         </div>
