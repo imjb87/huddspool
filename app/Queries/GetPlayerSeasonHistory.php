@@ -46,6 +46,7 @@ class GetPlayerSeasonHistory
                     $query->where('seasons.is_open', false)
                         ->orWhereNull('seasons.is_open');
                 })
+                ->whereNotNull('seasons.id')
                 ->groupBy(
                     'seasons.id',
                     'seasons.name',
@@ -63,13 +64,23 @@ class GetPlayerSeasonHistory
                 ->orderByDesc('seasons.id')
                 ->orderByDesc('sections.name')
                 ->orderByDesc('team_name')
+                ->selectRaw(
+                    'GREATEST(0, COUNT(*) - (
+                        SUM(CASE WHEN (frames.home_player_id = ? AND frames.home_score > frames.away_score)
+                            OR (frames.away_player_id = ? AND frames.away_score > frames.home_score)
+                        THEN 1 ELSE 0 END)
+                    ) - (
+                        SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END)
+                    )) as losses',
+                    [$playerId, $playerId],
+                )
                 ->get();
 
             return $rows->map(function ($row) {
                 $wins = (int) $row->wins;
                 $draws = (int) $row->draws;
                 $played = (int) $row->played;
-                $losses = max(0, $played - $wins - $draws);
+                $losses = (int) $row->losses;
                 $winPercentage = $played > 0 ? round(($wins / $played) * 100, 1) : 0.0;
                 $lossPercentage = $played > 0 ? round(($losses / $played) * 100, 1) : 0.0;
 
@@ -91,7 +102,7 @@ class GetPlayerSeasonHistory
                     'win_percentage' => $winPercentage,
                     'loss_percentage' => $lossPercentage,
                 ];
-            })->filter(fn ($entry) => $entry['season_id']);
+            });
         });
     }
 }

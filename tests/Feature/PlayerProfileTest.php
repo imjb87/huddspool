@@ -16,7 +16,9 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Queries\GetPlayerSeasonHistory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -373,5 +375,114 @@ class PlayerProfileTest extends TestCase
             ->assertSeeText('Opponent 16')
             ->assertDontSeeText('Opponent 17')
             ->assertDontSeeText('Opponent 11');
+    }
+
+    public function test_player_season_history_excludes_open_seasons_and_keeps_loss_totals_correct(): void
+    {
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $archivedSeason = Season::factory()->create(['is_open' => false]);
+        $ruleset = Ruleset::factory()->create();
+        $openSection = Section::factory()->create([
+            'season_id' => $openSeason->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $archivedSection = Section::factory()->create([
+            'season_id' => $archivedSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Archived Premier',
+        ]);
+
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+
+        $openSection->teams()->attach($team->id, ['sort' => 1]);
+        $openSection->teams()->attach($opponentTeam->id, ['sort' => 2]);
+        $archivedSection->teams()->attach($team->id, ['sort' => 1]);
+        $archivedSection->teams()->attach($opponentTeam->id, ['sort' => 2]);
+
+        $player = User::factory()->create(['team_id' => $team->id]);
+        $opponent = User::factory()->create(['team_id' => $opponentTeam->id]);
+
+        $openFixture = Fixture::factory()->create([
+            'season_id' => $openSeason->id,
+            'section_id' => $openSection->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+        ]);
+        $archivedFixture = Fixture::factory()->create([
+            'season_id' => $archivedSeason->id,
+            'section_id' => $archivedSection->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+        ]);
+
+        $openResult = Result::factory()->create([
+            'fixture_id' => $openFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 1,
+            'away_team_id' => $opponentTeam->id,
+            'away_team_name' => $opponentTeam->name,
+            'away_score' => 0,
+            'section_id' => $openSection->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+        $archivedResult = Result::factory()->create([
+            'fixture_id' => $archivedFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 1,
+            'away_team_id' => $opponentTeam->id,
+            'away_team_name' => $opponentTeam->name,
+            'away_score' => 1,
+            'section_id' => $archivedSection->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+
+        Frame::create([
+            'result_id' => $openResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $archivedResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $archivedResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 0,
+            'away_player_id' => $opponent->id,
+            'away_score' => 1,
+        ]);
+        Frame::create([
+            'result_id' => $archivedResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 1,
+        ]);
+
+        Cache::flush();
+
+        $history = (new GetPlayerSeasonHistory($player))();
+
+        $this->assertCount(1, $history);
+        $this->assertSame($archivedSeason->id, $history->first()['season_id']);
+        $this->assertSame(3, $history->first()['played']);
+        $this->assertSame(1, $history->first()['wins']);
+        $this->assertSame(1, $history->first()['draws']);
+        $this->assertSame(1, $history->first()['losses']);
+        $this->assertSame(33.3, $history->first()['win_percentage']);
+        $this->assertSame(33.3, $history->first()['loss_percentage']);
     }
 }
