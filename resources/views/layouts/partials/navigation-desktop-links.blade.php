@@ -1,9 +1,42 @@
 <div class="hidden lg:ml-12 lg:flex lg:items-center lg:gap-x-6">
     @foreach ($navigationRulesets as $navigationRuleset)
-        <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+        <div class="relative"
+            x-data="{
+                id: 'ruleset-{{ $navigationRuleset['ruleset']->id }}',
+                open: false,
+                prefersTap() {
+                    return window.matchMedia('(hover: none), (pointer: coarse)').matches;
+                },
+                show() {
+                    this.open = true;
+                    this.$dispatch('nav-dropdown-open', { id: this.id });
+                },
+                openOnHover() {
+                    if (! this.prefersTap()) {
+                        this.show();
+                    }
+                },
+                closeOnHover() {
+                    if (! this.prefersTap()) {
+                        this.open = false;
+                    }
+                },
+                toggle() {
+                    if (this.open) {
+                        this.open = false;
+
+                        return;
+                    }
+
+                    this.show();
+                },
+            }"
+            @mouseenter="openOnHover()"
+            @mouseleave="closeOnHover()"
+            @nav-dropdown-open.window="if ($event.detail.id !== id) open = false">
             <button type="button"
                 class="flex items-center gap-x-1 text-sm font-semibold leading-6 transition {{ $navigationRuleset['is_active'] ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
-                @click="open = ! open" :aria-expanded="open">
+                @click="toggle()" :aria-expanded="open">
                 {{ $navigationRuleset['ruleset']->name }}
                 <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -34,10 +67,43 @@
         </div>
     @endforeach
 
-    <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+    <div class="relative"
+        x-data="{
+            id: 'knockouts',
+            open: false,
+            prefersTap() {
+                return window.matchMedia('(hover: none), (pointer: coarse)').matches;
+            },
+            show() {
+                this.open = true;
+                this.$dispatch('nav-dropdown-open', { id: this.id });
+            },
+            openOnHover() {
+                if (! this.prefersTap()) {
+                    this.show();
+                }
+            },
+            closeOnHover() {
+                if (! this.prefersTap()) {
+                    this.open = false;
+                }
+            },
+            toggle() {
+                if (this.open) {
+                    this.open = false;
+
+                    return;
+                }
+
+                this.show();
+            },
+        }"
+        @mouseenter="openOnHover()"
+        @mouseleave="closeOnHover()"
+        @nav-dropdown-open.window="if ($event.detail.id !== id) open = false">
         <button type="button"
             class="flex items-center gap-x-1 text-sm font-semibold leading-6 transition {{ $knockoutNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-gray-900 hover:text-green-700 dark:text-gray-100 dark:hover:text-green-500' }}"
-            @click="open = ! open" :aria-expanded="open">
+            @click="toggle()" :aria-expanded="open">
             Knockouts
             <svg class="h-4 w-4 flex-none text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />

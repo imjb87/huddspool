@@ -98,8 +98,12 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertSee("@click=\"openDrawer('history')\"", false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
-        $response->assertSee('@mouseenter="open = true"', false);
-        $response->assertSee('@mouseleave="open = false"', false);
+        $response->assertSee("window.matchMedia('(hover: none), (pointer: coarse)').matches", false);
+        $response->assertSee('@mouseenter="openOnHover()"', false);
+        $response->assertSee('@mouseleave="closeOnHover()"', false);
+        $response->assertSee('@click="toggle()"', false);
+        $response->assertSee("\$dispatch('nav-dropdown-open', { id: this.id })", false);
+        $response->assertSee('@nav-dropdown-open.window="if ($event.detail.id !== id) open = false"', false);
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);

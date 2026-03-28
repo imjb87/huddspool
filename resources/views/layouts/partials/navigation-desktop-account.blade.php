@@ -1,9 +1,44 @@
 <div class="hidden lg:flex lg:justify-end lg:gap-x-6">
     @if (@auth()->user())
-        <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false" @close.stop="open = false">
+        <div class="relative"
+            x-data="{
+                id: 'account',
+                open: false,
+                prefersTap() {
+                    return window.matchMedia('(hover: none), (pointer: coarse)').matches;
+                },
+                show() {
+                    this.open = true;
+                    this.$dispatch('nav-dropdown-open', { id: this.id });
+                },
+                openOnHover() {
+                    if (! this.prefersTap()) {
+                        this.show();
+                    }
+                },
+                closeOnHover() {
+                    if (! this.prefersTap()) {
+                        this.open = false;
+                    }
+                },
+                toggle() {
+                    if (this.open) {
+                        this.open = false;
+
+                        return;
+                    }
+
+                    this.show();
+                },
+            }"
+            @mouseenter="openOnHover()"
+            @mouseleave="closeOnHover()"
+            @click.away="open = false"
+            @close.stop="open = false"
+            @nav-dropdown-open.window="if ($event.detail.id !== id) open = false">
             <button type="button"
                 class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
-                aria-expanded="false" @click="open = !open" :aria-expanded="open">
+                aria-expanded="false" @click="toggle()" :aria-expanded="open">
                 <img
                     src="{{ auth()->user()->avatar_url }}"
                     alt="{{ auth()->user()->name }} avatar"
