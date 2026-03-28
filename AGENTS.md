@@ -9,20 +9,20 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.4.18
-- filament/filament (FILAMENT) - v4
-- laravel/framework (LARAVEL) - v11
+- filament/filament (FILAMENT) - v5
+- laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
 - laravel/pulse (PULSE) - v1
 - laravel/sanctum (SANCTUM) - v4
 - laravel/socialite (SOCIALITE) - v5
-- livewire/livewire (LIVEWIRE) - v3
+- livewire/livewire (LIVEWIRE) - v4
 - laravel/breeze (BREEZE) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
-- phpunit/phpunit (PHPUNIT) - v11
-- alpinejs (ALPINEJS) - v2
-- tailwindcss (TAILWINDCSS) - v3
+- phpunit/phpunit (PHPUNIT) - v13
+- alpinejs (ALPINEJS) - v3
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
@@ -178,13 +178,13 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Vite Error
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `vendor/bin/sail npm run build` or ask the user to run `vendor/bin/sail npm run dev` or `vendor/bin/sail composer run dev`.
 
-=== laravel/v11 rules ===
+=== laravel/v12 rules ===
 
-## Laravel 11
+## Laravel 12
 
 - Use the `search-docs` tool to get version-specific documentation.
-- This project upgraded from Laravel 10 without migrating to the new streamlined Laravel 11 file structure.
-- This is **perfectly fine** and recommended by Laravel. Follow the existing structure from Laravel 10. We do not need to migrate to the Laravel 11 structure unless the user explicitly requests it.
+- This project upgraded from Laravel 10 without migrating to the new streamlined Laravel 11/12 file structure.
+- This is **perfectly fine** and recommended by Laravel. Follow the existing structure from Laravel 10. We do not need to migrate to the Laravel 11/12 structure unless the user explicitly requests it.
 
 ### Laravel 10 Structure
 - Middleware typically lives in `app/Http/Middleware/` and service providers in `app/Providers/`.
@@ -196,13 +196,13 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ### Database
 - When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 11 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
 
 ### Models
 - Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
 ### New Artisan Commands
-- List Artisan commands using Boost's MCP tool, if available. New commands available in Laravel 11:
+- List Artisan commands using Boost's MCP tool, if available. New commands available in Laravel 12:
     - `vendor/bin/sail artisan make:enum`
     - `vendor/bin/sail artisan make:class`
     - `vendor/bin/sail artisan make:interface`
@@ -252,40 +252,12 @@ protected function isAccessible(User $user, ?string $path = null): bool
     ->assertSeeLivewire(CreatePost::class);
 </code-snippet>
 
-=== livewire/v3 rules ===
+=== livewire/v4 rules ===
 
-## Livewire 3
+## Livewire 4
 
-### Key Changes From Livewire 2
-- These things changed in Livewire 3, but may not have been updated in this application. Verify this application's setup to ensure you conform with application conventions.
-    - Use `wire:model.live` for real-time updates, `wire:model` is now deferred by default.
-    - Components now use the `App\Livewire` namespace (not `App\Http\Livewire`).
-    - Use `$this->dispatch()` to dispatch events (not `emit` or `dispatchBrowserEvent`).
-    - Use the `components.layouts.app` view as the typical layout path (not `layouts.app`).
-
-### New Directives
-- `wire:show`, `wire:transition`, `wire:cloak`, `wire:offline`, `wire:target` are available for use. Use the documentation to find usage examples.
-
-### Alpine
-- Alpine is now included with Livewire; don't manually include Alpine.js.
-- Plugins included with Alpine: persist, intersect, collapse, and focus.
-
-### Lifecycle Hooks
-- You can listen for `livewire:init` to hook into Livewire initialization, and `fail.status === 419` for the page expiring:
-
-<code-snippet name="Livewire Init Hook Example" lang="js">
-document.addEventListener('livewire:init', function () {
-    Livewire.hook('request', ({ fail }) => {
-        if (fail && fail.status === 419) {
-            alert('Your session expired');
-        }
-    });
-
-    Livewire.hook('message.failed', (message, component) => {
-        console.error(message);
-    });
-});
-</code-snippet>
+- Use the `search-docs` tool to confirm exact Livewire 4 syntax and testing APIs before making framework-level changes.
+- Verify existing project conventions before changing component namespaces, layout usage, or client-side hooks.
 
 === pint/core rules ===
 
@@ -334,11 +306,11 @@ document.addEventListener('livewire:init', function () {
 ### Dark Mode
 - If existing pages and components support dark mode, new pages and components must support dark mode in a similar way, typically using `dark:`.
 
-=== tailwindcss/v3 rules ===
+=== tailwindcss/v4 rules ===
 
-## Tailwind CSS 3
+## Tailwind CSS 4
 
-- Always use Tailwind CSS v3; verify you're using only classes supported by this version.
+- Always use Tailwind CSS v4; verify you're using only classes supported by this version.
 
 === filament/filament rules ===
 
@@ -421,15 +393,9 @@ Forms\Components\Select::make('user_id')
     expect($invoice->refresh())->isSent()->toBeTrue();
 </code-snippet>
 
-### Important Version 4 Changes
-- File visibility is now `private` by default.
-- The `deferFilters` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
-- The `Grid`, `Section`, and `Fieldset` layout components no longer span all columns by default.
-- The `all` pagination page method is not available for tables by default.
-- All action classes extend `Filament\Actions\Action`. No action classes exist in `Filament\Tables\Actions`.
-- The `Form` & `Infolist` layout components have been moved to `Filament\Schemas\Components`, for example `Grid`, `Section`, `Fieldset`, `Tabs`, `Wizard`, etc.
-- A new `Repeater` component for Forms has been added.
-- Icons now use the `Filament\Support\Icons\Heroicon` Enum by default. Other options are available and documented.
+### Important Version Notes
+- Confirm Filament 5 behavior with the documentation before applying version-specific guidance from older Filament releases.
+- Follow the conventions already present in this project for actions, schemas, resources, and testing APIs rather than assuming Filament 4 semantics.
 
 ### Organize Component Classes Structure
 - Schema components: `Schemas/Components/`

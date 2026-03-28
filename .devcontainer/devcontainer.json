@@ -1,20 +1,23 @@
 {
   "name": "Huddspool",
   "dockerComposeFile": [
-    "../docker-compose.yml"
+    "../compose.yaml"
   ],
   "service": "laravel.test",
   "runServices": [
     "laravel.test",
     "mysql",
-    "mailpit"
+    "mailpit",
+    "redis",
+    "queue",
+    "reverb"
   ],
   "workspaceFolder": "/var/www/html",
   "remoteUser": "sail",
   "overrideCommand": false,
   "updateRemoteUserUID": false,
   "shutdownAction": "stopCompose",
-  "forwardPorts": [80, 5173, 8081],
+  "forwardPorts": [8000, 5173, 8081, 8025],
   "customizations": {
     "vscode": {
       "extensions": [],
