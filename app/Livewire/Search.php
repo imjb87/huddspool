@@ -13,6 +13,8 @@ use Livewire\Component;
 
 class Search extends Component
 {
+    private const int RESULT_LIMIT = 8;
+
     public bool $isOpen = false;
 
     public mixed $searchTerm = '';
@@ -88,33 +90,39 @@ class Search extends Component
     private function searchPlayers(string $searchTerm): Collection
     {
         return User::query()
-            ->with('team')
+            ->select(['id', 'name', 'team_id', 'avatar_path'])
+            ->with('team:id,name')
             ->where('name', 'like', '%'.$searchTerm.'%')
             ->whereHas('team.sections.season', function ($query) {
                 $query->where('is_open', 1);
             })
             ->orderBy('name')
+            ->limit(self::RESULT_LIMIT)
             ->get();
     }
 
     private function searchTeams(string $searchTerm): Collection
     {
         return Team::query()
-            ->with('openSections')
+            ->select(['id', 'name', 'shortname', 'folded_at'])
+            ->with('openSections:id,name')
             ->where('name', 'like', '%'.$searchTerm.'%')
-            ->where('folded_at', null)
+            ->whereNull('folded_at')
             ->whereHas('sections.season', function ($query) {
                 $query->where('is_open', 1);
             })
             ->orderBy('name')
+            ->limit(self::RESULT_LIMIT)
             ->get();
     }
 
     private function searchVenues(string $searchTerm): Collection
     {
         return Venue::query()
+            ->select(['id', 'name', 'address'])
             ->where('name', 'like', '%'.$searchTerm.'%')
             ->orderBy('name')
+            ->limit(self::RESULT_LIMIT)
             ->get();
     }
 }

@@ -166,56 +166,87 @@ class Section extends Model
                     ->get()
                     ->groupBy('expellable_id');
 
+            $teamStats = [];
+
+            foreach ($results as $result) {
+                $homeTeamId = $result->home_team_id;
+                $awayTeamId = $result->away_team_id;
+
+                $teamStats[$homeTeamId] ??= [
+                    'played' => 0,
+                    'wins' => 0,
+                    'draws' => 0,
+                    'losses' => 0,
+                    'points' => 0,
+                    'latest_result_id' => null,
+                    'archived_name' => null,
+                ];
+
+                $teamStats[$awayTeamId] ??= [
+                    'played' => 0,
+                    'wins' => 0,
+                    'draws' => 0,
+                    'losses' => 0,
+                    'points' => 0,
+                    'latest_result_id' => null,
+                    'archived_name' => null,
+                ];
+
+                $teamStats[$homeTeamId]['played']++;
+                $teamStats[$awayTeamId]['played']++;
+
+                $teamStats[$homeTeamId]['points'] += $result->home_score;
+                $teamStats[$awayTeamId]['points'] += $result->away_score;
+
+                if ($result->home_score > $result->away_score) {
+                    $teamStats[$homeTeamId]['wins']++;
+                    $teamStats[$awayTeamId]['losses']++;
+                } elseif ($result->home_score < $result->away_score) {
+                    $teamStats[$homeTeamId]['losses']++;
+                    $teamStats[$awayTeamId]['wins']++;
+                } else {
+                    $teamStats[$homeTeamId]['draws']++;
+                    $teamStats[$awayTeamId]['draws']++;
+                }
+
+                if ($teamStats[$homeTeamId]['latest_result_id'] === null || $result->id > $teamStats[$homeTeamId]['latest_result_id']) {
+                    $teamStats[$homeTeamId]['latest_result_id'] = $result->id;
+                    $teamStats[$homeTeamId]['archived_name'] = $result->home_team_name;
+                }
+
+                if ($teamStats[$awayTeamId]['latest_result_id'] === null || $result->id > $teamStats[$awayTeamId]['latest_result_id']) {
+                    $teamStats[$awayTeamId]['latest_result_id'] = $result->id;
+                    $teamStats[$awayTeamId]['archived_name'] = $result->away_team_name;
+                }
+            }
+
             $teams = ($this->relationLoaded('teams')
                 ? $this->teams
                 : $this->teams()
                     ->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at'])
                     ->withTrashed()
                     ->get())
-                ->map(function ($team) use ($results, $teamExpulsions) {
-                    // Check if the team is expelled
+                ->map(function ($team) use ($teamExpulsions, $teamStats) {
                     $expelled = $teamExpulsions->has($team->id);
-                    $latestResult = $results
-                        ->filter(function ($result) use ($team) {
-                            return $result->home_team_id === $team->id || $result->away_team_id === $team->id;
-                        })
-                        ->sortByDesc('id')
-                        ->first();
+                    $stats = $teamStats[$team->id] ?? [
+                        'played' => 0,
+                        'wins' => 0,
+                        'draws' => 0,
+                        'losses' => 0,
+                        'points' => 0,
+                        'archived_name' => null,
+                    ];
 
-                    $archivedName = match (true) {
-                        $latestResult?->home_team_id === $team->id => $latestResult->home_team_name,
-                        $latestResult?->away_team_id === $team->id => $latestResult->away_team_name,
-                        default => null,
-                    };
+                    $archivedName = $stats['archived_name'];
 
                     if ($expelled) {
                         $played = $wins = $draws = $losses = $points = 0;
                     } else {
-                        $playedResults = $results->filter(function ($result) use ($team) {
-                            return $result->home_team_id === $team->id || $result->away_team_id === $team->id;
-                        });
-
-                        $wins = $playedResults->filter(function ($result) use ($team) {
-                            return ($result->home_team_id === $team->id && $result->home_score > $result->away_score)
-                                || ($result->away_team_id === $team->id && $result->away_score > $result->home_score);
-                        })->count();
-
-                        $draws = $playedResults->filter(function ($result) use ($team) {
-                            return ($result->home_team_id === $team->id && $result->home_score === $result->away_score)
-                                || ($result->away_team_id === $team->id && $result->away_score === $result->home_score);
-                        })->count();
-
-                        $losses = $playedResults->filter(function ($result) use ($team) {
-                            return ($result->home_team_id === $team->id && $result->home_score < $result->away_score)
-                                || ($result->away_team_id === $team->id && $result->away_score < $result->home_score);
-                        })->count();
-
-                        $played = $playedResults->count();
-
-                        $homePoints = $results->where('home_team_id', $team->id)->sum('home_score');
-                        $awayPoints = $results->where('away_team_id', $team->id)->sum('away_score');
-
-                        $points = $homePoints + $awayPoints - (int) ($team->pivot->deducted ?? 0);
+                        $played = $stats['played'];
+                        $wins = $stats['wins'];
+                        $draws = $stats['draws'];
+                        $losses = $stats['losses'];
+                        $points = $stats['points'] - (int) ($team->pivot->deducted ?? 0);
                     }
 
                     return (object) [

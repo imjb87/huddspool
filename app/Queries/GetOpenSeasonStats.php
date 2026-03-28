@@ -6,6 +6,7 @@ use App\Data\OpenSeasonStatsData;
 use App\Models\Frame;
 use App\Models\Result;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class GetOpenSeasonStats
 {
@@ -13,37 +14,34 @@ class GetOpenSeasonStats
     {
         return Cache::remember('stats:open-season', now()->addMinutes(5), function () {
             $frameBaseQuery = Frame::query()
-            ->whereHas('result.fixture.season', fn ($query) => $query->where('is_open', true));
+                ->join('results', 'results.id', '=', 'frames.result_id')
+                ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
+                ->join('seasons', 'seasons.id', '=', 'fixtures.season_id')
+                ->where('seasons.is_open', true);
 
             $totalFrames = (clone $frameBaseQuery)->count();
 
             $homePlayerIds = (clone $frameBaseQuery)
-            ->select('home_player_id')
-            ->whereNotNull('home_player_id')
-            ->distinct()
-            ->pluck('home_player_id');
+                ->select('frames.home_player_id as player_id')
+                ->whereNotNull('frames.home_player_id');
 
             $awayPlayerIds = (clone $frameBaseQuery)
-            ->select('away_player_id')
-            ->whereNotNull('away_player_id')
-            ->distinct()
-            ->pluck('away_player_id');
+                ->select('frames.away_player_id as player_id')
+                ->whereNotNull('frames.away_player_id');
 
-            $totalPlayers = $homePlayerIds
-            ->merge($awayPlayerIds)
-            ->filter()
-            ->unique()
-            ->count();
+            $totalPlayers = DB::query()
+                ->fromSub($homePlayerIds->union($awayPlayerIds), 'open_season_players')
+                ->count();
 
             $totalResults = Result::query()
-            ->whereHas('fixture.season', fn ($query) => $query->where('is_open', true))
-            ->count();
+                ->whereHas('fixture.season', fn ($query) => $query->where('is_open', true))
+                ->count();
 
             return new OpenSeasonStatsData(
-            totalFrames: $totalFrames,
-            totalResults: $totalResults,
-            totalPlayers: $totalPlayers,
-        );
+                totalFrames: $totalFrames,
+                totalResults: $totalResults,
+                totalPlayers: $totalPlayers,
+            );
         });
     }
 }

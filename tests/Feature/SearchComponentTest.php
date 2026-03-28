@@ -101,4 +101,38 @@ class SearchComponentTest extends TestCase
             ->assertSeeText('Alex Carter')
             ->assertSeeText('Imperials');
     }
+
+    public function test_component_limits_each_result_group_to_the_top_eight_matches(): void
+    {
+        Model::withoutEvents(function (): void {
+            $season = Season::factory()->create(['is_open' => true]);
+            $section = Section::factory()->create(['season_id' => $season->id]);
+
+            foreach (range(1, 10) as $index) {
+                $team = Team::factory()->create(['name' => sprintf('Imperial Team %02d', $index)]);
+                $team->sections()->attach($section);
+
+                User::factory()->create([
+                    'name' => sprintf('Imperial Player %02d', $index),
+                    'team_id' => $team->id,
+                ]);
+
+                Venue::factory()->create([
+                    'name' => sprintf('Imperial Venue %02d', $index),
+                    'address' => sprintf('%d West Street', $index),
+                    'latitude' => 53.6486,
+                    'longitude' => -1.7828,
+                ]);
+            }
+        });
+
+        Livewire::test(Search::class)
+            ->set('searchTerm', 'Imperial')
+            ->assertSeeText('Imperial Player 01')
+            ->assertSeeText('Imperial Team 01')
+            ->assertSeeText('Imperial Venue 01')
+            ->assertDontSeeText('Imperial Player 09')
+            ->assertDontSeeText('Imperial Team 09')
+            ->assertDontSeeText('Imperial Venue 09');
+    }
 }

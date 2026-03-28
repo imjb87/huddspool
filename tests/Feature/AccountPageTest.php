@@ -6,6 +6,7 @@ use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Account\Show as AccountShow;
+use App\Livewire\Player\FramesSection;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -709,6 +710,90 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Lost')
             ->assertSeeText($opponent->name)
             ->assertSeeText($awayTeam->name);
+    }
+
+    public function test_account_page_paginates_frames_section(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $player = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => UserRole::Player->value,
+        ]);
+
+        foreach (range(1, 21) as $index) {
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $homeTeam->id,
+                'away_team_id' => $awayTeam->id,
+                'fixture_date' => now()->subDays(21 - $index),
+            ]);
+
+            $result = Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $homeTeam->id,
+                'home_team_name' => $homeTeam->name,
+                'home_score' => 1,
+                'away_team_id' => $awayTeam->id,
+                'away_team_name' => $awayTeam->name,
+                'away_score' => 0,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'submitted_by' => $player->id,
+            ]);
+
+            $opponent = User::factory()->create([
+                'name' => sprintf('Account Opponent %02d', $index),
+                'team_id' => $awayTeam->id,
+                'role' => UserRole::Player->value,
+            ]);
+
+            Frame::query()->create([
+                'result_id' => $result->id,
+                'home_player_id' => $player->id,
+                'home_score' => 1,
+                'away_player_id' => $opponent->id,
+                'away_score' => 0,
+            ]);
+        }
+
+        $this->actingAs($player)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSee('data-account-frames-controls', false)
+            ->assertSeeText('Page 1')
+            ->assertSeeText('Account Opponent 21')
+            ->assertSeeText('Account Opponent 17')
+            ->assertDontSeeText('Account Opponent 16')
+            ->assertDontSeeText('Account Opponent 01');
+
+        Livewire::actingAs($player)
+            ->test(FramesSection::class, [
+                'player' => $player,
+                'section' => $section,
+                'forAccount' => true,
+            ])
+            ->assertSeeText('Page 1')
+            ->assertDontSeeText('Account Opponent 01')
+            ->call('nextPage')
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Account Opponent 16')
+            ->assertDontSeeText('Account Opponent 17')
+            ->assertDontSeeText('Account Opponent 11');
     }
 
     public function test_account_page_shows_knockout_history_and_pending_actions(): void

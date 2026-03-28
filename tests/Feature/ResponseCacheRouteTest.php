@@ -9,6 +9,11 @@ use Tests\TestCase;
 
 class ResponseCacheRouteTest extends TestCase
 {
+    public function test_response_cache_uses_the_redis_store(): void
+    {
+        $this->assertSame('redis', config('responsecache.cache.store'));
+    }
+
     /**
      * @return array<string, array{0: string}>
      */

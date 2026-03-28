@@ -20,7 +20,7 @@
                 <div class="space-y-6">
                     @include('player.partials.info-section')
                     @include('player.partials.knockout-section')
-                    @include('player.partials.frames-section')
+                    <livewire:player.frames-section :player="$player" :section="$player->team?->openSection()" />
                     @include('player.partials.history-section')
                 </div>
             </div>

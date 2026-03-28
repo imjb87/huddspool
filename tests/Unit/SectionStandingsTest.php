@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Expulsion;
 use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\Ruleset;
@@ -142,5 +143,127 @@ class SectionStandingsTest extends TestCase
 
         $this->assertCount(2, $standings);
         $this->assertCount(0, DB::getQueryLog());
+    }
+
+    public function test_standings_preserve_order_archived_names_and_expulsions(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $alpha = Team::factory()->create(['name' => 'Alpha']);
+        $beta = Team::factory()->create(['name' => 'Beta']);
+        $gamma = Team::factory()->create(['name' => 'Gamma']);
+
+        $section->teams()->attach($alpha->id, ['sort' => 1, 'deducted' => 1]);
+        $section->teams()->attach($beta->id, ['sort' => 2, 'deducted' => 0]);
+        $section->teams()->attach($gamma->id, ['sort' => 3, 'deducted' => 0]);
+
+        $fixtureOne = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $alpha->id,
+            'away_team_id' => $beta->id,
+        ]);
+
+        Result::factory()->create([
+            'id' => 100,
+            'fixture_id' => $fixtureOne->id,
+            'home_team_id' => $alpha->id,
+            'home_team_name' => 'Alpha Old',
+            'home_score' => 6,
+            'away_team_id' => $beta->id,
+            'away_team_name' => 'Beta Old',
+            'away_score' => 4,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $fixtureTwo = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $gamma->id,
+            'away_team_id' => $alpha->id,
+        ]);
+
+        Result::factory()->create([
+            'id' => 200,
+            'fixture_id' => $fixtureTwo->id,
+            'home_team_id' => $gamma->id,
+            'home_team_name' => 'Gamma Current',
+            'home_score' => 5,
+            'away_team_id' => $alpha->id,
+            'away_team_name' => 'Alpha Current',
+            'away_score' => 5,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        $fixtureThree = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $beta->id,
+            'away_team_id' => $gamma->id,
+        ]);
+
+        Result::factory()->create([
+            'id' => 300,
+            'fixture_id' => $fixtureThree->id,
+            'home_team_id' => $beta->id,
+            'home_team_name' => 'Beta Current',
+            'home_score' => 7,
+            'away_team_id' => $gamma->id,
+            'away_team_name' => 'Gamma Old',
+            'away_score' => 3,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => true,
+        ]);
+
+        Expulsion::query()->create([
+            'season_id' => $season->id,
+            'expellable_id' => $gamma->id,
+            'expellable_type' => Team::class,
+            'reason' => 'Withdrawn from competition',
+            'date' => now(),
+        ]);
+
+        $standings = $section->fresh()->standings();
+
+        $this->assertSame([$beta->id, $alpha->id, $gamma->id], $standings->pluck('id')->all());
+
+        $betaEntry = $standings->firstWhere('id', $beta->id);
+        $alphaEntry = $standings->firstWhere('id', $alpha->id);
+        $gammaEntry = $standings->firstWhere('id', $gamma->id);
+
+        $this->assertSame('Beta Current', $betaEntry->archived_name);
+        $this->assertSame(2, $betaEntry->played);
+        $this->assertSame(1, $betaEntry->wins);
+        $this->assertSame(0, $betaEntry->draws);
+        $this->assertSame(1, $betaEntry->losses);
+        $this->assertSame(11, $betaEntry->points);
+
+        $this->assertSame('Alpha Current', $alphaEntry->archived_name);
+        $this->assertSame(2, $alphaEntry->played);
+        $this->assertSame(1, $alphaEntry->wins);
+        $this->assertSame(1, $alphaEntry->draws);
+        $this->assertSame(0, $alphaEntry->losses);
+        $this->assertSame(10, $alphaEntry->points);
+
+        $this->assertSame('Gamma Old', $gammaEntry->archived_name);
+        $this->assertTrue($gammaEntry->expelled);
+        $this->assertSame(0, $gammaEntry->played);
+        $this->assertSame(0, $gammaEntry->wins);
+        $this->assertSame(0, $gammaEntry->draws);
+        $this->assertSame(0, $gammaEntry->losses);
+        $this->assertSame(0, $gammaEntry->points);
     }
 }

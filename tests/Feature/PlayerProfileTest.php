@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\KnockoutType;
+use App\Livewire\Player\FramesSection;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -16,6 +17,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class PlayerProfileTest extends TestCase
@@ -296,5 +298,80 @@ class PlayerProfileTest extends TestCase
             ->assertDontSeeText('07123 456789')
             ->assertDontSee('mailto:', false)
             ->assertDontSee('tel:', false);
+    }
+
+    public function test_player_profile_limits_recent_frames_to_twenty_entries(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
+
+        $player = User::factory()->create(['team_id' => $team->id]);
+        foreach (range(1, 21) as $index) {
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponentTeam->id,
+                'fixture_date' => now()->subDays(21 - $index),
+            ]);
+
+            $result = Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $team->id,
+                'home_team_name' => $team->name,
+                'home_score' => 6,
+                'away_team_id' => $opponentTeam->id,
+                'away_team_name' => $opponentTeam->name,
+                'away_score' => 4,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'submitted_by' => $player->id,
+            ]);
+
+            $opponent = User::factory()->create([
+                'name' => sprintf('Opponent %02d', $index),
+                'team_id' => $opponentTeam->id,
+            ]);
+
+            Frame::create([
+                'result_id' => $result->id,
+                'home_player_id' => $player->id,
+                'home_score' => 1,
+                'away_player_id' => $opponent->id,
+                'away_score' => 0,
+            ]);
+        }
+
+        $response = $this->actingAs($player)->get(route('player.show', $player));
+
+        $response->assertOk();
+        $response->assertSee('data-player-frames-controls', false);
+        $response->assertSeeText('Page 1');
+        $response->assertDontSeeText('Opponent 01');
+        $response->assertDontSeeText('Opponent 16');
+        $response->assertSeeText('Opponent 17');
+        $response->assertSeeText('Opponent 21');
+
+        Livewire::test(FramesSection::class, [
+            'player' => $player,
+            'section' => $section,
+        ])
+            ->assertSeeText('Page 1')
+            ->assertDontSeeText('Opponent 16')
+            ->call('nextPage')
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Opponent 16')
+            ->assertDontSeeText('Opponent 17')
+            ->assertDontSeeText('Opponent 11');
     }
 }

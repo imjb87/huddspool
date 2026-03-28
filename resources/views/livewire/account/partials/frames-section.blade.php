@@ -1,4 +1,4 @@
-@if ($this->frames->isNotEmpty())
+@if ($this->frames->count() > 0)
     <section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-account-frames-section>
         <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
             <div class="space-y-2">
@@ -33,6 +33,40 @@
                         </a>
                     @endforeach
                 </div>
+
+                @if ($this->frames->hasPages())
+                    <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" data-account-frames-controls>
+                        <div class="flex items-center justify-between gap-4">
+                            @if ($this->frames->onFirstPage())
+                                <span class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-400 dark:border-zinc-700 dark:text-gray-500">
+                                    Previous
+                                </span>
+                            @else
+                                <button type="button"
+                                    wire:click="previousPage('framesPage')"
+                                    class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-800">
+                                    Previous
+                                </button>
+                            @endif
+
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                Page {{ $this->frames->currentPage() }}
+                            </span>
+
+                            @if ($this->frames->hasMorePages())
+                                <button type="button"
+                                    wire:click="nextPage('framesPage')"
+                                    class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-800">
+                                    Next
+                                </button>
+                            @else
+                                <span class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-400 dark:border-zinc-700 dark:text-gray-500">
+                                    Next
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </section>

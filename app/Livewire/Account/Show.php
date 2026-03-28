@@ -3,10 +3,8 @@
 namespace App\Livewire\Account;
 
 use App\Queries\GetPlayerAverages;
-use App\Queries\GetPlayerFrames;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
-use App\Support\FrameSummaryRow;
 use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
@@ -88,12 +86,6 @@ class Show extends BaseAccountComponent
     }
 
     #[Computed]
-    public function frames(): Collection
-    {
-        return new GetPlayerFrames($this->user, $this->currentSection)();
-    }
-
-    #[Computed]
     public function history(): Collection
     {
         return new GetPlayerSeasonHistory($this->user)();
@@ -103,12 +95,6 @@ class Show extends BaseAccountComponent
     public function knockoutMatches(): Collection
     {
         return new GetPlayerKnockoutMatches($this->user)();
-    }
-
-    #[Computed]
-    public function frameRows(): Collection
-    {
-        return $this->frames->map(fn ($frame) => FrameSummaryRow::fromFrame($frame, $this->user->id));
     }
 
     #[Computed]

@@ -42,7 +42,7 @@
         <div class="space-y-6">
             @include('livewire.account.partials.profile-section')
             @include('livewire.account.partials.knockout-section')
-            @include('livewire.account.partials.frames-section')
+            <livewire:player.frames-section :player="$this->user" :section="$this->currentSection" :for-account="true" :key="'account-frames-'.$this->user->id" />
             @include('livewire.account.partials.history-section')
         </div>
     </div>

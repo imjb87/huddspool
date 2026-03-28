@@ -6,20 +6,22 @@ use App\Data\PlayerFrameData;
 use App\Models\Frame;
 use App\Models\Section;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetPlayerFrames
 {
+    private const int PER_PAGE = 5;
+
     public function __construct(
         protected User $player,
         protected ?Section $section = null,
-    ) {
-    }
+        protected int $page = 1,
+    ) {}
 
     /**
-     * @return Collection<int, PlayerFrameData>
+     * @return LengthAwarePaginator<int, PlayerFrameData>
      */
-    public function __invoke(): Collection
+    public function __invoke(): LengthAwarePaginator
     {
         $query = Frame::query()
             ->select('frames.*')
@@ -36,14 +38,20 @@ class GetPlayerFrames
                     ->where('frames.home_player_id', $this->player->id)
                     ->orWhere('frames.away_player_id', $this->player->id);
             })
-            ->orderByDesc('fixtures.fixture_date');
+            ->orderByDesc('fixtures.fixture_date')
+            ->orderByDesc('frames.id');
 
         if ($this->section) {
             $query->where('results.section_id', $this->section->id);
         }
 
         return $query
-            ->get()
-            ->map(fn (Frame $frame) => PlayerFrameData::fromFrame($frame));
+            ->paginate(
+                perPage: self::PER_PAGE,
+                pageName: 'framesPage',
+                page: $this->page,
+            )
+            ->through(fn (Frame $frame) => PlayerFrameData::fromFrame($frame))
+            ->withQueryString();
     }
 }

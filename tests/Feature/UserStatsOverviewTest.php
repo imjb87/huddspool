@@ -11,6 +11,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Queries\GetOpenSeasonStats;
 use App\Queries\GetSeasonSeriesStats;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -93,6 +94,33 @@ class UserStatsOverviewTest extends TestCase
         $this->assertCount(3, $series['players']);
         $this->assertCount(3, $series['results']);
         $this->assertCount(3, $series['frames']);
+    }
+
+    public function test_open_season_stats_use_grouped_queries_for_player_totals(): void
+    {
+        Cache::flush();
+
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $closedSeason = Season::factory()->create(['is_open' => false]);
+        $ruleset = Ruleset::factory()->create();
+
+        $this->createSeasonResultWithFrames($openSeason, $ruleset, 5, 4);
+        $this->createSeasonResultWithFrames($closedSeason, $ruleset, 6, 3);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+
+        $stats = (new GetOpenSeasonStats)();
+
+        $this->assertSame(2, $stats->totalPlayers);
+        $this->assertSame(1, $stats->totalResults);
+        $this->assertSame(1, $stats->totalFrames);
+
+        $queries = collect(DB::getQueryLog())->pluck('query');
+
+        $this->assertCount(3, $queries);
+        $this->assertFalse($queries->contains(fn (string $query): bool => str_contains($query, 'select distinct `home_player_id`')));
+        $this->assertFalse($queries->contains(fn (string $query): bool => str_contains($query, 'select distinct `away_player_id`')));
     }
 
     private function createSeasonResultWithFrames(Season $season, Ruleset $ruleset, int $homeScore, int $awayScore): void
