@@ -20,10 +20,29 @@ class HistoryController extends Controller
         ];
 
         $seasons = Cache::remember('history:index', now()->addMinutes(10), function () use ($rulesetOrder) {
+            $today = now()->toDateString();
+
             return Season::query()
+                ->select(['id', 'name', 'slug', 'dates', 'is_open'])
+                ->where(function ($query) use ($today) {
+                    $query
+                        ->where('is_open', false)
+                        ->orWhereRaw(
+                            "JSON_LENGTH(dates) > 0 and JSON_UNQUOTE(JSON_EXTRACT(dates, CONCAT('$[', JSON_LENGTH(dates) - 1, ']'))) <= ?",
+                            [$today],
+                        );
+                })
                 ->with([
-                    'sections' => fn ($query) => $query->withTrashed()->with('ruleset:id,name,slug'),
-                    'knockouts' => fn ($query) => $query->orderBy('name'),
+                    'sections' => fn ($query) => $query
+                        ->withTrashed()
+                        ->select(['id', 'season_id', 'ruleset_id', 'name', 'slug', 'deleted_at'])
+                        ->whereNotNull('ruleset_id')
+                        ->with('ruleset:id,name,slug')
+                        ->orderBy('name'),
+                    'knockouts' => fn ($query) => $query
+                        ->select(['id', 'season_id', 'name', 'slug', 'type'])
+                        ->whereNotNull('slug')
+                        ->orderBy('name'),
                 ])
                 ->orderByDesc('id')
                 ->get()
@@ -31,7 +50,6 @@ class HistoryController extends Controller
                 ->values()
                 ->map(function (Season $season) use ($rulesetOrder) {
                     $rulesets = $season->sections
-                        ->filter(fn (Section $section) => $section->ruleset)
                         ->groupBy('ruleset_id')
                         ->map(function ($sections) use ($rulesetOrder) {
                             /** @var Section $firstSection */
@@ -40,22 +58,16 @@ class HistoryController extends Controller
                             return [
                                 'ruleset' => $firstSection->ruleset,
                                 'sort_order' => $rulesetOrder[$firstSection->ruleset->slug ?? ''] ?? PHP_INT_MAX,
-                                'sections' => $sections
-                                    ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
-                                    ->values(),
+                                'sections' => $sections->values(),
                             ];
                         })
                         ->sortBy(fn (array $group) => sprintf('%03d-%s', $group['sort_order'], $group['ruleset']->name))
                         ->values();
 
-                    $knockouts = $season->knockouts
-                        ->filter(fn ($knockout) => filled($knockout->slug))
-                        ->values();
-
                     return [
                         'season' => $season,
                         'rulesets' => $rulesets,
-                        'knockouts' => $knockouts,
+                        'knockouts' => $season->knockouts->values(),
                     ];
                 });
         });
