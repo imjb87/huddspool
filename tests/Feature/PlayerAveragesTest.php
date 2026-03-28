@@ -160,6 +160,123 @@ class PlayerAveragesTest extends TestCase
         $this->assertSame(0.0, $averages->frames_lost_percentage);
     }
 
+    public function test_player_averages_match_mixed_home_and_away_results_with_section_filtering(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $otherSection = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+        $otherSection->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $otherSection->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $player = User::factory()->create(['team_id' => $homeTeam->id]);
+        $opponent = User::factory()->create(['team_id' => $awayTeam->id]);
+
+        $firstFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+        $secondFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $awayTeam->id,
+            'away_team_id' => $homeTeam->id,
+        ]);
+        $otherFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $otherSection->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+
+        $firstResult = Result::factory()->create([
+            'fixture_id' => $firstFixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'home_score' => 1,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+            'is_confirmed' => true,
+        ]);
+        $secondResult = Result::factory()->create([
+            'fixture_id' => $secondFixture->id,
+            'home_team_id' => $awayTeam->id,
+            'home_team_name' => $awayTeam->name,
+            'home_score' => 1,
+            'away_team_id' => $homeTeam->id,
+            'away_team_name' => $homeTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+            'is_confirmed' => true,
+        ]);
+        $otherResult = Result::factory()->create([
+            'fixture_id' => $otherFixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'home_score' => 1,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'away_score' => 0,
+            'section_id' => $otherSection->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+            'is_confirmed' => true,
+        ]);
+
+        Frame::create([
+            'result_id' => $firstResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $secondResult->id,
+            'home_player_id' => $opponent->id,
+            'home_score' => 1,
+            'away_player_id' => $player->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $otherResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+
+        $averages = (new GetPlayerAverages($player, $section))();
+
+        $this->assertSame(2, $averages->frames_played);
+        $this->assertSame(1, $averages->frames_won);
+        $this->assertSame(1, $averages->frames_lost);
+        $this->assertSame(50.0, $averages->frames_won_percentage);
+        $this->assertSame(50.0, $averages->frames_lost_percentage);
+    }
+
     public function test_section_averages_moves_to_the_next_page_of_players(): void
     {
         $season = Season::factory()->create(['is_open' => true]);

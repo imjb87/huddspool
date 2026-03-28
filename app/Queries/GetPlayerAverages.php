@@ -12,13 +12,13 @@ class GetPlayerAverages
     public function __construct(
         protected User $player,
         protected ?Section $section = null,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): PlayerAverageData
     {
-        $frames = Frame::query()
-            ->select('frames.*', 'results.section_id')
+        $playerId = $this->player->id;
+
+        $totals = Frame::query()
             ->join('results', 'results.id', '=', 'frames.result_id')
             ->where(function ($builder) {
                 $builder
@@ -28,29 +28,33 @@ class GetPlayerAverages
             ->when($this->section, function ($builder) {
                 $builder->where('results.section_id', $this->section->id);
             })
-            ->get();
+            ->selectRaw('COUNT(*) as frames_played')
+            ->selectRaw(
+                'SUM(CASE
+                    WHEN frames.home_player_id = ? AND frames.home_score > frames.away_score THEN 1
+                    WHEN frames.away_player_id = ? AND frames.away_score > frames.home_score THEN 1
+                    ELSE 0
+                END) as frames_won',
+                [$playerId, $playerId],
+            )
+            ->selectRaw(
+                'SUM(CASE
+                    WHEN frames.home_player_id = ? AND frames.home_score < frames.away_score THEN 1
+                    WHEN frames.away_player_id = ? AND frames.away_score < frames.home_score THEN 1
+                    ELSE 0
+                END) as frames_lost',
+                [$playerId, $playerId],
+            )
+            ->first();
 
-        if ($frames->isEmpty()) {
+        $framesPlayed = (int) ($totals?->frames_played ?? 0);
+
+        if ($framesPlayed === 0) {
             return PlayerAverageData::empty($this->player->id, $this->player->name);
         }
 
-        $framesPlayed = $frames->count();
-
-        $framesWon = $frames->filter(function (Frame $frame) {
-            $playerIsHome = $frame->home_player_id === $this->player->id;
-
-            return $playerIsHome
-                ? $frame->home_score > $frame->away_score
-                : $frame->away_score > $frame->home_score;
-        })->count();
-
-        $framesLost = $frames->filter(function (Frame $frame) {
-            $playerIsHome = $frame->home_player_id === $this->player->id;
-
-            return $playerIsHome
-                ? $frame->home_score < $frame->away_score
-                : $frame->away_score < $frame->home_score;
-        })->count();
+        $framesWon = (int) ($totals?->frames_won ?? 0);
+        $framesLost = (int) ($totals?->frames_lost ?? 0);
 
         $winPercentage = $framesPlayed > 0
             ? round(($framesWon / $framesPlayed) * 100, 2)
