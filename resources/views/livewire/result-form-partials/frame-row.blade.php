@@ -69,6 +69,10 @@
 
             <select
                 wire:model.live="form.frames.{{ $row['number'] }}.home_player_id"
+                data-result-frame-field
+                data-frame-number="{{ $row['number'] }}"
+                data-frame-side="home"
+                data-frame-value="player"
                 class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
                 @disabled($isLocked || ! $canEdit)
             >
@@ -84,6 +88,10 @@
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.home_score"
                         name="form.frames.{{ $row['number'] }}.home_score"
+                        data-result-frame-field
+                        data-frame-number="{{ $row['number'] }}"
+                        data-frame-side="home"
+                        data-frame-value="score"
                         class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
@@ -125,6 +133,10 @@
 
             <select
                 wire:model.live="form.frames.{{ $row['number'] }}.away_player_id"
+                data-result-frame-field
+                data-frame-number="{{ $row['number'] }}"
+                data-frame-side="away"
+                data-frame-value="player"
                 class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
                 @disabled($isLocked || ! $canEdit)
             >
@@ -140,6 +152,10 @@
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.away_score"
                         name="form.frames.{{ $row['number'] }}.away_score"
+                        data-result-frame-field
+                        data-frame-number="{{ $row['number'] }}"
+                        data-frame-side="away"
+                        data-frame-value="score"
                         class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >

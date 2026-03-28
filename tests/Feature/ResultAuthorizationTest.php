@@ -50,6 +50,29 @@ class ResultAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_team_captain_on_fixture_team_cannot_resume_an_in_progress_result_without_submit_permission(): void
+    {
+        ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
+
+        $captain = $this->createUserForTeam($homeTeam);
+        $homeTeam->update(['captain_id' => $captain->id]);
+
+        Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => false,
+        ]);
+
+        $this->actingAs($captain)
+            ->get(route('result.create', $fixture))
+            ->assertForbidden();
+    }
+
     public function test_regular_player_on_fixture_team_receives_forbidden_when_opening_result_create_route(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());

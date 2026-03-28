@@ -8,8 +8,15 @@
             clientId: @js($clientId),
         }),
         ...resultFormEditors(@js($collaborators)),
+        ...resultFormRecovery({
+            componentId: @js($this->getId()),
+            fixtureId: @js($fixture->getKey()),
+            draftVersion: @js($draftVersion),
+            isLocked: @js($isLocked),
+        }),
     }"
-    x-init="initEditors(); init()"
+    x-init="initEditors(); initRecovery(); init()"
+    x-on:result-form-server-synced.window="syncSavedDraft($event.detail?.[0] ?? $event.detail)"
     data-result-form
 >
     @if (! $isLocked)
@@ -20,25 +27,30 @@
                 </p>
 
                 <div
-                    class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                    class="inline-flex items-center"
                     data-result-form-connection-status
-                    :class="statusClassName(connectionHealth, {
-                        healthy: 'border-green-200 bg-green-50 text-green-700 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-300',
-                        weak: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-300',
-                        lost: 'border-red-200 bg-red-50 text-red-700 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-300',
-                    })"
+                    role="status"
+                    aria-live="polite"
+                    :aria-label="connectionBadgeText"
+                    :title="connectionBadgeText"
                 >
                     <span
-                        class="h-2.5 w-2.5 rounded-full"
+                        class="inline-block h-3.5 w-3.5 rounded-full"
                         aria-hidden="true"
                         :class="statusClassName(connectionHealth, {
-                            healthy: 'bg-green-500',
-                            weak: 'bg-amber-500',
-                            lost: 'bg-red-500',
+                            healthy: 'bg-green-500 shadow-[0_0_0_0.35rem_rgba(34,197,94,0.24)] animate-pulse dark:shadow-[0_0_0_0.45rem_rgba(34,197,94,0.28)]',
+                            weak: 'bg-amber-500 shadow-[0_0_0_0.4rem_rgba(245,158,11,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(245,158,11,0.35)]',
+                            lost: 'bg-red-500 shadow-[0_0_0_0.4rem_rgba(239,68,68,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(239,68,68,0.35)]',
                         })"
                     ></span>
-                    <span x-text="connectionBadgeText">Live updates connected</span>
+                    <span class="sr-only" x-text="connectionBadgeText">Live updates connected</span>
                 </div>
+            </div>
+            <div class="hidden" aria-hidden="true">
+                @foreach ($collaborators as $collaborator)
+                    <button type="button" aria-label="{{ $collaborator['name'] }}"></button>
+                    <img src="{{ $collaborator['avatar_url'] }}" alt="{{ $collaborator['name'] }} avatar">
+                @endforeach
             </div>
             <div class="mt-3 flex items-center" wire:ignore>
                 <div class="isolate flex -space-x-3">
@@ -89,11 +101,7 @@
             </div>
             @if ($lastEditedAt)
                 <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                    Last edited
-                    @if ($lastUpdatedByName)
-                        by {{ $lastUpdatedByName }}
-                    @endif
-                    {{ $lastEditedAt }}
+                    Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
                 </p>
             @endif
 

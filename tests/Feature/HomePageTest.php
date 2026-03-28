@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Fixture;
 use App\Models\News;
 use App\Models\Result;
@@ -170,6 +171,95 @@ class HomePageTest extends TestCase
         $response->assertSeeText($data['fixture']->fixture_date->format('j M Y'));
         $response->assertSee('href="'.route('result.show', $result).'"', false);
         $response->assertDontSeeText('No current matches in progress right now.');
+    }
+
+    public function test_home_page_links_team_admin_to_resume_in_progress_match(): void
+    {
+        $data = $this->createLiveScoreFixtureData();
+
+        $teamAdmin = User::factory()->create([
+            'team_id' => $data['homeTeam']->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $data['fixture']->id,
+            'home_team_id' => $data['homeTeam']->id,
+            'home_team_name' => $data['homeTeam']->name,
+            'away_team_id' => $data['awayTeam']->id,
+            'away_team_name' => $data['awayTeam']->name,
+            'home_score' => 3,
+            'away_score' => 2,
+            'is_confirmed' => false,
+            'section_id' => $data['section']->id,
+            'ruleset_id' => $data['ruleset']->id,
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('result.create', $data['fixture']).'"', false)
+            ->assertDontSee('href="'.route('result.show', $result).'"', false);
+    }
+
+    public function test_home_page_links_team_captain_to_result_show_when_they_lack_submit_permission(): void
+    {
+        $data = $this->createLiveScoreFixtureData();
+
+        $captain = User::factory()->create([
+            'team_id' => $data['awayTeam']->id,
+            'role' => UserRole::Player->value,
+        ]);
+        $data['awayTeam']->update(['captain_id' => $captain->id]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $data['fixture']->id,
+            'home_team_id' => $data['homeTeam']->id,
+            'home_team_name' => $data['homeTeam']->name,
+            'away_team_id' => $data['awayTeam']->id,
+            'away_team_name' => $data['awayTeam']->name,
+            'home_score' => 4,
+            'away_score' => 4,
+            'is_confirmed' => false,
+            'section_id' => $data['section']->id,
+            'ruleset_id' => $data['ruleset']->id,
+        ]);
+
+        $this->actingAs($captain)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('result.show', $result).'"', false)
+            ->assertDontSee('href="'.route('result.create', $data['fixture']).'"', false);
+    }
+
+    public function test_home_page_links_site_admin_on_fixture_team_to_resume_in_progress_match(): void
+    {
+        $data = $this->createLiveScoreFixtureData();
+
+        $admin = User::factory()->create([
+            'team_id' => $data['homeTeam']->id,
+            'is_admin' => true,
+        ]);
+        $admin->assignRole('admin');
+
+        $result = Result::factory()->create([
+            'fixture_id' => $data['fixture']->id,
+            'home_team_id' => $data['homeTeam']->id,
+            'home_team_name' => $data['homeTeam']->name,
+            'away_team_id' => $data['awayTeam']->id,
+            'away_team_name' => $data['awayTeam']->name,
+            'home_score' => 3,
+            'away_score' => 2,
+            'is_confirmed' => false,
+            'section_id' => $data['section']->id,
+            'ruleset_id' => $data['ruleset']->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('result.create', $data['fixture']).'"', false)
+            ->assertDontSee('href="'.route('result.show', $result).'"', false);
     }
 
     public function test_home_page_live_scores_list_keeps_all_in_progress_results_in_a_scrollable_five_row_container(): void

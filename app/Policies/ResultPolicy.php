@@ -10,16 +10,16 @@ class ResultPolicy
 {
     public function resumeSubmission(User $user, Result $result): bool
     {
-        if (! $user->can(PermissionName::SubmitLeagueResults->value)) {
-            return false;
-        }
-
         $teamId = $user->team?->id;
 
         if ($teamId === null) {
             return false;
         }
 
-        return $teamId === $result->home_team_id || $teamId === $result->away_team_id;
+        if ($teamId !== $result->home_team_id && $teamId !== $result->away_team_id) {
+            return false;
+        }
+
+        return $user->can(PermissionName::SubmitLeagueResults->value);
     }
 }

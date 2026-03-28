@@ -27,7 +27,11 @@ class ResultFormFixtureAccess
             abort(404);
         }
 
-        Gate::authorize('submitResult', $fixture);
+        if ($fixture->result && ! $fixture->result->is_confirmed) {
+            Gate::authorize('resumeSubmission', $fixture->result);
+        } else {
+            Gate::authorize('submitResult', $fixture);
+        }
 
         if ($fixture->fixture_date->gte(now())) {
             abort(404);

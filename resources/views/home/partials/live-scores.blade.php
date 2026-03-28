@@ -21,7 +21,7 @@
                         data-home-live-scores-list>
                         @foreach ($liveScores as $result)
                             <div data-home-live-score-row>
-                                <a href="{{ route('result.show', $result) }}"
+                                <a href="{{ $result->live_score_url }}"
                                     class="block rounded-xl sm:px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="min-w-0 flex-1">

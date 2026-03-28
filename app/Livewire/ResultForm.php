@@ -4,14 +4,15 @@ namespace App\Livewire;
 
 use App\Events\LeagueResultDraftUpdated;
 use App\Events\LeagueResultSubmitted;
+use App\Exceptions\StaleResultDraftException;
 use App\Livewire\Forms\FixtureResultForm;
 use App\Models\Fixture;
 use App\Models\Result;
+use App\Models\User;
 use App\Support\ResultDraftPayloadFactory;
 use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormPersister;
-use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -71,7 +72,7 @@ class ResultForm extends Component
         }
     }
 
-    public function submit(): Redirector
+    public function submit(): ?Redirector
     {
         $this->refreshActionState();
 
@@ -80,13 +81,25 @@ class ResultForm extends Component
         }
 
         $frames = $this->form->prepareFrames(requireComplete: true);
-        $result = $this->persister()->submit(
-            fixture: $this->fixture,
-            result: $this->result,
-            draftFrames: $this->form->draftFrames(),
-            completedFrames: $frames,
-            updatedBy: $this->authenticatedUserId(),
-        );
+
+        try {
+            $result = $this->persister()->submit(
+                fixture: $this->fixture,
+                result: $this->result,
+                draftFrames: $this->form->draftFrames(),
+                completedFrames: $frames,
+                updatedBy: $this->authenticatedUserId(),
+                expectedDraftVersion: $this->draftVersion,
+            );
+        } catch (StaleResultDraftException $exception) {
+            $this->handleStaleDraftException($exception, 'Another editor updated this result. We refreshed the latest draft for you.');
+
+            if ($this->isLocked && $this->result) {
+                return redirect()->route('result.show', $this->result);
+            }
+
+            return null;
+        }
 
         $this->syncComponentState($result);
 
@@ -99,6 +112,50 @@ class ResultForm extends Component
         sleep(1);
 
         return redirect()->route('result.show', $this->result);
+    }
+
+    /**
+     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $frames
+     */
+    public function restoreClientDraft(array $frames, int $draftVersion): void
+    {
+        $this->refreshActionState();
+
+        if ($this->isLocked || ! $this->canEdit || $draftVersion !== $this->draftVersion) {
+            return;
+        }
+
+        $this->form->syncFromResultAndDraft($this->result, $frames);
+
+        if ($this->form->matchesDraftState($this->result?->draft_state)) {
+            return;
+        }
+
+        $this->persistCurrentDraft();
+    }
+
+    /**
+     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $frames
+     */
+    public function mergeClientDraft(array $frames, int $draftVersion): void
+    {
+        $this->refreshActionState();
+
+        $currentDraftVersion = (int) ($this->result?->draft_version ?? 0);
+
+        if ($this->isLocked || ! $this->canEdit || $draftVersion !== $currentDraftVersion) {
+            return;
+        }
+
+        $this->draftVersion = $currentDraftVersion;
+
+        $this->form->syncFromResultAndDraft($this->result, $frames);
+
+        if ($this->form->matchesDraftState($this->result?->draft_state)) {
+            return;
+        }
+
+        $this->persistCurrentDraft();
     }
 
     /**
@@ -162,6 +219,30 @@ class ResultForm extends Component
         $changedFrameNumbers = $this->changedFrameNumbersFromPayload($payload['frames'] ?? []);
 
         $this->fixture = $this->fixtureAccess()->load($this->fixture);
+
+        if ($this->fixture->result) {
+            $this->syncComponentState($this->fixture->result);
+        } else {
+            $this->result = null;
+            $this->isLocked = (bool) ($payload['is_confirmed'] ?? false);
+            $this->canEdit = ! $this->isLocked;
+            $this->draftVersion = (int) ($payload['draft_version'] ?? 0);
+            $this->lastUpdatedByName = $payload['updated_by_name'] ?? null;
+            $this->form->syncFromResultAndDraft(null, $payload['frames'] ?? []);
+        }
+
+        if ($changedFrameNumbers !== []) {
+            $this->dispatch('result-frames-synced', frameNumbers: $changedFrameNumbers);
+        }
+    }
+
+    public function refreshSharedDraft(): void
+    {
+        $this->fixture = $this->fixtureAccess()->load($this->fixture);
+        $this->fixtureAccess()->ensureAccessible($this->fixture);
+
+        $changedFrameNumbers = $this->changedFrameNumbersFromPayload($this->fixture->result?->draft_state ?? []);
+
         $this->syncComponentState($this->fixture->result);
 
         if ($changedFrameNumbers !== []) {
@@ -206,6 +287,12 @@ class ResultForm extends Component
             $this->result,
             $this->result?->draft_state,
         );
+
+        $this->dispatch('result-form-server-synced', [
+            'draftVersion' => $this->draftVersion,
+            'frames' => $this->form->draftFrames(),
+            'isLocked' => $this->isLocked,
+        ]);
     }
 
     public function handleFrameUpdate(): void
@@ -230,20 +317,7 @@ class ResultForm extends Component
             return;
         }
 
-        $result = $this->persister()->persistDraft(
-            fixture: $this->fixture,
-            result: $this->result,
-            draftFrames: $this->form->draftFrames(),
-            updatedBy: $this->authenticatedUserId(),
-        );
-
-        $this->syncComponentState($result);
-
-        event(new LeagueResultDraftUpdated($this->draftPayloadFactory()->make(
-            fixture: $this->fixture,
-            result: $result,
-            clientId: $this->clientId,
-        )));
+        $this->persistCurrentDraft();
     }
 
     private function redirectToFixtureOrResult(): Redirector
@@ -319,6 +393,39 @@ class ResultForm extends Component
         }
 
         return $value;
+    }
+
+    private function persistCurrentDraft(): void
+    {
+        try {
+            $result = $this->persister()->persistDraft(
+                fixture: $this->fixture,
+                result: $this->result,
+                draftFrames: $this->form->draftFrames(),
+                updatedBy: $this->authenticatedUserId(),
+                expectedDraftVersion: $this->draftVersion,
+            );
+        } catch (StaleResultDraftException $exception) {
+            $this->handleStaleDraftException($exception, 'Another editor updated this result before your latest changes were saved.');
+
+            return;
+        }
+
+        $this->syncComponentState($result);
+        $this->resetErrorBag('form.frames');
+
+        event(new LeagueResultDraftUpdated($this->draftPayloadFactory()->make(
+            fixture: $this->fixture,
+            result: $result,
+            clientId: $this->clientId,
+        )));
+    }
+
+    private function handleStaleDraftException(StaleResultDraftException $exception, string $message): void
+    {
+        $this->fixture = $this->fixtureAccess()->load($this->fixture);
+        $this->syncComponentState($exception->result);
+        $this->addError('form.frames', $message);
     }
 
     /**

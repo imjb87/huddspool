@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Exceptions\StaleResultDraftException;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Result;
@@ -12,7 +13,7 @@ class ResultFormPersister
     /**
      * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
      */
-    public function persistDraft(Fixture $fixture, ?Result $result, array $draftFrames, int $updatedBy): Result
+    public function persistDraft(Fixture $fixture, ?Result $result, array $draftFrames, int $updatedBy, ?int $expectedDraftVersion = null): Result
     {
         return $this->persist(
             fixture: $fixture,
@@ -21,6 +22,7 @@ class ResultFormPersister
             completedFrames: $this->completedFramesFromDraft($draftFrames),
             confirmResult: false,
             updatedBy: $updatedBy,
+            expectedDraftVersion: $expectedDraftVersion,
         );
     }
 
@@ -28,7 +30,7 @@ class ResultFormPersister
      * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
      * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $completedFrames
      */
-    public function submit(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, int $updatedBy): Result
+    public function submit(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, int $updatedBy, ?int $expectedDraftVersion = null): Result
     {
         return $this->persist(
             fixture: $fixture,
@@ -37,6 +39,7 @@ class ResultFormPersister
             completedFrames: $completedFrames,
             confirmResult: true,
             updatedBy: $updatedBy,
+            expectedDraftVersion: $expectedDraftVersion,
         );
     }
 
@@ -44,17 +47,33 @@ class ResultFormPersister
      * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
      * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $completedFrames
      */
-    private function persist(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, bool $confirmResult, int $updatedBy): Result
+    private function persist(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, bool $confirmResult, int $updatedBy, ?int $expectedDraftVersion = null): Result
     {
-        $isOverridden = $result?->is_overridden ?? false;
         $scores = $this->scoresFromFrames($completedFrames);
 
-        return DB::transaction(function () use ($fixture, $result, $draftFrames, $completedFrames, $confirmResult, $updatedBy, $isOverridden, $scores) {
+        return DB::transaction(function () use ($fixture, $result, $draftFrames, $completedFrames, $confirmResult, $updatedBy, $expectedDraftVersion, $scores) {
+            Fixture::query()
+                ->whereKey($fixture->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $result = Result::query()
+                ->where('fixture_id', $fixture->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if ($result && $expectedDraftVersion !== null && (int) $result->draft_version !== $expectedDraftVersion) {
+                throw new StaleResultDraftException($result->fresh([
+                    'frames' => fn ($query) => $query->orderBy('id'),
+                    'draftUpdatedBy',
+                ]));
+            }
+
             $attributes = [
                 'home_score' => $scores['home_score'],
                 'away_score' => $scores['away_score'],
                 'is_confirmed' => $confirmResult,
-                'is_overridden' => $isOverridden,
+                'is_overridden' => $result?->is_overridden ?? false,
                 'draft_version' => (int) ($result?->draft_version ?? 0) + 1,
                 'draft_updated_by' => $updatedBy,
                 'draft_state' => $draftFrames,

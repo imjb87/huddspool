@@ -44,11 +44,18 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
     connectionBadgeText: 'Live updates connected',
     connectionHeading: 'Live syncing is healthy',
     connectionMessage: '',
+    connectionStateTimeoutId: null,
+    foregroundSyncTimeoutId: null,
+    hasBoundForegroundSync: false,
+    hasConnectedOnce: false,
     statusClassName(status, classes) {
         return classes[status] ?? classes.healthy;
     },
-    updateConnectionState(state) {
-        const connectionState = typeof state === 'string' ? state : state?.current;
+    applyConnectionState(connectionState) {
+        if (this.connectionStateTimeoutId) {
+            window.clearTimeout(this.connectionStateTimeoutId);
+            this.connectionStateTimeoutId = null;
+        }
 
         switch (connectionState) {
             case 'connected':
@@ -75,6 +82,30 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
                 break;
         }
     },
+    updateConnectionState(state) {
+        const connectionState = typeof state === 'string' ? state : state?.current;
+
+        if (connectionState === 'connected') {
+            this.hasConnectedOnce = true;
+            this.applyConnectionState(connectionState);
+
+            return;
+        }
+
+        if (! this.hasConnectedOnce && ['initialized', 'connecting'].includes(connectionState)) {
+            return;
+        }
+
+        if (['disconnected', 'failed'].includes(connectionState)) {
+            this.applyConnectionState(connectionState);
+
+            return;
+        }
+
+        this.connectionStateTimeoutId = window.setTimeout(() => {
+            this.applyConnectionState(connectionState);
+        }, 1000);
+    },
     echoConnection() {
         // Reverb currently uses Echo's Pusher-compatible connector, so the raw
         // connection state is read from the underlying Pusher connection here.
@@ -93,6 +124,40 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         connection.bind('state_change', (states) => this.updateConnectionState(states.current));
         connection.bind('error', () => this.updateConnectionState('failed'));
     },
+    queueForegroundSync() {
+        if (document.visibilityState === 'hidden') {
+            return;
+        }
+
+        if (this.foregroundSyncTimeoutId) {
+            window.clearTimeout(this.foregroundSyncTimeoutId);
+        }
+
+        this.foregroundSyncTimeoutId = window.setTimeout(() => {
+            window.Livewire.find(componentId)?.call('refreshSharedDraft');
+        }, 150);
+    },
+    bindForegroundSync() {
+        if (this.hasBoundForegroundSync) {
+            return;
+        }
+
+        this.hasBoundForegroundSync = true;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                this.queueForegroundSync();
+            }
+        });
+
+        window.addEventListener('pageshow', () => {
+            this.queueForegroundSync();
+        });
+
+        window.addEventListener('focus', () => {
+            this.queueForegroundSync();
+        });
+    },
     init() {
         if (!window.Echo || !window.Livewire) {
             this.updateConnectionState('failed');
@@ -104,6 +169,7 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         }
 
         this.bindConnectionStatus();
+        this.bindForegroundSync();
 
         const syncUi = (members) => this.syncCollaboratorsUi?.(members);
         const joinUi = (member) => this.collaboratorJoinedUi?.(member);
@@ -229,6 +295,191 @@ window.resultFormEditors = (initialCollaborators = []) => ({
         window.setTimeout(() => {
             this.collaboratorsUi = this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId);
         }, 220);
+    },
+});
+
+window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) => ({
+    currentDraftVersion: Number(draftVersion ?? 0),
+    storageKey: `result-form-recovery:${fixtureId}`,
+    saveTimeoutId: null,
+    initRecovery() {
+        if (isLocked) {
+            this.clearSavedDraft();
+
+            return;
+        }
+
+        this.restoreSavedDraft();
+        this.persistSavedDraft();
+
+        this.$el.addEventListener('change', () => this.queueSavedDraft(), true);
+        this.$el.addEventListener('input', () => this.queueSavedDraft(), true);
+    },
+    queueSavedDraft() {
+        if (this.saveTimeoutId) {
+            window.clearTimeout(this.saveTimeoutId);
+        }
+
+        this.saveTimeoutId = window.setTimeout(() => {
+            this.persistSavedDraft();
+        }, 75);
+    },
+    persistSavedDraft() {
+        const frames = this.readFramesFromDom();
+        const existingPayload = this.readSavedDraft();
+        const baseFrames = existingPayload && Number(existingPayload.draftVersion ?? -1) === this.currentDraftVersion
+            ? this.normalizeFrames(existingPayload.baseFrames ?? existingPayload.frames ?? frames)
+            : this.normalizeFrames(frames);
+
+        window.localStorage.setItem(this.storageKey, JSON.stringify({
+            draftVersion: this.currentDraftVersion,
+            baseFrames,
+            frames: this.normalizeFrames(frames),
+        }));
+    },
+    restoreSavedDraft() {
+        const payload = this.readSavedDraft();
+
+        if (!payload || Number(payload.draftVersion ?? -1) !== this.currentDraftVersion) {
+            return;
+        }
+
+        const savedFrames = this.normalizeFrames(payload.frames ?? {});
+
+        if (_.isEqual(savedFrames, this.readFramesFromDom())) {
+            return;
+        }
+
+        window.Livewire.find(componentId)?.call('restoreClientDraft', savedFrames, this.currentDraftVersion);
+    },
+    syncSavedDraft(detail = {}) {
+        const nextDraftVersion = Number(detail.draftVersion ?? this.currentDraftVersion ?? 0);
+        const latestFrames = this.normalizeFrames(detail.frames ?? this.readFramesFromDom());
+        const existingPayload = this.readSavedDraft();
+
+        if (detail.isLocked) {
+            this.clearSavedDraft();
+
+            return;
+        }
+
+        if (existingPayload && Number(existingPayload.draftVersion ?? -1) < nextDraftVersion) {
+            const mergedFrames = this.mergeFrames(
+                this.normalizeFrames(existingPayload.baseFrames ?? {}),
+                this.normalizeFrames(existingPayload.frames ?? {}),
+                latestFrames,
+            );
+
+            if (!_.isEqual(mergedFrames, latestFrames)) {
+                this.currentDraftVersion = nextDraftVersion;
+
+                window.localStorage.setItem(this.storageKey, JSON.stringify({
+                    draftVersion: this.currentDraftVersion,
+                    baseFrames: latestFrames,
+                    frames: mergedFrames,
+                }));
+
+                window.Livewire.find(componentId)?.call('mergeClientDraft', mergedFrames, this.currentDraftVersion);
+
+                return;
+            }
+        }
+
+        this.currentDraftVersion = nextDraftVersion;
+
+        window.localStorage.setItem(this.storageKey, JSON.stringify({
+            draftVersion: this.currentDraftVersion,
+            baseFrames: latestFrames,
+            frames: latestFrames,
+        }));
+    },
+    clearSavedDraft() {
+        window.localStorage.removeItem(this.storageKey);
+    },
+    readSavedDraft() {
+        const rawPayload = window.localStorage.getItem(this.storageKey);
+
+        if (!rawPayload) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(rawPayload);
+        } catch (error) {
+            this.clearSavedDraft();
+
+            return null;
+        }
+    },
+    readFramesFromDom() {
+        return Array.from(this.$el.querySelectorAll('[data-result-frame-field]')).reduce((frames, field) => {
+            const frameNumber = Number(field.dataset.frameNumber);
+            const side = field.dataset.frameSide;
+            const valueType = field.dataset.frameValue;
+
+            if (!frameNumber || !side || !valueType) {
+                return frames;
+            }
+
+            if (!frames[frameNumber]) {
+                frames[frameNumber] = {
+                    home_player_id: null,
+                    away_player_id: null,
+                    home_score: 0,
+                    away_score: 0,
+                };
+            }
+
+            const frame = frames[frameNumber];
+            const value = field.value === '' ? null : field.value;
+
+            if (side === 'home' && valueType === 'player') {
+                frame.home_player_id = value;
+            } else if (side === 'away' && valueType === 'player') {
+                frame.away_player_id = value;
+            } else if (side === 'home' && valueType === 'score') {
+                frame.home_score = Number(value ?? 0);
+            } else if (side === 'away' && valueType === 'score') {
+                frame.away_score = Number(value ?? 0);
+            }
+
+            return frames;
+        }, {});
+    },
+    normalizeFrames(frames = {}) {
+        return Array.from({ length: 10 }, (_, index) => index + 1).reduce((normalizedFrames, frameNumber) => {
+            const frame = frames[frameNumber] ?? frames[String(frameNumber)] ?? {};
+
+            normalizedFrames[frameNumber] = {
+                home_player_id: frame.home_player_id === '' ? null : frame.home_player_id ?? null,
+                away_player_id: frame.away_player_id === '' ? null : frame.away_player_id ?? null,
+                home_score: Number(frame.home_score ?? 0),
+                away_score: Number(frame.away_score ?? 0),
+            };
+
+            return normalizedFrames;
+        }, {});
+    },
+    mergeFrames(baseFrames, localFrames, latestFrames) {
+        return Array.from({ length: 10 }, (_, index) => index + 1).reduce((mergedFrames, frameNumber) => {
+            const mergedFrame = { ...latestFrames[frameNumber] };
+            const baseFrame = baseFrames[frameNumber] ?? {};
+            const localFrame = localFrames[frameNumber] ?? {};
+
+            ['home_player_id', 'away_player_id', 'home_score', 'away_score'].forEach((field) => {
+                if (_.isEqual(localFrame[field], baseFrame[field])) {
+                    return;
+                }
+
+                if (_.isEqual(latestFrames[frameNumber]?.[field], baseFrame[field])) {
+                    mergedFrame[field] = localFrame[field];
+                }
+            });
+
+            mergedFrames[frameNumber] = mergedFrame;
+
+            return mergedFrames;
+        }, {});
     },
 });
 

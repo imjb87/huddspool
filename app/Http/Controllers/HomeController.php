@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\Result;
 use App\Models\Season;
+use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -44,6 +46,8 @@ class HomeController extends Controller
 
     private function liveScores(): Collection
     {
+        $user = auth()->user();
+
         return Result::query()
             ->with([
                 'fixture:id,fixture_date',
@@ -55,15 +59,29 @@ class HomeController extends Controller
             ->whereHas('fixture.awayTeam', fn (Builder $query) => $query->notBye())
             ->orderByDesc('updated_at')
             ->get()
-            ->map(function (Result $result) {
+            ->map(function (Result $result) use ($user) {
                 $result->row_meta = collect([
                     $result->fixture?->fixture_date?->format('j M Y'),
                     $result->section?->name,
                     $result->section?->ruleset?->name,
                 ])->filter()->implode(' / ');
+                $result->live_score_url = $this->liveScoreUrlFor($result, $user);
 
                 return $result;
             });
+    }
+
+    private function liveScoreUrlFor(Result $result, ?User $user): string
+    {
+        if (
+            ! $result->is_confirmed &&
+            $user instanceof User &&
+            Gate::forUser($user)->allows('resumeSubmission', $result)
+        ) {
+            return route('result.create', $result->fixture);
+        }
+
+        return route('result.show', $result);
     }
 
     private function news(): Collection

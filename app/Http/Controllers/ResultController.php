@@ -44,7 +44,11 @@ class ResultController extends Controller
             return redirect()->route('result.show', $fixture->result);
         }
 
-        $this->authorize('createResult', $fixture);
+        if ($fixture->result) {
+            $this->authorize('resumeSubmission', $fixture->result);
+        } else {
+            $this->authorize('createResult', $fixture);
+        }
 
         return view('result.create', compact('fixture'));
     }

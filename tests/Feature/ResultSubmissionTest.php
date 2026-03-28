@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Events\LeagueResultDraftUpdated;
 use App\Events\LeagueResultSubmitted;
+use App\Exceptions\StaleResultDraftException;
 use App\Livewire\ResultForm;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Fixture;
@@ -13,6 +14,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Markdown;
@@ -57,8 +59,7 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('dark:border-zinc-800/80', false)
             ->assertSeeText('Submit a result')
             ->assertSeeText('Fixture details')
-            ->assertSeeText('Result card')
-            ->assertSeeText('Editing now')
+            ->assertSeeText('Enter result')
             ->assertSeeText('Live updates connected')
             ->assertSee($teamAdmin->avatar_url, false)
             ->assertSeeText($teamAdmin->name);
@@ -817,6 +818,181 @@ class ResultSubmissionTest extends TestCase
             ->assertSet('form.frames.2.home_player_id', null);
 
         $this->assertSame($result->draft_version, Result::firstOrFail()->draft_version);
+    }
+
+    public function test_foreground_refresh_silently_resyncs_to_latest_shared_draft_state(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $primaryComponent = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->assertSet('draftVersion', 0)
+            ->assertSet('form.frames.1.home_player_id', null);
+
+        Livewire::actingAs($secondaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->set('form.frames.1.home_score', 1);
+
+        $result = Result::firstOrFail();
+
+        $primaryComponent
+            ->call('refreshSharedDraft')
+            ->assertDispatched('result-frames-synced')
+            ->assertSet('draftVersion', $result->draft_version)
+            ->assertSet('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSet('form.frames.1.home_score', 1)
+            ->assertSet('form.frames.1.away_score', 0);
+    }
+
+    public function test_stale_draft_write_is_rejected_without_overwriting_newer_changes(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->set('form.frames.1.home_score', 1);
+
+        $result = Result::firstOrFail();
+        $staleVersion = $result->draft_version;
+
+        $persister = new ResultFormPersister;
+
+        $latestResult = $persister->persistDraft(
+            fixture: $fixture,
+            result: $result,
+            draftFrames: [
+                1 => [
+                    'home_player_id' => (string) $homePlayers[1]->id,
+                    'away_player_id' => (string) $awayPlayers[1]->id,
+                    'home_score' => 0,
+                    'away_score' => 1,
+                ],
+            ],
+            updatedBy: $secondaryAdmin->id,
+            expectedDraftVersion: $staleVersion,
+        );
+
+        try {
+            $persister->persistDraft(
+                fixture: $fixture,
+                result: $result,
+                draftFrames: [
+                    1 => [
+                        'home_player_id' => (string) $homePlayers[2]->id,
+                        'away_player_id' => (string) $awayPlayers[2]->id,
+                        'home_score' => 1,
+                        'away_score' => 0,
+                    ],
+                ],
+                updatedBy: $primaryAdmin->id,
+                expectedDraftVersion: $staleVersion,
+            );
+
+            $this->fail('Expected a stale draft write to be rejected.');
+        } catch (StaleResultDraftException $exception) {
+            $this->assertSame($latestResult->id, $exception->result->id);
+        }
+
+        $freshResult = Result::firstOrFail()->fresh();
+
+        $this->assertSame($secondaryAdmin->id, $freshResult->draft_updated_by);
+        $this->assertSame($staleVersion + 1, $freshResult->draft_version);
+        $this->assertSame((int) $homePlayers[1]->id, (int) data_get($freshResult->draft_state, '1.home_player_id'));
+        $this->assertSame((int) $awayPlayers[1]->id, (int) data_get($freshResult->draft_state, '1.away_player_id'));
+        $this->assertSame(0, (int) data_get($freshResult->draft_state, '1.home_score'));
+        $this->assertSame(1, (int) data_get($freshResult->draft_state, '1.away_score'));
+    }
+
+    public function test_client_recovery_payload_restores_unsaved_draft_when_server_version_matches(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->call('restoreClientDraft', [
+                1 => [
+                    'home_player_id' => (string) $homePlayers[0]->id,
+                    'away_player_id' => (string) $awayPlayers[0]->id,
+                    'home_score' => 1,
+                    'away_score' => 0,
+                ],
+            ], 0)
+            ->assertSet('draftVersion', 1)
+            ->assertSet('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSet('form.frames.1.home_score', 1);
+
+        $result = Result::firstOrFail();
+
+        $this->assertSame((int) $homePlayers[0]->id, (int) data_get($result->draft_state, '1.home_player_id'));
+        $this->assertSame((int) $awayPlayers[0]->id, (int) data_get($result->draft_state, '1.away_player_id'));
+        $this->assertSame(1, (int) data_get($result->draft_state, '1.home_score'));
+        $this->assertSame(0, (int) data_get($result->draft_state, '1.away_score'));
+    }
+
+    public function test_merged_client_draft_persists_non_conflicting_local_changes_on_latest_shared_state(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $primaryAdmin,
+            'secondaryAdmin' => $secondaryAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $primaryComponent = Livewire::actingAs($primaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        Livewire::actingAs($secondaryAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture])
+            ->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
+            ->set('form.frames.1.home_score', 1);
+
+        $latestResult = Result::firstOrFail();
+
+        $mergedFrames = $latestResult->draft_state;
+        $mergedFrames[2] = [
+            'home_player_id' => (string) $homePlayers[1]->id,
+            'away_player_id' => (string) $awayPlayers[1]->id,
+            'home_score' => 0,
+            'away_score' => 1,
+        ];
+
+        $primaryComponent->call('mergeClientDraft', $mergedFrames, $latestResult->draft_version);
+
+        $result = Result::firstOrFail()->fresh();
+
+        $this->assertSame($latestResult->draft_version + 1, $result->draft_version);
+        $this->assertSame((int) $homePlayers[0]->id, (int) data_get($result->draft_state, '1.home_player_id'));
+        $this->assertSame((int) $awayPlayers[0]->id, (int) data_get($result->draft_state, '1.away_player_id'));
+        $this->assertSame(1, (int) data_get($result->draft_state, '1.home_score'));
+        $this->assertSame((int) $homePlayers[1]->id, (int) data_get($result->draft_state, '2.home_player_id'));
+        $this->assertSame((int) $awayPlayers[1]->id, (int) data_get($result->draft_state, '2.away_player_id'));
+        $this->assertSame(0, (int) data_get($result->draft_state, '2.home_score'));
+        $this->assertSame(1, (int) data_get($result->draft_state, '2.away_score'));
     }
 
     public function test_submit_redirects_when_result_has_already_been_confirmed(): void
