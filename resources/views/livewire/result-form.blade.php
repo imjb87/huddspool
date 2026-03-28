@@ -14,9 +14,32 @@
 >
     @if (! $isLocked)
         <div>
-            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                <span x-text="collaboratorsUi.length === 1 ? '1 person is here' : `${collaboratorsUi.length} people are here`"></span>
-            </p>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    <span x-text="collaboratorsUi.length === 1 ? '1 person is here' : `${collaboratorsUi.length} people are here`"></span>
+                </p>
+
+                <div
+                    class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                    data-result-form-connection-status
+                    :class="statusClassName(connectionHealth, {
+                        healthy: 'border-green-200 bg-green-50 text-green-700 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-300',
+                        weak: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-300',
+                        lost: 'border-red-200 bg-red-50 text-red-700 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-300',
+                    })"
+                >
+                    <span
+                        class="h-2.5 w-2.5 rounded-full"
+                        aria-hidden="true"
+                        :class="statusClassName(connectionHealth, {
+                            healthy: 'bg-green-500',
+                            weak: 'bg-amber-500',
+                            lost: 'bg-red-500',
+                        })"
+                    ></span>
+                    <span x-text="connectionBadgeText">Live updates connected</span>
+                </div>
+            </div>
             <div class="mt-3 flex items-center" wire:ignore>
                 <div class="isolate flex -space-x-3">
                     <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
@@ -73,6 +96,21 @@
                     {{ $lastEditedAt }}
                 </p>
             @endif
+
+            <div
+                x-cloak
+                x-show="connectionHealth !== 'healthy'"
+                class="mt-4 rounded-xl border px-4 py-3"
+                data-result-form-connection-alert
+                :class="statusClassName(connectionHealth, {
+                    healthy: 'border-green-200 bg-green-50/80 text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200',
+                    weak: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-200',
+                    lost: 'border-red-200 bg-red-50 text-red-800 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-200',
+                })"
+            >
+                <p class="text-sm font-semibold" x-text="connectionHeading">Weak connection detected</p>
+                <p class="mt-1 text-sm leading-6" x-text="connectionMessage">Live updates may be delayed. It’s best if one person updates the result until your connection improves.</p>
+            </div>
         </div>
     @endif
 
