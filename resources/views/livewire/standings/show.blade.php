@@ -44,7 +44,7 @@
                                         wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
                                         data-section-table-row-type="static">
                                 @endif
-                                    <div class="flex items-center justify-between gap-2 rounded-lg py-2 sm:gap-3 sm:px-3 sm:py-3 sm:transition sm:group-hover:bg-gray-200/70 dark:sm:group-hover:bg-zinc-800/70" data-section-table-band>
+                                    <div class="flex items-center justify-between gap-2 rounded-lg py-2 sm:-mx-3 sm:-my-px sm:gap-3 sm:px-3 sm:py-3 sm:transition sm:group-hover:bg-gray-200/70 dark:sm:group-hover:bg-zinc-800/70" data-section-table-band>
                                         <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
                                             <div class="w-4 shrink-0 text-center text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400 sm:w-7">
                                                 {{ $row->position }}

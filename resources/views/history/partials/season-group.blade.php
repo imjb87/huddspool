@@ -1,6 +1,6 @@
 <section class="border-t border-gray-200 first:border-t-0 dark:border-zinc-800/80" data-history-season-shell>
     <button type="button"
-        class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-3 py-4 text-left transition hover:bg-gray-200/70 hover:text-gray-700 dark:hover:bg-zinc-800/70 dark:hover:text-gray-200"
+        class="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-3 py-4 text-left transition hover:bg-gray-200/70 hover:text-gray-700 dark:hover:bg-zinc-800/70 dark:hover:text-gray-200 sm:-my-px sm:-mx-3"
         @click="openSeason = openSeason === 'season-{{ $group['season']->id }}' ? null : 'season-{{ $group['season']->id }}'; openRuleset = null"
         :aria-expanded="openSeason === 'season-{{ $group['season']->id }}'"
         data-history-season-trigger>

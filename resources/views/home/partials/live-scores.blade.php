@@ -16,13 +16,13 @@
                         </p>
                     </div>
                 @else
-                    <div class="max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain dark:divide-zinc-800/80"
+                    <div class="max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain dark:divide-zinc-800/80 sm:-mx-3"
                         data-home-live-scores-shell
                         data-home-live-scores-list>
                         @foreach ($liveScores as $result)
                             <div data-home-live-score-row>
                                 <a href="{{ $result->live_score_url }}"
-                                    class="block rounded-xl sm:px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70">
+                                    class="block rounded-xl py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70 sm:px-3 sm:-my-px">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="min-w-0 flex-1">
                                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">

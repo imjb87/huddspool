@@ -8,12 +8,12 @@
         </div>
 
         <div class="lg:col-span-2">
-            <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+            <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-venue-teams-list>
                 @forelse ($venueTeams as $teamRow)
-                    <a href="{{ route('team.show', $teamRow['team']) }}"
-                        class="block rounded-xl px-3 py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70"
-                        wire:key="venue-team-{{ $teamRow['team']->id }}">
-                        <div class="flex items-start justify-between gap-4">
+                    <div wire:key="venue-team-{{ $teamRow['team']->id }}">
+                        <a href="{{ route('team.show', $teamRow['team']) }}"
+                            class="block py-4 transition sm:rounded-lg sm:px-3 sm:-mx-3 sm:-my-px sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70">
+                            <div class="flex items-start justify-between gap-4">
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $teamRow['team']->name }}</p>
                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -27,8 +27,9 @@
                                     <p class="mt-1 text-sm font-semibold text-gray-700 dark:text-gray-200">{{ $teamRow['captain_name'] }}</p>
                                 </div>
                             @endif
-                        </div>
-                    </a>
+                            </div>
+                        </a>
+                    </div>
                 @empty
                     <div class="py-6">
                         <p class="text-sm text-gray-500 dark:text-gray-400">No active teams for the current season.</p>

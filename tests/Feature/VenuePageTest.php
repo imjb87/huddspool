@@ -46,10 +46,13 @@ class VenuePageTest extends TestCase
         $response->assertSee('data-venue-page', false);
         $response->assertSee('data-venue-info-section', false);
         $response->assertSee('data-venue-teams-section', false);
+        $response->assertSee('data-venue-teams-list', false);
         $response->assertSee('data-venue-map-section', false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
+        $response->assertSee('divide-y divide-gray-200 dark:divide-zinc-800/80', false);
+        $response->assertSee('block py-4 transition sm:rounded-lg sm:px-3 sm:-mx-3 sm:-my-px sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70', false);
         $response->assertSeeText($venue->name);
         $response->assertSeeText('Venue information');
         $response->assertSeeText('Teams');

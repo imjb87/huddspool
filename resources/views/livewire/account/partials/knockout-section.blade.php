@@ -13,7 +13,7 @@
                     @foreach ($this->knockoutRows as $knockoutRow)
                         <div wire:key="account-knockout-{{ $knockoutRow->id }}">
                             @if ($knockoutRow->row_url)
-                                <a href="{{ $knockoutRow->row_url }}" class="block py-4 transition sm:rounded-lg sm:px-3 sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70">
+                                <a href="{{ $knockoutRow->row_url }}" class="block py-4 transition sm:-mx-3 sm:-my-px sm:rounded-lg sm:px-3 sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70">
                             @endif
                             <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'py-4 sm:rounded-lg sm:px-3' }} sm:items-center sm:gap-4">
                                 <div class="min-w-0 flex-1">

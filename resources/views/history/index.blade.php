@@ -20,7 +20,7 @@
                             </p>
                         </div>
 
-                        <div class="lg:col-span-2" data-history-index-accordion
+                        <div class="lg:col-span-2 sm:-mx-3" data-history-index-accordion
                             x-data="{ openSeason: null, openRuleset: null }">
                             @forelse ($seasonGroups as $group)
                                 @include('history.partials.season-group')

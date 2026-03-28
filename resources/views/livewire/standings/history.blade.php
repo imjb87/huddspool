@@ -30,7 +30,7 @@
                     @else
                         <div class="divide-y divide-gray-300 dark:divide-zinc-800/80">
                         @foreach ($standingRows as $row)
-                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-200/70 dark:hover:bg-zinc-800/70 sm:px-6 {{ $row->withdrawn ? 'line-through' : '' }}"
+                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-200/70 dark:hover:bg-zinc-800/70 sm:-mx-6 sm:px-6 {{ $row->withdrawn ? 'line-through' : '' }}"
                                 href="{{ route('team.show', $row->id) }}">
                                 <div class="flex w-1/2 items-center">
                                     <div class="w-2/12 whitespace-nowrap py-3 text-sm font-semibold {{ $row->text_class }}">

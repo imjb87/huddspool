@@ -78,7 +78,10 @@ class HistoryPageTest extends TestCase
         $response->assertSee('max-w-4xl px-4 pt-2 sm:px-6 lg:px-6', false);
         $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
         $response->assertSee('dark:text-gray-300', false);
+        $response->assertSee('lg:col-span-2 sm:-mx-3', false);
         $response->assertSee('data-history-index-accordion', false);
+        $response->assertSee('sm:-my-px', false);
+        $response->assertSee('sm:-mx-3 sm:ml-6', false);
         $response->assertSee('data-history-season-trigger', false);
         $response->assertSee('data-history-ruleset-trigger', false);
         $response->assertSee('data-history-section-link', false);
