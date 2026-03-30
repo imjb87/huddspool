@@ -95,3 +95,5 @@ export function enhanceSiteSearch(component) {
         },
     });
 }
+
+window.enhanceSiteSearch = enhanceSiteSearch;

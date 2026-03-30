@@ -87,7 +87,7 @@
                                 <a href="{{ $sponsor['url'] }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="group flex h-full flex-col"
+                                    class="group flex flex-col"
                                     data-section-sponsors-card>
                                     <div class="flex h-24 w-full items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 transition hover:border-gray-300 dark:border-gray-200 dark:bg-white dark:hover:border-gray-300">
                                         @if (isset($sponsor['webp_160']))
@@ -131,7 +131,7 @@
                                                 aria-hidden="true">
                                         @endif
                                     </div>
-                                    <p class="mt-2 flex min-h-10 items-start justify-center text-center text-sm font-medium text-gray-500 transition group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">
+                                    <p class="mt-2 text-center text-sm font-medium text-gray-500 transition group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">
                                         {{ $sponsor['name'] }}
                                     </p>
                                 </a>

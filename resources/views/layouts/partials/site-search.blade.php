@@ -184,7 +184,12 @@
                         return;
                     }
 
-                    const { enhanceSiteSearch } = await import(this.moduleUrl);
+                    await import(this.moduleUrl);
+                    const enhanceSiteSearch = window.enhanceSiteSearch;
+
+                    if (typeof enhanceSiteSearch !== 'function') {
+                        throw new Error('Site search enhancer failed to load.');
+                    }
 
                     enhanceSiteSearch(this);
                     this.isEnhanced = true;
