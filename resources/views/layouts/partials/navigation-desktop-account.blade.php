@@ -51,7 +51,7 @@
                         clip-rule="evenodd" />
                 </svg>
             </button>
-            <div class="absolute right-0 top-full z-10 mt-3 w-56 rounded-xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5 dark:bg-zinc-900 dark:ring-white/10"
+            <div class="absolute right-0 top-full z-10 mt-3 w-56"
                 x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-y-1"
                 x-transition:enter-end="opacity-100 translate-y-0"
@@ -59,45 +59,49 @@
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 translate-y-1"
                 @click="open = false">
-                <div class="py-1">
-                    <a href="{{ route('account.show') }}"
-                        class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                        Account
-                    </a>
-                </div>
-                <div class="py-1" x-cloak x-show="canInstallApp">
-                    <button type="button"
-                        class="block w-full rounded-md py-2 pl-3 pr-4 text-left text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800"
-                        @click="installApp()"
-                        data-install-app-trigger>
-                        Install app
-                    </button>
-                </div>
-                @if (auth()->user()->isAdmin())
-                    <div class="py-1">
-                        <a href="{{ route('filament.admin.pages.dashboard') }}"
-                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                            Admin
+                <div class="ui-card overflow-hidden dark:bg-zinc-800">
+                    <div class="ui-card-rows">
+                        <a href="{{ route('account.show') }}"
+                            class="ui-card-row-link">
+                            <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                Account
+                            </div>
                         </a>
+                        <div x-cloak x-show="canInstallApp">
+                            <button type="button"
+                                class="ui-card-row w-full cursor-pointer px-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5"
+                                @click="installApp()"
+                                data-install-app-trigger>
+                                Install app
+                            </button>
+                        </div>
+                        @if (auth()->user()->isAdmin())
+                            <a href="{{ route('filament.admin.pages.dashboard') }}"
+                                class="ui-card-row-link">
+                                <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                    Admin
+                                </div>
+                            </a>
+                        @endif
+                        @if ($is_impersonating ?? false)
+                            <a class="ui-card-row-link"
+                                href="{{ route('impersonation.leave') }}">
+                                <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                    Stop impersonating
+                                </div>
+                            </a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a href="{{ route('logout') }}"
+                                class="ui-card-row-link"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                    Log out
+                                </div>
+                            </a>
+                        </form>
                     </div>
-                @endif
-                @if ($is_impersonating ?? false)
-                    <div class="py-1">
-                        <a class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800"
-                            href="{{ route('impersonation.leave') }}">
-                            Stop impersonating
-                        </a>
-                    </div>
-                @endif
-                <div class="py-1">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <a href="{{ route('logout') }}"
-                            class="block rounded-md py-2 pl-3 pr-4 text-sm font-semibold leading-5 text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800"
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                            Log out
-                        </a>
-                    </form>
                 </div>
             </div>
         </div>

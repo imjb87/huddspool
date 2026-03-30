@@ -43,7 +43,7 @@
                 </svg>
             </button>
 
-            <div class="absolute left-0 top-full z-10 mt-3 w-72 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5 dark:bg-zinc-900 dark:ring-white/10"
+            <div class="absolute left-0 top-full z-10 mt-3 w-72"
                 x-show="open"
                 x-cloak
                 x-transition:enter="transition ease-out duration-200"
@@ -52,17 +52,24 @@
                 x-transition:leave="transition ease-in duration-150"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 translate-y-1">
-                @foreach ($navigationRuleset['sections'] as $section)
-                    <a href="{{ route('ruleset.section.show', ['ruleset' => $navigationRuleset['ruleset'], 'section' => $section]) }}"
-                        class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                        {{ $section->name }}
-                    </a>
-                @endforeach
-                <div class="mx-2 my-1 border-t border-gray-200 dark:border-gray-800"></div>
-                <a href="{{ route('ruleset.show', $navigationRuleset['ruleset']) }}"
-                    class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                    {{ $navigationRuleset['ruleset']->name }}
-                </a>
+                <div class="ui-card overflow-hidden dark:bg-zinc-800">
+                    <div class="ui-card-rows">
+                        @foreach ($navigationRuleset['sections'] as $section)
+                            <a href="{{ route('ruleset.section.show', ['ruleset' => $navigationRuleset['ruleset'], 'section' => $section]) }}"
+                                class="ui-card-row-link">
+                                <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                    {{ $section->name }}
+                                </div>
+                            </a>
+                        @endforeach
+                        <a href="{{ route('ruleset.show', $navigationRuleset['ruleset']) }}"
+                            class="ui-card-row-link">
+                            <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                {{ $navigationRuleset['ruleset']->name }}
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     @endforeach
@@ -110,7 +117,7 @@
             </svg>
         </button>
 
-        <div class="absolute left-0 top-full z-10 mt-3 w-72 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-gray-900/5 dark:bg-zinc-900 dark:ring-white/10"
+        <div class="absolute left-0 top-full z-10 mt-3 w-72"
             x-show="open"
             x-cloak
             x-transition:enter="transition ease-out duration-200"
@@ -120,19 +127,24 @@
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-1"
             data-knockouts-nav>
-            @foreach ($navigableKnockouts as $knockout)
-                <a href="{{ route('knockout.show', $knockout) }}"
-                    class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                    {{ $knockout->name }}
-                </a>
-            @endforeach
-            @if ($navigableKnockouts->isNotEmpty())
-                <div class="mx-2 my-1 border-t border-gray-200 dark:border-gray-800"></div>
-            @endif
-            <a href="{{ route('page.show', 'knockout-dates') }}"
-                class="block rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-zinc-800">
-                Knockout Dates
-            </a>
+            <div class="ui-card overflow-hidden dark:bg-zinc-800">
+                <div class="ui-card-rows">
+                    @foreach ($navigableKnockouts as $knockout)
+                        <a href="{{ route('knockout.show', $knockout) }}"
+                            class="ui-card-row-link">
+                            <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                                {{ $knockout->name }}
+                            </div>
+                        </a>
+                    @endforeach
+                    <a href="{{ route('page.show', 'knockout-dates') }}"
+                        class="ui-card-row-link">
+                        <div class="ui-card-row px-4 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5">
+                            Knockout Dates
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     <a href="{{ route('history.index') }}"
