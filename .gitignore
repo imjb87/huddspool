@@ -18,3 +18,4 @@ yarn-error.log
 .vercel
 *.sql
 .DS_Store
+/output
