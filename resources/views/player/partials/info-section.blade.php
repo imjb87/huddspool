@@ -1,19 +1,24 @@
-<section class="py-1" data-player-profile-section>
-    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-        <div class="space-y-2">
+<section class="ui-section" data-player-profile-section>
+    <div class="ui-shell-grid">
+        <div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Player information</h3>
-            <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                 Public profile details, current team information, and this season's playing record.
             </p>
         </div>
 
-        <div class="space-y-6 lg:col-span-2">
-            <div class="pt-1">
-                <div class="space-y-5">
+        <div class="lg:col-span-2">
+            <div class="ui-card">
+                <div class="ui-card-body">
                     @include('player.partials.profile-header')
-                    @include('player.partials.averages-card')
-                    @include('player.partials.contact-details')
                 </div>
+
+                @if ($averages || (($player->email || $player->telephone) && auth()->check()))
+                    <div class="ui-card-rows">
+                        @include('player.partials.averages-card')
+                        @include('player.partials.contact-details')
+                    </div>
+                @endif
             </div>
         </div>
     </div>

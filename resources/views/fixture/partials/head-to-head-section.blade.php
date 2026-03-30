@@ -1,52 +1,76 @@
-<section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-fixture-head-to-head-section>
-    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-        <div class="space-y-2">
+<section class="ui-section" data-fixture-head-to-head-section>
+    <div class="ui-shell-grid">
+        <div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Head to head</h3>
-            <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                 Current section standings for the two teams in this fixture.
             </p>
         </div>
 
         <div class="lg:col-span-2">
-            <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+            <div class="ui-card">
+                <div class="ui-card-column-headings px-4 sm:px-5">
+                    <div class="flex min-w-0 items-center gap-3 sm:gap-4"></div>
+
+                    <div class="ml-auto flex shrink-0 items-start gap-3 text-center sm:gap-4">
+                        <div class="w-9 sm:w-10">
+                            <p class="ui-card-column-header">Pos</p>
+                        </div>
+                        <div class="w-9 sm:w-10">
+                            <p class="ui-card-column-header">Pl</p>
+                        </div>
+                        <div class="hidden w-9 md:block sm:w-10">
+                            <p class="ui-card-column-header">W</p>
+                        </div>
+                        <div class="hidden w-9 md:block sm:w-10">
+                            <p class="ui-card-column-header">D</p>
+                        </div>
+                        <div class="hidden w-9 md:block sm:w-10">
+                            <p class="ui-card-column-header">L</p>
+                        </div>
+                        <div class="w-9 sm:w-10">
+                            <p class="ui-card-column-header">Pts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-card-rows">
                 @foreach ($standings as $standing)
                     <a href="{{ route('team.show', $standing->id) }}"
-                        class="block"
+                        class="ui-card-row-link"
                         wire:key="fixture-standing-{{ $standing->id }}">
-                        <div class="flex items-center gap-4 py-4">
-                            <div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">
-                                {{ $standing->position }}
-                            </div>
-
+                        <div class="ui-card-row items-center px-4 sm:px-5">
                             <div class="min-w-0 flex-1">
-                                <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->name }}</p>
+                                <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    <span class="sm:hidden">{{ $standing->shortname ?: $standing->name }}</span>
+                                    <span class="hidden sm:inline">{{ $standing->name }}</span>
+                                </p>
                             </div>
 
-                            <div class="ml-auto flex shrink-0 items-center gap-5 text-center">
-                                <div class="w-12">
-                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pl</p>
-                                    <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->played }}</p>
+                            <div class="ml-auto flex shrink-0 items-center gap-3 text-center sm:gap-4">
+                                <div class="w-9 sm:w-10">
+                                    <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">{{ $standing->position }}</p>
                                 </div>
-                                <div class="hidden w-12 md:block">
-                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">W</p>
-                                    <p class="mt-1 text-sm font-semibold text-green-700 dark:text-green-400">{{ $standing->wins }}</p>
+                                <div class="w-9 sm:w-10">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->played }}</p>
                                 </div>
-                                <div class="hidden w-12 md:block">
-                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">D</p>
-                                    <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->draws }}</p>
+                                <div class="hidden w-9 md:block sm:w-10">
+                                    <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ $standing->wins }}</p>
                                 </div>
-                                <div class="hidden w-12 md:block">
-                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">L</p>
-                                    <p class="mt-1 text-sm font-semibold text-red-700 dark:text-red-400">{{ $standing->losses }}</p>
+                                <div class="hidden w-9 md:block sm:w-10">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->draws }}</p>
                                 </div>
-                                <div class="w-12">
-                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pts</p>
-                                    <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->points }}</p>
+                                <div class="hidden w-9 md:block sm:w-10">
+                                    <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $standing->losses }}</p>
+                                </div>
+                                <div class="w-9 sm:w-10">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $standing->points }}</p>
                                 </div>
                             </div>
                         </div>
                     </a>
                 @endforeach
+                </div>
             </div>
         </div>
     </div>

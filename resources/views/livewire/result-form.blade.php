@@ -1,5 +1,5 @@
 <form
-    class="space-y-6"
+    class="space-y-6 lg:contents"
     wire:submit.prevent="submit"
     x-data="{
         ...resultFormCollaboration({
@@ -20,160 +20,214 @@
     data-result-form
 >
     @if (! $isLocked)
-        <div>
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    <span x-text="collaboratorsUi.length === 1 ? '1 person is here' : `${collaboratorsUi.length} people are here`"></span>
-                </p>
-
-                <div
-                    class="inline-flex items-center"
-                    data-result-form-connection-status
-                    role="status"
-                    aria-live="polite"
-                    :aria-label="connectionBadgeText"
-                    :title="connectionBadgeText"
-                >
-                    <span
-                        class="inline-block h-3.5 w-3.5 rounded-full"
-                        aria-hidden="true"
-                        :class="statusClassName(connectionHealth, {
-                            healthy: 'bg-green-500 shadow-[0_0_0_0.35rem_rgba(34,197,94,0.24)] animate-pulse dark:shadow-[0_0_0_0.45rem_rgba(34,197,94,0.28)]',
-                            weak: 'bg-amber-500 shadow-[0_0_0_0.4rem_rgba(245,158,11,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(245,158,11,0.35)]',
-                            lost: 'bg-red-500 shadow-[0_0_0_0.4rem_rgba(239,68,68,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(239,68,68,0.35)]',
-                        })"
-                    ></span>
-                    <span class="sr-only" x-text="connectionBadgeText">Live updates connected</span>
+        <section class="ui-section" data-result-form-presence-section>
+            <div class="ui-shell-grid">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Presence</p>
+                    <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        Keep an eye on who is currently viewing or editing this result.
+                    </p>
                 </div>
-            </div>
-            <div class="hidden" aria-hidden="true">
-                @foreach ($collaborators as $collaborator)
-                    <button type="button" aria-label="{{ $collaborator['name'] }}"></button>
-                    <img src="{{ $collaborator['avatar_url'] }}" alt="{{ $collaborator['name'] }} avatar">
-                @endforeach
-            </div>
-            <div class="mt-3 flex items-center" wire:ignore>
-                <div class="isolate flex -space-x-3">
-                    <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
-                        <div
-                            class="relative transition duration-200 ease-out"
-                            x-data="resultFormPresenceTooltip()"
-                            x-show="collaborator.isVisible"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 scale-95"
-                            x-transition:enter-end="opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-200"
-                            x-transition:leave-start="opacity-100 scale-100"
-                            x-transition:leave-end="opacity-0 scale-95"
-                            x-on:mouseenter="showTooltip()"
-                            x-on:mouseleave="hideTooltip()"
-                            x-on:focusin="showTooltip()"
-                            x-on:focusout="hideTooltip()"
-                            x-on:click.prevent="showTooltip()"
-                            x-on:click.outside="hideTooltip()"
-                        >
-                            <button
-                                type="button"
-                                class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-zinc-900 dark:focus:ring-offset-zinc-900"
-                                :aria-label="collaborator.name"
-                                x-ref="trigger"
-                            >
-                                <img
-                                    :src="collaborator.avatar_url"
-                                    :alt="`${collaborator.name} avatar`"
-                                    class="h-9 w-9 rounded-full object-cover"
-                                >
-                            </button>
 
-                            <template x-teleport="body">
-                                <div
-                                    x-cloak
-                                    x-show="open"
-                                    x-ref="tooltip"
-                                    class="fixed z-[100] max-w-[min(18rem,calc(100vw-1rem))] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium text-white break-words shadow-sm transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
-                                    :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
-                                    x-text="collaborator.name"
-                                ></div>
-                            </template>
+                <div class="lg:col-span-2">
+                    <div class="ui-card">
+                        <div class="ui-card-body">
+                            <div class="hidden" aria-hidden="true">
+                                @foreach ($collaborators as $collaborator)
+                                    <button type="button" aria-label="{{ $collaborator['name'] }}"></button>
+                                    <img src="{{ $collaborator['avatar_url'] }}" alt="{{ $collaborator['name'] }} avatar">
+                                @endforeach
+                            </div>
+
+                            <div class="min-w-0" wire:ignore>
+                                <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                                    <span x-text="collaboratorsUi.length === 1 ? '1 person here' : `${collaboratorsUi.length} people here`"></span>
+                                </p>
+
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="isolate flex items-center -space-x-3">
+                                        <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
+                                            <div
+                                                class="relative flex items-center transition duration-200 ease-out"
+                                                x-data="resultFormPresenceTooltip()"
+                                                x-show="collaborator.isVisible"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100"
+                                                x-transition:leave="transition ease-in duration-200"
+                                                x-transition:leave-start="opacity-100 scale-100"
+                                                x-transition:leave-end="opacity-0 scale-95"
+                                                x-on:mouseenter="showTooltip()"
+                                                x-on:mouseleave="hideTooltip()"
+                                                x-on:focusin="showTooltip()"
+                                                x-on:focusout="hideTooltip()"
+                                                x-on:click.prevent="showTooltip()"
+                                                x-on:click.outside="hideTooltip()"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-zinc-900 dark:focus:ring-offset-zinc-900"
+                                                    :aria-label="collaborator.name"
+                                                    x-ref="trigger"
+                                                >
+                                                    <img
+                                                        :src="collaborator.avatar_url"
+                                                        :alt="`${collaborator.name} avatar`"
+                                                        class="h-9 w-9 rounded-full object-cover"
+                                                    >
+                                                </button>
+
+                                                <template x-teleport="body">
+                                                    <div
+                                                        x-cloak
+                                                        x-show="open"
+                                                        x-ref="tooltip"
+                                                        class="fixed z-[100] max-w-[min(18rem,calc(100vw-1rem))] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium text-white break-words shadow-sm transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
+                                                        :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
+                                                        x-text="collaborator.name"
+                                                    ></div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div
+                                        class="relative flex shrink-0 items-center justify-end self-center"
+                                        x-data="resultFormPresenceTooltip()"
+                                        x-on:mouseenter="showTooltip()"
+                                        x-on:mouseleave="hideTooltip()"
+                                        x-on:focusin="showTooltip()"
+                                        x-on:focusout="hideTooltip()"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center justify-end"
+                                            data-result-form-connection-status
+                                            role="status"
+                                            aria-live="polite"
+                                            :aria-label="connectionBadgeText"
+                                            :title="connectionBadgeText"
+                                            x-ref="trigger"
+                                        >
+                                            <span
+                                                class="inline-block h-3.5 w-3.5 rounded-full"
+                                                aria-hidden="true"
+                                                :class="statusClassName(connectionHealth, {
+                                                    healthy: 'bg-green-500 shadow-[0_0_0_0.35rem_rgba(34,197,94,0.24)] animate-pulse dark:shadow-[0_0_0_0.45rem_rgba(34,197,94,0.28)]',
+                                                    weak: 'bg-amber-500 shadow-[0_0_0_0.4rem_rgba(245,158,11,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(245,158,11,0.35)]',
+                                                    lost: 'bg-red-500 shadow-[0_0_0_0.4rem_rgba(239,68,68,0.3)] dark:shadow-[0_0_0_0.5rem_rgba(239,68,68,0.35)]',
+                                                })"
+                                            ></span>
+                                            <span class="sr-only" x-text="connectionBadgeText">Live updates connected</span>
+                                        </button>
+
+                                        <template x-teleport="body">
+                                            <div
+                                                x-cloak
+                                                x-show="open"
+                                                x-ref="tooltip"
+                                                class="fixed z-[100] max-w-[calc(100vw-1rem)] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium whitespace-nowrap text-white shadow-sm transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
+                                                :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
+                                                x-text="connectionBadgeText"
+                                            ></div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </template>
+                    </div>
                 </div>
             </div>
-            @if ($lastEditedAt)
-                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                    Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
-                </p>
-            @endif
+        </section>
 
-            <div
-                x-cloak
-                x-show="connectionHealth !== 'healthy'"
-                class="mt-4 rounded-xl border px-4 py-3"
-                data-result-form-connection-alert
-                :class="statusClassName(connectionHealth, {
-                    healthy: 'border-green-200 bg-green-50/80 text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200',
-                    weak: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-200',
-                    lost: 'border-red-200 bg-red-50 text-red-800 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-200',
-                })"
-            >
-                <p class="text-sm font-semibold" x-text="connectionHeading">Weak connection detected</p>
-                <p class="mt-1 text-sm leading-6" x-text="connectionMessage">Live updates may be delayed. It’s best if one person updates the result until your connection improves.</p>
-            </div>
+        <div
+            x-cloak
+            x-show="connectionHealth !== 'healthy'"
+            class="mx-auto w-full max-w-4xl rounded-xl border px-4 py-3 sm:px-6 lg:px-6"
+            data-result-form-connection-alert
+            :class="statusClassName(connectionHealth, {
+                healthy: 'border-green-200 bg-green-50/80 text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200',
+                weak: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-200',
+                lost: 'border-red-200 bg-red-50 text-red-800 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-200',
+            })"
+        >
+            <p class="text-sm font-semibold" x-text="connectionHeading">Weak connection detected</p>
+            <p class="mt-1 text-sm leading-6" x-text="connectionMessage">Live updates may be delayed. It’s best if one person updates the result until your connection improves.</p>
         </div>
     @endif
 
-    <div class="space-y-4" data-result-form-shell>
-        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" data-result-form-frames>
-            @foreach ($frameRows as $row)
-                @include('livewire.result-form-partials.frame-row', ['row' => $row])
-            @endforeach
-        </div>
-
-        <div class="flex items-start justify-between gap-4 py-1" data-result-form-band>
-            <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    {{ $fixture->homeTeam->name }}
-                    <span class="text-gray-300 dark:text-zinc-600">/</span>
-                    {{ $fixture->awayTeam->name }}
+    <section class="ui-section" data-result-create-form-section>
+        <div class="ui-shell-grid">
+            <div>
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Enter result</h3>
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    Complete each frame accurately, then submit the result when you're ready.
                 </p>
             </div>
 
-            <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
-                    <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $form->homeScore }}</div>
-                    <div class="w-px bg-white/25"></div>
-                    <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $form->awayScore }}</div>
+            <div class="lg:col-span-2">
+                <div class="ui-card" data-result-form-shell>
+                    <div class="ui-card-rows" data-result-form-frames>
+                        @foreach ($frameRows as $row)
+                            @include('livewire.result-form-partials.frame-row', ['row' => $row])
+                        @endforeach
+                    </div>
+
+                    <div class="ui-card-row items-start justify-between gap-4" data-result-form-band>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                {{ $fixture->homeTeam->name }}
+                                <span class="text-gray-300 dark:text-zinc-600">/</span>
+                                {{ $fixture->awayTeam->name }}
+                            </p>
+                        </div>
+
+                        <div class="ml-auto flex shrink-0 self-center items-center text-right">
+                            <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
+                                <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $form->homeScore }}</div>
+                                <div class="w-px bg-white/25"></div>
+                                <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $form->awayScore }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-card-footer border-t-0 pt-0 dark:border-t-0">
+                        @if ($lastEditedAt)
+                            <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                                Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
+                            </p>
+                        @endif
+
+                        <div class="flex justify-end gap-x-3">
+                            <a
+                                href="{{ route('fixture.show', $fixture->id) }}"
+                                class="ui-button-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                            @if (! $isLocked && $canEdit)
+                                <button
+                                    type="submit"
+                                    class="ui-button-primary"
+                                    wire:loading.attr="disabled"
+                                    wire:target="submit"
+                                >
+                                    Submit result
+                                </button>
+                            @elseif ($isLocked)
+                                <div class="flex items-center text-sm font-semibold text-green-700 dark:text-green-400">
+                                    Result submitted
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     @if ($errors->any())
         <x-errors />
     @endif
-
-    <div class="flex justify-end gap-x-3 pt-2">
-        <a
-            href="{{ route('fixture.show', $fixture->id) }}"
-            class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-xs ring-1 ring-inset ring-slate-300 transition hover:bg-slate-50 dark:bg-zinc-900 dark:text-gray-100 dark:ring-zinc-700 dark:hover:bg-zinc-800"
-        >
-            Cancel
-        </a>
-
-        @if (! $isLocked && $canEdit)
-            <button
-                type="submit"
-                class="inline-flex justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 transition hover:brightness-110 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
-                wire:loading.attr="disabled"
-                wire:target="submit"
-            >
-                Submit result
-            </button>
-        @elseif ($isLocked)
-            <div class="flex items-center text-sm font-semibold text-green-700 dark:text-green-400">
-                Result submitted
-            </div>
-        @endif
-    </div>
 </form>

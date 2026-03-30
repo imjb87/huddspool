@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\KnockoutType;
+use App\Livewire\Team\FixturesSection;
+use App\Livewire\Team\HistorySection;
+use App\Livewire\Team\PlayersSection;
+use App\Models\Expulsion;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -18,6 +22,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Queries\GetTeamPlayers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class TeamProfileTest extends TestCase
@@ -74,13 +79,21 @@ class TeamProfileTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('data-team-page', false);
+        $response->assertSee('ui-page-shell', false);
+        $response->assertSee('data-section-shared-header', false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('data-team-info-section', false);
         $response->assertSee('data-team-players-section', false);
         $response->assertSee('data-team-fixtures-section', false);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
+        $response->assertSeeLivewire(FixturesSection::class);
+        $response->assertSeeLivewire(HistorySection::class);
+        $response->assertSeeLivewire(PlayersSection::class);
         $response->assertSeeText($team->name);
+        $response->assertSeeText('Team');
         $response->assertSeeText('Team information');
         $response->assertSeeText('Players');
         $response->assertSeeText('Fixtures');
@@ -168,6 +181,176 @@ class TeamProfileTest extends TestCase
         $this->assertSame(1, (int) $playerStats->frames_won);
         $this->assertSame(0, (int) $playerStats->frames_lost);
 
+    }
+
+    public function test_team_players_section_paginates_five_players_without_page_params(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $players = collect([
+            'Aaron',
+            'Barry',
+            'Chris',
+            'Darren',
+            'Ethan',
+            'Frank',
+        ])->map(fn (string $name) => User::factory()->create([
+            'team_id' => $team->id,
+            'name' => $name,
+        ]));
+
+        Livewire::test(PlayersSection::class, ['team' => $team, 'section' => $section])
+            ->assertSeeInOrder($players->take(5)->pluck('name')->all())
+            ->assertDontSee($players->last()->name)
+            ->call('nextPage')
+            ->assertSee($players->last()->name)
+            ->assertDontSee($players->first()->name)
+            ->assertSee('Page 2');
+    }
+
+    public function test_team_fixtures_section_defaults_to_the_page_containing_the_current_week_and_paginates_by_five(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => collect(range(5, 1))
+                ->map(fn (int $weeksAgo) => now()->subWeeks($weeksAgo)->toDateString())
+                ->push(now()->toDateString())
+                ->values()
+                ->all(),
+        ]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create(['name' => 'Blues']);
+        $section->teams()->attach($team->id, ['sort' => 1]);
+
+        $opponents = collect(range(1, 6))->map(function (int $index) use ($section, $season, $ruleset, $team) {
+            $opponent = Team::factory()->create([
+                'name' => 'Opponents '.$index,
+            ]);
+
+            $section->teams()->attach($opponent->id, ['sort' => $index + 1]);
+
+            Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponent->id,
+                'week' => $index,
+                'fixture_date' => now()->subWeeks(6 - $index),
+            ]);
+
+            return $opponent;
+        });
+
+        Livewire::test(FixturesSection::class, ['team' => $team, 'section' => $section])
+            ->assertSet('page', 2)
+            ->assertSee('Opponents 6')
+            ->assertDontSee('Opponents 1')
+            ->call('previousPage')
+            ->assertSet('page', 1)
+            ->assertSee('Opponents 1')
+            ->assertDontSee('Opponents 6');
+    }
+
+    public function test_team_history_section_shows_finishing_position_and_paginates_by_five(): void
+    {
+        $currentSeason = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [now()->toDateString()],
+        ]);
+        $historySeasons = collect(range(1, 6))->map(function (int $index) {
+            return Season::factory()->create([
+                'is_open' => false,
+                'name' => '20'.(20 + $index).'/'.(21 + $index).' Season',
+                'dates' => [now()->subYears($index)->toDateString()],
+            ]);
+        });
+
+        $ruleset = Ruleset::factory()->create(['name' => 'International Rules']);
+        $currentSection = Section::factory()->create([
+            'season_id' => $currentSeason->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Current Division',
+        ]);
+
+        $team = Team::factory()->create(['name' => 'Blues']);
+        $currentOpponent = Team::factory()->create(['name' => 'Current Opponent']);
+        $currentSection->teams()->attach($team->id, ['sort' => 1]);
+        $currentSection->teams()->attach($currentOpponent->id, ['sort' => 2]);
+
+        foreach ($historySeasons as $index => $season) {
+            $section = Section::factory()->create([
+                'season_id' => $season->id,
+                'ruleset_id' => $ruleset->id,
+                'name' => 'Division '.($index + 1),
+            ]);
+
+            $opponent = Team::factory()->create(['name' => 'Opponent '.($index + 1)]);
+
+            $section->teams()->attach($team->id, ['sort' => 1, 'deducted' => $index === 0 ? 2 : 0]);
+            $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponent->id,
+                'week' => 1,
+                'fixture_date' => now()->subYears($index + 1),
+            ]);
+
+            Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $team->id,
+                'home_team_name' => $team->name,
+                'home_score' => 6,
+                'away_team_id' => $opponent->id,
+                'away_team_name' => $opponent->name,
+                'away_score' => 4,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'is_confirmed' => true,
+            ]);
+
+            if ($index === 1) {
+                Expulsion::query()->create([
+                    'season_id' => $season->id,
+                    'expellable_id' => $team->id,
+                    'expellable_type' => Team::class,
+                ]);
+            }
+        }
+
+        Livewire::test(HistorySection::class, ['team' => $team, 'currentSection' => $currentSection])
+            ->assertSee('Pos')
+            ->assertSee('1')
+            ->assertDontSee('-2 pts deducted')
+            ->assertDontSee('Team expelled')
+            ->assertDontSee($historySeasons->get(1)->name)
+            ->assertSee('Page 1')
+            ->assertDontSee($historySeasons->first()->name)
+            ->call('nextPage')
+            ->assertSee('Page 2')
+            ->assertSee($historySeasons->first()->name)
+            ->assertDontSee($historySeasons->last()->name)
+            ->assertDontSee($historySeasons->get(1)->name);
     }
 
     public function test_team_profile_does_not_link_bye_fixture(): void

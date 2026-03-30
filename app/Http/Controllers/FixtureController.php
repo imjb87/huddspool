@@ -6,7 +6,6 @@ use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Section;
 use App\Models\SectionTeam;
-use App\Queries\GetTeamPlayers;
 use App\Support\FixtureShowPageData;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
@@ -52,14 +51,10 @@ class FixtureController extends Controller
             abort(404);
         }
 
-        $home_team_players = new GetTeamPlayers($homeTeam, $section)();
-        $away_team_players = new GetTeamPlayers($awayTeam, $section)();
         $pageData = (new FixtureShowPageData)->build($fixture);
 
         return view('fixture.show', [
             'fixture' => $fixture,
-            'home_team_players' => $home_team_players,
-            'away_team_players' => $away_team_players,
             'standings' => $pageData->standings,
         ]);
     }

@@ -23,24 +23,27 @@
                 ]);
         }
     @endphp
-    <div class="bg-gray-50 pt-[72px] dark:bg-zinc-900">
-        <div class="pb-10 lg:pb-14" data-result-page>
-            <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
-                data-section-shared-header>
-                <div class="min-w-0">
-                    <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Result</h1>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $section?->name ?? 'Archived section' }}</p>
-                </div>
-            </div>
+    <div class="ui-page-shell" data-result-page>
+        <div class="ui-section" data-section-shared-header>
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
+                <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
+                    <div class="min-w-0 lg:col-span-2">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Result</p>
+                        <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $section?->name ?? 'Archived section' }}</h1>
+                    </div>
 
-            <div class="mx-auto max-w-4xl px-4 pt-2 sm:px-6 lg:px-6">
-                <div class="space-y-6">
-                    @include('result.partials.info-section')
-                    @include('result.partials.card-section')
+                    <div aria-hidden="true"></div>
                 </div>
             </div>
         </div>
 
-        <x-logo-clouds  />
+        <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+            <div class="space-y-6">
+                @include('result.partials.info-section')
+                @include('result.partials.card-section')
+            </div>
+        </div>
+
+        <x-logo-clouds />
     </div>
 @endsection

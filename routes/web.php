@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DesignSystemController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KnockoutController;
@@ -77,6 +78,7 @@ Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelp
 Route::middleware('auth')->group(function () {
     Route::view('/account', 'account.show')->name('account.show');
     Route::view('/account/team', 'account.team')->name('account.team');
+    Route::get('/design-system', DesignSystemController::class)->name('design-system.index');
     Route::get('/stop-impersonating', function () {
         if (! Impersonation::isImpersonating()) {
             return redirect('/');

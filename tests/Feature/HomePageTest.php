@@ -33,12 +33,16 @@ class HomePageTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk();
+        $response->assertSee('data-home-page', false);
+        $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-home-hero', false);
-        $response->assertSee('from-green-950 via-green-800 to-green-600 pt-[72px] text-white lg:pt-[80px]', false);
-        $response->assertSee('mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14', false);
-        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
-        $response->assertSee('space-y-3 text-left lg:col-span-2 lg:pr-12 xl:pr-16', false);
-        $response->assertSee('relative w-36 drop-shadow-2xl sm:w-40 lg:w-44', false);
+        $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
+        $response->assertSee('ui-card-branded', false);
+        $response->assertSee('ui-section ui-card-body', false);
+        $response->assertSee('ui-shell-grid items-center', false);
+        $response->assertSee('flex justify-start lg:justify-center', false);
+        $response->assertSee('text-left lg:col-span-2', false);
+        $response->assertSee('relative w-32 drop-shadow-2xl sm:w-36 lg:w-40', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSeeText('Tables, fixtures, results and averages for every section');
         $response->assertSee('data-home-hero-account-link', false);
@@ -48,7 +52,8 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-live-scores', false);
         $response->assertSeeText('Live scores');
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
-        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
         $response->assertSeeText('No current matches in progress right now.');
         $response->assertSee('data-home-news', false);
         $response->assertSeeText('Latest news');
@@ -57,7 +62,8 @@ class HomePageTest extends TestCase
         $response->assertSee('data-section-sponsors', false);
         $response->assertSee('data-section-sponsors-grid', false);
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
-        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
         $response->assertSeeText('Backing the league every week');
         $response->assertSeeText('Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.');
         $response->assertDontSee('tracking-[0.28em] text-green-100', false);
@@ -74,6 +80,7 @@ class HomePageTest extends TestCase
         $response = $this->actingAs($user)->get(route('home'));
 
         $response->assertOk();
+        $response->assertSee('data-home-page', false);
         $response->assertSee('data-home-hero', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSee('data-home-hero-account-link', false);
@@ -161,7 +168,10 @@ class HomePageTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-home-live-scores-shell', false);
         $response->assertSee('data-home-live-scores-list', false);
-        $response->assertSee('max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain', false);
+        $response->assertSee('ui-card', false);
+        $response->assertSee('ui-card-rows max-h-80 overflow-y-auto overscroll-contain', false);
+        $response->assertSee('ui-card-row-link', false);
+        $response->assertSee('ui-card-row items-start', false);
         $response->assertSee('data-home-live-score-row', false);
         $response->assertSee('data-home-live-score-pill', false);
         $response->assertSeeText('Break Masters');
@@ -306,7 +316,7 @@ class HomePageTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('max-h-80 divide-y divide-gray-200 overflow-y-auto overscroll-contain', false);
+        $response->assertSee('ui-card-rows max-h-80 overflow-y-auto overscroll-contain', false);
         $this->assertSame(7, substr_count($response->getContent(), 'data-home-live-score-row'));
         $response->assertSeeText('Home Team 1');
         $response->assertSeeText('Away Team 7');

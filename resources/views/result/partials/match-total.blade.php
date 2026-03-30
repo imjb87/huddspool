@@ -1,4 +1,4 @@
-<div class="flex items-start justify-between gap-4 py-1" data-result-card-band>
+<div class="ui-card-row items-start justify-between gap-4" data-result-card-band>
     <div class="min-w-0 flex-1">
         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">

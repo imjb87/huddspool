@@ -6,6 +6,4 @@
         :section="$activeSection"
         :initial-tab="$activeTab"
     />
-
-    <x-logo-clouds  />
 @endsection

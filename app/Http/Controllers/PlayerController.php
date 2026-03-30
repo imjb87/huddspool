@@ -7,7 +7,6 @@ use App\Models\Ruleset;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerKnockoutMatches;
-use App\Queries\GetPlayerSeasonHistory;
 use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -41,13 +40,12 @@ class PlayerController extends Controller
     {
         $section = $player->team?->openSection();
         $averages = $player->team ? (new GetPlayerAverages($player, $section))() : null;
-        $history = (new GetPlayerSeasonHistory($player))();
 
         $knockoutMatches = new GetPlayerKnockoutMatches($player)();
         $allowKnockoutSubmission = auth()->user()?->isAdmin() ?? false;
         $knockoutRows = $knockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forPlayer($match, $player, $allowKnockoutSubmission));
 
-        return view('player.show', compact('player', 'averages', 'history', 'knockoutMatches', 'knockoutRows'));
+        return view('player.show', compact('player', 'averages', 'knockoutMatches', 'knockoutRows'));
     }
 
     public function updateAvatar(UpdatePlayerAvatarRequest $request, User $player): RedirectResponse

@@ -29,16 +29,17 @@
 @endonce
 
 <div
-    class="rounded-xl px-3 py-4 -mx-3 transition-colors duration-1000"
+    class="ui-card-row items-start transition-colors duration-1000"
     wire:key="result-frame-{{ $row['number'] }}"
     x-data="resultFormFlashRow({{ $row['number'] }})"
     x-on:result-frames-synced.window="flashIfIncluded($event.detail.frameNumbers ?? [])"
-    :class="isFlashing ? 'bg-gray-100 dark:bg-zinc-800/80' : 'bg-transparent'"
+    :class="isFlashing ? 'bg-gray-100 dark:bg-zinc-800/80' : ''"
 >
-    <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">Frame {{ $row['number'] }}</p>
+    <div class="min-w-0 w-full flex-1 space-y-3">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Frame {{ $row['number'] }}</p>
 
-    <div class="space-y-3">
-        <div class="flex items-center gap-3">
+        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+            <div class="min-w-0 flex items-center gap-3">
             @if ($row['home_selected_player'])
                 <div
                     class="h-6 w-6 shrink-0"
@@ -82,8 +83,9 @@
                     <option value="{{ $player->id }}">{{ $player->name }}</option>
                 @endforeach
             </select>
+            </div>
 
-            <div class="shrink-0">
+            <div class="shrink-0 justify-self-end">
                 <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $homeScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.home_score"
@@ -102,7 +104,8 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+            <div class="min-w-0 flex items-center gap-3">
             @if ($row['away_selected_player'])
                 <div
                     class="h-6 w-6 shrink-0"
@@ -146,8 +149,9 @@
                     <option value="{{ $player->id }}">{{ $player->name }}</option>
                 @endforeach
             </select>
+            </div>
 
-            <div class="shrink-0">
+            <div class="shrink-0 justify-self-end">
                 <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $awayScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.away_score"

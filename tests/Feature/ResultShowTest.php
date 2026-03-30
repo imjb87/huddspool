@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\Venue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 use Tests\TestCase;
 
 class ResultShowTest extends TestCase
@@ -19,6 +21,9 @@ class ResultShowTest extends TestCase
 
     public function test_result_show_displays_archived_season_results_with_trashed_relations(): void
     {
+        Cache::flush();
+        ResponseCache::clear();
+
         $result = null;
         $season = null;
         $ruleset = null;
@@ -99,6 +104,9 @@ class ResultShowTest extends TestCase
 
     public function test_result_show_eager_loads_relations_used_by_the_view(): void
     {
+        Cache::flush();
+        ResponseCache::clear();
+
         $result = null;
         $homeTeam = null;
         $awayTeam = null;
@@ -165,8 +173,11 @@ class ResultShowTest extends TestCase
             ->assertSee('data-result-frame-score-pill', false)
             ->assertSee('from-green-900 via-green-800 to-green-700', false)
             ->assertSee('from-red-900 via-red-800 to-red-700', false)
-            ->assertSee('dark:bg-zinc-900', false)
-            ->assertSee('dark:border-zinc-800/80', false)
+            ->assertSee('ui-page-shell', false)
+            ->assertSee('data-section-shared-header', false)
+            ->assertSee('ui-section', false)
+            ->assertSee('ui-shell-grid', false)
+            ->assertSee('ui-card', false)
             ->assertSeeText('Result information')
             ->assertSeeText('Result card')
             ->assertSee('href="'.route('team.show', $homeTeam).'"', false)

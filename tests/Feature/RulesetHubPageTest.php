@@ -6,6 +6,7 @@ use App\Livewire\RulesetSectionPage;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
+use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -33,9 +34,10 @@ class RulesetHubPageTest extends TestCase
         $response->assertOk();
         $response->assertSeeText('International Rules');
         $response->assertSee('data-ruleset-content-page', false);
+        $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-ruleset-content-section', false);
-        $response->assertSee('dark:bg-zinc-900', false);
+        $response->assertSee('ui-section', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('dark:prose-invert', false);
         $response->assertSee('World rules guidance.', false);
@@ -263,7 +265,9 @@ class RulesetHubPageTest extends TestCase
         $response = $this->get(route('ruleset.show', $ruleset));
 
         $response->assertOk();
+        $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-ruleset-content-empty', false);
+        $response->assertSee('ui-section', false);
         $response->assertSee('dark:prose-invert', false);
         $response->assertSeeText('No ruleset content has been published yet.');
     }
@@ -361,22 +365,23 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertSee('data-section-tab-skeleton="fixtures-results"', false);
         $fixturesResponse->assertSee('data-section-fixtures-view', false);
         $fixturesResponse->assertSee('data-section-fixtures-shell', false);
+        $fixturesResponse->assertSee('data-section-fixtures-headings', false);
         $fixturesResponse->assertSee('data-section-fixtures-band', false);
         $fixturesResponse->assertSee('data-section-fixtures-controls', false);
         $fixturesResponse->assertSee('data-section-fixtures-row-skeleton', false);
         $fixturesResponse->assertSee('wire:target="previousWeek, nextWeek"', false);
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-tab-skeleton-row="fixtures-results"'));
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-fixtures-row-skeleton-row'));
-        $fixturesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $fixturesResponse->assertSee('ui-shell-grid', false);
         $fixturesResponse->assertSee('<h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures & Results</h2>', false);
         $fixturesResponse->assertSee('Print fixtures', false);
         $fixturesResponse->assertSeeText('Print');
         $fixturesResponse->assertSee('Week 1', false);
-        $fixturesResponse->assertSee('inline-flex min-w-24 items-center justify-center gap-2 self-end rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-200/70 hover:text-gray-900', false);
+        $fixturesResponse->assertSeeText('Home vs Away');
+        $fixturesResponse->assertSee('ui-button-secondary min-w-24 gap-2', false);
         $fixturesResponse->assertSee('flex items-center justify-between gap-4', false);
         $fixturesResponse->assertSee('text-sm font-semibold text-gray-900', false);
-        $fixturesResponse->assertSee('bg-linear-to-br from-green-900 via-green-800 to-green-700', false);
-        $fixturesResponse->assertSee('inline-flex w-24 cursor-pointer items-center justify-center rounded-full', false);
+        $fixturesResponse->assertSee('ui-button-primary min-w-24', false);
         $fixturesResponse->assertSee('Previous');
         $fixturesResponse->assertSee('Next');
         $fixturesResponse->assertDontSee('Week 1 fixtures and results for this section.');
@@ -409,9 +414,9 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75', false);
         $tablesResponse->assertSee('mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6', false);
         $tablesResponse->assertSee('data-section-tabs-track', false);
-        $tablesResponse->assertSee('inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition', false);
-        $tablesResponse->assertSee('bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300', false);
-        $tablesResponse->assertSee('pt-[72px] pb-8 lg:pb-8', false);
+        $tablesResponse->assertSee('ui-button-primary', false);
+        $tablesResponse->assertSee('ui-button-secondary', false);
+        $tablesResponse->assertSee('ui-page-shell', false);
         $tablesResponse->assertSee('data-ruleset-active-panel="tables"', false);
         $tablesResponse->assertSee('data-section-table-view', false);
         $tablesResponse->assertSee('data-section-table-shell', false);
@@ -424,13 +429,12 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-sponsors', false);
         $tablesResponse->assertSee('data-section-sponsors-grid', false);
         $tablesResponse->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
-        $tablesResponse->assertSee('grid gap-8 py-8 sm:py-10 lg:grid-cols-3 lg:gap-10', false);
+        $tablesResponse->assertSee('ui-shell-grid', false);
+        $tablesResponse->assertSee('ui-card', false);
         $this->assertSame(6, substr_count($tablesResponse->getContent(), 'data-section-sponsors-card'));
         $tablesResponse->assertSeeText('Backing the league every week');
-        $tablesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $tablesResponse->assertSee('ui-shell-grid', false);
         $tablesResponse->assertSeeText('Standings');
-        $tablesResponse->assertSee('flex items-center justify-between gap-2 pb-0.5 sm:-mx-3 sm:px-3', false);
-        $tablesResponse->assertSee('ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3', false);
         $tablesResponse->assertDontSee('Print fixtures', false);
         $tablesResponse->assertDontSee('Current standings for this section.');
         $tablesResponse->assertDontSee('rounded-2xl border border-gray-200 bg-white shadow-sm', false);
@@ -452,25 +456,25 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('data-section-shared-header', false);
         $averagesResponse->assertSeeText('Division A');
         $averagesResponse->assertSee('data-ruleset-active-panel="averages"', false);
-        $averagesResponse->assertSee('pt-[72px] pb-8 lg:pb-8', false);
+        $averagesResponse->assertSee('ui-page-shell', false);
         $averagesResponse->assertSee('data-section-tab-skeleton', false);
         $averagesResponse->assertSee('data-section-tab-skeleton="averages"', false);
         $averagesResponse->assertSee('data-section-averages-view', false);
         $averagesResponse->assertSee('data-section-averages-shell', false);
         $averagesResponse->assertSee('data-section-averages-band', false);
         $averagesResponse->assertSee('data-section-averages-controls', false);
-        $averagesResponse->assertSee('flex items-center justify-between gap-2 pb-0.5 sm:-mx-3 sm:px-3', false);
+        $averagesResponse->assertSee('ui-card-column-headings px-4 sm:px-5', false);
         $averagesResponse->assertSee('data-section-see-also', false);
         $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
-        $averagesResponse->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
+        $averagesResponse->assertSee('ui-shell-grid', false);
         $averagesResponse->assertSeeText('Averages');
-        $averagesResponse->assertSee('flex items-center gap-3 rounded-lg py-3 sm:-mx-3 sm:-my-px sm:gap-4 sm:px-3 sm:py-4', false);
+        $averagesResponse->assertSee('ui-card-row items-center px-4 sm:px-5', false);
         $averagesResponse->assertSee('ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5', false);
         $averagesResponse->assertSee('data-section-averages-row-skeleton', false);
         $averagesResponse->assertSee('wire:target="previousPage, nextPage"', false);
         $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-tab-skeleton-row="averages"'));
         $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-averages-row-skeleton-row'));
-        $averagesResponse->assertSee('inline-flex w-24 cursor-pointer items-center justify-center rounded-full', false);
+        $averagesResponse->assertSee('ui-button-primary min-w-24', false);
         $averagesResponse->assertSee('Page 1');
         $averagesResponse->assertSee('Previous');
         $averagesResponse->assertSee('Next');
@@ -478,5 +482,31 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertDontSee('Frame records and win rates for this section.');
         $averagesResponse->assertDontSee('rounded-2xl border border-gray-200 bg-white shadow-sm', false);
 
+    }
+
+    public function test_standings_rows_render_top_and_bottom_inset_accents(): void
+    {
+        $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->toDateString()]]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Division A',
+        ]);
+
+        $teams = Team::factory()->count(4)->create();
+
+        $section->teams()->attach(
+            $teams->mapWithKeys(fn (Team $team, int $index) => [$team->id => ['sort' => $index + 1]])->all()
+        );
+
+        $response = $this->get(route('ruleset.section.show', [
+            'ruleset' => $ruleset,
+            'section' => $section,
+        ]));
+
+        $response->assertOk();
+        $this->assertSame(2, substr_count($response->getContent(), 'bg-emerald-500 dark:bg-emerald-400'));
+        $this->assertSame(2, substr_count($response->getContent(), 'bg-rose-500 dark:bg-rose-400'));
     }
 }

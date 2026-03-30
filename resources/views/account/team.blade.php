@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px]">
+    <div class="ui-page-shell" data-account-team-page-shell>
         <livewire:account.team />
 
-        <x-logo-clouds  />
+        <x-logo-clouds />
     </div>
 @endsection

@@ -55,6 +55,14 @@ class HistoryPageTest extends TestCase
             'name' => 'Division Two',
         ]);
 
+        $deletedSection = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $archivedSeason->id,
+            'name' => 'Division Deleted',
+        ]);
+
+        $deletedSection->delete();
+
         $archivedKnockout = Knockout::query()->create([
             'season_id' => $archivedSeason->id,
             'name' => 'Singles Cup',
@@ -73,15 +81,13 @@ class HistoryPageTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Season archive');
         $response->assertSeeText('Browse past seasons, then drill into each ruleset and section for archived standings, fixtures, results, and averages.');
-        $response->assertSee('dark:bg-zinc-900', false);
-        $response->assertSee('dark:text-gray-100', false);
-        $response->assertSee('max-w-4xl px-4 pt-2 sm:px-6 lg:px-6', false);
-        $response->assertSee('grid gap-8 lg:grid-cols-3 lg:gap-10', false);
-        $response->assertSee('dark:text-gray-300', false);
-        $response->assertSee('lg:col-span-2 sm:-mx-3', false);
+        $response->assertSee('ui-page-shell', false);
+        $response->assertSee('ui-section', false);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
+        $response->assertSee('ui-card-rows', false);
+        $response->assertSee('ui-card-row', false);
         $response->assertSee('data-history-index-accordion', false);
-        $response->assertSee('sm:-my-px', false);
-        $response->assertSee('sm:-mx-3 sm:ml-6', false);
         $response->assertSee('data-history-season-trigger', false);
         $response->assertSee('data-history-ruleset-trigger', false);
         $response->assertSee('data-history-section-link', false);
@@ -91,6 +97,7 @@ class HistoryPageTest extends TestCase
         $response->assertSeeText('2023/24 Season');
         $response->assertSeeText('Eight Ball');
         $response->assertSeeText('Division One');
+        $response->assertDontSeeText('Division Deleted');
         $response->assertSeeText('Knockouts');
         $response->assertSeeText('Singles Cup');
         $response->assertSee('href="'.route('history.section.show', [
@@ -107,6 +114,44 @@ class HistoryPageTest extends TestCase
             'season' => $futureSeason,
             'ruleset' => $ruleset,
             'section' => 'future-division',
+        ]).'"', false);
+    }
+
+    public function test_history_index_prefers_the_live_section_when_duplicate_historical_section_names_exist(): void
+    {
+        $ruleset = Ruleset::factory()->create(['name' => 'International Rules']);
+
+        $season = Season::factory()->create([
+            'name' => 'February 2024',
+            'is_open' => false,
+        ]);
+
+        $archivedSection = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $season->id,
+            'name' => 'International Premier',
+        ]);
+
+        $archivedSection->delete();
+
+        $liveSection = Section::factory()->create([
+            'ruleset_id' => $ruleset->id,
+            'season_id' => $season->id,
+            'name' => 'International Premier',
+        ]);
+
+        $response = $this->get(route('history.index'));
+
+        $response->assertOk();
+        $response->assertSee('href="'.route('history.section.show', [
+            'season' => $season,
+            'ruleset' => $ruleset,
+            'section' => $liveSection,
+        ]).'"', false);
+        $response->assertDontSee('href="'.route('history.section.show', [
+            'season' => $season,
+            'ruleset' => $ruleset,
+            'section' => $archivedSection,
         ]).'"', false);
     }
 
@@ -278,6 +323,7 @@ class HistoryPageTest extends TestCase
         $response->assertOk();
         $response->assertSeeLivewire(HistorySectionPage::class);
         $response->assertSee('data-history-section-page', false);
+        $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-tabs', false);
         $response->assertSee('data-ruleset-active-panel="tables"', false);
         $response->assertSee('border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75', false);
@@ -289,6 +335,7 @@ class HistoryPageTest extends TestCase
         $response->assertDontSeeText('Modern Reds');
         $response->assertSee('data-section-see-also', false);
         $response->assertSeeText('Division B');
+        $response->assertDontSeeText('Division Deleted');
         $response->assertDontSee('href="'.route('team.show', $homeTeam->id).'"', false);
         $response->assertSee('data-section-table-row-type="static"', false);
         $response->assertSee('href="'.route('history.section.show', [$season, $ruleset, $otherSection]).'"', false);

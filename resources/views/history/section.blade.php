@@ -7,6 +7,4 @@
         :section="$section"
         :initial-tab="request('tab', 'tables')"
     />
-
-    <x-logo-clouds  />
 @endsection

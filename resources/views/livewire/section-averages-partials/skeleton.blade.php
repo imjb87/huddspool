@@ -1,8 +1,8 @@
 <div class="animate-pulse" wire:loading.block wire:target="previousPage, nextPage" data-section-averages-row-skeleton>
-    <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+    <div class="ui-card-rows">
         @foreach (range(1, 5) as $row)
             <div data-section-averages-row-skeleton-row>
-                <div class="flex items-center gap-3 rounded-lg py-3 sm:gap-4 sm:px-3 sm:py-4" data-section-averages-band>
+                <div class="ui-card-row items-center px-4 sm:px-5" data-section-averages-band>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-3">
                             <div class="h-4 w-4 shrink-0 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-7"></div>

@@ -28,6 +28,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('data-login-page', false);
+        $response->assertSee('ui-card', false);
         $response->assertSeeText('Log in');
         $response->assertSeeText('Access your account to manage your profile');
         $response->assertSee('type="email"', false);

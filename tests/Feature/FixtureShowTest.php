@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Livewire\Fixture\TeamSection as FixtureTeamSection;
 use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\Ruleset;
@@ -11,6 +12,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class FixtureShowTest extends TestCase
@@ -68,13 +70,20 @@ class FixtureShowTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('data-fixture-page', false);
+        $response->assertSee('ui-page-shell', false);
+        $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-fixture-info-section', false);
         $response->assertSee('data-fixture-head-to-head-section', false);
         $response->assertSee('data-fixture-home-team-section', false);
         $response->assertSee('data-fixture-away-team-section', false);
+        $response->assertSeeLivewire(FixtureTeamSection::class);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
+        $response->assertSee('ui-card-rows', false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
+        $response->assertSeeText('Fixture');
         $response->assertSeeText('Fixture information');
         $response->assertSeeText('Head to head');
         $response->assertSeeTextInOrder([$homeTeam->name, 'vs', $awayTeam->name]);
@@ -88,6 +97,83 @@ class FixtureShowTest extends TestCase
         $response->assertSeeText('Won');
         $response->assertSeeText('Lost');
         $response->assertSeeText('0%');
+    }
+
+    public function test_fixture_show_team_sections_paginate_players_by_five(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        Team::factory()->create();
+
+        $homeTeam = Team::factory()->create(['name' => 'Home Team']);
+        $awayTeam = Team::factory()->create(['name' => 'Away Team']);
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        foreach (range(1, 6) as $index) {
+            User::factory()->create([
+                'team_id' => $homeTeam->id,
+                'name' => sprintf('Home Player %02d', $index),
+                'role' => UserRole::Player->value,
+            ]);
+
+            User::factory()->create([
+                'team_id' => $awayTeam->id,
+                'name' => sprintf('Away Player %02d', $index),
+                'role' => UserRole::Player->value,
+            ]);
+        }
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+
+        $this->get(route('fixture.show', $fixture))
+            ->assertOk()
+            ->assertSee('data-fixture-home-team-section-controls', false)
+            ->assertSee('data-fixture-away-team-section-controls', false);
+
+        Livewire::test(FixtureTeamSection::class, [
+            'team' => $homeTeam,
+            'section' => $section,
+            'title' => $homeTeam->name,
+            'sectionKey' => 'fixture-home-team-section',
+            'side' => 'home',
+        ])
+            ->assertSee('Page 1')
+            ->assertSee('Home Player 01')
+            ->assertSee('Home Player 05')
+            ->assertDontSee('Home Player 06')
+            ->call('nextPage')
+            ->assertSee('Page 2')
+            ->assertSee('Home Player 06')
+            ->assertDontSee('Home Player 01');
+
+        Livewire::test(FixtureTeamSection::class, [
+            'team' => $awayTeam,
+            'section' => $section,
+            'title' => $awayTeam->name,
+            'sectionKey' => 'fixture-away-team-section',
+            'side' => 'away',
+        ])
+            ->assertSee('Page 1')
+            ->assertSee('Away Player 01')
+            ->assertSee('Away Player 05')
+            ->assertDontSee('Away Player 06')
+            ->call('nextPage')
+            ->assertSee('Page 2')
+            ->assertSee('Away Player 06')
+            ->assertDontSee('Away Player 01');
     }
 
     public function test_fixture_show_uses_actual_section_positions_in_head_to_head(): void

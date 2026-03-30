@@ -52,7 +52,9 @@ class SearchComponentTest extends TestCase
             ->assertSee('data-search-loading-state', false)
             ->assertSee('data-search-loading-skeleton', false)
             ->assertSee('data-search-results-shell', false)
-            ->assertSee('rounded-lg border border-transparent px-4 py-3', false)
+            ->assertSee('ui-card-column-headings', false)
+            ->assertSee('ui-card-rows', false)
+            ->assertSee('ui-card-row', false)
             ->assertSeeText('Imperial Club')
             ->assertSeeText('12 West Street')
             ->assertSee('data-search-result-link', false);

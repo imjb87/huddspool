@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -34,7 +35,6 @@ class HistoryController extends Controller
                 })
                 ->with([
                     'sections' => fn ($query) => $query
-                        ->withTrashed()
                         ->select(['id', 'season_id', 'ruleset_id', 'name', 'slug', 'deleted_at'])
                         ->whereNotNull('ruleset_id')
                         ->with('ruleset:id,name,slug')
@@ -52,6 +52,13 @@ class HistoryController extends Controller
                     $rulesets = $season->sections
                         ->groupBy('ruleset_id')
                         ->map(function ($sections) use ($rulesetOrder) {
+                            $sections = $sections
+                                ->groupBy('name')
+                                ->map(fn ($namedSections) => $this->preferredHistoricalSection($namedSections))
+                                ->filter()
+                                ->sortBy('name')
+                                ->values();
+
                             /** @var Section $firstSection */
                             $firstSection = $sections->first();
 
@@ -124,5 +131,12 @@ class HistoryController extends Controller
             'ruleset' => $ruleset,
             'section' => $historySection,
         ]);
+    }
+
+    private function preferredHistoricalSection(EloquentCollection $sections): ?Section
+    {
+        return $sections
+            ->sortBy(fn (Section $section) => [$section->trashed() ? 1 : 0, -$section->id])
+            ->first();
     }
 }

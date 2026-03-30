@@ -111,6 +111,8 @@ class KnockoutMatchSummaryRow
             'home_parts' => self::participantParts($match->homeParticipant, $match->homeParticipant?->display_name ?? 'TBC', $match->type()),
             'away_parts' => self::participantParts($match->awayParticipant, $match->awayParticipant?->display_name ?? 'TBC', $match->type()),
             'meta_label' => ($match->round?->knockout?->name ?? 'Knockout').' / '.($match->round?->name ?? 'Round TBC'),
+            'venue_label' => $match->venue?->name ?? 'Venue TBC',
+            'referee_label' => $match->referee,
             'has_result' => $hasResult,
             'home_score' => $match->home_score,
             'away_score' => $match->away_score,

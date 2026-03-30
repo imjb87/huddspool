@@ -25,7 +25,7 @@ class SectionPage extends BaseSectionPage
     #[Computed]
     public function relatedSections(): EloquentCollection
     {
-        return Section::withTrashed()
+        return Section::query()
             ->where('season_id', $this->season->id)
             ->where('ruleset_id', $this->ruleset->id)
             ->orderBy('name')

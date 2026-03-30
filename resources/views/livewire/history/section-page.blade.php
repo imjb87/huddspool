@@ -1,9 +1,14 @@
-<div class="pt-[72px] {{ $contentPadding }}" data-history-section-page>
-    <div class="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4"
-        data-section-shared-header>
-        <div class="min-w-0">
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $season->name }}</p>
-            <h1 class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
+<div class="ui-page-shell {{ $contentPadding }}" data-history-section-page>
+    <div class="ui-section" data-section-shared-header>
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
+            <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
+                <div class="min-w-0 lg:col-span-2">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $season->name }}</p>
+                    <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
+                </div>
+
+                <div aria-hidden="true"></div>
+            </div>
         </div>
     </div>
 
@@ -13,14 +18,14 @@
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6"
             data-section-tabs-scroll
             data-section-tabs-track>
-            <nav class="-ml-3 flex gap-2">
+            <nav class="flex gap-2">
                 @foreach ($tabs as $tabKey => $tabLabel)
                     <a href="{{ $this->tabUrl($tabKey) }}"
                         wire:click.prevent="setActiveTab('{{ $tabKey }}')"
                         wire:key="history-section-tab-{{ $tabKey }}"
                         data-section-tab="{{ $tabKey }}"
                         @if ($activeTab === $tabKey) aria-current="page" @endif
-                        class="inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition data-loading:opacity-60 {{ $activeTab === $tabKey ? 'bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300' : 'text-gray-700 hover:bg-gray-200/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100' }}">
+                        class="{{ $activeTab === $tabKey ? 'ui-button-primary' : 'ui-button-secondary' }} shrink-0 data-loading:opacity-60">
                         {{ $tabLabel }}
                     </a>
                 @endforeach
@@ -86,31 +91,38 @@
     </div>
 
     @if ($this->relatedSections->isNotEmpty())
-        <section class="mx-auto mt-10 w-full max-w-4xl border-t border-gray-200 px-4 pt-6 dark:border-zinc-800/80 sm:px-6 sm:pt-8 lg:px-6" data-section-see-also>
-            <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-                <div class="space-y-2">
-                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Other sections in {{ $ruleset->name }}</h2>
-                    <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">
-                        Browse the other sections in this archived ruleset.
-                    </p>
-                </div>
+        <section class="ui-section mt-10 border-t border-gray-200 pt-6 dark:border-zinc-800/80 sm:pt-8" data-section-see-also>
+            <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+                <div class="ui-shell-grid">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Other sections in {{ $ruleset->name }}</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                            Browse the other sections in this archived ruleset.
+                        </p>
+                    </div>
 
-                <div class="lg:col-span-2">
-                    <ul class="text-base leading-6 text-gray-700 dark:text-gray-300 [overflow-wrap:normal] [word-break:normal]" data-section-see-also-links>
-                        @foreach ($this->relatedSections as $relatedSection)
-                            <li class="inline">
-                                <a href="{{ $this->sectionUrl($relatedSection) }}"
-                                    class="font-semibold underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:decoration-zinc-600 dark:hover:text-gray-100 dark:hover:decoration-zinc-400">
-                                    {{ $relatedSection->name }}
-                                </a>
-                                @unless ($loop->last)
-                                    <span class="mx-2 text-gray-300 dark:text-zinc-600" aria-hidden="true">/</span>
-                                @endunless
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="lg:col-span-2">
+                        <div class="ui-card" data-section-see-also-links>
+                            <div class="ui-card-rows">
+                                @foreach ($this->relatedSections as $relatedSection)
+                                    <a href="{{ $this->sectionUrl($relatedSection) }}" class="ui-card-row-link">
+                                        <div class="ui-card-row">
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                {{ $relatedSection->name }}
+                                            </p>
+                                            <svg class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06L8.28 14.53a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     @endif
+
+    <x-logo-clouds />
 </div>

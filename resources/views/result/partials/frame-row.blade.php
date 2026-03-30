@@ -1,5 +1,5 @@
-<div class="py-4" wire:key="result-frame-{{ $frame->id }}">
-    <div class="space-y-3" data-result-card-band>
+<div class="ui-card-row items-start" wire:key="result-frame-{{ $frame->id }}">
+    <div class="min-w-0 w-full flex-1 space-y-3" data-result-card-band>
         <p class="text-xs text-gray-500 dark:text-gray-400">
             Frame {{ $index + 1 }}
         </p>

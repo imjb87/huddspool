@@ -265,9 +265,7 @@ abstract class BaseSectionPage extends Component
 
     protected function contentPadding(): string
     {
-        return in_array($this->activeTab, ['tables', 'averages'], true)
-            ? 'pb-8 lg:pb-8'
-            : 'pb-10 lg:pb-14';
+        return '';
     }
 
     protected function maxWeek(): int

@@ -7,6 +7,8 @@ use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Account\Show as AccountShow;
 use App\Livewire\Player\FramesSection;
+use App\Livewire\Team\FixturesSection as TeamFixturesSection;
+use App\Livewire\Team\PlayersSection as TeamPlayersSection;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -45,7 +47,11 @@ class AccountPageTest extends TestCase
             ->assertOk()
             ->assertSee('data-account-page', false)
             ->assertSee('data-account-header', false)
+            ->assertSee('data-account-nav', false)
             ->assertSee('data-account-profile-section', false)
+            ->assertSee('ui-page-shell', false)
+            ->assertSee('ui-button-primary', false)
+            ->assertSee('ui-card', false)
             ->assertSee('dark:bg-zinc-900', false)
             ->assertSee('dark:border-zinc-700', false)
             ->assertSee('dark:bg-zinc-800/75', false)
@@ -638,6 +644,128 @@ class AccountPageTest extends TestCase
         $this->actingAs($player)
             ->get(route('account.team'))
             ->assertForbidden();
+    }
+
+    public function test_team_account_page_paginates_team_members(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+            'name' => 'Captain Account',
+        ]);
+
+        $team->update(['captain_id' => $teamAdmin->id]);
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        foreach (range(1, 7) as $index) {
+            User::factory()->create([
+                'team_id' => $team->id,
+                'role' => UserRole::Player->value,
+                'name' => sprintf('Account Team Player %02d', $index),
+            ]);
+        }
+
+        $this->actingAs($teamAdmin)
+            ->get(route('account.team'))
+            ->assertOk()
+            ->assertSee('data-account-team-section', false)
+            ->assertSee('data-account-team-players-controls', false)
+            ->assertSeeText('Page 1')
+            ->assertSeeText('Account Team Player 07')
+            ->assertSeeText('Account Team Player 03')
+            ->assertDontSeeText('Account Team Player 02');
+
+        Livewire::actingAs($teamAdmin)
+            ->test(TeamPlayersSection::class, [
+                'team' => $team,
+                'section' => $section,
+                'forAccount' => true,
+            ])
+            ->assertSeeText('Page 1')
+            ->assertDontSeeText('Account Team Player 02')
+            ->call('nextPage')
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Account Team Player 02')
+            ->assertSeeText('Account Team Player 01')
+            ->assertDontSeeText('Account Team Player 03');
+    }
+
+    public function test_team_account_page_defaults_fixtures_to_the_page_for_the_current_week(): void
+    {
+        $today = now();
+
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [
+                $today->copy()->subWeeks(5)->toDateString(),
+                $today->copy()->subWeeks(4)->toDateString(),
+                $today->copy()->subWeeks(3)->toDateString(),
+                $today->copy()->subWeeks(2)->toDateString(),
+                $today->copy()->subWeek()->toDateString(),
+                $today->copy()->toDateString(),
+                $today->copy()->addWeek()->toDateString(),
+                $today->copy()->addWeeks(2)->toDateString(),
+            ],
+        ]);
+
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create(['name' => 'Account Fixtures Team']);
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+
+        foreach (range(1, 8) as $week) {
+            $opponent = Team::factory()->create(['name' => sprintf('Account Opponent Week %02d', $week)]);
+            $section->teams()->attach($opponent->id, ['sort' => $week + 1]);
+
+            Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponent->id,
+                'week' => $week,
+                'fixture_date' => $today->copy()->addWeeks($week - 6),
+            ]);
+        }
+
+        $this->actingAs($teamAdmin)
+            ->get(route('account.team'))
+            ->assertOk()
+            ->assertSee('data-account-team-fixtures-section', false)
+            ->assertSee('data-account-team-fixtures-controls', false)
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Account Opponent Week 06')
+            ->assertSeeText('Account Opponent Week 08')
+            ->assertDontSeeText('Account Opponent Week 01');
+
+        Livewire::actingAs($teamAdmin)
+            ->test(TeamFixturesSection::class, [
+                'team' => $team,
+                'section' => $section,
+                'forAccount' => true,
+            ])
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Account Opponent Week 06')
+            ->assertDontSeeText('Account Opponent Week 01');
     }
 
     public function test_account_page_shows_player_history_sections(): void

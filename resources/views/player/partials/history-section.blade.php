@@ -1,17 +1,34 @@
 @if ($history->isNotEmpty())
-    <section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-player-history-section>
-        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-            <div class="space-y-2">
+    <section class="ui-section" data-player-history-section>
+        <div class="ui-shell-grid">
+            <div>
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">History</h3>
-                <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                     Season-by-season playing history with archived team and section details.
                 </p>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                <div class="ui-card">
+                    <div class="ui-card-column-headings px-4 sm:px-5">
+                        <div class="flex min-w-0 items-center gap-3 sm:gap-4"></div>
+
+                        <div class="ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5">
+                            <div class="w-12 sm:w-16">
+                                <p class="ui-card-column-header">Played</p>
+                            </div>
+                            <div class="w-12 sm:w-16">
+                                <p class="ui-card-column-header">Won</p>
+                            </div>
+                            <div class="w-12 sm:w-16">
+                                <p class="ui-card-column-header">Lost</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card-rows">
                     @foreach ($history as $entry)
-                        <div class="flex items-center gap-4 py-4" wire:key="player-history-{{ $entry['season_id'] }}-{{ $entry['section_id'] }}-{{ $loop->index }}">
+                        <div class="ui-card-row items-center px-4 sm:px-5" wire:key="player-history-{{ $entry['season_id'] }}-{{ $entry['section_id'] }}-{{ $loop->index }}">
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $entry['season_name'] }}</p>
                                 <p class="mt-1 truncate text-sm text-gray-700 dark:text-gray-300">{{ $entry['team_name'] ?? 'Team TBC' }}</p>
@@ -37,6 +54,7 @@
                             </div>
                         </div>
                     @endforeach
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,21 +1,22 @@
 @if ($knockoutRows->isNotEmpty())
-    <section class="border-t border-gray-200 pt-6 dark:border-zinc-800/80" data-player-knockout-section>
-        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-            <div class="space-y-2">
+    <section class="ui-section" data-player-knockout-section>
+        <div class="ui-shell-grid">
+            <div>
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Knockouts</h3>
-                <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                     Knockout matches this player has featured in.
                 </p>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
-                    @foreach ($knockoutRows as $knockoutRow)
-                        <div wire:key="player-knockout-{{ $knockoutRow->id }}">
-                            @if ($knockoutRow->row_url)
-                                <a href="{{ $knockoutRow->row_url }}" class="block py-4 transition hover:bg-gray-200/70 dark:hover:bg-zinc-800/70 sm:-mx-3 sm:-my-px sm:rounded-xl sm:px-3">
-                            @endif
-                            <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'sm:rounded-xl sm:px-3 sm:py-4' }} sm:items-center sm:gap-4">
+                <div class="ui-card">
+                    <div class="ui-card-rows">
+                        @foreach ($knockoutRows as $knockoutRow)
+                            <div wire:key="player-knockout-{{ $knockoutRow->id }}">
+                                @if ($knockoutRow->row_url)
+                                    <a href="{{ $knockoutRow->row_url }}" class="ui-card-row-link">
+                                @endif
+                                <div class="ui-card-row items-start px-4 sm:items-center sm:px-5">
                                 <div class="min-w-0 flex-1">
                                     @if ($knockoutRow->is_doubles)
                                         <div class="space-y-0.5 text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
@@ -52,12 +53,13 @@
                                         </p>
                                     @endif
                                 </div>
+                                </div>
+                                @if ($knockoutRow->row_url)
+                                    </a>
+                                @endif
                             </div>
-                            @if ($knockoutRow->row_url)
-                                </a>
-                            @endif
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

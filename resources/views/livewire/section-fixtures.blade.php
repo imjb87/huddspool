@@ -1,9 +1,9 @@
-<section data-section-fixtures-view class="mt-0">
-    <div class="mx-auto mt-6 w-full max-w-4xl px-4 sm:px-6 lg:px-6">
-        <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
-            <div class="space-y-2">
+<section data-section-fixtures-view class="ui-section">
+    <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+        <div class="ui-shell-grid">
+            <div>
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures & Results</h2>
-                <p class="max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
                     {{ ($history ?? false)
                         ? 'Archived fixtures and submitted results for this section by week.'
                         : 'Current fixtures and submitted results for this section by week.' }}
@@ -11,17 +11,21 @@
             </div>
 
             <div class="lg:col-span-2">
-                <div data-section-fixtures-shell>
-                    <div class="divide-y divide-gray-200 dark:divide-zinc-800/80" wire:loading.remove wire:target="previousWeek, nextWeek">
+                <div class="ui-card" data-section-fixtures-shell>
+                    <div class="ui-card-column-headings justify-start px-4 sm:px-5" data-section-fixtures-headings>
+                        <p class="ui-card-column-header">Home vs Away</p>
+                    </div>
+
+                    <div class="ui-card-rows" wire:loading.remove wire:target="previousWeek, nextWeek">
                         @forelse ($fixtureRows as $row)
                             <div wire:key="section-fixture-{{ $section->id }}-{{ $row->fixture->id }}">
                                 @if ($row->link === null || $row->is_bye)
-                                    <div class="{{ $row->row_classes }}">
+                                    <div>
                                 @else
-                                    <a class="{{ trim($row->row_classes.' sm:hover:bg-gray-200/70 dark:sm:hover:bg-zinc-800/70') }}"
+                                    <a class="ui-card-row-link"
                                         href="{{ $row->link }}">
                                 @endif
-                                        <div class="flex items-start justify-between gap-4" data-section-fixtures-band>
+                                        <div class="ui-card-row items-start px-4 sm:px-5" data-section-fixtures-band>
                                             <div class="min-w-0 flex-1">
                                                 <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
                                                     {{ $row->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $row->away_team_name }}
@@ -55,7 +59,7 @@
                                 @endif
                             </div>
                         @empty
-                            <div class="px-4 py-10 text-center sm:px-6">
+                            <div class="ui-card-body py-10 text-center">
                                 <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
                                     <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available for this week.</h3>
                                     <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
@@ -67,10 +71,10 @@
                     </div>
 
                     <div class="animate-pulse" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
-                        <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                        <div class="ui-card-rows">
                             @foreach (range(1, 5) as $row)
                                 <div data-section-fixtures-row-skeleton-row>
-                                    <div class="flex items-start justify-between gap-4 rounded-lg py-4 sm:px-3" data-section-fixtures-band>
+                                    <div class="ui-card-row items-start px-4 sm:px-5" data-section-fixtures-band>
                                         <div class="min-w-0 flex-1">
                                             <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
                                             <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
@@ -87,7 +91,7 @@
                 <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" data-section-fixtures-controls>
                     <div class="flex items-center justify-between gap-4" data-section-fixtures-band>
                         <button wire:click="previousWeek" wire:loading.attr="disabled"
-                            class="inline-flex w-24 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                             aria-label="Previous"
                             @disabled($week === 1)>
                             Previous
@@ -98,7 +102,7 @@
                         </span>
 
                         <button wire:click="nextWeek" wire:loading.attr="disabled"
-                            class="inline-flex w-24 cursor-pointer items-center justify-center rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-black/10 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                             aria-label="Next"
                             @disabled(! $canAdvanceWeek)>
                             Next

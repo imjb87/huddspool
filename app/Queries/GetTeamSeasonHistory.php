@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Models\Expulsion;
 use App\Models\Result;
 use App\Models\SectionTeam;
 use App\Models\Team;
@@ -19,11 +20,11 @@ class GetTeamSeasonHistory
     {
         $teamId = $this->team->id;
 
-        return Cache::remember("team:season-history:{$teamId}", now()->addMinutes(10), function () use ($teamId) {
+        return Cache::remember("team:season-history:v2:{$teamId}", now()->addMinutes(10), function () use ($teamId) {
             $rows = Result::query()
                 ->selectRaw(
                     'seasons.id as season_id, seasons.name as season_name, seasons.slug as season_slug, seasons.dates as season_dates, seasons.is_open,
-                    sections.id as section_id, sections.slug as section_slug,
+                    sections.id as section_id, sections.name as section_name, sections.slug as section_slug,
                     rulesets.id as ruleset_id, rulesets.name as ruleset_name, rulesets.slug as ruleset_slug,
                     COUNT(*) as played,
                     SUM(CASE WHEN (results.home_team_id = ? AND results.home_score > results.away_score)
@@ -50,6 +51,7 @@ class GetTeamSeasonHistory
                     'seasons.dates',
                     'seasons.is_open',
                     'sections.id',
+                    'sections.name',
                     'sections.slug',
                     'rulesets.id',
                     'rulesets.name',
@@ -62,28 +64,33 @@ class GetTeamSeasonHistory
 
             $seasonIds = $rows->pluck('season_id')->filter()->unique();
 
+            $sectionIds = $rows->pluck('section_id')->filter()->unique();
+
             $deductions = SectionTeam::query()
-                ->join('sections', 'sections.id', '=', 'section_team.section_id')
-                ->whereIn('sections.season_id', $seasonIds)
-                ->where('section_team.team_id', $teamId)
-                ->selectRaw('sections.season_id, sections.ruleset_id, SUM(section_team.deducted) as total_deducted')
-                ->groupBy('sections.season_id', 'sections.ruleset_id')
+                ->whereIn('section_id', $sectionIds)
+                ->where('team_id', $teamId)
+                ->selectRaw('section_id, deducted')
                 ->get()
                 ->mapWithKeys(function ($row) {
-                    $key = $row->season_id.':'.($row->ruleset_id ?? 'null');
-
-                    return [$key => (int) $row->total_deducted];
+                    return [(int) $row->section_id => (int) $row->deducted];
                 });
 
-            return $rows->map(function ($row) use ($deductions) {
-                $key = $row->season_id.':'.($row->ruleset_id ?? 'null');
-                $deducted = $deductions[$key] ?? 0;
+            $teamExpulsions = Expulsion::query()
+                ->whereIn('season_id', $seasonIds)
+                ->where('expellable_type', Team::class)
+                ->where('expellable_id', $teamId)
+                ->pluck('season_id')
+                ->mapWithKeys(fn ($seasonId) => [(int) $seasonId => true]);
 
-                $wins = (int) $row->wins;
-                $draws = (int) $row->draws;
-                $losses = (int) $row->losses;
-                $played = (int) $row->played;
-                $points = (int) $row->raw_points - $deducted;
+            return $rows->map(function ($row) use ($deductions, $teamExpulsions) {
+                $deducted = $deductions[(int) $row->section_id] ?? 0;
+                $teamExpelled = (bool) ($teamExpulsions[(int) $row->season_id] ?? false);
+
+                $wins = $teamExpelled ? 0 : (int) $row->wins;
+                $draws = $teamExpelled ? 0 : (int) $row->draws;
+                $losses = $teamExpelled ? 0 : (int) $row->losses;
+                $played = $teamExpelled ? 0 : (int) $row->played;
+                $points = $teamExpelled ? 0 : (int) $row->raw_points - $deducted;
 
                 return [
                     'season_id' => $row->season_id,
@@ -91,6 +98,7 @@ class GetTeamSeasonHistory
                     'season_slug' => $row->season_slug,
                     'season_label' => SeasonLabelFormatter::format($row->season_name, $row->season_dates ?? []),
                     'section_id' => $row->section_id,
+                    'section_name' => $row->section_name,
                     'section_slug' => $row->section_slug,
                     'ruleset_id' => $row->ruleset_id,
                     'ruleset_name' => $row->ruleset_name,
@@ -100,6 +108,8 @@ class GetTeamSeasonHistory
                     'draws' => $draws,
                     'losses' => $losses,
                     'points' => $points,
+                    'deducted' => $deducted,
+                    'team_expelled' => $teamExpelled,
                 ];
             })->filter(fn ($entry) => $entry['season_id']);
         });

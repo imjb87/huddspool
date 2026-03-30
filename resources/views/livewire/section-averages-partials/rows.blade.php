@@ -1,4 +1,4 @@
-<div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+<div class="ui-card-rows">
     @foreach ($averageRows as $row)
         @include('livewire.section-averages-partials.row', ['row' => $row])
     @endforeach

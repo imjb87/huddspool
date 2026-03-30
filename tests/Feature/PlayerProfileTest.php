@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\KnockoutType;
 use App\Livewire\Player\FramesSection;
+use App\Livewire\Player\HistorySection;
+use App\Models\Expulsion;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Knockout;
@@ -45,7 +47,7 @@ class PlayerProfileTest extends TestCase
 
         $section->teams()->attach($team->id, ['sort' => 1]);
         $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
-        $archivedSection->teams()->attach($team->id, ['sort' => 1]);
+        $archivedSection->teams()->attach($team->id, ['sort' => 1, 'deducted' => 2]);
         $archivedSection->teams()->attach($opponentTeam->id, ['sort' => 2]);
 
         $player = User::factory()->create(['team_id' => $team->id]);
@@ -117,24 +119,47 @@ class PlayerProfileTest extends TestCase
             'away_score' => 1,
         ]);
 
+        Expulsion::query()->create([
+            'season_id' => $archivedSeason->id,
+            'expellable_id' => $player->id,
+            'expellable_type' => User::class,
+        ]);
+
         $this->actingAs($player);
 
         $response = $this->get(route('player.show', $player));
 
         $response->assertStatus(200);
         $response->assertSee('data-player-page', false);
+        $response->assertSee('ui-page-shell', false);
+        $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-player-profile-section', false);
         $response->assertSee('data-player-frames-section', false);
         $response->assertSee('data-player-history-section', false);
+        $response->assertSeeLivewire(HistorySection::class);
+        $response->assertSee('ui-shell-grid', false);
+        $response->assertSee('ui-card', false);
         $response->assertSee('dark:bg-zinc-900', false);
         $response->assertSee('dark:border-zinc-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($player->name);
+        $response->assertSeeText('Player');
         $response->assertSeeText($team->name);
         $response->assertSeeTextInOrder(['Played', 'Won', 'Lost']);
         $response->assertSeeText('50%');
         $response->assertSeeText($opponent->name);
         $response->assertSeeTextInOrder(['Frames', $opponentTeam->name]);
+        $response->assertDontSeeText('-2 pts deducted');
+        $response->assertDontSeeText('Player expelled');
+        $response->assertDontSeeText($archivedSeason->name);
+        $response->assertSee(
+            route('history.section.show', [
+                'season' => $archivedSeason->slug,
+                'ruleset' => $ruleset->slug,
+                'section' => $archivedSection->slug,
+            ]),
+            false,
+        );
     }
 
     public function test_player_profile_shows_read_only_knockout_links(): void
@@ -358,6 +383,7 @@ class PlayerProfileTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-player-frames-controls', false);
+        $response->assertSee('ui-button-primary', false);
         $response->assertSeeText('Page 1');
         $response->assertDontSeeText('Opponent 01');
         $response->assertDontSeeText('Opponent 16');
@@ -484,5 +510,80 @@ class PlayerProfileTest extends TestCase
         $this->assertSame(1, $history->first()['losses']);
         $this->assertSame(33.3, $history->first()['win_percentage']);
         $this->assertSame(33.3, $history->first()['loss_percentage']);
+    }
+
+    public function test_player_history_is_paginated_in_place_with_a_shared_header_row(): void
+    {
+        $archivedSeasons = Season::factory()->count(6)->create(['is_open' => false]);
+        $ruleset = Ruleset::factory()->create();
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+        $player = User::factory()->create(['team_id' => $team->id]);
+        $opponents = User::factory()->count(6)->create(['team_id' => $opponentTeam->id]);
+
+        foreach ($archivedSeasons as $index => $season) {
+            $section = Section::factory()->create([
+                'season_id' => $season->id,
+                'ruleset_id' => $ruleset->id,
+                'name' => "Section {$index}",
+            ]);
+
+            $section->teams()->attach($team->id, ['sort' => 1]);
+            $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
+
+            $fixture = Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponentTeam->id,
+            ]);
+
+            $result = Result::factory()->create([
+                'fixture_id' => $fixture->id,
+                'home_team_id' => $team->id,
+                'home_team_name' => $team->name,
+                'home_score' => 5,
+                'away_team_id' => $opponentTeam->id,
+                'away_team_name' => $opponentTeam->name,
+                'away_score' => 3,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'submitted_by' => $player->id,
+            ]);
+
+            Frame::create([
+                'result_id' => $result->id,
+                'home_player_id' => $player->id,
+                'home_score' => 1,
+                'away_player_id' => $opponents[$index]->id,
+                'away_score' => 0,
+            ]);
+        }
+
+        $response = $this->get(route('player.show', $player));
+
+        $response->assertOk();
+        $response->assertSeeLivewire(HistorySection::class);
+        $response->assertSee('data-player-history-controls', false);
+
+        preg_match('/<section[^>]*data-player-history-section[^>]*>.*?<\/section>/s', $response->getContent(), $matches);
+
+        $historySection = $matches[0] ?? '';
+
+        $this->assertStringContainsString('Played', $historySection);
+        $this->assertSame(1, substr_count($historySection, 'Played'));
+        $this->assertSame(1, substr_count($historySection, 'Won'));
+        $this->assertSame(1, substr_count($historySection, 'Lost'));
+
+        Livewire::test(HistorySection::class, ['player' => $player])
+            ->assertSee('Page 1')
+            ->assertSee('100%')
+            ->assertSee($archivedSeasons->last()->name)
+            ->assertDontSee($archivedSeasons->first()->name)
+            ->call('nextPage')
+            ->assertSee('Page 2')
+            ->assertSee($archivedSeasons->first()->name)
+            ->assertDontSee($archivedSeasons->last()->name);
     }
 }
