@@ -44,7 +44,7 @@
                     </span>
                 </div>
             </div>
-            <div class="w-12 sm:w-16">
+            <div class="hidden w-12 sm:block sm:w-16">
                 <div class="flex flex-col items-center gap-1">
                     <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $row['player']->frames_lost }}</p>
                     <span class="inline-flex items-center justify-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300 sm:text-xs">

@@ -23,11 +23,11 @@
                         <div class="ui-card-column-headings px-4 sm:px-5" data-section-table-band>
                             <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
 
-                            <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3">
+                            <div class="ml-auto grid shrink-0 grid-cols-4 gap-2 text-center sm:grid-cols-5 sm:gap-3">
                                 <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pl</div>
                                 <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">W</div>
                                 <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">D</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">L</div>
+                                <div class="hidden w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:block sm:w-10">L</div>
                                 <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pts</div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="ml-auto grid shrink-0 grid-cols-5 gap-2 text-center sm:gap-3">
+                                        <div class="ml-auto grid shrink-0 grid-cols-4 gap-2 text-center sm:grid-cols-5 sm:gap-3">
                                             <div class="w-8 sm:w-10">
                                                 <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
                                             </div>
@@ -91,7 +91,7 @@
                                             <div class="w-8 sm:w-10">
                                                 <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->draws }}</p>
                                             </div>
-                                            <div class="w-8 sm:w-10">
+                                            <div class="hidden w-8 sm:block sm:w-10">
                                                 <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
                                             </div>
                                             <div class="w-8 sm:w-10">

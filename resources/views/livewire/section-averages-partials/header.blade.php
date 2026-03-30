@@ -4,6 +4,6 @@
     <div class="ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5">
         <div class="w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-16">Played</div>
         <div class="w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-16">Won</div>
-        <div class="w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-16">Lost</div>
+        <div class="hidden w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:block sm:w-16">Lost</div>
     </div>
 </div>

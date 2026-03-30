@@ -21,7 +21,7 @@
                                 <div class="h-5 w-12 rounded-md opacity-0"></div>
                             </div>
                         </div>
-                        <div class="w-12 sm:w-16">
+                        <div class="hidden w-12 sm:block sm:w-16">
                             <div class="flex flex-col items-center gap-1">
                                 <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
                                 <div class="h-5 w-12 rounded-md bg-gray-200 dark:bg-zinc-700"></div>

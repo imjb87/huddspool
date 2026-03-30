@@ -464,6 +464,8 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('data-section-averages-band', false);
         $averagesResponse->assertSee('data-section-averages-controls', false);
         $averagesResponse->assertSee('ui-card-column-headings px-4 sm:px-5', false);
+        $averagesResponse->assertSee('hidden w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:block sm:w-16', false);
+        $averagesResponse->assertSee('hidden w-12 sm:block sm:w-16', false);
         $averagesResponse->assertSee('data-section-see-also', false);
         $averagesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail(), 'tab' => 'averages']).'"', false);
         $averagesResponse->assertSee('ui-shell-grid', false);
