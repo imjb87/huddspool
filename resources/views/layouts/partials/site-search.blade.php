@@ -63,7 +63,11 @@
                     placeholder="Search players, teams, venues..."
                     role="combobox"
                     :aria-expanded="resultGroups.length > 0 ? 'true' : 'false'"
+                    :aria-activedescendant="activeResultId()"
                     aria-controls="search-results"
+                    @keydown.arrow-down.prevent="moveActiveResult(1)"
+                    @keydown.arrow-up.prevent="moveActiveResult(-1)"
+                    @keydown.enter.prevent="openActiveResult()"
                 >
                 <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
                     <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-500">
@@ -137,8 +141,11 @@
                             <template x-for="item in group.results" :key="`${group.key}-${item.id}`">
                                 <a
                                     class="ui-card-row-link focus:outline-none"
+                                    :id="`site-search-result-${group.key}-${item.id}`"
                                     :href="item.href"
+                                    :class="{ 'bg-gray-50 dark:bg-zinc-800/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
                                     data-search-result-link
+                                    @mouseenter="setActiveResultById(`site-search-result-${group.key}-${item.id}`)"
                                     @click="close()"
                                 >
                                     <div class="ui-card-row items-start">
@@ -178,6 +185,7 @@
                 focusTimer: null,
                 searchTimer: null,
                 abortController: null,
+                activeResultIndex: -1,
                 isEnhanced: false,
                 async ensureEnhanced() {
                     if (this.isEnhanced) {

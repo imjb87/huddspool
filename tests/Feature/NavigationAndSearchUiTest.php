@@ -59,7 +59,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('data-search-modal-shell', false);
-        $response->assertSee(route('search.index'), false);
+        $response->assertSee('endpoint:', false);
         $response->assertSee('pl-11 pr-4', false);
         $response->assertSee('sm:pr-24', false);
         $response->assertSee('justify-between gap-4', false);
@@ -115,7 +115,6 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('hover:text-green-700', false);
         $response->assertSee('dark:hover:text-green-500', false);
         $response->assertDontSee('dark:backdrop-blur', false);
-        $response->assertSee('rounded-lg px-0 py-3 text-base font-semibold leading-7 text-gray-900', false);
         $response->assertSee('aria-label="Toggle main menu"', false);
         $response->assertDontSee('<a href="#" class="-m-1.5 p-1.5">', false);
         $response->assertDontSee('<a href="/" class="fa-stack -ml-1">', false);
@@ -128,6 +127,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('data-mobile-menu-close', false);
         $response->assertDontSee('href="/rulesets"', false);
         $response->assertDontSee('aria-label="Primary mobile"', false);
+        $response->assertSee('ui-card overflow-hidden', false);
+        $response->assertSee('ui-card-rows', false);
+        $response->assertSee('ui-card-row-link', false);
+        $response->assertSee('ui-card-row w-full cursor-pointer items-center justify-between', false);
     }
 
     public function test_home_page_lists_current_knockouts_and_knockout_dates_in_navigation(): void

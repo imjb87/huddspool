@@ -55,6 +55,10 @@ class HomePageTest extends TestCase
         $response->assertSee('height="160"', false);
         $response->assertSee('loading="eager"', false);
         $response->assertSee('fetchpriority="high"', false);
+        $response->assertSee('@keydown.arrow-down.prevent="moveActiveResult(1)"', false);
+        $response->assertSee('@keydown.arrow-up.prevent="moveActiveResult(-1)"', false);
+        $response->assertSee('@keydown.enter.prevent="openActiveResult()"', false);
+        $response->assertSee(':aria-activedescendant="activeResultId()"', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSeeText('Tables, fixtures, results and averages for every section');
         $response->assertSee('data-home-hero-account-link', false);
