@@ -3,11 +3,38 @@
         open: false,
         activeDrawer: 'root',
         headerHeight: 0,
+        headerHeightFrameId: null,
+        headerResizeObserver: null,
         theme: 'light',
         deferredInstallPrompt: null,
         canInstallApp: false,
         updateHeaderHeight() {
+            if (!this.$refs.header) {
+                return;
+            }
+
             this.headerHeight = Math.ceil(this.$refs.header.getBoundingClientRect().bottom);
+        },
+        scheduleHeaderHeightUpdate() {
+            if (this.headerHeightFrameId) {
+                window.cancelAnimationFrame(this.headerHeightFrameId);
+            }
+
+            this.headerHeightFrameId = window.requestAnimationFrame(() => {
+                this.headerHeightFrameId = null;
+                this.updateHeaderHeight();
+            });
+        },
+        bindHeaderResizeObserver() {
+            if (!this.$refs.header || typeof ResizeObserver === 'undefined') {
+                return;
+            }
+
+            this.headerResizeObserver = new ResizeObserver(() => {
+                this.scheduleHeaderHeightUpdate();
+            });
+
+            this.headerResizeObserver.observe(this.$refs.header);
         },
         syncTheme() {
             this.theme = window.siteTheme?.currentTheme?.() ?? 'light';
@@ -32,7 +59,7 @@
         openMenu() {
             this.open = true;
             this.activeDrawer = 'root';
-            this.$nextTick(() => this.updateHeaderHeight());
+            this.$nextTick(() => this.scheduleHeaderHeightUpdate());
         },
         closeMenu() {
             this.open = false;
@@ -45,7 +72,7 @@
             this.activeDrawer = 'root';
         },
     }"
-    x-init="syncTheme(); syncInstallAvailability(); updateHeaderHeight(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => updateHeaderHeight()); window.addEventListener('site-theme-changed', () => syncTheme()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
+    x-init="syncTheme(); syncInstallAvailability(); bindHeaderResizeObserver(); scheduleHeaderHeightUpdate(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => scheduleHeaderHeightUpdate()); window.addEventListener('site-theme-changed', () => syncTheme()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
     x-ref="header">
     <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 lg:px-8" aria-label="Global">
         <div class="flex shrink-0">

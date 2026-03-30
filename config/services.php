@@ -51,15 +51,6 @@ return [
         'embed_key' => env('GOOGLE_MAPS_EMBED_KEY'),
     ],
 
-    'hotjar' => [
-        'site_id' => env('HOTJAR_SITE_ID'),
-        'snippet_version' => env('HOTJAR_SNIPPET_VERSION'),
-    ],
-
-    'font_awesome' => [
-        'kit_url' => env('FONT_AWESOME_KIT_URL'),
-    ],
-
     'nominatim' => [
         'search_url' => env('NOMINATIM_SEARCH_URL', 'https://nominatim.openstreetmap.org/search'),
         'user_agent' => env('NOMINATIM_USER_AGENT', env('APP_NAME', 'HuddsPool').' geocoder'),

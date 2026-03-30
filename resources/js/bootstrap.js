@@ -487,22 +487,29 @@ window.resultFormPresenceTooltip = () => ({
     open: false,
     isPositioned: false,
     tooltipStyle: '',
+    tooltipFrameId: null,
     showTooltip() {
         this.open = true;
         this.isPositioned = false;
 
         this.$nextTick(() => {
-            this.positionTooltip();
-            this.isPositioned = true;
+            this.scheduleTooltipPosition();
         });
     },
     hideTooltip() {
+        this.cancelTooltipFrame();
         this.open = false;
         this.isPositioned = false;
     },
-    positionTooltip() {
+    cancelTooltipFrame() {
+        if (this.tooltipFrameId) {
+            window.cancelAnimationFrame(this.tooltipFrameId);
+            this.tooltipFrameId = null;
+        }
+    },
+    measureTooltipPosition() {
         if (!this.$refs.trigger || !this.$refs.tooltip) {
-            return;
+            return null;
         }
 
         const viewportPadding = 8;
@@ -514,6 +521,25 @@ window.resultFormPresenceTooltip = () => ({
             Math.min(window.innerWidth - viewportPadding - (tooltipWidth / 2), centeredLeft),
         );
 
-        this.tooltipStyle = `left:${clampedLeft}px;top:${triggerBounds.top - 8}px;`;
+        return {
+            left: clampedLeft,
+            top: triggerBounds.top - 8,
+        };
+    },
+    scheduleTooltipPosition() {
+        this.cancelTooltipFrame();
+
+        this.tooltipFrameId = window.requestAnimationFrame(() => {
+            const position = this.measureTooltipPosition();
+
+            this.tooltipFrameId = null;
+
+            if (!position) {
+                return;
+            }
+
+            this.tooltipStyle = `left:${position.left}px;top:${position.top}px;`;
+            this.isPositioned = true;
+        });
     },
 });

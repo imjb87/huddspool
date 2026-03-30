@@ -13,6 +13,23 @@
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
+    @if (Route::currentRouteNamed('home'))
+        @php
+            $logo160PngUrl = asset('images/logo-160.png') . '?v=' . filemtime(public_path('images/logo-160.png'));
+            $logo160WebpUrl = asset('images/logo-160.webp') . '?v=' . filemtime(public_path('images/logo-160.webp'));
+            $logo320WebpUrl = asset('images/logo-320.webp') . '?v=' . filemtime(public_path('images/logo-320.webp'));
+        @endphp
+
+        <link
+            rel="preload"
+            as="image"
+            href="{{ $logo160PngUrl }}"
+            imagesrcset="{{ $logo160WebpUrl }} 160w, {{ $logo320WebpUrl }} 320w"
+            imagesizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"
+            fetchpriority="high"
+        >
+    @endif
+
     @if (Route::currentRouteName() == 'result.create')
         <meta http-equiv="refresh" content="600">
     @endif
@@ -40,29 +57,6 @@
 
             gtag('config', @js(config('services.google_analytics.measurement_id')));
         </script>
-    @endif
-
-    @if (filled(config('services.hotjar.site_id')) && filled(config('services.hotjar.snippet_version')))
-        <script>
-            (function(h, o, t, j, a, r) {
-                h.hj = h.hj || function() {
-                    (h.hj.q = h.hj.q || []).push(arguments)
-                };
-                h._hjSettings = {
-                    hjid: @js(config('services.hotjar.site_id')),
-                    hjsv: @js(config('services.hotjar.snippet_version'))
-                };
-                a = o.getElementsByTagName('head')[0];
-                r = o.createElement('script');
-                r.async = 1;
-                r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-                a.appendChild(r);
-            })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-        </script>
-    @endif
-
-    @if (filled(config('services.font_awesome.kit_url')))
-        <script src="{{ config('services.font_awesome.kit_url') }}" crossorigin="anonymous"></script>
     @endif
 
     <!-- Scripts -->

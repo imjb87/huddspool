@@ -1,5 +1,10 @@
 <section data-home-hero>
     @php
+        $logo160PngUrl = asset('images/logo-160.png') . '?v=' . filemtime(public_path('images/logo-160.png'));
+        $logo160WebpUrl = asset('images/logo-160.webp') . '?v=' . filemtime(public_path('images/logo-160.webp'));
+        $logo320PngUrl = asset('images/logo-320.png') . '?v=' . filemtime(public_path('images/logo-320.png'));
+        $logo320WebpUrl = asset('images/logo-320.webp') . '?v=' . filemtime(public_path('images/logo-320.webp'));
+
         $heroTitle = $entrySeasonCountdown
             ? 'Registration for the next season is now open'
             : 'Everything for league night, in one place.';
@@ -15,8 +20,29 @@
                     <div class="flex justify-start lg:justify-center">
                         <div class="relative">
                             <div class="absolute inset-0 rounded-full bg-white/10 blur-3xl"></div>
-                            <img class="relative w-32 drop-shadow-2xl sm:w-36 lg:w-40"
-                                src="{{ asset('images/logo.png') }}" alt="Huddersfield Pool League logo" />
+                            <picture>
+                                <source
+                                    type="image/webp"
+                                    srcset="
+                                        {{ $logo160WebpUrl }} 160w,
+                                        {{ $logo320WebpUrl }} 320w
+                                    "
+                                    sizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"
+                                >
+                                <img class="relative w-32 drop-shadow-2xl sm:w-36 lg:w-40"
+                                    src="{{ $logo320PngUrl }}"
+                                    srcset="
+                                        {{ $logo160PngUrl }} 160w,
+                                        {{ $logo320PngUrl }} 320w
+                                    "
+                                    sizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"
+                                    width="160"
+                                    height="160"
+                                    loading="eager"
+                                    fetchpriority="high"
+                                    decoding="async"
+                                    alt="Huddersfield Pool League logo" />
+                            </picture>
                         </div>
                     </div>
 
@@ -43,7 +69,7 @@
                                 x-init="refresh(); setInterval(() => refresh(), 1000)"
                                 class="pt-1"
                             >
-                                <div class="flex flex-wrap items-center gap-3 text-[11px] font-medium uppercase tracking-[0.18em] text-green-100/80">
+                                <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-green-100/70">
                                     <span>Closes in</span>
                                     <div class="flex items-center gap-3 tabular-nums" data-home-hero-entry-countdown>
                                         <span><span class="text-white" x-text="remaining.days"></span>d</span>
@@ -69,7 +95,7 @@
                                     class="inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-green-900 shadow-sm transition duration-150 hover:-translate-y-0.5 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-green-900"
                                 >
                                     {{ $entrySeasonCountdown['cta_label'] }}
-                                </a>.
+                                </a>
                             </div>
                         @endif
 

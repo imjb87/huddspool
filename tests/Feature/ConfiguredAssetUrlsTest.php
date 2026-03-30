@@ -2,57 +2,28 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 use Tests\TestCase;
 
 class ConfiguredAssetUrlsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_page_uses_configured_font_awesome_kit_url(): void
+    protected function setUp(): void
     {
-        config([
-            'services.font_awesome.kit_url' => 'https://kit.fontawesome.com/configured-home.js',
-        ]);
+        parent::setUp();
 
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertSee('https://kit.fontawesome.com/configured-home.js', false);
+        Cache::flush();
+        ResponseCache::clear();
     }
 
-    public function test_login_page_uses_configured_font_awesome_kit_url(): void
-    {
-        config([
-            'services.font_awesome.kit_url' => 'https://kit.fontawesome.com/configured-login.js',
-        ]);
-
-        $this->get(route('login'))
-            ->assertOk()
-            ->assertSee('https://kit.fontawesome.com/configured-login.js', false);
-    }
-
-    public function test_player_profile_uses_configured_font_awesome_kit_url(): void
-    {
-        config([
-            'services.font_awesome.kit_url' => 'https://kit.fontawesome.com/configured-player.js',
-        ]);
-
-        $player = User::factory()->create();
-
-        $this->get(route('player.show', $player))
-            ->assertOk()
-            ->assertSee('https://kit.fontawesome.com/configured-player.js', false);
-    }
-
-    public function test_home_page_does_not_render_optional_tracking_scripts_when_not_configured(): void
+    public function test_home_page_does_not_render_removed_optional_tracking_scripts(): void
     {
         config([
             'services.google_analytics.measurement_id' => null,
-            'services.hotjar.site_id' => null,
-            'services.hotjar.snippet_version' => null,
-            'services.font_awesome.kit_url' => null,
         ]);
 
         $this->get(route('home'))

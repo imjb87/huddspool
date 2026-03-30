@@ -3,7 +3,12 @@
         [
             'name' => 'The Pool Table Guru',
             'url' => 'https://www.thepooltableguru.co.uk/',
-            'image' => asset('images/sponsors/thepooltableguru.jpg'),
+            'image' => asset('images/sponsors/thepooltableguru-320.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-320.jpg')),
+            'image_160' => asset('images/sponsors/thepooltableguru-160.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-160.jpg')),
+            'webp_160' => asset('images/sponsors/thepooltableguru-160.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-160.webp')),
+            'webp_320' => asset('images/sponsors/thepooltableguru-320.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-320.webp')),
+            'width' => 159,
+            'height' => 160,
             'alt' => 'The Pool Table Guru',
         ],
         [
@@ -21,7 +26,12 @@
         [
             'name' => 'NRK Fabrication',
             'url' => 'https://www.nrkfabrication.co.uk/',
-            'image' => asset('images/sponsors/nrkfabrication-logo.jpg'),
+            'image' => asset('images/sponsors/nrkfabrication-logo-320.jpg') . '?v=' . filemtime(public_path('images/sponsors/nrkfabrication-logo-320.jpg')),
+            'image_160' => asset('images/sponsors/nrkfabrication-logo-160.jpg') . '?v=' . filemtime(public_path('images/sponsors/nrkfabrication-logo-160.jpg')),
+            'webp_160' => asset('images/sponsors/nrkfabrication-logo-160.webp') . '?v=' . filemtime(public_path('images/sponsors/nrkfabrication-logo-160.webp')),
+            'webp_320' => asset('images/sponsors/nrkfabrication-logo-320.webp') . '?v=' . filemtime(public_path('images/sponsors/nrkfabrication-logo-320.webp')),
+            'width' => 160,
+            'height' => 94,
             'alt' => 'NRK Fabrication',
         ],
         [
@@ -33,7 +43,12 @@
         [
             'name' => 'UK Plastics & Glazing Ltd',
             'url' => 'https://www.facebook.com/ukplasticsandglazingltd',
-            'image' => asset('images/sponsors/ukplasticsandglazing-logo.jpeg'),
+            'image' => asset('images/sponsors/ukplasticsandglazing-logo-320.jpeg') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-320.jpeg')),
+            'image_160' => asset('images/sponsors/ukplasticsandglazing-logo-160.jpeg') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-160.jpeg')),
+            'webp_160' => asset('images/sponsors/ukplasticsandglazing-logo-160.webp') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-160.webp')),
+            'webp_320' => asset('images/sponsors/ukplasticsandglazing-logo-320.webp') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-320.webp')),
+            'width' => 160,
+            'height' => 86,
             'alt' => 'UK Plastics & Glazing Ltd',
         ],
     ];
@@ -62,9 +77,36 @@
                                     class="group flex h-full flex-col"
                                     data-section-sponsors-card>
                                     <div class="flex h-24 w-full items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 transition hover:border-gray-300 dark:border-gray-200 dark:bg-white dark:hover:border-gray-300">
-                                        <img class="max-h-12 w-full object-contain sm:max-h-14"
-                                            src="{{ $sponsor['image'] }}"
-                                            alt="{{ $sponsor['alt'] }}">
+                                        @if (isset($sponsor['webp_160']))
+                                            <picture>
+                                                <source
+                                                    type="image/webp"
+                                                    srcset="
+                                                        {{ $sponsor['webp_160'] }} 160w,
+                                                        {{ $sponsor['webp_320'] }} 320w
+                                                    "
+                                                    sizes="(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px"
+                                                >
+                                                <img class="max-h-12 w-full object-contain sm:max-h-14"
+                                                    src="{{ $sponsor['image'] }}"
+                                                    srcset="
+                                                        {{ $sponsor['image_160'] }} 160w,
+                                                        {{ $sponsor['image'] }} 320w
+                                                    "
+                                                    sizes="(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px"
+                                                    width="{{ $sponsor['width'] }}"
+                                                    height="{{ $sponsor['height'] }}"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    alt="{{ $sponsor['alt'] }}">
+                                            </picture>
+                                        @else
+                                            <img class="max-h-12 w-full object-contain sm:max-h-14"
+                                                src="{{ $sponsor['image'] }}"
+                                                loading="lazy"
+                                                decoding="async"
+                                                alt="{{ $sponsor['alt'] }}">
+                                        @endif
                                     </div>
                                     <p class="mt-2 flex min-h-10 items-start justify-center text-center text-sm font-medium text-gray-500 transition group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">
                                         {{ $sponsor['name'] }}
