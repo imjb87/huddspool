@@ -13,7 +13,7 @@
             'webp_320' => asset('images/sponsors/thepooltableguru-320.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-320.webp')),
             'width' => 159,
             'height' => 160,
-            'alt' => 'The Pool Table Guru',
+            'alt' => '',
             'sizes' => '(min-width: 1024px) 110px, (min-width: 640px) 96px, 84px',
         ],
         [
@@ -22,7 +22,7 @@
             'image' => asset('images/sponsors/eagleroofing-logo.png'),
             'width' => 290,
             'height' => 81,
-            'alt' => 'Eagle Roofing',
+            'alt' => '',
         ],
         [
             'name' => 'The Bigger Boat',
@@ -30,7 +30,7 @@
             'image' => asset('images/sponsors/tbb-logo.svg'),
             'width' => 287,
             'height' => 70,
-            'alt' => 'The Bigger Boat',
+            'alt' => '',
         ],
         [
             'name' => 'NRK Fabrication',
@@ -41,7 +41,7 @@
             'webp_320' => asset('images/sponsors/nrkfabrication-logo-320.webp') . '?v=' . filemtime(public_path('images/sponsors/nrkfabrication-logo-320.webp')),
             'width' => 160,
             'height' => 94,
-            'alt' => 'NRK Fabrication',
+            'alt' => '',
             'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
         ],
         [
@@ -50,7 +50,7 @@
             'image' => asset('images/sponsors/levelshuddersfield.svg'),
             'width' => 260,
             'height' => 120,
-            'alt' => 'Levels Huddersfield',
+            'alt' => '',
         ],
         [
             'name' => 'UK Plastics & Glazing Ltd',
@@ -61,7 +61,7 @@
             'webp_320' => asset('images/sponsors/ukplasticsandglazing-logo-320.webp') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-320.webp')),
             'width' => 160,
             'height' => 86,
-            'alt' => 'UK Plastics & Glazing Ltd',
+            'alt' => '',
             'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
         ],
     ];
@@ -102,7 +102,7 @@
                                                     "
                                                     sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
                                                 >
-                                                <img class="max-h-12 w-full object-contain sm:max-h-14"
+                                                <img class="h-auto max-h-12 w-auto max-w-full object-contain sm:max-h-14"
                                                     src="{{ $sponsor['image'] }}"
                                                     srcset="
                                                         @if (isset($sponsor['image_96'])){{ $sponsor['image_96'] }} 96w, @endif
@@ -113,18 +113,22 @@
                                                     sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
                                                     width="{{ $sponsor['width'] }}"
                                                     height="{{ $sponsor['height'] }}"
+                                                    style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};"
                                                     loading="lazy"
                                                     decoding="async"
-                                                    alt="{{ $sponsor['alt'] }}">
+                                                    alt="{{ $sponsor['alt'] }}"
+                                                    aria-hidden="true">
                                             </picture>
                                         @else
-                                            <img class="max-h-12 w-full object-contain sm:max-h-14"
+                                            <img class="h-auto max-h-12 w-auto max-w-full object-contain sm:max-h-14"
                                                 src="{{ $sponsor['image'] }}"
                                                 @if (isset($sponsor['width'])) width="{{ $sponsor['width'] }}" @endif
                                                 @if (isset($sponsor['height'])) height="{{ $sponsor['height'] }}" @endif
+                                                @if (isset($sponsor['width'], $sponsor['height'])) style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};" @endif
                                                 loading="lazy"
                                                 decoding="async"
-                                                alt="{{ $sponsor['alt'] }}">
+                                                alt="{{ $sponsor['alt'] }}"
+                                                aria-hidden="true">
                                         @endif
                                     </div>
                                     <p class="mt-2 flex min-h-10 items-start justify-center text-center text-sm font-medium text-gray-500 transition group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">

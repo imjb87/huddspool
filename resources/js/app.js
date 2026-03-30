@@ -1,9 +1,7 @@
-import './bootstrap';
 import Alpine from 'alpinejs';
-import { registerSiteSearch } from './site-search';
+import { bootDeferredGoogleAnalytics } from './google-analytics';
 
 window.Alpine = Alpine;
 
-registerSiteSearch(Alpine);
-
 Alpine.start();
+bootDeferredGoogleAnalytics();

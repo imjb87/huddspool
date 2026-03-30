@@ -9,6 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="{{ config('app.description') }}">
     <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
     <meta property="og:description" content="{{ config('app.description') }}" />
     <meta property="og:type" content="website" />
@@ -27,7 +28,7 @@
         <link
             rel="preload"
             as="image"
-            href="{{ $logo160PngUrl }}"
+            href="{{ $logo320WebpUrl }}"
             imagesrcset="{{ $logo160WebpUrl }} 160w, {{ $logo320WebpUrl }} 320w"
             imagesizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"
             fetchpriority="high"
@@ -45,20 +46,6 @@
 
     @include('layouts.partials.theme-head')
 
-    @if (filled(config('services.google_analytics.measurement_id')))
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.measurement_id') }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-
-            gtag('config', @js(config('services.google_analytics.measurement_id')));
-        </script>
-    @endif
-
     <!-- Scripts -->
     @if ($usesLivewire)
         @vite(['resources/css/app.css', 'resources/js/livewire-app.js'])
@@ -69,7 +56,12 @@
     @laravelPWA
 </head>
 
-<body class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-gray-100">
+<body
+    class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-gray-100"
+    @if (filled(config('services.google_analytics.measurement_id')))
+        data-google-analytics-measurement-id="{{ config('services.google_analytics.measurement_id') }}"
+    @endif
+>
     <div class="min-h-screen bg-gray-100 dark:bg-zinc-900">
         @include('layouts.navigation')
         <!-- Page Content -->

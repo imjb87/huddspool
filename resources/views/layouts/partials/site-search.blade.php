@@ -2,7 +2,11 @@
     class="relative z-99 duration-300"
     role="dialog"
     aria-modal="true"
-    x-data="siteSearch('{{ route('search.index') }}')"
+    aria-labelledby="site-search-dialog-title"
+    x-data="window.createSiteSearch({
+        endpoint: @js(route('search.index')),
+        moduleUrl: @js(Vite::asset('resources/js/site-search-modal.js')),
+    })"
     x-on:site-search:open.window="openSearch()"
     x-on:keydown.escape.window="if (open) { close() }"
     x-cloak
@@ -35,6 +39,7 @@
             class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:bg-zinc-900 dark:ring-white/10"
             data-search-modal-shell
         >
+            <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>
             <div class="relative border-b border-gray-200 dark:border-zinc-800/80">
                 <svg
                     class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400 dark:text-gray-500"
@@ -159,3 +164,83 @@
         </div>
     </div>
 </div>
+
+<script>
+    if (!window.createSiteSearch) {
+        window.createSiteSearch = function ({ endpoint, moduleUrl }) {
+            return {
+                endpoint,
+                moduleUrl,
+                open: false,
+                searchTerm: '',
+                resultGroups: [],
+                isLoading: false,
+                focusTimer: null,
+                searchTimer: null,
+                abortController: null,
+                isEnhanced: false,
+                async ensureEnhanced() {
+                    if (this.isEnhanced) {
+                        return;
+                    }
+
+                    const { enhanceSiteSearch } = await import(this.moduleUrl);
+
+                    enhanceSiteSearch(this);
+                    this.isEnhanced = true;
+                    this.initializeSiteSearch();
+                },
+                async openSearch() {
+                    await this.ensureEnhanced();
+                    this.openLoadedSearch();
+                },
+                close() {
+                    if (!this.isEnhanced) {
+                        this.open = false;
+                        this.searchTerm = '';
+                        this.resultGroups = [];
+                        this.isLoading = false;
+
+                        return;
+                    }
+
+                    this.closeLoadedSearch();
+                },
+            };
+        };
+    }
+
+    if (!window.siteSearchBindingsRegistered) {
+        window.siteSearchBindingsRegistered = true;
+
+        const dispatchSiteSearchOpen = (event = null) => {
+            if (event) {
+                event.preventDefault();
+            }
+
+            window.dispatchEvent(new CustomEvent('site-search:open'));
+        };
+
+        document.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-site-search-trigger]');
+
+            if (!trigger) {
+                return;
+            }
+
+            dispatchSiteSearchOpen(event);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (!(event.metaKey || event.ctrlKey)) {
+                return;
+            }
+
+            if (event.key.toLowerCase() !== 'k') {
+                return;
+            }
+
+            dispatchSiteSearchOpen(event);
+        });
+    }
+</script>

@@ -40,7 +40,6 @@
                                     height="160"
                                     loading="eager"
                                     fetchpriority="high"
-                                    decoding="async"
                                     alt="Huddersfield Pool League logo" />
                             </picture>
                         </div>

@@ -24,7 +24,15 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * allows your team to easily build robust real-time web applications.
  */
 
-if (import.meta.env.VITE_REVERB_APP_KEY) {
+window.ensureEcho = () => {
+    if (window.Echo) {
+        return window.Echo;
+    }
+
+    if (!import.meta.env.VITE_REVERB_APP_KEY) {
+        return null;
+    }
+
     const reverbScheme = import.meta.env.VITE_REVERB_SCHEME ?? 'https';
     const forceTls = reverbScheme === 'https' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
@@ -37,7 +45,9 @@ if (import.meta.env.VITE_REVERB_APP_KEY) {
         forceTLS: forceTls,
         enabledTransports: ['ws', 'wss'],
     });
-}
+
+    return window.Echo;
+};
 
 window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
     connectionHealth: 'healthy',
@@ -159,7 +169,9 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         });
     },
     init() {
-        if (!window.Echo || !window.Livewire) {
+        const echo = window.ensureEcho?.() ?? window.Echo ?? null;
+
+        if (!echo || !window.Livewire) {
             this.updateConnectionState('failed');
             console.warn('[result-collaboration] Echo or Livewire is unavailable; collaboration channel was not initialized.', {
                 channelName,
@@ -175,9 +187,9 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
         const joinUi = (member) => this.collaboratorJoinedUi?.(member);
         const leaveUi = (member) => this.collaboratorLeftUi?.(member);
 
-        window.Echo.leave(channelName);
+        echo.leave(channelName);
 
-        window.Echo.join(channelName)
+        echo.join(channelName)
             .here((members) => {
                 console.info('[result-collaboration] Connected to broadcast channel.', {
                     channelName,

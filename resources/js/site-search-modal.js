@@ -1,37 +1,18 @@
-let siteSearchRegistered = false;
-
-/**
- * @param {import('alpinejs').Alpine} Alpine
- */
-export function registerSiteSearch(Alpine) {
-    if (siteSearchRegistered) {
-        return;
-    }
-
-    siteSearchRegistered = true;
-
-    Alpine.data('siteSearch', (endpoint) => ({
-        endpoint,
-        open: false,
-        searchTerm: '',
-        resultGroups: [],
-        isLoading: false,
-        focusTimer: null,
-        searchTimer: null,
-        abortController: null,
-        async init() {
+export function enhanceSiteSearch(component) {
+    Object.assign(component, {
+        initializeSiteSearch() {
             this.$watch('searchTerm', (value) => {
                 this.scheduleSearch(value);
             });
         },
-        openSearch() {
+        openLoadedSearch() {
             this.open = true;
             this.searchTerm = '';
             this.resultGroups = [];
             this.isLoading = false;
             this.focusInput();
         },
-        close() {
+        closeLoadedSearch() {
             if (this.focusTimer) {
                 window.clearTimeout(this.focusTimer);
                 this.focusTimer = null;
@@ -93,12 +74,16 @@ export function registerSiteSearch(Alpine) {
             this.abortController = new AbortController();
 
             try {
-                const response = await window.axios.get(this.endpoint, {
-                    params: { q: query },
+                const response = await window.fetch(`${this.endpoint}?${new URLSearchParams({ q: query }).toString()}`, {
                     signal: this.abortController.signal,
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
                 });
+                const payload = response.ok ? await response.json() : { groups: [] };
 
-                this.resultGroups = response.data.groups ?? [];
+                this.resultGroups = payload.groups ?? [];
             } catch (error) {
                 if (error.name !== 'CanceledError' && error.name !== 'AbortError') {
                     this.resultGroups = [];
@@ -108,41 +93,5 @@ export function registerSiteSearch(Alpine) {
                 this.isLoading = false;
             }
         },
-    }));
-
-    if (window.siteSearchBindingsRegistered) {
-        return;
-    }
-
-    window.siteSearchBindingsRegistered = true;
-
-    const dispatchSiteSearchOpen = (event = null) => {
-        if (event) {
-            event.preventDefault();
-        }
-
-        window.dispatchEvent(new CustomEvent('site-search:open'));
-    };
-
-    document.addEventListener('click', (event) => {
-        const trigger = event.target.closest('[data-site-search-trigger]');
-
-        if (! trigger) {
-            return;
-        }
-
-        dispatchSiteSearchOpen(event);
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (! (event.metaKey || event.ctrlKey)) {
-            return;
-        }
-
-        if (event.key.toLowerCase() !== 'k') {
-            return;
-        }
-
-        dispatchSiteSearchOpen(event);
     });
 }

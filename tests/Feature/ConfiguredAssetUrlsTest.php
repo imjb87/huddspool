@@ -33,6 +33,19 @@ class ConfiguredAssetUrlsTest extends TestCase
             ->assertDontSee('kit.fontawesome.com', false);
     }
 
+    public function test_home_page_defers_google_analytics_loading_until_after_initial_render(): void
+    {
+        config([
+            'services.google_analytics.measurement_id' => 'G-620MNWY15S',
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-google-analytics-measurement-id="G-620MNWY15S"', false)
+            ->assertDontSee('https://www.googletagmanager.com/gtag/js?id=G-620MNWY15S', false)
+            ->assertDontSee("gtag('config'", false);
+    }
+
     public function test_venue_page_hides_google_map_embed_when_key_is_not_configured(): void
     {
         config([

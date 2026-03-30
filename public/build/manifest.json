@@ -1,10 +1,10 @@
 {
-  "_site-search-Beuyw8_c.js": {
-    "file": "assets/site-search-Beuyw8_c.js",
-    "name": "site-search"
+  "_google-analytics-D9zDWlUq.js": {
+    "file": "assets/google-analytics-D9zDWlUq.js",
+    "name": "google-analytics"
   },
   "resources/css/app.css": {
-    "file": "assets/app-B9MJ8xQm.css",
+    "file": "assets/app-DvpgSxW2.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,21 +13,27 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-YCQeC3mB.js",
+    "file": "assets/app-D_537LPM.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_site-search-Beuyw8_c.js"
+      "_google-analytics-D9zDWlUq.js"
     ]
   },
   "resources/js/livewire-app.js": {
-    "file": "assets/livewire-app-XQWEaSLm.js",
+    "file": "assets/livewire-app-DneURWMS.js",
     "name": "livewire-app",
     "src": "resources/js/livewire-app.js",
     "isEntry": true,
     "imports": [
-      "_site-search-Beuyw8_c.js"
+      "_google-analytics-D9zDWlUq.js"
     ]
+  },
+  "resources/js/site-search-modal.js": {
+    "file": "assets/site-search-modal-l0sNRNKZ.js",
+    "name": "site-search-modal",
+    "src": "resources/js/site-search-modal.js",
+    "isEntry": true
   }
 }
