@@ -36,6 +36,8 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-page', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-home-hero', false);
+        $response->assertDontSee('/livewire/livewire.min.js', false);
+        $response->assertDontSee('window.livewireScriptConfig', false);
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $response->assertSee('ui-card-branded', false);
         $response->assertSee('ui-section ui-card-body', false);

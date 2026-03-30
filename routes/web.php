@@ -8,6 +8,7 @@ use App\Http\Controllers\KnockoutMatchController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RulesetController;
 use App\Http\Controllers\SeasonEntryController;
+use App\Http\Controllers\SiteSearchController;
 use App\Http\Controllers\SupportTicketController;
 use App\Support\ResponseCacheTags;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::pattern('season', '[^/]*[0-9][^/]*');
 Route::get('/', HomeController::class)
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::HOME]))
     ->name('home');
+Route::get('/search', SiteSearchController::class)->name('search.index');
 Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
     Route::prefix('rulesets')->group(function () {
         Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');

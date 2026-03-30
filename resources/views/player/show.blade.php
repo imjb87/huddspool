@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('uses-livewire', 'true')
+
 @section('content')
     <div class="ui-page-shell" data-player-page>
         <div class="ui-section" data-section-shared-header>

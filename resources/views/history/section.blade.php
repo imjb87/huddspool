@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('uses-livewire', 'true')
+
 @section('content')
     <livewire:history.section-page
         :season="$season"

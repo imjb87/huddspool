@@ -121,7 +121,5 @@
         </div>
 
     </nav>
-
     @include('layouts.partials.navigation-mobile-drawer')
-    @include('layouts.partials.navigation-search-script')
 </header>

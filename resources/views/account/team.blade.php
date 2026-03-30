@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('uses-livewire', 'true')
+
 @section('content')
     <div class="ui-page-shell" data-account-team-page-shell>
         <livewire:account.team />

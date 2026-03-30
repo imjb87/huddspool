@@ -54,11 +54,12 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('aria-label="Open search"', false);
         $response->assertSee('data-theme-toggle', false);
         $response->assertSee('aria-label="Toggle dark mode"', false);
-        $response->assertSee('focus-first-search-result', false);
         $response->assertSee('site-theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
+        $response->assertSee('data-search-modal-shell', false);
+        $response->assertSee(route('search.index'), false);
         $response->assertSee('pl-11 pr-4', false);
         $response->assertSee('sm:pr-24', false);
         $response->assertSee('justify-between gap-4', false);

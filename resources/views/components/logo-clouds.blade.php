@@ -4,23 +4,32 @@
             'name' => 'The Pool Table Guru',
             'url' => 'https://www.thepooltableguru.co.uk/',
             'image' => asset('images/sponsors/thepooltableguru-320.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-320.jpg')),
+            'image_96' => asset('images/sponsors/thepooltableguru-96.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-96.jpg')),
             'image_160' => asset('images/sponsors/thepooltableguru-160.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-160.jpg')),
+            'image_192' => asset('images/sponsors/thepooltableguru-192.jpg') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-192.jpg')),
+            'webp_96' => asset('images/sponsors/thepooltableguru-96.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-96.webp')),
             'webp_160' => asset('images/sponsors/thepooltableguru-160.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-160.webp')),
+            'webp_192' => asset('images/sponsors/thepooltableguru-192.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-192.webp')),
             'webp_320' => asset('images/sponsors/thepooltableguru-320.webp') . '?v=' . filemtime(public_path('images/sponsors/thepooltableguru-320.webp')),
             'width' => 159,
             'height' => 160,
             'alt' => 'The Pool Table Guru',
+            'sizes' => '(min-width: 1024px) 110px, (min-width: 640px) 96px, 84px',
         ],
         [
             'name' => 'Eagle Roofing',
             'url' => 'https://www.eagle-roofing.co.uk/',
             'image' => asset('images/sponsors/eagleroofing-logo.png'),
+            'width' => 290,
+            'height' => 81,
             'alt' => 'Eagle Roofing',
         ],
         [
             'name' => 'The Bigger Boat',
             'url' => 'https://www.thebiggerboat.co.uk/',
             'image' => asset('images/sponsors/tbb-logo.svg'),
+            'width' => 287,
+            'height' => 70,
             'alt' => 'The Bigger Boat',
         ],
         [
@@ -33,11 +42,14 @@
             'width' => 160,
             'height' => 94,
             'alt' => 'NRK Fabrication',
+            'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
         ],
         [
             'name' => 'Levels Huddersfield',
             'url' => 'https://www.levelshuddersfield.co.uk/',
             'image' => asset('images/sponsors/levelshuddersfield.svg'),
+            'width' => 260,
+            'height' => 120,
             'alt' => 'Levels Huddersfield',
         ],
         [
@@ -50,6 +62,7 @@
             'width' => 160,
             'height' => 86,
             'alt' => 'UK Plastics & Glazing Ltd',
+            'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
         ],
     ];
 @endphp
@@ -82,18 +95,22 @@
                                                 <source
                                                     type="image/webp"
                                                     srcset="
+                                                        @if (isset($sponsor['webp_96'])){{ $sponsor['webp_96'] }} 96w, @endif
                                                         {{ $sponsor['webp_160'] }} 160w,
+                                                        @if (isset($sponsor['webp_192'])){{ $sponsor['webp_192'] }} 192w, @endif
                                                         {{ $sponsor['webp_320'] }} 320w
                                                     "
-                                                    sizes="(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px"
+                                                    sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
                                                 >
                                                 <img class="max-h-12 w-full object-contain sm:max-h-14"
                                                     src="{{ $sponsor['image'] }}"
                                                     srcset="
+                                                        @if (isset($sponsor['image_96'])){{ $sponsor['image_96'] }} 96w, @endif
                                                         {{ $sponsor['image_160'] }} 160w,
+                                                        @if (isset($sponsor['image_192'])){{ $sponsor['image_192'] }} 192w, @endif
                                                         {{ $sponsor['image'] }} 320w
                                                     "
-                                                    sizes="(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px"
+                                                    sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
                                                     width="{{ $sponsor['width'] }}"
                                                     height="{{ $sponsor['height'] }}"
                                                     loading="lazy"
@@ -103,6 +120,8 @@
                                         @else
                                             <img class="max-h-12 w-full object-contain sm:max-h-14"
                                                 src="{{ $sponsor['image'] }}"
+                                                @if (isset($sponsor['width'])) width="{{ $sponsor['width'] }}" @endif
+                                                @if (isset($sponsor['height'])) height="{{ $sponsor['height'] }}" @endif
                                                 loading="lazy"
                                                 decoding="async"
                                                 alt="{{ $sponsor['alt'] }}">

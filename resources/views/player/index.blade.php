@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('uses-livewire', 'true')
+
 @section('content')
 <div class="bg-gray-50 pt-[80px] dark:bg-zinc-900">
     <div class="py-8 sm:py-16">

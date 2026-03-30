@@ -1,6 +1,10 @@
 {
+  "_site-search-Beuyw8_c.js": {
+    "file": "assets/site-search-Beuyw8_c.js",
+    "name": "site-search"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-D3XlIghB.css",
+    "file": "assets/app-B9MJ8xQm.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -9,9 +13,21 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-B6PWSBWX.js",
+    "file": "assets/app-YCQeC3mB.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_site-search-Beuyw8_c.js"
+    ]
+  },
+  "resources/js/livewire-app.js": {
+    "file": "assets/livewire-app-XQWEaSLm.js",
+    "name": "livewire-app",
+    "src": "resources/js/livewire-app.js",
+    "isEntry": true,
+    "imports": [
+      "_site-search-Beuyw8_c.js"
+    ]
   }
 }

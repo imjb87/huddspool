@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100 text-gray-900 dark:bg-zinc-900">
 
+@php
+    $usesLivewire = trim($__env->yieldContent('uses-livewire')) === 'true';
+@endphp
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,10 +34,6 @@
         >
     @endif
 
-    @if (Route::currentRouteName() == 'result.create')
-        <meta http-equiv="refresh" content="600">
-    @endif
-
     <title>
         @hasSection('title')
             {{ trim($__env->yieldContent('title')) }} |
@@ -60,8 +60,12 @@
     @endif
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
+    @if ($usesLivewire)
+        @vite(['resources/css/app.css', 'resources/js/livewire-app.js'])
+        @livewireStyles
+    @else
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     @laravelPWA
 </head>
 
@@ -73,9 +77,11 @@
             @yield('content')
         </main>
         @include('layouts.footer')
-        <livewire:search />
+        @include('layouts.partials.site-search')
     </div>
-    @livewireScripts
+    @if ($usesLivewire)
+        @livewireScriptConfig
+    @endif
 </body>
 
 </html>
