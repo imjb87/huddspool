@@ -1,4 +1,4 @@
-<header class="site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:bg-zinc-900"
+<header class="site-header fixed top-0 z-50 w-full bg-white shadow-sm ring-1 ring-gray-950/5 transition-all duration-500 dark:border-b dark:border-zinc-700/75 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10"
     x-data="{
         open: false,
         activeDrawer: 'root',

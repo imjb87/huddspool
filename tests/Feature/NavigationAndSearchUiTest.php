@@ -108,11 +108,11 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
-        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-500 dark:bg-zinc-900', false);
+        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-sm ring-1 ring-gray-950/5 transition-all duration-500 dark:border-b dark:border-zinc-700/75 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10', false);
         $response->assertSee('data-mobile-menu-drawer', false);
         $response->assertSee('bg-gray-50 shadow-2xl ring-1 ring-black/5 dark:bg-zinc-900', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
-        $response->assertSee('dark:bg-zinc-900', false);
+        $response->assertSee('dark:bg-zinc-800', false);
         $response->assertSee('text-sm font-semibold leading-6 transition', false);
         $response->assertSee('hover:text-green-700', false);
         $response->assertSee('dark:hover:text-green-500', false);
