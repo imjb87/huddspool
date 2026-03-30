@@ -15,6 +15,20 @@ class InviteRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_invited_user_can_view_registration_form(): void
+    {
+        $user = User::factory()->unverified()->create([
+            'invitation_token' => 'valid-invitation-token',
+        ]);
+
+        $response = $this->get(route('invite.register', $user->invitation_token));
+
+        $response->assertOk();
+        $response->assertSee('data-invite-register-page', false);
+        $response->assertSeeText('Set password');
+        $response->assertSeeText($user->email);
+    }
+
     public function test_invited_user_can_complete_registration(): void
     {
         $user = User::factory()->unverified()->create([
