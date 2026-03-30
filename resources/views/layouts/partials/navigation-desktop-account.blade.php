@@ -67,14 +67,13 @@
                                 Account
                             </div>
                         </a>
-                        <div x-cloak x-show="canInstallApp">
-                            <button type="button"
-                                class="ui-card-row w-full cursor-pointer px-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5"
-                                @click="installApp()"
-                                data-install-app-trigger>
-                                Install app
-                            </button>
-                        </div>
+                        <button type="button"
+                            class="ui-card-row w-full cursor-pointer px-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:px-5"
+                            x-cloak x-show="canInstallApp"
+                            @click="installApp()"
+                            data-install-app-trigger>
+                            Install app
+                        </button>
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('filament.admin.pages.dashboard') }}"
                                 class="ui-card-row-link">

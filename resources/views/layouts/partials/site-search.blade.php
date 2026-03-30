@@ -36,7 +36,7 @@
     >
         <div
             @click.outside="close()"
-            class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:bg-zinc-900 dark:ring-white/10"
+            class="ui-card mx-auto max-w-xl transform transition-all dark:bg-zinc-800"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>

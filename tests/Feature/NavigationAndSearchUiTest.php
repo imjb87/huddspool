@@ -59,6 +59,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('data-search-modal-shell', false);
+        $response->assertSee('ui-card mx-auto max-w-xl transform transition-all dark:bg-zinc-800', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('pl-11 pr-4', false);
         $response->assertSee('sm:pr-24', false);
