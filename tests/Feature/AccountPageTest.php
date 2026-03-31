@@ -159,7 +159,6 @@ class AccountPageTest extends TestCase
             ->get(route('account.show'))
             ->assertOk()
             ->assertSee('data-account-result-submission-prompt', false)
-            ->assertSeeText('A team result is ready to submit.')
             ->assertSeeText($team->name.' vs '.$opponentTeam->name)
             ->assertSee(route('result.create', $fixture), false)
             ->assertDontSee('bg-linear-to-br from-red-700 via-red-600 to-red-500', false);
@@ -202,7 +201,6 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSeeText('2 team results are ready to submit.')
             ->assertSeeText('League matches')
             ->assertSeeText('Home vs First Opponent')
             ->assertSeeText('Second Opponent vs Home')

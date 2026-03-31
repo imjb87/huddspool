@@ -27,7 +27,7 @@
                                 <a href="{{ $fixtureRow->row_url }}" class="ui-card-row-link">
                             @endif
                             <div @if ($isReadyToSubmit) data-account-team-fixture-ready @endif
-                                class="ui-card-row items-start px-4 sm:px-5 {{ $isReadyToSubmit ? 'bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-200' : '' }}">
+                                class="ui-card-row items-start px-4 sm:px-5 {{ $isReadyToSubmit ? 'bg-linear-to-r from-red-50 via-red-50/95 to-amber-50/70 text-red-900 ring-1 ring-inset ring-red-200/80 dark:from-red-950/40 dark:via-red-950/30 dark:to-amber-950/10 dark:text-red-200 dark:ring-red-900/60' : '' }}">
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-semibold {{ $isReadyToSubmit ? 'text-red-900 dark:text-red-100' : 'text-gray-900 dark:text-gray-100' }} sm:hidden">
                                         {{ $fixtureRow->home_team_shortname ?: $fixtureRow->home_team_name }}
