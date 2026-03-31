@@ -195,10 +195,13 @@ class HomePageTest extends TestCase
         $response->assertSee('ui-card-row items-start', false);
         $response->assertSee('data-home-live-score-row', false);
         $response->assertSee('data-home-live-score-pill', false);
+        $response->assertSee('sm:hidden', false);
+        $response->assertSee('sm:block', false);
         $response->assertSeeText('Break Masters');
         $response->assertSeeText('Cue Kings');
         $response->assertSeeText('Premier Division');
-        $response->assertSeeText('International Rules');
+        $response->assertSeeText($data['fixture']->fixture_date->format('j M Y').' / Premier Division');
+        $response->assertDontSeeText($data['fixture']->fixture_date->format('j M Y').' / Premier Division / International Rules');
         $response->assertSeeText($data['fixture']->fixture_date->format('j M Y'));
         $response->assertSee('href="'.route('result.show', $result).'"', false);
         $response->assertDontSeeText('No current matches in progress right now.');

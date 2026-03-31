@@ -25,7 +25,10 @@
                                     <a href="{{ $result->live_score_url }}" class="ui-card-row-link">
                                         <div class="ui-card-row items-start">
                                         <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 sm:hidden">
+                                                {{ $result->home_team_shortname ?: $result->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $result->away_team_shortname ?: $result->away_team_name }}
+                                            </p>
+                                            <p class="hidden text-sm font-semibold text-gray-900 dark:text-gray-100 sm:block">
                                                 {{ $result->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $result->away_team_name }}
                                             </p>
                                             @if ($result->row_meta !== '')

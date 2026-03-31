@@ -50,7 +50,9 @@ class HomeController extends Controller
 
         return Result::query()
             ->with([
-                'fixture:id,fixture_date',
+                'fixture:id,fixture_date,home_team_id,away_team_id',
+                'fixture.homeTeam:id,name,shortname',
+                'fixture.awayTeam:id,name,shortname',
                 'section.ruleset',
             ])
             ->inOpenSeason()
@@ -60,10 +62,11 @@ class HomeController extends Controller
             ->orderByDesc('updated_at')
             ->get()
             ->map(function (Result $result) use ($user) {
+                $result->home_team_shortname = $result->fixture?->homeTeam?->shortname;
+                $result->away_team_shortname = $result->fixture?->awayTeam?->shortname;
                 $result->row_meta = collect([
                     $result->fixture?->fixture_date?->format('j M Y'),
                     $result->section?->name,
-                    $result->section?->ruleset?->name,
                 ])->filter()->implode(' / ');
                 $result->live_score_url = $this->liveScoreUrlFor($result, $user);
 
