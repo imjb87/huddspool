@@ -139,8 +139,8 @@ class AccountPageTest extends TestCase
             'season_id' => $season->id,
             'ruleset_id' => $ruleset->id,
         ]);
-        $team = Team::factory()->create();
-        $opponentTeam = Team::factory()->create();
+        $team = Team::factory()->create(['shortname' => 'TEAM']);
+        $opponentTeam = Team::factory()->create(['shortname' => 'OPP']);
         $teamAdmin = User::factory()->create([
             'team_id' => $team->id,
             'role' => UserRole::TeamAdmin->value,
@@ -620,6 +620,8 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Team Admin')
             ->assertSeeText($team->name)
             ->assertSeeText($opponentTeam->name)
+            ->assertSee('sm:hidden', false)
+            ->assertSee('sm:block', false)
             ->assertSeeText($teamKnockout->name)
             ->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]).'"', false)
             ->assertSee('href="'.route('venue.show', $team->venue).'"', false)
@@ -627,6 +629,8 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $dueFixture), false)
             ->assertSee(route('result.create', $continueFixture), false)
             ->assertDontSee(route('result.create', $futureFixture), false)
+            ->assertSee('data-account-team-fixture-ready', false)
+            ->assertDontSeeText('Submit result')
             ->assertDontSee('href="'.route('fixture.show', $dueFixture).'"', false)
             ->assertDontSee('href="'.route('result.show', $continueFixture->result).'"', false)
             ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
@@ -768,6 +772,54 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Page 2')
             ->assertSeeText('Account Opponent Week 06')
             ->assertDontSeeText('Account Opponent Week 01');
+    }
+
+    public function test_team_account_fixtures_use_shortnames_on_mobile(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create([
+            'name' => 'Account Team Long Name',
+            'shortname' => 'ATL',
+        ]);
+        $opponent = Team::factory()->create([
+            'name' => 'Account Opponent Long Name',
+            'shortname' => 'AOL',
+        ]);
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now(),
+        ]);
+
+        Livewire::actingAs($teamAdmin)
+            ->test(TeamFixturesSection::class, [
+                'team' => $team,
+                'section' => $section,
+                'forAccount' => true,
+            ])
+            ->assertSeeText('ATL')
+            ->assertSeeText('AOL')
+            ->assertSeeText('Account Team Long Name')
+            ->assertSeeText('Account Opponent Long Name')
+            ->assertSee('sm:hidden', false)
+            ->assertSee('sm:block', false);
     }
 
     public function test_account_page_shows_player_history_sections(): void

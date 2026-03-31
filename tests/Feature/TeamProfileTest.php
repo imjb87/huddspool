@@ -39,8 +39,8 @@ class TeamProfileTest extends TestCase
         ]);
 
         Team::factory()->create();
-        $team = Team::factory()->create();
-        $opponent = Team::factory()->create();
+        $team = Team::factory()->create(['shortname' => 'TEAM']);
+        $opponent = Team::factory()->create(['shortname' => 'OPP']);
 
         // attach teams to section
         $section->teams()->attach($team->id, ['sort' => 1]);
@@ -101,6 +101,10 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText('1st of 2');
         $response->assertSeeText('6 pts from 1 played');
         $response->assertSeeTextInOrder([$team->name, $opponent->name]);
+        $response->assertSeeText('TEAM');
+        $response->assertSeeText('OPP');
+        $response->assertSee('sm:hidden', false);
+        $response->assertSee('sm:block', false);
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);

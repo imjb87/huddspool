@@ -187,6 +187,36 @@
                 abortController: null,
                 activeResultIndex: -1,
                 isEnhanced: false,
+                flattenedResults() {
+                    return [];
+                },
+                activeResult() {
+                    return null;
+                },
+                activeResultId() {
+                    return null;
+                },
+                syncActiveResult() {},
+                setActiveResultById() {},
+                moveActiveResult() {},
+                openActiveResult() {},
+                scrollActiveResultIntoView() {},
+                initializeSiteSearch() {},
+                openLoadedSearch() {
+                    this.open = true;
+                    this.searchTerm = '';
+                    this.resultGroups = [];
+                    this.activeResultIndex = -1;
+                    this.isLoading = false;
+                    this.focusInput();
+                },
+                closeLoadedSearch() {
+                    this.open = false;
+                    this.searchTerm = '';
+                    this.resultGroups = [];
+                    this.activeResultIndex = -1;
+                    this.isLoading = false;
+                },
                 async ensureEnhanced() {
                     if (this.isEnhanced) {
                         return;
@@ -209,11 +239,7 @@
                 },
                 close() {
                     if (!this.isEnhanced) {
-                        this.open = false;
-                        this.searchTerm = '';
-                        this.resultGroups = [];
-                        this.isLoading = false;
-
+                        this.closeLoadedSearch();
                         return;
                     }
 

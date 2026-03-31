@@ -191,14 +191,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ui-card-footer border-t-0 pt-0 dark:border-t-0">
+                    <div class="ui-card-footer">
                         @if ($lastEditedAt)
-                            <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
                                 Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
                             </p>
                         @endif
-
-                        <div class="flex justify-end gap-x-3">
+                        <div class="flex justify-end gap-x-3 mt-3">
                             <a
                                 href="{{ route('fixture.show', $fixture->id) }}"
                                 class="ui-button-secondary"
@@ -221,6 +220,7 @@
                                 </div>
                             @endif
                         </div>
+
                     </div>
                 </div>
             </div>

@@ -17,7 +17,10 @@
                         @endif
                         <div class="ui-card-row items-start px-4 sm:px-5">
                             <div class="min-w-0 flex-1">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 sm:hidden">
+                                    {{ $fixtureRow->home_team_shortname ?: $fixtureRow->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $fixtureRow->away_team_shortname ?: $fixtureRow->away_team_name }}
+                                </p>
+                                <p class="hidden text-sm font-semibold text-gray-900 dark:text-gray-100 sm:block">
                                     {{ $fixtureRow->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $fixtureRow->away_team_name }}
                                 </p>
                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $fixtureRow->fixture_date_label }}</p>

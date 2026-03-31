@@ -19,18 +19,27 @@
                     wire:loading.remove
                     wire:target="previousPage, nextPage">
                     @foreach ($this->fixtureRows as $fixtureRow)
+                        @php
+                            $isReadyToSubmit = $forAccount && $fixtureRow->action_url;
+                        @endphp
                         <div wire:key="team-fixture-{{ $fixtureRow->fixture_id }}">
                             @if ($fixtureRow->row_url)
                                 <a href="{{ $fixtureRow->row_url }}" class="ui-card-row-link">
                             @endif
-                            <div class="ui-card-row items-start px-4 sm:px-5">
+                            <div @if ($isReadyToSubmit) data-account-team-fixture-ready @endif
+                                class="ui-card-row items-start px-4 sm:px-5 {{ $isReadyToSubmit ? 'bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-200' : '' }}">
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    <p class="text-sm font-semibold {{ $isReadyToSubmit ? 'text-red-900 dark:text-red-100' : 'text-gray-900 dark:text-gray-100' }} sm:hidden">
+                                        {{ $fixtureRow->home_team_shortname ?: $fixtureRow->home_team_name }}
+                                        <span class="font-normal {{ $isReadyToSubmit ? 'text-red-700 dark:text-red-300' : 'text-gray-400 dark:text-gray-500' }}">vs</span>
+                                        {{ $fixtureRow->away_team_shortname ?: $fixtureRow->away_team_name }}
+                                    </p>
+                                    <p class="hidden text-sm font-semibold {{ $isReadyToSubmit ? 'text-red-900 dark:text-red-100' : 'text-gray-900 dark:text-gray-100' }} sm:block">
                                         {{ $fixtureRow->home_team_name }}
-                                        <span class="font-normal text-gray-400 dark:text-gray-500">vs</span>
+                                        <span class="font-normal {{ $isReadyToSubmit ? 'text-red-700 dark:text-red-300' : 'text-gray-400 dark:text-gray-500' }}">vs</span>
                                         {{ $fixtureRow->away_team_name }}
                                     </p>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <p class="mt-1 text-xs {{ $isReadyToSubmit ? 'text-red-800 dark:text-red-300' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $fixtureRow->fixture_date_label }}
                                     </p>
                                 </div>
@@ -42,6 +51,8 @@
                                             <div class="w-px bg-white/25"></div>
                                             <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                         </div>
+                                    @elseif ($forAccount && $fixtureRow->action_url)
+                                        <p class="text-sm text-red-800 dark:text-red-300">{{ $fixtureRow->compact_date_label }}</p>
                                     @elseif ($fixtureRow->action_url)
                                         <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-linear-to-br from-red-700 via-red-600 to-red-500 px-3 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
                                             {{ $fixtureRow->action_label }}
