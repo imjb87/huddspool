@@ -24,8 +24,6 @@ class ResultSubmissionPromptResolver
 
         $fixtureCount = $fixtures->count();
         $knockoutCount = $knockoutMatches->count();
-        $fixture = $fixtures->first();
-
         $message = match (true) {
             $fixtureCount > 0 && $knockoutCount > 0 => sprintf(
                 '%d team result%s and %d knockout result%s are ready to submit.',
@@ -44,13 +42,6 @@ class ResultSubmissionPromptResolver
 
         return [
             'message' => $message,
-            'fixture_label' => $fixtureCount === 1 && $knockoutCount === 0
-                ? sprintf('%s vs %s', $fixture->homeTeam?->name ?? 'TBC', $fixture->awayTeam?->name ?? 'TBC')
-                : null,
-            'url' => $fixtureCount === 1 && $knockoutCount === 0 && $fixture instanceof Fixture
-                ? route('result.create', $fixture)
-                : null,
-            'button_label' => $fixtureCount === 1 && $knockoutCount === 0 ? 'Submit result' : null,
             'fixtures_heading' => $fixtureCount > 0 ? 'League matches' : null,
             'fixtures' => $fixtures
                 ->map(fn (Fixture $outstandingFixture) => [

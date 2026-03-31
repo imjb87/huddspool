@@ -160,7 +160,9 @@ class AccountPageTest extends TestCase
             ->assertOk()
             ->assertSee('data-account-result-submission-prompt', false)
             ->assertSeeText('A team result is ready to submit.')
-            ->assertSee(route('result.create', $fixture), false);
+            ->assertSeeText($team->name.' vs '.$opponentTeam->name)
+            ->assertSee(route('result.create', $fixture), false)
+            ->assertDontSee('bg-linear-to-br from-red-700 via-red-600 to-red-500', false);
     }
 
     public function test_team_admin_prompt_accounts_for_multiple_outstanding_results(): void
