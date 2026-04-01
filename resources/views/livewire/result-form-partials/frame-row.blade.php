@@ -2,15 +2,15 @@
     $homeScore = (int) data_get($form->frames, $row['number'].'.home_score', 0);
     $awayScore = (int) data_get($form->frames, $row['number'].'.away_score', 0);
 
-    $homeScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
-    $awayScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
+    $homeScorePillClasses = 'ui-score-pill-neutral';
+    $awayScorePillClasses = 'ui-score-pill-neutral';
 
     if ($homeScore === 1 && $awayScore === 0) {
-        $homeScorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
-        $awayScorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
+        $homeScorePillClasses = 'ui-score-pill-success';
+        $awayScorePillClasses = 'ui-score-pill-danger';
     } elseif ($homeScore === 0 && $awayScore === 1) {
-        $homeScorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
-        $awayScorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
+        $homeScorePillClasses = 'ui-score-pill-danger';
+        $awayScorePillClasses = 'ui-score-pill-success';
     }
 @endphp
 
@@ -86,7 +86,7 @@
             </div>
 
             <div class="shrink-0 justify-self-end">
-                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $homeScorePillClasses }}">
+                <div class="ui-score-pill ui-score-pill-single {{ $homeScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.home_score"
                         name="form.frames.{{ $row['number'] }}.home_score"
@@ -152,7 +152,7 @@
             </div>
 
             <div class="shrink-0 justify-self-end">
-                <div class="inline-flex h-7 w-9 overflow-hidden rounded-full text-center text-xs font-extrabold {{ $awayScorePillClasses }}">
+                <div class="ui-score-pill ui-score-pill-single {{ $awayScorePillClasses }}">
                     <select
                         wire:model.live="form.frames.{{ $row['number'] }}.away_score"
                         name="form.frames.{{ $row['number'] }}.away_score"

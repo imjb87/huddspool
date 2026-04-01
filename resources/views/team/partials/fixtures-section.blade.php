@@ -36,10 +36,10 @@
 
                                 <div class="ml-auto flex shrink-0 self-center items-center text-right">
                                     @if ($fixtureRow->result_id)
-                                        <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full {{ $fixtureRow->result_pill_classes }} text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $fixtureRow->home_score ?? '' }}</div>
-                                            <div class="w-px bg-white/25"></div>
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
+                                        <div class="ui-score-pill ui-score-pill-split {{ $fixtureRow->result_pill_classes }}">
+                                            <div class="ui-score-pill-segment pl-1">{{ $fixtureRow->home_score ?? '' }}</div>
+                                            <div class="ui-score-pill-divider"></div>
+                                            <div class="ui-score-pill-segment pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                         </div>
                                     @else
                                         <p class="text-sm text-gray-500 dark:text-gray-400">{{ $fixtureRow->compact_date_label }}</p>

@@ -29,7 +29,7 @@
                                 wire:key="player-frame-{{ $forAccount ? 'account' : 'public' }}-{{ $frameRow->result_id }}-{{ $loop->index }}">
                                 <div class="ui-card-row items-center px-4 sm:px-5">
                                     <div class="shrink-0">
-                                        <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $frameRow->result_pill_classes }}">
+                                        <span class="ui-score-pill min-w-[28px] items-center justify-center px-2 {{ $frameRow->result_pill_classes }}">
                                             {{ $frameRow->won_frame ? 'W' : 'L' }}
                                         </span>
                                     </div>

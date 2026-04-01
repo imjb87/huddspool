@@ -95,12 +95,12 @@ class KnockoutMatchSummaryRow
         $wonMatch = $hasResult && $match->winner_participant_id && $participantId === $match->winner_participant_id;
 
         $resultPillClasses = $neutralPill
-            ? 'bg-linear-to-br from-gray-700 via-gray-600 to-gray-500'
+            ? 'ui-score-pill-neutral'
             : ($isDraw
-                ? 'bg-linear-to-br from-gray-600 via-gray-500 to-gray-400'
+                ? 'ui-score-pill-draw'
                 : ($wonMatch
-                    ? 'bg-linear-to-br from-green-900 via-green-800 to-green-700'
-                    : 'bg-linear-to-br from-red-800 via-red-700 to-red-600'));
+                    ? 'ui-score-pill-success'
+                    : 'ui-score-pill-danger'));
 
         return (object) [
             'id' => $match->id,

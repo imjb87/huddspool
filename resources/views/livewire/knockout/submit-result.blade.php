@@ -18,7 +18,7 @@
                         </div>
 
                         <div class="shrink-0">
-                            <div class="inline-flex h-7 w-14 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800">
+                            <div class="ui-score-pill ui-score-pill-input">
                                 <input type="number"
                                     min="0"
                                     wire:model="homeScore"
@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="shrink-0">
-                            <div class="inline-flex h-7 w-14 overflow-hidden rounded-full bg-gray-100 text-center text-xs font-extrabold text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800">
+                            <div class="ui-score-pill ui-score-pill-input">
                                 <input type="number"
                                     min="0"
                                     wire:model="awayScore"

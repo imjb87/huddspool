@@ -23,7 +23,7 @@
                             wire:key="account-frame-{{ $frameRow->result_id }}-{{ $loop->index }}">
                             <div class="flex items-center gap-4 rounded-lg py-4 transition sm:-mx-3 sm:-my-px sm:px-3 group-hover:bg-gray-200/70 dark:group-hover:bg-neutral-900/70">
                                 <div class="shrink-0">
-                                    <span class="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-sm ring-1 ring-black/10 {{ $frameRow->result_pill_classes }}">
+                                    <span class="ui-score-pill min-w-[28px] items-center justify-center px-2 {{ $frameRow->result_pill_classes }}">
                                         {{ $frameRow->won_frame ? 'W' : 'L' }}
                                     </span>
                                 </div>

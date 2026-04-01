@@ -50,12 +50,12 @@
 
                                 <div class="shrink-0 self-center text-right">
                                     @if ($knockoutRow->has_result)
-                                        <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full {{ $knockoutRow->result_pill_classes }} text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                                        <div class="ui-score-pill ui-score-pill-split {{ $knockoutRow->result_pill_classes }}">
+                                            <div class="ui-score-pill-segment pl-1">
                                                 {{ $knockoutRow->home_score }}
                                             </div>
-                                            <div class="w-px bg-white/25"></div>
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                                            <div class="ui-score-pill-divider"></div>
+                                            <div class="ui-score-pill-segment pr-1">
                                                 {{ $knockoutRow->away_score }}
                                             </div>
                                         </div>

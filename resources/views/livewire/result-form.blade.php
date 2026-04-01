@@ -184,10 +184,15 @@
                         </div>
 
                         <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                            <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
-                                <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $form->homeScore }}</div>
-                                <div class="w-px bg-white/25"></div>
-                                <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $form->awayScore }}</div>
+                            @php
+                                $matchTotalClasses = $form->homeScore === $form->awayScore
+                                    ? 'ui-score-pill-draw'
+                                    : ($form->homeScore > $form->awayScore ? 'ui-score-pill-success' : 'ui-score-pill-danger');
+                            @endphp
+                            <div class="ui-score-pill ui-score-pill-split {{ $matchTotalClasses }}">
+                                <div class="ui-score-pill-segment pl-1">{{ $form->homeScore }}</div>
+                                <div class="ui-score-pill-divider"></div>
+                                <div class="ui-score-pill-segment pr-1">{{ $form->awayScore }}</div>
                             </div>
                         </div>
                     </div>

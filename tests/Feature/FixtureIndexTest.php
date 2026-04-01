@@ -195,10 +195,10 @@ class FixtureIndexTest extends TestCase
         ]))
             ->assertOk()
             ->assertSee('data-section-fixtures-score-pill', false)
-            ->assertSee('h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700', false)
-            ->assertSee('justify-center tabular-nums', false)
+            ->assertSee('ui-score-pill ui-score-pill-neutral ui-score-pill-split', false)
+            ->assertSee('ui-score-pill-segment', false)
             ->assertSee('truncate text-sm font-semibold', false)
-            ->assertSee('w-px bg-white/25', false)
+            ->assertSee('ui-score-pill-divider-neutral', false)
             ->assertSeeText('10')
             ->assertSeeText('8');
     }

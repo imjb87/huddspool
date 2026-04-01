@@ -66,24 +66,32 @@
 
     <div class="ml-auto flex shrink-0 self-center items-center text-right" data-knockout-score-state>
         @if ($matchRow->match->forfeitParticipant)
-            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-bold uppercase tracking-wide text-gray-600 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-300 dark:ring-neutral-800">
+            <span class="ui-score-pill-chip ui-score-pill-neutral">
                 FF
             </span>
         @elseif ($matchRow->match->home_score !== null && $matchRow->match->away_score !== null)
-            <span class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+            @php
+                $homeSegmentClasses = $matchRow->match->home_score === $matchRow->match->away_score
+                    ? 'ui-score-pill-segment-draw'
+                    : ($matchRow->match->home_score > $matchRow->match->away_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                $awaySegmentClasses = $matchRow->match->home_score === $matchRow->match->away_score
+                    ? 'ui-score-pill-segment-draw'
+                    : ($matchRow->match->away_score > $matchRow->match->home_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+            @endphp
+            <span class="ui-score-pill ui-score-pill-neutral ui-score-pill-split"
                 data-knockout-score-pill>
-                <span class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                <span class="ui-score-pill-segment {{ $homeSegmentClasses }} pl-1">
                     {{ $matchRow->match->home_score }}
                 </span>
-                <span class="w-px bg-white/25"></span>
-                <span class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                <span class="ui-score-pill-divider-neutral"></span>
+                <span class="ui-score-pill-segment {{ $awaySegmentClasses }} pr-1">
                     {{ $matchRow->match->away_score }}
                 </span>
             </span>
         @elseif ($matchRow->match->starts_at)
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ $matchRow->match->starts_at->format('j M') }}</p>
         @else
-            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-500 dark:ring-neutral-800">
+            <span class="ui-score-pill-chip ui-score-pill-neutral">
                 Vs
             </span>
         @endif

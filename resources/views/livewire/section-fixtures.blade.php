@@ -47,13 +47,24 @@
 
                                             <div class="ml-auto flex shrink-0 self-center items-center text-right">
                                                 @if ($row->fixture->result)
-                                                    <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                                    @php
+                                                        $homeScore = (int) ($row->fixture->result->home_score ?? 0);
+                                                        $awayScore = (int) ($row->fixture->result->away_score ?? 0);
+                                                        $homeSegmentClasses = $homeScore === $awayScore
+                                                            ? 'ui-score-pill-segment-draw'
+                                                            : ($homeScore > $awayScore ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                                                        $awaySegmentClasses = $homeScore === $awayScore
+                                                            ? 'ui-score-pill-segment-draw'
+                                                            : ($awayScore > $homeScore ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                                                    @endphp
+
+                                                    <div class="ui-score-pill ui-score-pill-neutral ui-score-pill-split"
                                                         data-section-fixtures-score-pill>
-                                                        <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                                                        <div class="ui-score-pill-segment {{ $homeSegmentClasses }} pl-1">
                                                             {{ $row->fixture->result->home_score ?? '' }}
                                                         </div>
-                                                        <div class="w-px bg-white/25"></div>
-                                                        <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                                                        <div class="ui-score-pill-divider-neutral"></div>
+                                                        <div class="ui-score-pill-segment {{ $awaySegmentClasses }} pr-1">
                                                             {{ $row->fixture->result->away_score ?? '' }}
                                                         </div>
                                                     </div>

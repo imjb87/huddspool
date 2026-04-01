@@ -28,6 +28,14 @@
                     <div class="ui-card" data-home-live-scores-shell>
                         <div class="ui-card-rows max-h-80 overflow-y-auto overscroll-contain" data-home-live-scores-list>
                             @foreach ($liveScores as $result)
+                                @php
+                                    $homeSegmentClasses = $result->home_score === $result->away_score
+                                        ? 'ui-score-pill-segment-draw'
+                                        : ($result->home_score > $result->away_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                                    $awaySegmentClasses = $result->home_score === $result->away_score
+                                        ? 'ui-score-pill-segment-draw'
+                                        : ($result->away_score > $result->home_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                                @endphp
                                 <div data-home-live-score-row>
                                     <a href="{{ $result->live_score_url }}" class="ui-card-row-link">
                                         <div class="ui-card-row items-start">
@@ -44,13 +52,13 @@
                                         </div>
 
                                             <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                                                <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full bg-linear-to-br from-green-900 via-green-800 to-green-700 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10"
+                                                <div class="ui-score-pill ui-score-pill-neutral ui-score-pill-split"
                                                     data-home-live-score-pill>
-                                                    <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">
+                                                    <div class="ui-score-pill-segment {{ $homeSegmentClasses }} pl-1">
                                                         {{ $result->home_score }}
                                                     </div>
-                                                    <div class="w-px bg-white/25"></div>
-                                                    <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">
+                                                    <div class="ui-score-pill-divider-neutral"></div>
+                                                    <div class="ui-score-pill-segment {{ $awaySegmentClasses }} pr-1">
                                                         {{ $result->away_score }}
                                                     </div>
                                                 </div>

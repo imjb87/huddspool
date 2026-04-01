@@ -53,15 +53,15 @@
 
                                 <div class="ml-auto flex shrink-0 self-center items-center text-right">
                                     @if ($fixtureRow->result_id)
-                                        <div class="inline-flex h-7 w-[60px] overflow-hidden rounded-full {{ $fixtureRow->result_pill_classes }} text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pl-1">{{ $fixtureRow->home_score ?? '' }}</div>
-                                            <div class="w-px bg-white/25"></div>
-                                            <div class="flex w-1/2 items-center justify-center tabular-nums pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
+                                        <div class="ui-score-pill ui-score-pill-split {{ $fixtureRow->result_pill_classes }}">
+                                            <div class="ui-score-pill-segment pl-1">{{ $fixtureRow->home_score ?? '' }}</div>
+                                            <div class="ui-score-pill-divider"></div>
+                                            <div class="ui-score-pill-segment pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                         </div>
                                     @elseif ($forAccount && $fixtureRow->action_url)
                                         <p class="text-sm text-red-800 dark:text-red-300">{{ $fixtureRow->compact_date_label }}</p>
                                     @elseif ($fixtureRow->action_url)
-                                        <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-linear-to-br from-red-700 via-red-600 to-red-500 px-3 text-center text-xs font-extrabold text-white shadow-sm ring-1 ring-black/10">
+                                        <span class="ui-score-pill-chip ui-score-pill-danger">
                                             {{ $fixtureRow->action_label }}
                                         </span>
                                     @else

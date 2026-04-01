@@ -1,10 +1,10 @@
 @php
-    $scorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
+    $scorePillClasses = 'ui-score-pill-neutral';
 
     if ((int) $score === 1 && (int) $opponentScore === 0) {
-        $scorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
+        $scorePillClasses = 'ui-score-pill-success';
     } elseif ((int) $score === 0 && (int) $opponentScore === 1) {
-        $scorePillClasses = 'bg-linear-to-br from-red-900 via-red-800 to-red-700 text-white ring-1 ring-black/10';
+        $scorePillClasses = 'ui-score-pill-danger';
     }
 @endphp
 
@@ -29,7 +29,7 @@
     </div>
 
     <div class="shrink-0 justify-self-end">
-        <div class="inline-flex h-7 w-9 items-center justify-center overflow-hidden rounded-full text-center text-xs font-extrabold {{ $scorePillClasses }}"
+        <div class="ui-score-pill ui-score-pill-single {{ $scorePillClasses }}"
             data-result-frame-score-pill>
             {{ $score }}
         </div>
