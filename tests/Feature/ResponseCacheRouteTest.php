@@ -20,7 +20,6 @@ class ResponseCacheRouteTest extends TestCase
     public static function cacheableRouteNames(): array
     {
         return [
-            'home' => ['home'],
             'ruleset.show' => ['ruleset.show'],
             'fixture.show' => ['fixture.show'],
             'fixture.download' => ['fixture.download'],
@@ -54,7 +53,7 @@ class ResponseCacheRouteTest extends TestCase
 
     public function test_authenticated_and_submission_routes_are_not_response_cached(): void
     {
-        foreach (['account.show', 'account.team', 'result.create', 'support.tickets'] as $routeName) {
+        foreach (['home', 'account.show', 'account.team', 'result.create', 'support.tickets'] as $routeName) {
             $route = Route::getRoutes()->getByName($routeName);
 
             $this->assertNotNull($route);

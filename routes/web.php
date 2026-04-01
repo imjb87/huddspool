@@ -31,9 +31,7 @@ require __DIR__.'/auth.php';
 
 Route::pattern('season', '[^/]*[0-9][^/]*');
 
-Route::get('/', HomeController::class)
-    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::HOME]))
-    ->name('home');
+Route::get('/', HomeController::class)->name('home');
 Route::get('/search', SiteSearchController::class)->name('search.index');
 Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
     Route::prefix('rulesets')->group(function () {
