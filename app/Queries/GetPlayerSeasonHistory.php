@@ -21,7 +21,7 @@ class GetPlayerSeasonHistory
     {
         $playerId = $this->player->id;
 
-        return Cache::remember("player:season-history:v4:{$playerId}", now()->addMinutes(10), function () use ($playerId) {
+        return Cache::remember("player:season-history:v5:{$playerId}", now()->addMinutes(10), function () use ($playerId) {
             $rows = Frame::query()
                 ->selectRaw(
                     'seasons.id as season_id, seasons.name as season_name, seasons.slug as season_slug, seasons.dates as season_dates, seasons.is_open,
@@ -31,15 +31,11 @@ class GetPlayerSeasonHistory
                         WHEN frames.home_player_id = ? THEN results.home_team_id
                         ELSE results.away_team_id
                     END as team_id,
-                    CASE
-                        WHEN frames.home_player_id = ? THEN results.home_team_name
-                        ELSE results.away_team_name
-                    END as team_name,
                     COUNT(*) as played,
                     SUM(CASE WHEN (frames.home_player_id = ? AND frames.home_score > frames.away_score)
                         OR (frames.away_player_id = ? AND frames.away_score > frames.home_score)
                     THEN 1 ELSE 0 END) as wins,
-                    SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END) as draws', [$playerId, $playerId, $playerId, $playerId])
+                    SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END) as draws', [$playerId, $playerId, $playerId])
                 ->join('results', 'results.id', '=', 'frames.result_id')
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
@@ -67,12 +63,10 @@ class GetPlayerSeasonHistory
                     'rulesets.name',
                     'rulesets.slug',
                     'team_id',
-                    'team_name',
                 )
                 ->orderByDesc('seasons.is_open')
                 ->orderByDesc('seasons.id')
                 ->orderByDesc('sections.name')
-                ->orderByDesc('team_name')
                 ->selectRaw(
                     'GREATEST(0, COUNT(*) - (
                         SUM(CASE WHEN (frames.home_player_id = ? AND frames.home_score > frames.away_score)
@@ -84,6 +78,55 @@ class GetPlayerSeasonHistory
                     [$playerId, $playerId],
                 )
                 ->get();
+
+            $latestTeamNames = Frame::query()
+                ->selectRaw(
+                    'seasons.id as season_id,
+                    sections.id as section_id,
+                    rulesets.id as ruleset_id,
+                    CASE
+                        WHEN frames.home_player_id = ? THEN results.home_team_id
+                        ELSE results.away_team_id
+                    END as team_id,
+                    CASE
+                        WHEN frames.home_player_id = ? THEN results.home_team_name
+                        ELSE results.away_team_name
+                    END as team_name,
+                    fixtures.fixture_date,
+                    results.id as result_id',
+                    [$playerId, $playerId],
+                )
+                ->join('results', 'results.id', '=', 'frames.result_id')
+                ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
+                ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
+                ->leftJoin('sections', 'sections.id', '=', 'fixtures.section_id')
+                ->leftJoin('rulesets', 'rulesets.id', '=', 'fixtures.ruleset_id')
+                ->where(function ($query) use ($playerId) {
+                    $query->where('frames.home_player_id', $playerId)
+                        ->orWhere('frames.away_player_id', $playerId);
+                })
+                ->where(function ($query) {
+                    $query->where('seasons.is_open', false)
+                        ->orWhereNull('seasons.is_open');
+                })
+                ->whereNotNull('seasons.id')
+                ->orderByDesc('fixtures.fixture_date')
+                ->orderByDesc('results.id')
+                ->get()
+                ->unique(fn ($row) => implode(':', [
+                    $row->season_id,
+                    $row->section_id,
+                    $row->ruleset_id,
+                    $row->team_id,
+                ]))
+                ->mapWithKeys(fn ($row) => [
+                    implode(':', [
+                        $row->season_id,
+                        $row->section_id,
+                        $row->ruleset_id,
+                        $row->team_id,
+                    ]) => $row->team_name,
+                ]);
 
             $sectionTeamPairs = $rows
                 ->filter(fn ($row) => $row->section_id && $row->team_id)
@@ -124,7 +167,7 @@ class GetPlayerSeasonHistory
                 ->pluck('season_id')
                 ->mapWithKeys(fn ($seasonId) => [(int) $seasonId => true]);
 
-            return $rows->map(function ($row) use ($deductions, $teamExpulsions, $playerExpulsions) {
+            return $rows->map(function ($row) use ($deductions, $teamExpulsions, $playerExpulsions, $latestTeamNames) {
                 $teamExpelled = (bool) ($row->season_id && $row->team_id ? ($teamExpulsions[$row->season_id.':'.$row->team_id] ?? false) : false);
                 $playerExpelled = (bool) ($playerExpulsions[(int) $row->season_id] ?? false);
                 $expelled = $teamExpelled || $playerExpelled;
@@ -135,6 +178,12 @@ class GetPlayerSeasonHistory
                 $winPercentage = $played > 0 ? round(($wins / $played) * 100, 1) : 0.0;
                 $lossPercentage = $played > 0 ? round(($losses / $played) * 100, 1) : 0.0;
                 $sectionTeamKey = $row->section_id && $row->team_id ? $row->section_id.':'.$row->team_id : null;
+                $seasonSectionTeamKey = implode(':', [
+                    $row->season_id,
+                    $row->section_id,
+                    $row->ruleset_id,
+                    $row->team_id,
+                ]);
 
                 return [
                     'season_id' => $row->season_id,
@@ -148,7 +197,7 @@ class GetPlayerSeasonHistory
                     'ruleset_name' => $row->ruleset_name,
                     'ruleset_slug' => $row->ruleset_slug,
                     'team_id' => $row->team_id,
-                    'team_name' => $row->team_name,
+                    'team_name' => $latestTeamNames[$seasonSectionTeamKey] ?? null,
                     'played' => $played,
                     'wins' => $wins,
                     'draws' => $draws,
@@ -166,7 +215,8 @@ class GetPlayerSeasonHistory
                         ])
                         : null,
                 ];
-            });
+            })->sortByDesc(fn (array $row) => $row['team_name'] ?? '')
+                ->values();
         });
     }
 }

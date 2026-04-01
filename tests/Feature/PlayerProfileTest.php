@@ -512,6 +512,98 @@ class PlayerProfileTest extends TestCase
         $this->assertSame(33.3, $history->first()['loss_percentage']);
     }
 
+    public function test_player_season_history_uses_latest_archived_team_name_for_the_same_team_id(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => false,
+            'name' => 'August 2023',
+        ]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'EPA Section 2',
+        ]);
+
+        $team = Team::factory()->create([
+            'name' => 'Rack Cafe Cobras',
+        ]);
+        $opponentTeam = Team::factory()->create();
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
+
+        $player = User::factory()->create(['team_id' => $team->id]);
+        $opponent = User::factory()->create(['team_id' => $opponentTeam->id]);
+
+        $earlyFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+            'fixture_date' => '2023-08-08',
+        ]);
+        $lateFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+            'fixture_date' => '2023-08-29',
+        ]);
+
+        $earlyResult = Result::factory()->create([
+            'fixture_id' => $earlyFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => 'Crown Jewels',
+            'home_score' => 1,
+            'away_team_id' => $opponentTeam->id,
+            'away_team_name' => $opponentTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+        $lateResult = Result::factory()->create([
+            'fixture_id' => $lateFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => 'Turnbridge Jewels',
+            'home_score' => 1,
+            'away_team_id' => $opponentTeam->id,
+            'away_team_name' => $opponentTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $player->id,
+        ]);
+
+        Frame::create([
+            'result_id' => $earlyResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $lateResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+
+        Cache::flush();
+
+        $history = (new GetPlayerSeasonHistory($player))();
+
+        $this->assertCount(1, $history);
+        $this->assertSame($team->id, $history->first()['team_id']);
+        $this->assertSame('Turnbridge Jewels', $history->first()['team_name']);
+        $this->assertSame(2, $history->first()['played']);
+        $this->assertSame(2, $history->first()['wins']);
+    }
+
     public function test_player_history_is_paginated_in_place_with_a_shared_header_row(): void
     {
         $archivedSeasons = Season::factory()->count(6)->create(['is_open' => false]);
