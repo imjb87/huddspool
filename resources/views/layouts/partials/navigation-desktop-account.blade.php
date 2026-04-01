@@ -58,7 +58,7 @@
                 x-transition:leave="transition ease-in duration-150"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 translate-y-1">
-                <div class="ui-card overflow-hidden dark:bg-neutral-900">
+                <div class="ui-card overflow-hidden">
                     <div class="ui-card-rows">
                         <div class="ui-card-row px-4 sm:px-5">
                             @include('layouts.partials.theme-switcher', ['fullWidth' => true])
