@@ -215,8 +215,11 @@ class GetPlayerSeasonHistory
                         ])
                         : null,
                 ];
-            })->sortByDesc(fn (array $row) => $row['team_name'] ?? '')
-                ->values();
+            })->sortBy([
+                ['season_id', 'desc'],
+                ['section_name', 'desc'],
+                ['team_name', 'desc'],
+            ])->values();
         });
     }
 }
