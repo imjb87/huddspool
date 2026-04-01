@@ -46,6 +46,9 @@ Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::FIXTURES]))->grou
 Route::get('/results/{result}', 'App\Http\Controllers\ResultController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::RESULTS]))
     ->name('result.show');
+Route::get('/results/{result}/og-image', 'App\Http\Controllers\ResultController@ogImage')
+    ->middleware(CacheResponse::for(tags: [ResponseCacheTags::RESULTS]))
+    ->name('result.og-image');
 Route::get('/results/create/{fixture}', 'App\Http\Controllers\ResultController@create')->name('result.create');
 Route::get('/players/{player}', 'App\Http\Controllers\PlayerController@show')
     ->middleware(CacheResponse::for(tags: [ResponseCacheTags::PLAYERS]))

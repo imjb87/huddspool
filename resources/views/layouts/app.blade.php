@@ -6,15 +6,43 @@
 @endphp
 
 <head>
+    @php
+        $metaDescription = trim($__env->yieldContent('meta_description')) ?: config('app.description');
+        $metaOgTitle = trim($__env->yieldContent('og_title')) ?: config('app.name', 'Huddersfield & District Tuesday Night Pool League');
+        $metaOgDescription = trim($__env->yieldContent('og_description')) ?: $metaDescription;
+        $metaOgType = trim($__env->yieldContent('og_type')) ?: 'website';
+        $metaOgUrl = trim($__env->yieldContent('og_url')) ?: config('app.frontend_url');
+        $metaOgImage = trim($__env->yieldContent('og_image')) ?: asset('images/og-image.jpg');
+        $metaOgImageType = trim($__env->yieldContent('og_image_type'));
+        $metaOgImageWidth = trim($__env->yieldContent('og_image_width'));
+        $metaOgImageHeight = trim($__env->yieldContent('og_image_height'));
+        $metaFacebookAppId = trim($__env->yieldContent('facebook_app_id')) ?: config('services.facebook.client_id');
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="{{ config('app.description') }}">
-    <meta property="og:title" content="{{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}" />
-    <meta property="og:description" content="{{ config('app.description') }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ config('app.frontend_url') }}" />
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}" />
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta property="og:title" content="{{ $metaOgTitle }}" />
+    <meta property="og:description" content="{{ $metaOgDescription }}" />
+    <meta property="og:type" content="{{ $metaOgType }}" />
+    <meta property="og:url" content="{{ $metaOgUrl }}" />
+    <meta property="og:image" content="{{ $metaOgImage }}" />
+    @if ($metaOgImageType !== '')
+        <meta property="og:image:type" content="{{ $metaOgImageType }}" />
+    @endif
+    @if ($metaOgImageWidth !== '')
+        <meta property="og:image:width" content="{{ $metaOgImageWidth }}" />
+    @endif
+    @if ($metaOgImageHeight !== '')
+        <meta property="og:image:height" content="{{ $metaOgImageHeight }}" />
+    @endif
+    @if ($metaFacebookAppId !== '')
+        <meta property="fb:app_id" content="{{ $metaFacebookAppId }}" />
+    @endif
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $metaOgTitle }}">
+    <meta name="twitter:description" content="{{ $metaOgDescription }}">
+    <meta name="twitter:image" content="{{ $metaOgImage }}">
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
