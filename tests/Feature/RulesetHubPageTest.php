@@ -359,12 +359,15 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertOk();
         $fixturesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $fixturesResponse->assertSee('data-section-shared-header', false);
+        $fixturesResponse->assertSee('data-section-header-icon', false);
         $fixturesResponse->assertSeeText('Division A');
+        $fixturesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $fixturesResponse->assertSee('data-ruleset-active-panel="fixtures-results"', false);
         $fixturesResponse->assertSee('data-section-tab-skeleton', false);
         $fixturesResponse->assertSee('data-section-tab-skeleton="fixtures-results"', false);
         $fixturesResponse->assertSee('data-section-fixtures-view', false);
         $fixturesResponse->assertSee('data-section-fixtures-shell', false);
+        $fixturesResponse->assertSee('ui-section-intro-icon', false);
         $fixturesResponse->assertSee('data-section-fixtures-headings', false);
         $fixturesResponse->assertSee('data-section-fixtures-band', false);
         $fixturesResponse->assertSee('data-section-fixtures-controls', false);
@@ -398,7 +401,9 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertOk();
         $tablesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $tablesResponse->assertSee('data-section-shared-header', false);
+        $tablesResponse->assertSee('data-section-header-icon', false);
         $tablesResponse->assertSeeText('Division A');
+        $tablesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $tablesResponse->assertSee('data-section-tabs', false);
         $tablesResponse->assertSee('data-section-tabs-scroll', false);
         $tablesResponse->assertSee('data-active-section-tab="tables"', false);
@@ -411,7 +416,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-tab-skeleton', false);
         $tablesResponse->assertSee('data-section-tab-skeleton="tables"', false);
         $this->assertSame(10, substr_count($tablesResponse->getContent(), 'data-section-tab-skeleton-row="tables"'));
-        $tablesResponse->assertSee('border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75', false);
+        $tablesResponse->assertSee('border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75', false);
         $tablesResponse->assertSee('mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6', false);
         $tablesResponse->assertSee('data-section-tabs-track', false);
         $tablesResponse->assertSee('ui-button-primary', false);
@@ -419,6 +424,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('ui-page-shell', false);
         $tablesResponse->assertSee('data-ruleset-active-panel="tables"', false);
         $tablesResponse->assertSee('data-section-table-view', false);
+        $tablesResponse->assertSee('ui-section-intro-icon', false);
         $tablesResponse->assertSee('data-section-table-shell', false);
         $tablesResponse->assertSee('data-section-table-band', false);
         $tablesResponse->assertSee('data-section-see-also', false);
@@ -454,12 +460,15 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertOk();
         $averagesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $averagesResponse->assertSee('data-section-shared-header', false);
+        $averagesResponse->assertSee('data-section-header-icon', false);
         $averagesResponse->assertSeeText('Division A');
+        $averagesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $averagesResponse->assertSee('data-ruleset-active-panel="averages"', false);
         $averagesResponse->assertSee('ui-page-shell', false);
         $averagesResponse->assertSee('data-section-tab-skeleton', false);
         $averagesResponse->assertSee('data-section-tab-skeleton="averages"', false);
         $averagesResponse->assertSee('data-section-averages-view', false);
+        $averagesResponse->assertSee('ui-section-intro-icon', false);
         $averagesResponse->assertSee('data-section-averages-shell', false);
         $averagesResponse->assertSee('data-section-averages-band', false);
         $averagesResponse->assertSee('data-section-averages-controls', false);

@@ -5,9 +5,9 @@
 ])
 
 @php
-    $buttonClasses = 'flex justify-center rounded-md p-2 outline-hidden transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5';
-    $activeClasses = 'text-green-600 bg-gray-50 dark:bg-white/5 dark:text-green-400';
-    $inactiveClasses = 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400';
+    $buttonClasses = 'flex justify-center rounded-md p-2 outline-hidden transition duration-75 hover:bg-neutral-50 focus-visible:bg-neutral-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5';
+    $activeClasses = 'bg-neutral-50 text-green-600 dark:bg-white/5 dark:text-green-400';
+    $inactiveClasses = 'text-neutral-400 hover:text-neutral-500 focus-visible:text-neutral-500 dark:text-neutral-500 dark:hover:text-neutral-400 dark:focus-visible:text-neutral-400';
     $themes = [
         [
             'name' => 'light',

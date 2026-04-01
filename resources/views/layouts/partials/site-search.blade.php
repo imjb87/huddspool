@@ -36,11 +36,11 @@
     >
         <div
             @click.outside="close()"
-            class="ui-card mx-auto max-w-xl transform transition-all dark:bg-zinc-800"
+            class="ui-card mx-auto max-w-xl transform transition-all dark:bg-neutral-900"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>
-            <div class="relative border-b border-gray-200 dark:border-zinc-800/80">
+            <div class="relative border-b border-gray-200 dark:border-neutral-800/80">
                 <svg
                     class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400 dark:text-gray-500"
                     viewBox="0 0 20 20"
@@ -70,7 +70,7 @@
                     @keydown.enter.prevent="openActiveResult()"
                 >
                 <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
-                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-500">
+                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-neutral-800 dark:bg-neutral-800 dark:text-gray-500">
                         Ctrl K
                     </span>
                 </div>
@@ -79,18 +79,18 @@
             <div class="w-full" x-show="isLoading" data-search-loading-state>
                 <div class="w-full space-y-3" data-search-loading-skeleton>
                     @foreach (range(1, 2) as $groupIndex)
-                        <div class="w-full border-t border-gray-200/80 first:border-t-0 dark:border-zinc-700/75">
+                        <div class="w-full border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75">
                             <div class="ui-card-column-headings justify-start px-4 sm:px-5">
-                                <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                             </div>
                             <div class="ui-card-rows">
                                 @foreach (range(1, 3) as $rowIndex)
                                     <div class="ui-card-row items-start">
                                         <div class="min-w-0 flex flex-1 items-start gap-3">
-                                            <div class="h-9 w-9 shrink-0 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                            <div class="h-9 w-9 shrink-0 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                             <div class="min-w-0 flex-1 space-y-2">
-                                                <div class="h-3.5 w-32 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-40"></div>
-                                                <div class="h-3 w-24 rounded-full bg-gray-100 dark:bg-zinc-800/70 sm:w-28"></div>
+                                                <div class="h-3.5 w-32 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-40"></div>
+                                                <div class="h-3 w-24 rounded-full bg-gray-100 dark:bg-neutral-900/70 sm:w-28"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                 data-search-results-shell
             >
                 <template x-for="group in resultGroups" :key="group.key">
-                    <li class="border-t border-gray-200/80 first:border-t-0 dark:border-zinc-700/75">
+                    <li class="border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75">
                         <div class="ui-card-column-headings justify-start px-4 sm:px-5">
                             <h2 class="text-xs font-medium text-gray-500 dark:text-gray-400" x-text="group.heading"></h2>
                         </div>
@@ -143,7 +143,7 @@
                                     class="ui-card-row-link focus:outline-none"
                                     :id="`site-search-result-${group.key}-${item.id}`"
                                     :href="item.href"
-                                    :class="{ 'bg-gray-50 dark:bg-zinc-800/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
+                                    :class="{ 'bg-gray-50 dark:bg-neutral-900/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
                                     data-search-result-link
                                     @mouseenter="setActiveResultById(`site-search-result-${group.key}-${item.id}`)"
                                     @click="close()"
@@ -153,7 +153,7 @@
                                             <img
                                                 :src="item.avatarUrl"
                                                 :alt="item.name"
-                                                class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700"
+                                                class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800"
                                                 data-search-player-avatar
                                             >
                                         </template>

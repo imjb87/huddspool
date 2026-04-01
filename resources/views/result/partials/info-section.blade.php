@@ -1,10 +1,17 @@
 <section class="ui-section" data-result-info-section>
     <div class="ui-shell-grid">
-        <div>
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result information</h3>
-            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                Match details, venue, and links back to the wider section schedule.
-            </p>
+        <div class="ui-section-intro">
+            <div class="ui-section-intro-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25 12 11.25v4.5h.75m-3-9h4.5m6 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+            </div>
+            <div class="ui-section-intro-copy">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result information</h3>
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    Match details, venue, and links back to the wider section schedule.
+                </p>
+            </div>
         </div>
 
         <div class="lg:col-span-2">
@@ -22,7 +29,7 @@
                         @else
                             {{ $result->home_team_name }}
                         @endif
-                        <span class="font-normal text-gray-400 dark:text-zinc-500">vs</span>
+                        <span class="font-normal text-gray-400 dark:text-neutral-500">vs</span>
                         @if ($fixture->awayTeam)
                             <a href="{{ route('team.show', $fixture->awayTeam) }}"
                                 class="ui-link inline-flex text-sm font-semibold">

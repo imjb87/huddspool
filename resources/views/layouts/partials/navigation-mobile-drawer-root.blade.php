@@ -13,7 +13,7 @@
             <div class="ui-card overflow-hidden">
                 @include('layouts.partials.theme-switcher', ['mobile' => true, 'grouped' => true])
 
-                <div class="border-t border-gray-200 dark:border-zinc-700/75"></div>
+                <div class="border-t border-gray-200 dark:border-neutral-800/75"></div>
 
                 <a href="{{ route('account.show') }}"
                     class="ui-card-row-link">
@@ -31,7 +31,7 @@
             <div class="ui-card overflow-hidden">
                 @include('layouts.partials.theme-switcher', ['mobile' => true, 'grouped' => true])
 
-                <div class="border-t border-gray-200 dark:border-zinc-700/75"></div>
+                <div class="border-t border-gray-200 dark:border-neutral-800/75"></div>
 
                 <a href="{{ route('login') }}"
                     class="ui-card-row-link">
@@ -46,7 +46,7 @@
             <div class="ui-card-rows">
                 @foreach ($navigationRulesets as $navigationRuleset)
                     <button type="button"
-                        class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                        class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                         data-mobile-ruleset-trigger
                         @click="openDrawer('ruleset-{{ $navigationRuleset['id'] }}')">
                         <span>{{ $navigationRuleset['name'] }}</span>
@@ -61,7 +61,7 @@
         <div class="ui-card overflow-hidden">
             <div class="ui-card-rows">
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     data-mobile-knockouts-trigger
                     @click="openDrawer('knockouts')">
                     <span>Knockouts</span>
@@ -70,7 +70,7 @@
                     </svg>
                 </button>
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     data-mobile-history-trigger
                     @click="openDrawer('history')">
                     <span>History</span>
@@ -104,7 +104,7 @@
                     </a>
                 @endif
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     x-cloak
                     x-show="canInstallApp"
                     @click="installApp()"
@@ -123,7 +123,7 @@
                 </form>
             @else
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     x-cloak
                     x-show="canInstallApp"
                     @click="installApp()"

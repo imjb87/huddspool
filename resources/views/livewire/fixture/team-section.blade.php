@@ -52,20 +52,20 @@
                         @foreach (range(1, 5) as $row)
                             <div class="ui-card-row items-center px-4 sm:px-5">
                                 <div class="shrink-0">
-                                    <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                    <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-36"></div>
-                                    <div class="mt-2 h-3 w-16 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-20"></div>
+                                    <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-36"></div>
+                                    <div class="mt-2 h-3 w-16 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-20"></div>
                                 </div>
 
                                 <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-5">
                                     @foreach (range(1, 3) as $column)
                                         <div class="w-12 sm:w-16">
                                             <div class="flex flex-col items-center gap-1">
-                                                <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
-                                                <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-zinc-700' }}"></div>
+                                                <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-10"></div>
+                                                <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-neutral-800' }}"></div>
                                             </div>
                                         </div>
                                     @endforeach

@@ -70,13 +70,20 @@
 <section {{ $attributes->class(['ui-section']) }} data-section-sponsors>
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
-            <div>
-                <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    Backing the league every week
-                </h2>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.
-                </p>
+            <div class="ui-section-intro">
+                <div class="ui-section-intro-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                    </svg>
+                </div>
+                <div class="ui-section-intro-copy">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Backing the league every week
+                    </h2>
+                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.
+                    </p>
+                </div>
             </div>
 
             <div class="lg:col-span-2">

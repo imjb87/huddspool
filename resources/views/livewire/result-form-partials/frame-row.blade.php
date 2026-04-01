@@ -2,8 +2,8 @@
     $homeScore = (int) data_get($form->frames, $row['number'].'.home_score', 0);
     $awayScore = (int) data_get($form->frames, $row['number'].'.away_score', 0);
 
-    $homeScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
-    $awayScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
+    $homeScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
+    $awayScorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
 
     if ($homeScore === 1 && $awayScore === 0) {
         $homeScorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';
@@ -33,7 +33,7 @@
     wire:key="result-frame-{{ $row['number'] }}"
     x-data="resultFormFlashRow({{ $row['number'] }})"
     x-on:result-frames-synced.window="flashIfIncluded($event.detail.frameNumbers ?? [])"
-    :class="isFlashing ? 'bg-gray-100 dark:bg-zinc-800/80' : ''"
+    :class="isFlashing ? 'bg-gray-100 dark:bg-neutral-900/80' : ''"
 >
     <div class="min-w-0 w-full flex-1 space-y-3">
         <p class="text-xs text-gray-500 dark:text-gray-400">Frame {{ $row['number'] }}</p>
@@ -65,7 +65,7 @@
                     >
                 </div>
             @else
-                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
+                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-neutral-800 dark:ring-neutral-800"></div>
             @endif
 
             <select
@@ -131,7 +131,7 @@
                     >
                 </div>
             @else
-                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-zinc-700 dark:ring-zinc-700"></div>
+                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-neutral-800 dark:ring-neutral-800"></div>
             @endif
 
             <select

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100 text-gray-900 dark:bg-zinc-900">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-neutral-100 text-gray-900 dark:bg-neutral-950">
 
 @php
     $usesLivewire = trim($__env->yieldContent('uses-livewire')) === 'true';
@@ -57,12 +57,12 @@
 </head>
 
 <body
-    class="font-sans antialiased bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-gray-100"
+    class="bg-neutral-100 font-sans antialiased text-gray-900 dark:bg-neutral-950 dark:text-gray-100"
     @if (filled(config('services.google_analytics.measurement_id')))
         data-google-analytics-measurement-id="{{ config('services.google_analytics.measurement_id') }}"
     @endif
 >
-    <div class="min-h-screen bg-gray-100 dark:bg-zinc-900">
+    <div class="min-h-screen bg-neutral-100 dark:bg-neutral-950">
         @include('layouts.navigation')
         <!-- Page Content -->
         <main>

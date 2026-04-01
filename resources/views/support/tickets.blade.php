@@ -8,8 +8,17 @@
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
                 <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
                     <div class="min-w-0 lg:col-span-2">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Account</p>
-                        <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">Support</h1>
+                        <div class="ui-page-title-with-icon">
+                            <div class="ui-page-title-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 0 1 0 12.728M5.636 18.364a9 9 0 1 1 12.728-12.728M12 9v3.75m0 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Account</p>
+                                <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">Support</h1>
+                            </div>
+                        </div>
                     </div>
 
                     <div aria-hidden="true"></div>
@@ -17,7 +26,7 @@
             </div>
         </div>
 
-        <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75" data-account-nav>
+        <div class="border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75" data-account-nav>
             <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
                 <nav class="flex gap-2">
                     <a href="{{ route('account.show') }}" class="ui-button-secondary shrink-0">
@@ -45,11 +54,18 @@
 
                 <section class="ui-section">
                     <div class="ui-shell-grid">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Support request</h3>
-                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                Send a message to the admin team and we will get back to you as soon as we can.
-                            </p>
+                        <div class="ui-section-intro">
+                            <div class="ui-section-intro-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 0 1 0 12.728M5.636 18.364a9 9 0 1 1 12.728-12.728M12 9v3.75m0 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                            </div>
+                            <div class="ui-section-intro-copy">
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Support request</h3>
+                                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                                    Send a message to the admin team and we will get back to you as soon as we can.
+                                </p>
+                            </div>
                         </div>
 
                         <div class="lg:col-span-2">
@@ -70,7 +86,7 @@
                                                 type="text"
                                                 autocomplete="name"
                                                 value="{{ $name }}"
-                                                class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">
+                                                class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">
                                             @error('name')
                                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                             @enderror
@@ -83,7 +99,7 @@
                                                 type="email"
                                                 autocomplete="email"
                                                 value="{{ $email }}"
-                                                class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">
+                                                class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">
                                             @error('email')
                                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                             @enderror
@@ -95,7 +111,7 @@
                                         <textarea id="support-message"
                                             name="message"
                                             rows="7"
-                                            class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">{{ $supportMessage }}</textarea>
+                                            class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20">{{ $supportMessage }}</textarea>
                                         @error('message')
                                             <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror

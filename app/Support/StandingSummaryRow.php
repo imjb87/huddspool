@@ -8,7 +8,7 @@ class StandingSummaryRow
     {
         $withdrawn = (bool) ($team->pivot->withdrawn_at ?? false);
         $displayName = $isHistoryView ? ($team->archived_name ?? $team->name) : $team->name;
-        $textClass = $withdrawn ? 'text-gray-400 dark:text-zinc-500' : 'text-gray-900 dark:text-gray-100';
+        $textClass = $withdrawn ? 'text-gray-400 dark:text-neutral-500' : 'text-gray-900 dark:text-gray-100';
 
         return (object) [
             'id' => $team->id,
@@ -22,7 +22,7 @@ class StandingSummaryRow
             'shortname' => $isHistoryView ? ($team->archived_name ?? $team->shortname) : $team->shortname,
             'withdrawn' => $withdrawn,
             'text_class' => $textClass,
-            'points_class' => $withdrawn ? 'text-gray-400 dark:text-zinc-500' : 'text-green-700 dark:text-green-400',
+            'points_class' => $withdrawn ? 'text-gray-400 dark:text-neutral-500' : 'text-green-700 dark:text-green-400',
             'can_link' => ! ($isHistoryView && ($team->trashed ?? false)),
         ];
     }

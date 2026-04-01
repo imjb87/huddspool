@@ -1,6 +1,6 @@
-<footer class="bg-gray-100 dark:bg-zinc-900">
+<footer class="bg-neutral-100 dark:bg-neutral-950">
     @if ($is_impersonating ?? false)
-        <div class="border-b border-gray-200 dark:border-zinc-800/80">
+        <div class="border-b border-gray-200 dark:border-neutral-800/80">
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
                 <div class="flex justify-end py-3">
                     <a href="{{ route('impersonation.leave') }}"

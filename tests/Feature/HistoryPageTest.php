@@ -81,6 +81,7 @@ class HistoryPageTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Season archive');
         $response->assertSeeText('Browse past seasons, then drill into each ruleset and section for archived standings, fixtures, results, and averages.');
+        $response->assertSee('ui-section-intro-icon', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('ui-section', false);
         $response->assertSee('ui-shell-grid', false);
@@ -326,7 +327,7 @@ class HistoryPageTest extends TestCase
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-tabs', false);
         $response->assertSee('data-ruleset-active-panel="tables"', false);
-        $response->assertSee('border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75', false);
+        $response->assertSee('border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75', false);
         $response->assertDontSee('sticky top-[72px] z-30 bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl', false);
         $response->assertDontSee('data-section-tab-indicator', false);
         $response->assertSeeText('Division A');

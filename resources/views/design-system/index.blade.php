@@ -123,8 +123,8 @@
                             <li>Use a subtle ring and soft shadow instead of a heavy border.</li>
                             <li>Cards do not have a dedicated header container.</li>
                             <li>Put title, status, and lead copy directly inside the body layout.</li>
-                            <li>Rows inside the card should be separated with standard dividers, using zinc-700 in dark mode.</li>
-                            <li>If a card row is linked, it gets a desktop hover state, resolving to zinc-700 in dark mode.</li>
+                            <li>Rows inside the card should be separated with standard dividers, using neutral-800 in dark mode.</li>
+                            <li>If a card row is linked, it gets a desktop hover state, resolving to neutral-800 in dark mode.</li>
                             <li>If a row set includes data columns, the columns need a single header row using the same typography as the row sub-description.</li>
                             <li>Column headers appear once above the first row and are never repeated per row.</li>
                             <li><code>ui-card-branded</code> is the full-width gradient variant with a left-right split layout.</li>

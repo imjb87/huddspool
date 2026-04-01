@@ -54,8 +54,8 @@ class VenuePageTest extends TestCase
         $response->assertSee('ui-card', false);
         $response->assertSee('ui-card-rows', false);
         $response->assertSee('ui-card-row-link', false);
-        $response->assertSee('dark:bg-zinc-900', false);
-        $response->assertSee('dark:border-zinc-800/80', false);
+        $response->assertSee('dark:bg-neutral-950', false);
+        $response->assertSee('dark:border-neutral-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($venue->name);
         $response->assertSeeText('Venue');

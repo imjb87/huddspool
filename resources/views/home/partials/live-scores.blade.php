@@ -1,11 +1,18 @@
 <section class="ui-section" data-home-live-scores>
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
-            <div>
-                <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Live scores</h2>
-                <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                    Results currently being added across the league.
-                </p>
+            <div class="ui-section-intro">
+                <div class="ui-section-intro-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m13.5 10.5 2.25-6.75-9 10.5h4.5L9 20.25l9-10.5h-4.5Z" />
+                    </svg>
+                </div>
+                <div class="ui-section-intro-copy">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Live scores</h2>
+                    <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                        Results currently being added across the league.
+                    </p>
+                </div>
             </div>
             <div class="lg:col-span-2">
                 @if ($liveScores->isEmpty())

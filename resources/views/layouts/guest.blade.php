@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-50 text-gray-900 dark:bg-zinc-900">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-neutral-50 text-gray-900 dark:bg-neutral-950">
 
 <head>
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
 </head>
 
 <body
-    class="bg-gray-50 font-sans text-gray-900 antialiased dark:bg-zinc-900 dark:text-gray-100"
+    class="bg-neutral-50 font-sans text-gray-900 antialiased dark:bg-neutral-950 dark:text-gray-100"
     @if (filled(config('services.google_analytics.measurement_id')))
         data-google-analytics-measurement-id="{{ config('services.google_analytics.measurement_id') }}"
     @endif

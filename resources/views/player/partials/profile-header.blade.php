@@ -1,6 +1,6 @@
 <div class="flex items-start gap-8">
     <div class="shrink-0">
-        <img class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700/80"
+        <img class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800/80"
             src="{{ $player->avatar_url }}"
             alt="{{ $player->name }} avatar">
     </div>

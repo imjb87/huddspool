@@ -39,9 +39,9 @@
         x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1">
         <div @click.outside="close()"
-            class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:bg-zinc-900 dark:ring-white/10"
+            class="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:bg-neutral-950 dark:ring-white/10"
             data-search-modal-shell>
-            <div class="relative border-b border-gray-200 dark:border-zinc-800/80">
+            <div class="relative border-b border-gray-200 dark:border-neutral-800/80">
                 <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20"
                     fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd"
@@ -55,7 +55,7 @@
                     placeholder="Search players, teams, venues..." role="combobox"
                     aria-expanded="{{ ! empty($resultGroups) ? 'true' : 'false' }}" aria-controls="options">
                 <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
-                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-gray-500">
+                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-neutral-800 dark:bg-neutral-800 dark:text-gray-500">
                         Ctrl K
                     </span>
                 </div>

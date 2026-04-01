@@ -1,12 +1,12 @@
 @php
-    $inputClasses = 'mt-2 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20';
+    $inputClasses = 'mt-2 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20';
     $sectionHeadingClasses = 'text-sm font-semibold text-gray-900 dark:text-gray-100';
     $sectionBodyClasses = 'max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400';
     $buttonClasses = 'inline-flex items-center rounded-full bg-green-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 dark:bg-green-600 dark:hover:bg-green-500';
-    $secondaryButtonClasses = 'inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-200 dark:hover:bg-zinc-800';
+    $secondaryButtonClasses = 'inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-200 dark:hover:bg-neutral-900';
 @endphp
 
-<div class="pb-10 lg:pb-14 dark:bg-zinc-900" data-season-entry-page>
+<div class="pb-10 lg:pb-14 dark:bg-neutral-950" data-season-entry-page>
     <div class="mx-auto flex w-full max-w-4xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-4">
         <div class="min-w-0">
             <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Season registration</h1>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75">
+    <div class="border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75">
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
             <nav class="-ml-3 flex gap-2">
                 @foreach ($steps as $wizardStep)
@@ -22,7 +22,7 @@
                         type="button"
                         wire:click="goToStep('{{ $wizardStep }}')"
                         @disabled(! $this->canAccessStep($wizardStep))
-                        class="{{ $step === $wizardStep ? 'bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-gray-100' : 'text-gray-600 hover:bg-gray-200/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-gray-100' }} inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-600 dark:disabled:hover:text-gray-300"
+                        class="{{ $step === $wizardStep ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-gray-100' : 'text-gray-600 hover:bg-gray-200/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-gray-100' }} inline-flex shrink-0 items-center rounded-full px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-600 dark:disabled:hover:text-gray-300"
                     >
                         {{ ucfirst($wizardStep) }}
                     </button>
@@ -161,7 +161,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                    <div class="divide-y divide-gray-200 dark:divide-neutral-800/80">
                                         @forelse ($teamRegistrations as $index => $registration)
                                             <div class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0" wire:key="season-entry-team-{{ $index }}">
                                                 <div class="min-w-0 flex-1">
@@ -217,7 +217,7 @@
                                         </button>
                                     </div>
 
-                                    <div class="divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                    <div class="divide-y divide-gray-200 dark:divide-neutral-800/80">
                                         @forelse ($knockoutRegistrations as $index => $registration)
                                             @php($knockout = $availableKnockouts->firstWhere('id', (int) $registration['knockout_id']))
                                             <div class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0" wire:key="season-entry-knockout-{{ $index }}">
@@ -243,7 +243,7 @@
 
                                     <section>
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Contact</h3>
-                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                             <div class="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
                                                 <span class="text-sm text-gray-500 dark:text-gray-400">Name</span>
                                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $contact['name'] }}</span>
@@ -280,7 +280,7 @@
 
                                     <section>
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Teams</h3>
-                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                             @forelse ($teamRegistrations as $registration)
                                                 <div class="flex items-start justify-between gap-4 py-4 first:pt-0">
                                                     <div class="min-w-0 flex-1">
@@ -308,7 +308,7 @@
 
                                     <section>
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Knockouts</h3>
-                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                                        <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                             @forelse ($knockoutRegistrations as $registration)
                                                 @php($knockout = $availableKnockouts->firstWhere('id', (int) $registration['knockout_id']))
                                                 <div class="flex items-start justify-between gap-4 py-4 first:pt-0">

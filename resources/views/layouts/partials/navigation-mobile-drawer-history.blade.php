@@ -12,7 +12,7 @@
     <div class="space-y-4">
         <div class="ui-card overflow-hidden">
             <button type="button"
-                class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                 @click="goBackToRoot()">
                 <span class="flex items-center gap-3" data-mobile-back-label>
                     <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -26,7 +26,7 @@
             <div class="ui-card-rows">
             @forelse ($historySeasonGroups as $historySeasonGroup)
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     data-mobile-history-season-trigger
                     @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}')">
                     <span>{{ $historySeasonGroup['season']->name }}</span>
@@ -57,7 +57,7 @@
         <div class="space-y-4">
             <div class="ui-card overflow-hidden">
                 <button type="button"
-                    class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                    class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                     @click="openDrawer('history')">
                     <span class="flex items-center gap-3" data-mobile-back-label>
                         <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -71,7 +71,7 @@
                 <div class="ui-card-rows">
                 @foreach ($historySeasonGroup['rulesets'] as $historyRulesetGroup)
                     <button type="button"
-                        class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                        class="ui-card-row w-full cursor-pointer items-center justify-between px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                         data-mobile-history-ruleset-trigger
                         @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}-ruleset-{{ $historyRulesetGroup['ruleset']->id }}')">
                         <span>{{ $historyRulesetGroup['ruleset']->name }}</span>
@@ -110,7 +110,7 @@
             <div class="space-y-4">
                 <div class="ui-card overflow-hidden">
                     <button type="button"
-                        class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-zinc-700/85 sm:px-5"
+                        class="ui-card-row w-full cursor-pointer items-center gap-3 px-4 text-left text-base font-semibold leading-7 text-gray-900 transition hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-neutral-800/85 sm:px-5"
                         @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}')">
                         <span class="flex items-center gap-3" data-mobile-back-label>
                             <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

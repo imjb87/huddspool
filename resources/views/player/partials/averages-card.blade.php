@@ -1,6 +1,6 @@
 @if ($averages)
-    <div class="block border-t border-gray-200 dark:border-zinc-700/75">
-        <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-zinc-700/75">
+    <div class="block border-t border-gray-200 dark:border-neutral-800/75">
+        <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-neutral-800/75">
             <div class="px-4 py-4 sm:px-5">
                 <p class="text-center text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
                 <p class="mt-1 text-center text-base font-semibold text-gray-900 dark:text-gray-100">{{ $averages->frames_played }}</p>

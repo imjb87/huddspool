@@ -18,7 +18,7 @@ class NavigationViewClasses
     public static function defaults(): array
     {
         return [
-            'mobileDrawerPanelClasses' => 'absolute inset-0 overflow-y-auto bg-white px-4 py-4 dark:bg-zinc-900',
+            'mobileDrawerPanelClasses' => 'absolute inset-0 overflow-y-auto bg-white px-4 py-4 dark:bg-neutral-900',
             'mobileDrawerPanelContentClasses' => 'space-y-5',
             'mobileDrawerListClasses' => 'space-y-1',
             'mobileDrawerBackButtonClasses' => 'block w-full border-b border-gray-200 pb-3 text-left dark:border-gray-800',

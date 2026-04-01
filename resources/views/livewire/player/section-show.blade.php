@@ -1,12 +1,12 @@
 <section>
-    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0 dark:bg-zinc-800/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
+    <div class="bg-white shadow-sm sm:rounded-lg flex flex-col h-full overflow-hidden -mx-4 sm:mx-0 dark:bg-neutral-900/75 dark:shadow-none dark:ring-1 dark:ring-white/5">
         <div class="px-4 py-4 sm:px-6 bg-green-700 flex items-center justify-between">
             <h2 class="text-sm font-medium leading-6 text-white">Players</h2>
             <span class="text-xs font-semibold uppercase tracking-wide text-green-100">{{ $section->name }}</span>
         </div>
-        <div class="border-t border-gray-200 h-full flex flex-col dark:border-zinc-800/80">
+        <div class="border-t border-gray-200 h-full flex flex-col dark:border-neutral-800/80">
             <div class="min-w-full overflow-hidden">
-                <div class="bg-gray-50 dark:bg-zinc-800/70 flex">
+                <div class="bg-gray-50 dark:bg-neutral-900/70 flex">
                     <div class="flex w-1/2 pl-4 sm:pl-6">
                         <div scope="col" class="py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 w-2/12">#</div>
                         <div scope="col" class="py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 w-10/12">Name</div>
@@ -19,16 +19,16 @@
                 </div>
                 <div class="bg-white dark:bg-transparent">
                     @if ($players->isEmpty())
-                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-zinc-700">
+                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-neutral-800">
                             <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">No frames</h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-prose mx-auto">
                                 There have been no frames played in this section yet. Please check back here again soon.
                             </p>
                         </div>
                     @else
-                        <div class="divide-y divide-gray-300 dark:divide-zinc-800/80">
+                        <div class="divide-y divide-gray-300 dark:divide-neutral-800/80">
                         @foreach ($players as $player)
-                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-200/70 dark:hover:bg-zinc-800/70 sm:-mx-6 sm:px-6"
+                            <a class="flex w-full rounded-xl px-4 transition hover:cursor-pointer hover:bg-gray-200/70 dark:hover:bg-neutral-900/70 sm:-mx-6 sm:px-6"
                                 href="{{ route('player.show', $player->id) }}">
                                 <div class="flex w-1/2 items-center">
                                     <div class="whitespace-nowrap py-3 text-sm text-gray-900 dark:text-gray-100 w-2/12 font-semibold">
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <div class="mt-auto px-4 py-4 sm:px-6 border-t border-gray-200 dark:border-zinc-800/80">
+        <div class="mt-auto px-4 py-4 sm:px-6 border-t border-gray-200 dark:border-neutral-800/80">
             <div class="flex">
                 <button wire:click="previousPage" wire:loading.attr="disabled"
                     class="inline-flex items-center px-2 py-1 border border-green-700/20 text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-700 disabled:opacity-50"

@@ -4,11 +4,18 @@
             data-player-frames-section
             @if ($forAccount) data-account-frames-section @endif>
         <div class="ui-shell-grid">
-            <div>
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Frames</h3>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    {{ $forAccount ? 'Recent frames you have played this season.' : 'Recent frames this player has played in the current section.' }}
-                </p>
+            <div class="ui-section-intro">
+                <div class="ui-section-intro-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 6h16.5m-16.5 6h16.5" />
+                    </svg>
+                </div>
+                <div class="ui-section-intro-copy">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Frames</h3>
+                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        {{ $forAccount ? 'Recent frames you have played this season.' : 'Recent frames this player has played in the current section.' }}
+                    </p>
+                </div>
             </div>
 
             <div class="lg:col-span-2">
@@ -47,12 +54,12 @@
                         <div class="ui-card-rows">
                             @foreach (range(1, 5) as $row)
                                 <div class="ui-card-row items-center px-4 sm:px-5">
-                                    <div class="h-7 w-7 shrink-0 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                    <div class="h-7 w-7 shrink-0 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                     <div class="min-w-0 flex-1 space-y-2">
-                                        <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-36"></div>
-                                        <div class="h-3 w-20 rounded-full bg-gray-100 dark:bg-zinc-800/70 sm:w-28"></div>
+                                        <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-36"></div>
+                                        <div class="h-3 w-20 rounded-full bg-gray-100 dark:bg-neutral-900/70 sm:w-28"></div>
                                     </div>
-                                    <div class="h-4 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                                    <div class="h-4 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                 </div>
                             @endforeach
                         </div>

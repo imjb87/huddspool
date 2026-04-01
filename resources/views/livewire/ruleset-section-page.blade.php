@@ -3,8 +3,18 @@
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-end lg:grid-cols-3">
                 <div class="min-w-0 lg:col-span-2">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $section->season->name }}</p>
-                    <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
+                    <div class="ui-page-title-with-icon">
+                        <div class="ui-page-title-icon" data-section-header-icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $section->season->name }}</p>
+                            <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
+                        </div>
+                    </div>
                 </div>
 
                 @if ($activeTab === 'fixtures-results')
@@ -26,7 +36,7 @@
         </div>
     </div>
 
-    <section class="border-y border-gray-200 bg-white dark:border-zinc-800/80 dark:bg-zinc-800/75"
+    <section class="bg-white ring-1 ring-neutral-950/5 dark:bg-neutral-900 dark:ring-neutral-100/10"
         data-section-tabs
         data-active-section-tab="{{ $activeTab }}">
         <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6"
@@ -105,11 +115,18 @@
         <section class="ui-section" data-section-see-also>
             <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
                 <div class="ui-shell-grid">
-                    <div>
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Other sections in {{ $ruleset->name }}</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
-                            Browse the other sections in this ruleset.
-                        </p>
+                    <div class="ui-section-intro">
+                        <div class="ui-section-intro-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99" />
+                            </svg>
+                        </div>
+                        <div class="ui-section-intro-copy">
+                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Other sections in {{ $ruleset->name }}</h2>
+                            <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                                Browse the other sections in this ruleset.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-2">

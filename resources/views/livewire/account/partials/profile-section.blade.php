@@ -1,10 +1,17 @@
 <section id="account-profile" class="ui-section" data-account-profile-section>
     <div class="ui-shell-grid">
-        <div>
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Personal information</h3>
-            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                Manage the profile details shown for your account and keep your avatar up to date.
-            </p>
+        <div class="ui-section-intro">
+            <div class="ui-section-intro-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+            </div>
+            <div class="ui-section-intro-copy">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Personal information</h3>
+                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    Manage the profile details shown for your account and keep your avatar up to date.
+                </p>
+            </div>
         </div>
 
         <div class="lg:col-span-2">
@@ -16,15 +23,15 @@
                             @if ($removeAvatar)
                                 <img src="{{ asset('/images/user.jpg') }}"
                                     alt="Avatar preview"
-                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700/80">
+                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800/80">
                             @elseif ($avatarUpload)
                                 <img src="{{ $avatarUpload->temporaryUrl() }}"
                                     alt="Avatar preview"
-                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700/80">
+                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800/80">
                             @else
                                 <img src="{{ $this->user->avatar_url }}"
                                     alt="{{ $this->user->name }} avatar"
-                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700/80">
+                                    class="h-24 w-24 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800/80">
                             @endif
                             </div>
 
@@ -82,8 +89,8 @@
                 </div>
 
                 <div class="ui-card-rows">
-                    <div class="block border-t border-gray-200 dark:border-zinc-700/75">
-                        <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-zinc-700/75">
+                    <div class="block border-t border-gray-200 dark:border-neutral-800/75">
+                        <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-neutral-800/75">
                             <div class="px-4 py-4 sm:px-5">
                                 <p class="text-center text-xs font-medium text-gray-500 dark:text-gray-400">Played</p>
                                 <p class="mt-1 text-center text-base font-semibold text-gray-900 dark:text-gray-100">{{ $this->record->frames_played }}</p>
@@ -116,7 +123,7 @@
                                 <input type="email"
                                     id="account-email"
                                     wire:model.live="email"
-                                    class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100">
+                                    class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100">
                                 @error('email')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
@@ -127,7 +134,7 @@
                                 <input type="text"
                                     id="account-telephone"
                                     wire:model.live="telephone"
-                                    class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-100">
+                                    class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100">
                                 @error('telephone')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
