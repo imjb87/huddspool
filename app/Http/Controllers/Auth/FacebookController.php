@@ -41,7 +41,7 @@ class FacebookController extends Controller
 
         $this->storeFacebookAvatarForUser($user, $facebookUser->getAvatar());
 
-        Auth::login($user);
+        Auth::login($user, true);
         request()->session()->regenerate();
 
         return redirect($user->getRedirectRoute());

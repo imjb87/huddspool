@@ -92,6 +92,11 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('account.show'));
         $this->assertStringStartsWith('avatars/google-', $user->fresh()->avatar_path);
         Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+        $this->assertNotNull($user->fresh()->remember_token);
+        $this->assertNotNull(
+            collect($response->headers->getCookies())
+                ->first(fn ($cookie) => str_starts_with($cookie->getName(), 'remember_web_'))
+        );
     }
 
     public function test_users_can_start_facebook_authentication(): void
@@ -145,6 +150,11 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('account.show'));
         $this->assertStringStartsWith('avatars/facebook-', $user->fresh()->avatar_path);
         Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+        $this->assertNotNull($user->fresh()->remember_token);
+        $this->assertNotNull(
+            collect($response->headers->getCookies())
+                ->first(fn ($cookie) => str_starts_with($cookie->getName(), 'remember_web_'))
+        );
     }
 
     public function test_facebook_authentication_does_not_replace_an_existing_avatar(): void

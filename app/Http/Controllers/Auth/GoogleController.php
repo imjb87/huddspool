@@ -41,7 +41,7 @@ class GoogleController extends Controller
 
         $this->storeGoogleAvatarForUser($user, $googleUser->getAvatar());
 
-        Auth::login($user);
+        Auth::login($user, true);
         request()->session()->regenerate();
 
         return redirect($user->getRedirectRoute());
