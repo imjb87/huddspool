@@ -65,7 +65,7 @@
 
 @layer components {
   .ui-page-shell {
-    @apply mt-18 grid grid-cols-1 content-start gap-6 bg-neutral-50 py-6 text-gray-900 dark:bg-neutral-950 dark:text-gray-100;
+    @apply mt-[4.5rem] grid grid-cols-1 content-start gap-6 bg-neutral-50 py-6 text-gray-900 dark:bg-neutral-950 dark:text-gray-100;
   }
 
   .ui-page-body {
