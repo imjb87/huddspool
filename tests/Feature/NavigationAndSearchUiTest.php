@@ -53,8 +53,13 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-site-search-trigger', false);
         $response->assertSee('aria-label="Open search"', false);
         $response->assertSee('data-theme-toggle', false);
-        $response->assertSee('aria-label="Toggle dark mode"', false);
+        $response->assertSee('Enable light theme', false);
+        $response->assertSee('Enable dark theme', false);
+        $response->assertSee('Enable system theme', false);
+        $response->assertSee('Open settings menu', false);
         $response->assertSee('site-theme', false);
+        $response->assertSee('themePreference: \'system\'', false);
+        $response->assertSee('window.siteTheme?.setTheme?.(theme) ?? theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
@@ -80,6 +85,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-menu-toggle', false);
         $response->assertSee('data-mobile-menu-drawer', false);
         $response->assertSee('data-mobile-menu-panel="root"', false);
+        $response->assertSee('data-mobile-theme-toggle', false);
+        $response->assertSee('grid w-full grid-cols-3 gap-x-2', false);
+        $response->assertDontSeeText('Appearance');
+        $response->assertSee('border-t border-gray-200 dark:border-zinc-700/75', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
         $response->assertSee('data-knockouts-nav', false);
@@ -96,7 +105,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); });", false);
         $response->assertSee("window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })", false);
         $response->assertSee("window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true", false);
-        $response->assertDontSee('data-install-app-trigger', false);
+        $response->assertSee('data-install-app-trigger', false);
         $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertSee("@click=\"openDrawer('history')\"", false);
         $response->assertSee("@click=\"openDrawer('knockouts')\"", false);
@@ -282,6 +291,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('Account');
         $response->assertSee('src="'.$user->avatar_url.'"', false);
         $response->assertSee('alt="'.$user->name.' avatar"', false);
+        $response->assertSee('data-theme-toggle', false);
+        $response->assertSee('Enable light theme', false);
+        $response->assertSee('Enable dark theme', false);
+        $response->assertSee('Enable system theme', false);
         $response->assertSee('data-install-app-trigger', false);
         $response->assertSee('data-mobile-install-app-trigger', false);
         $response->assertDontSeeText('Your profile');

@@ -1,6 +1,6 @@
 <script>
     (() => {
-        const storageKey = 'site-theme';
+        const storageKey = 'theme';
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const transitionClass = 'theme-transitioning';
         let transitionTimeout = null;
@@ -8,19 +8,58 @@
         const getStoredTheme = () => {
             const storedTheme = window.localStorage.getItem(storageKey);
 
-            return storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : null;
+            return storedTheme === 'dark' || storedTheme === 'light' || storedTheme === 'system' ? storedTheme : null;
+        };
+
+        const resolveTheme = (themePreference) => {
+            if (themePreference === 'system') {
+                return mediaQuery.matches ? 'dark' : 'light';
+            }
+
+            return themePreference === 'dark' ? 'dark' : 'light';
         };
 
         const getPreferredTheme = () => {
-            return getStoredTheme() ?? (mediaQuery.matches ? 'dark' : 'light');
+            return getStoredTheme() ?? 'system';
         };
 
-        const applyTheme = (theme) => {
-            const isDark = theme === 'dark';
+        const applyTheme = (themePreference) => {
+            const resolvedTheme = resolveTheme(themePreference);
+            const isDark = resolvedTheme === 'dark';
 
             document.documentElement.classList.toggle('dark', isDark);
-            document.documentElement.dataset.theme = theme;
+            document.documentElement.dataset.theme = resolvedTheme;
+            document.documentElement.dataset.themePreference = themePreference;
             document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        };
+
+        const dispatchThemeChange = (themePreference) => {
+            window.dispatchEvent(new CustomEvent('site-theme-changed', {
+                detail: {
+                    preference: themePreference,
+                    theme: resolveTheme(themePreference),
+                },
+            }));
+        };
+
+        const setTheme = (themePreference) => {
+            startThemeTransition();
+
+            if (themePreference === 'dark' || themePreference === 'light' || themePreference === 'system') {
+                window.localStorage.setItem(storageKey, themePreference);
+            } else {
+                window.localStorage.removeItem(storageKey);
+                themePreference = getPreferredTheme();
+            }
+
+            applyTheme(themePreference);
+            dispatchThemeChange(themePreference);
+
+            return themePreference;
+        };
+
+        const toggleTheme = () => {
+            return setTheme(resolveTheme(getPreferredTheme()) === 'dark' ? 'light' : 'dark');
         };
 
         const startThemeTransition = () => {
@@ -36,55 +75,29 @@
             }, 550);
         };
 
-        const dispatchThemeChange = (theme) => {
-            window.dispatchEvent(new CustomEvent('site-theme-changed', {
-                detail: {
-                    theme,
-                },
-            }));
-        };
-
-        const setTheme = (theme) => {
-            startThemeTransition();
-
-            if (theme === 'dark' || theme === 'light') {
-                window.localStorage.setItem(storageKey, theme);
-            } else {
-                window.localStorage.removeItem(storageKey);
-                theme = getPreferredTheme();
-            }
-
-            applyTheme(theme);
-            dispatchThemeChange(theme);
-
-            return theme;
-        };
-
-        const toggleTheme = () => {
-            return setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-        };
-
         window.siteTheme = {
             storageKey,
             getStoredTheme,
             getPreferredTheme,
+            resolveTheme,
             applyTheme,
             setTheme,
             toggleTheme,
-            currentTheme: () => document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+            currentTheme: () => resolveTheme(getPreferredTheme()),
+            currentPreference: () => getPreferredTheme(),
         };
 
         applyTheme(getPreferredTheme());
 
-        const syncSystemTheme = (event) => {
-            if (getStoredTheme()) {
+        const syncSystemTheme = () => {
+            const themePreference = getPreferredTheme();
+
+            if (themePreference !== 'system') {
                 return;
             }
 
-            const theme = event.matches ? 'dark' : 'light';
-
-            applyTheme(theme);
-            dispatchThemeChange(theme);
+            applyTheme(themePreference);
+            dispatchThemeChange(themePreference);
         };
 
         if (typeof mediaQuery.addEventListener === 'function') {
@@ -98,10 +111,10 @@
                 return;
             }
 
-            const theme = getPreferredTheme();
+            const themePreference = getPreferredTheme();
 
-            applyTheme(theme);
-            dispatchThemeChange(theme);
+            applyTheme(themePreference);
+            dispatchThemeChange(themePreference);
         });
     })();
 </script>

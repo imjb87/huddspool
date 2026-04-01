@@ -11,6 +11,10 @@
     <div class="space-y-4">
         @if (@auth()->user())
             <div class="ui-card overflow-hidden">
+                @include('layouts.partials.theme-switcher', ['mobile' => true, 'grouped' => true])
+
+                <div class="border-t border-gray-200 dark:border-zinc-700/75"></div>
+
                 <a href="{{ route('account.show') }}"
                     class="ui-card-row-link">
                     <div class="ui-card-row justify-start gap-3 px-4 sm:px-5">
@@ -25,6 +29,10 @@
             </div>
         @else
             <div class="ui-card overflow-hidden">
+                @include('layouts.partials.theme-switcher', ['mobile' => true, 'grouped' => true])
+
+                <div class="border-t border-gray-200 dark:border-zinc-700/75"></div>
+
                 <a href="{{ route('login') }}"
                     class="ui-card-row-link">
                     <div class="ui-card-row px-4 text-base font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:px-5">
