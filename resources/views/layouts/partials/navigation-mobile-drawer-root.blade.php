@@ -87,7 +87,12 @@
             </div>
         </div>
 
-        <div class="ui-card overflow-hidden">
+        <div class="ui-card overflow-hidden"
+            @unless (auth()->check())
+                x-cloak
+                x-show="canInstallApp"
+            @endunless
+        >
             <div class="ui-card-rows">
             @if (@auth()->user())
                 @if (auth()->user()->isAdmin())
