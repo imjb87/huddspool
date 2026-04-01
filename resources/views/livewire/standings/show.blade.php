@@ -2,17 +2,27 @@
     <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
             <div>
-                <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Standings</h2>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    {{ $summaryCopy }}
-                </p>
+                <div class="ui-section-intro">
+                    <div class="ui-section-intro-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                        </svg>
+                    </div>
+
+                    <div class="ui-section-intro-copy">
+                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Standings</h2>
+                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                            {{ $summaryCopy }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div class="lg:col-span-2">
                 <div class="ui-card" data-section-table-shell>
                     @if ($standings->isEmpty())
                         <div class="ui-card-body py-10 text-center">
-                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-zinc-700 dark:bg-zinc-800/75">
+                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-neutral-800 dark:bg-neutral-900/75">
                                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No standings available for this section yet.</h3>
                                 <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
                                     Standings will appear once results are entered for this section.

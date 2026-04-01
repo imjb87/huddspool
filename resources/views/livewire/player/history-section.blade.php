@@ -2,11 +2,18 @@
     @if ($this->allHistory->isNotEmpty())
         <section class="ui-section" data-player-history-section>
             <div class="ui-shell-grid">
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">History</h3>
-                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                        Season-by-season playing history with archived team and section details.
-                    </p>
+                <div class="ui-section-intro">
+                    <div class="ui-section-intro-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2.25m6-2.25a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </div>
+                    <div class="ui-section-intro-copy">
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">History</h3>
+                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                            Season-by-season playing history with archived team and section details.
+                        </p>
+                    </div>
                 </div>
 
                 <div class="lg:col-span-2">
@@ -72,17 +79,17 @@
                                 @foreach (range(1, 5) as $row)
                                     <div class="ui-card-row items-center px-4 sm:px-5">
                                         <div class="min-w-0 flex-1">
-                                            <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                                            <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                                            <div class="mt-2 h-3 w-16 rounded-full bg-gray-100 dark:bg-zinc-800/70"></div>
+                                            <div class="h-4 w-32 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            <div class="mt-2 h-3 w-16 rounded-full bg-gray-100 dark:bg-neutral-900/70"></div>
                                         </div>
 
                                         <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-5">
                                             @foreach (range(1, 3) as $column)
                                                 <div class="w-12 sm:w-16">
                                                     <div class="flex flex-col items-center gap-1">
-                                                        <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-zinc-700 sm:w-10"></div>
-                                                        <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-zinc-700' }}"></div>
+                                                        <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-10"></div>
+                                                        <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-neutral-800' }}"></div>
                                                     </div>
                                                 </div>
                                             @endforeach

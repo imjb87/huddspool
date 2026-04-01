@@ -7,7 +7,7 @@
     'framesWon' => 0,
     'framesLost' => 0,
     'wrapperClass' => 'group block',
-    'rowClass' => 'flex items-center gap-3 rounded-lg py-4 transition sm:-mx-3 sm:-my-px sm:gap-4 sm:px-3 sm:group-hover:bg-gray-200/70 dark:sm:group-hover:bg-zinc-800/70',
+    'rowClass' => 'flex items-center gap-3 rounded-lg py-4 transition sm:-mx-3 sm:-my-px sm:gap-4 sm:px-3 sm:group-hover:bg-gray-200/70 dark:sm:group-hover:bg-neutral-900/70',
     'showInlineStatLabels' => true,
     'statsMarker' => null,
     'wireKey' => null,

@@ -4,7 +4,7 @@
     role="listbox"
     data-search-results-shell>
     @foreach ($resultGroups as $name => $group)
-        <li class="border-t border-gray-200/80 first:border-t-0 dark:border-zinc-700/75" wire:key="search-group-{{ $name }}">
+        <li class="border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75" wire:key="search-group-{{ $name }}">
             <div class="ui-card-column-headings justify-start px-4 sm:px-5">
                 <h2 class="text-xs font-medium text-gray-500 dark:text-gray-400">
                     {{ $group['heading'] }}
@@ -22,7 +22,7 @@
                                 @if ($name === 'players')
                                     <img src="{{ $item->avatar_url }}"
                                         alt="{{ $item->name }}"
-                                        class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-zinc-700"
+                                        class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800"
                                         data-search-player-avatar>
                                 @endif
                                 <div class="min-w-0 flex-1">

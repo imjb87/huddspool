@@ -10,8 +10,17 @@
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
                 <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
                     <div class="min-w-0 lg:col-span-2">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Ruleset</p>
-                        <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $ruleset->name }}</h1>
+                        <div class="ui-page-title-with-icon">
+                            <div class="ui-page-title-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5h16.5M3.75 9.75h16.5m-16.5 5.25h16.5m-16.5 5.25h16.5" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Ruleset</p>
+                                <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $ruleset->name }}</h1>
+                            </div>
+                        </div>
                     </div>
 
                     <div aria-hidden="true"></div>

@@ -81,8 +81,8 @@ class TeamProfileTest extends TestCase
         $response->assertSee('data-team-page', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-shared-header', false);
-        $response->assertSee('dark:bg-zinc-900', false);
-        $response->assertSee('dark:border-zinc-800/80', false);
+        $response->assertSee('dark:bg-neutral-950', false);
+        $response->assertSee('dark:border-neutral-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('data-team-info-section', false);
         $response->assertSee('data-team-players-section', false);

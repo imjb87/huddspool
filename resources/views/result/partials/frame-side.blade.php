@@ -1,5 +1,5 @@
 @php
-    $scorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:ring-zinc-700';
+    $scorePillClasses = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-200 dark:ring-neutral-800';
 
     if ((int) $score === 1 && (int) $opponentScore === 0) {
         $scorePillClasses = 'bg-linear-to-br from-green-900 via-green-800 to-green-700 text-white ring-1 ring-black/10';

@@ -1,4 +1,4 @@
-<header class="site-header fixed top-0 z-50 w-full bg-white shadow-sm ring-1 ring-gray-950/5 transition-all duration-500 dark:border-b dark:border-zinc-700/75 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10"
+<header class="site-header fixed top-0 z-50 w-full bg-white/85 shadow-sm ring-1 ring-neutral-950/5 backdrop-blur-md transition-all duration-500 dark:bg-neutral-900/85 dark:ring-neutral-100/10"
     x-data="{
         open: false,
         activeDrawer: 'root',
@@ -85,7 +85,7 @@
         @include('layouts.partials.navigation-desktop-links')
 
         <div class="flex min-w-0 flex-1 items-center justify-end gap-x-4">
-            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
+            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-neutral-700 dark:text-neutral-300"
                 data-site-search-trigger aria-label="Open search">
                 <span class="block w-5 flex items-center justify-center" aria-hidden="true">
                     <svg wire:loading.remove.delay.default="1" wire:target="search" class="h-5 w-5 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -93,7 +93,7 @@
                     </svg>                
                 </span>
             </button>
-            <button type="button" class="-m-2.5 inline-flex p-2.5 items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300 lg:hidden"
+            <button type="button" class="-m-2.5 inline-flex p-2.5 items-center justify-center rounded-md p-2.5 text-neutral-700 dark:text-neutral-300 lg:hidden"
                 @click="open ? closeMenu() : openMenu()" :aria-expanded="open" aria-label="Toggle main menu"
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>

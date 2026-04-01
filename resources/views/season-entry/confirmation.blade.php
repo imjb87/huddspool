@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-zinc-900">
+    <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-neutral-950">
         <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-8">
                 <section class="grid gap-8 lg:grid-cols-3 lg:gap-10">
@@ -30,7 +30,7 @@
 
                         <section>
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Contact and venue</h2>
-                            <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                            <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                 <div class="flex items-center justify-between gap-4 py-3 first:pt-0">
                                     <span class="text-sm text-gray-500 dark:text-gray-400">Contact</span>
                                     <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $entry->contact_name }}</span>
@@ -59,7 +59,7 @@
 
                         <section>
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Teams</h2>
-                            <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                            <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                 @forelse ($entry->teams as $team)
                                     <div class="flex items-start justify-between gap-4 py-4 first:pt-0">
                                         <div class="min-w-0 flex-1">
@@ -91,7 +91,7 @@
 
                         <section>
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Knockouts</h2>
-                            <div class="mt-3 divide-y divide-gray-200 dark:divide-zinc-800/80">
+                            <div class="mt-3 divide-y divide-gray-200 dark:divide-neutral-800/80">
                                 @forelse ($entry->knockoutRegistrations as $knockoutEntry)
                                     <div class="flex items-start justify-between gap-4 py-4">
                                         <div class="min-w-0 flex-1">

@@ -64,7 +64,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('data-search-modal-shell', false);
-        $response->assertSee('ui-card mx-auto max-w-xl transform transition-all dark:bg-zinc-800', false);
+        $response->assertSee('ui-card mx-auto max-w-xl transform transition-all dark:bg-neutral-900', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('pl-11 pr-4', false);
         $response->assertSee('sm:pr-24', false);
@@ -88,7 +88,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-theme-toggle', false);
         $response->assertSee('grid w-full grid-cols-3 gap-x-2', false);
         $response->assertDontSeeText('Appearance');
-        $response->assertSee('border-t border-gray-200 dark:border-zinc-700/75', false);
+        $response->assertSee('border-t border-gray-200 dark:border-neutral-800/75', false);
         $response->assertSee('data-mobile-ruleset-trigger', false);
         $response->assertSee('data-mobile-ruleset-sections', false);
         $response->assertSee('data-knockouts-nav', false);
@@ -118,11 +118,11 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
-        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white shadow-sm ring-1 ring-gray-950/5 transition-all duration-500 dark:border-b dark:border-zinc-700/75 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10', false);
+        $response->assertSee('site-header fixed top-0 z-50 w-full bg-white/85 shadow-sm ring-1 ring-neutral-950/5 backdrop-blur-md transition-all duration-500 dark:bg-neutral-900/85 dark:ring-neutral-100/10', false);
         $response->assertSee('data-mobile-menu-drawer', false);
-        $response->assertSee('bg-gray-50 shadow-2xl ring-1 ring-black/5 dark:bg-zinc-900', false);
+        $response->assertSee('bg-gray-50 shadow-2xl ring-1 ring-black/5 dark:bg-neutral-950', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
-        $response->assertSee('dark:bg-zinc-800', false);
+        $response->assertSee('dark:bg-neutral-900', false);
         $response->assertSee('text-sm font-semibold leading-6 transition', false);
         $response->assertSee('hover:text-green-700', false);
         $response->assertSee('dark:hover:text-green-500', false);

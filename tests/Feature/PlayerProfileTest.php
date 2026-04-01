@@ -139,8 +139,8 @@ class PlayerProfileTest extends TestCase
         $response->assertSeeLivewire(HistorySection::class);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
-        $response->assertSee('dark:bg-zinc-900', false);
-        $response->assertSee('dark:border-zinc-800/80', false);
+        $response->assertSee('dark:bg-neutral-950', false);
+        $response->assertSee('dark:border-neutral-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($player->name);
         $response->assertSeeText('Player');

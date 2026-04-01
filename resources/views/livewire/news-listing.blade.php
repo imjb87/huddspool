@@ -1,10 +1,10 @@
-<div class="bg-white py-24 sm:py-32 dark:bg-zinc-900">
+<div class="bg-white py-24 sm:py-32 dark:bg-neutral-950">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <div class="mx-auto max-w-2xl">
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">Latest News</h2>
             <p class="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-400">Stay up to date with the latest news from the Huddersfield
                 Pool League.</p>
-            <div class="mt-10 space-y-16 border-t border-gray-200 pt-10 dark:border-zinc-800/80 sm:mt-16 sm:pt-16">
+            <div class="mt-10 space-y-16 border-t border-gray-200 pt-10 dark:border-neutral-800/80 sm:mt-16 sm:pt-16">
                 @foreach ($news as $article)
                     <article class="flex max-w-xl flex-col items-start justify-between">
                         <div class="flex items-center gap-x-4 text-xs">

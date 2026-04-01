@@ -3,13 +3,20 @@
         <div class="space-y-5">
             @if (count($resultSubmissionPrompt->fixtures ?? []) > 0)
                 <div class="ui-shell-grid">
-                    <div>
-                        <h3 class="text-sm font-semibold text-red-950 dark:text-red-50">
-                            {{ $resultSubmissionPrompt->fixtures_heading ?? 'League results to submit' }}
-                        </h3>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-red-800/90 dark:text-red-300">
-                            Outstanding league results assigned to your account.
-                        </p>
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/80 ring-1 ring-red-200/80 shadow-sm dark:bg-red-950/50 dark:ring-red-900/60">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-red-700 dark:text-red-200" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 6.75h.008v.008H12v-.008Z" />
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-sm font-semibold text-red-950 dark:text-red-50">
+                                {{ $resultSubmissionPrompt->fixtures_heading ?? 'League results to submit' }}
+                            </h3>
+                            <p class="mt-1 max-w-sm text-sm leading-6 text-red-800/90 dark:text-red-300">
+                                Outstanding league results assigned to your account.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-2">
@@ -36,13 +43,20 @@
 
             @if (count($resultSubmissionPrompt->knockouts ?? []) > 0)
                 <div class="ui-shell-grid">
-                    <div>
-                        <h3 class="text-sm font-semibold text-red-950 dark:text-red-50">
-                            {{ $resultSubmissionPrompt->knockouts_heading ?? 'Knockout results to submit' }}
-                        </h3>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-red-800/90 dark:text-red-300">
-                            Outstanding knockout results assigned to your account.
-                        </p>
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/80 ring-1 ring-red-200/80 shadow-sm dark:bg-red-950/50 dark:ring-red-900/60">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-red-700 dark:text-red-200" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 6.75h.008v.008H12v-.008Z" />
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-sm font-semibold text-red-950 dark:text-red-50">
+                                {{ $resultSubmissionPrompt->knockouts_heading ?? 'Knockout results to submit' }}
+                            </h3>
+                            <p class="mt-1 max-w-sm text-sm leading-6 text-red-800/90 dark:text-red-300">
+                                Outstanding knockout results assigned to your account.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-2">

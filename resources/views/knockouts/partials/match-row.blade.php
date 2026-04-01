@@ -66,7 +66,7 @@
 
     <div class="ml-auto flex shrink-0 self-center items-center text-right" data-knockout-score-state>
         @if ($matchRow->match->forfeitParticipant)
-            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-bold uppercase tracking-wide text-gray-600 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-300 dark:ring-zinc-700">
+            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-bold uppercase tracking-wide text-gray-600 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-300 dark:ring-neutral-800">
                 FF
             </span>
         @elseif ($matchRow->match->home_score !== null && $matchRow->match->away_score !== null)
@@ -83,7 +83,7 @@
         @elseif ($matchRow->match->starts_at)
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ $matchRow->match->starts_at->format('j M') }}</p>
         @else
-            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-gray-200 dark:bg-zinc-700 dark:text-gray-500 dark:ring-zinc-700">
+            <span class="inline-flex h-7 min-w-[60px] items-center justify-center rounded-full bg-gray-100 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-gray-200 dark:bg-neutral-800 dark:text-gray-500 dark:ring-neutral-800">
                 Vs
             </span>
         @endif

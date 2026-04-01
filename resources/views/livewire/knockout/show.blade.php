@@ -7,13 +7,20 @@
         @if ($this->currentRound)
             <section class="ui-section" data-knockout-round-shell>
                 <div class="ui-shell-grid">
-                    <div>
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->currentRound->name }}</h2>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                            {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'Date TBC' }}
-                            <span class="text-gray-300 dark:text-zinc-600">/</span>
-                            Best of {{ $this->currentRound->bestOfValue() }} frames
-                        </p>
+                    <div class="ui-section-intro">
+                        <div class="ui-section-intro-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5v15m0-15a2.25 2.25 0 0 1 2.25 2.25v1.5A2.25 2.25 0 0 1 6.75 10.5m0-6a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 6.75 10.5m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5A2.25 2.25 0 0 0 6.75 13.5m0 6a2.25 2.25 0 0 1-2.25-2.25v-1.5A2.25 2.25 0 0 1 6.75 13.5m10.5-9v15m0-15A2.25 2.25 0 0 1 19.5 6.75v1.5a2.25 2.25 0 0 1-2.25 2.25m0-6A2.25 2.25 0 0 0 15 6.75v1.5a2.25 2.25 0 0 0 2.25 2.25m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5a2.25 2.25 0 0 0-2.25-2.25m0 6A2.25 2.25 0 0 1 15 17.25v-1.5a2.25 2.25 0 0 1 2.25-2.25" />
+                            </svg>
+                        </div>
+                        <div class="ui-section-intro-copy">
+                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->currentRound->name }}</h2>
+                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                                {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'Date TBC' }}
+                                <span class="text-gray-300 dark:text-neutral-600">/</span>
+                                Best of {{ $this->currentRound->bestOfValue() }} frames
+                            </p>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-2">
@@ -65,11 +72,18 @@
         @else
             <div class="ui-section" data-knockout-empty-state>
                 <div class="ui-shell-grid">
-                    <div>
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rounds</h2>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                            Published rounds and ties will appear here once the bracket is ready.
-                        </p>
+                    <div class="ui-section-intro">
+                        <div class="ui-section-intro-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5v15m0-15a2.25 2.25 0 0 1 2.25 2.25v1.5A2.25 2.25 0 0 1 6.75 10.5m0-6a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 6.75 10.5m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5A2.25 2.25 0 0 0 6.75 13.5m0 6a2.25 2.25 0 0 1-2.25-2.25v-1.5A2.25 2.25 0 0 1 6.75 13.5m10.5-9v15m0-15A2.25 2.25 0 0 1 19.5 6.75v1.5a2.25 2.25 0 0 1-2.25 2.25m0-6A2.25 2.25 0 0 0 15 6.75v1.5a2.25 2.25 0 0 0 2.25 2.25m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5a2.25 2.25 0 0 0-2.25-2.25m0 6A2.25 2.25 0 0 1 15 17.25v-1.5a2.25 2.25 0 0 1 2.25-2.25" />
+                            </svg>
+                        </div>
+                        <div class="ui-section-intro-copy">
+                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rounds</h2>
+                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                                Published rounds and ties will appear here once the bracket is ready.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-2">

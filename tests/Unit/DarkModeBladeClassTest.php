@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class DarkModeBladeClassTest extends TestCase
 {
-    public function test_blade_views_do_not_use_the_solid_dark_zinc_800_background_class(): void
+    public function test_blade_views_do_not_use_the_solid_dark_neutral_800_background_class(): void
     {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(resource_path('views'))
@@ -22,7 +22,7 @@ class DarkModeBladeClassTest extends TestCase
             $contents = file_get_contents($file->getPathname());
 
             $this->assertIsString($contents);
-            $this->assertDoesNotMatchRegularExpression('/dark:bg-zinc-800(?!\\/)/', $contents, $file->getPathname());
+            $this->assertDoesNotMatchRegularExpression('/dark:bg-neutral-900(?!\\/)/', $contents, $file->getPathname());
         }
     }
 }

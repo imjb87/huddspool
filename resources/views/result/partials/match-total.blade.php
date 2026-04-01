@@ -3,7 +3,7 @@
         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
             {{ $result->home_team_name }}
-            <span class="text-gray-300 dark:text-zinc-600">/</span>
+            <span class="text-gray-300 dark:text-neutral-600">/</span>
             {{ $result->away_team_name }}
         </p>
     </div>

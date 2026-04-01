@@ -1,6 +1,6 @@
 <div data-history-ruleset-shell>
     <button type="button"
-        class="ui-card-row w-full cursor-pointer text-left transition hover:bg-gray-100 dark:hover:bg-zinc-700/85"
+        class="ui-card-row w-full cursor-pointer text-left transition hover:bg-gray-100 dark:hover:bg-neutral-800/85"
         @click="openRuleset = openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}' ? null : 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
         :aria-expanded="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
         data-history-ruleset-trigger>
@@ -16,7 +16,7 @@
         x-show="openRuleset === 'ruleset-{{ $group['season']->id }}-{{ $rulesetGroup['ruleset']->id }}'"
         x-cloak
         data-history-ruleset-panel>
-        <div class="ui-card-rows border-t border-gray-200/80 dark:border-zinc-700/75">
+        <div class="ui-card-rows border-t border-gray-200/80 dark:border-neutral-800/75">
             @foreach ($rulesetGroup['sections'] as $section)
                 @include('history.partials.section-link')
             @endforeach
