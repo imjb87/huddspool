@@ -19,6 +19,7 @@ use App\Notifications\KnockoutMatchReminderNotification;
 use App\Notifications\KnockoutResultOutstandingNotification;
 use App\Notifications\LeagueNightTonightNotification;
 use App\Notifications\MatchNightStartedNotification;
+use App\Notifications\TuesdayResultCatchupNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
@@ -187,6 +188,50 @@ class NotificationCommandTest extends TestCase
                     && $payload['body'] === 'Your match has started. Pick your players, keep things moving, and get ready to submit the result.';
             }
         );
+    }
+
+    public function test_tuesday_result_catchup_command_only_notifies_team_admins_for_previous_tuesday(): void
+    {
+        Carbon::setTestNow('2026-04-12 12:00:00');
+        Notification::fake();
+
+        [
+            'fixture' => $fixture,
+            'homeAdmin' => $homeAdmin,
+            'homePlayer' => $homePlayer,
+            'awayAdmin' => $awayAdmin,
+            'awayPlayer' => $awayPlayer,
+        ] = $this->createFixtureNotificationContext(today()->previous(Carbon::TUESDAY));
+
+        Result::query()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $fixture->home_team_id,
+            'home_team_name' => $fixture->homeTeam->name,
+            'home_score' => 4,
+            'away_team_id' => $fixture->away_team_id,
+            'away_team_name' => $fixture->awayTeam->name,
+            'away_score' => 3,
+            'is_confirmed' => false,
+        ]);
+
+        $otherContext = $this->createFixtureNotificationContext(today()->subDay());
+
+        $this->artisan('app:send-tuesday-result-catchup-notifications')
+            ->assertSuccessful();
+
+        Notification::assertSentTo(
+            [$homeAdmin, $awayAdmin],
+            TuesdayResultCatchupNotification::class,
+            function (TuesdayResultCatchupNotification $notification, array $channels) use ($fixture): bool {
+                return $channels === ['database', 'mail']
+                    && $notification->fixture->is($fixture)
+                    && $notification->toArray(new \stdClass)['action_url'] === route('result.create', $fixture);
+            }
+        );
+        Notification::assertNotSentTo($homePlayer, TuesdayResultCatchupNotification::class);
+        Notification::assertNotSentTo($awayPlayer, TuesdayResultCatchupNotification::class);
+        Notification::assertNotSentTo($otherContext['homeAdmin'], TuesdayResultCatchupNotification::class);
+        Notification::assertNotSentTo($otherContext['awayAdmin'], TuesdayResultCatchupNotification::class);
     }
 
     public function test_outstanding_knockout_command_notifies_participants_and_deduplicates_reruns(): void

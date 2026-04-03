@@ -35,7 +35,7 @@ class LeagueNightTonightNotification extends Notification implements ShouldQueue
 
         $isTeamAdmin = method_exists($notifiable, 'isTeamAdmin') && $notifiable->isTeamAdmin();
 
-        $title = 'League night is tonight';
+        $title = '🎱 League night is tonight';
         $body = $isTeamAdmin
             ? 'It\'s match night. Prepare your team ahead of time, pick your players, and get ready to submit the result.'
             : 'Get ready for match night. View your fixture, check your opponents, and make sure you\'re set for tonight.';

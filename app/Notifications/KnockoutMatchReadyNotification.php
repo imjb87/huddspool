@@ -36,7 +36,7 @@ class KnockoutMatchReadyNotification extends Notification implements ShouldQueue
         ]);
 
         return [
-            'title' => 'Knockout match ready',
+            'title' => '🏆 Knockout match ready',
             'body' => sprintf(
                 '%s / %s is now live: %s.',
                 $this->match->round?->knockout?->name ?? 'Knockout',

@@ -37,7 +37,7 @@ class LeagueResultSubmittedNotification extends Notification implements ShouldQu
         ]);
 
         return [
-            'title' => 'Result submitted',
+            'title' => '📋 Result submitted',
             'body' => sprintf(
                 '%s submitted %s %d-%d %s.',
                 $this->result->submittedBy?->name ?? 'A team admin',

@@ -36,7 +36,7 @@ class KnockoutMatchReminderNotification extends Notification implements ShouldQu
         ]);
 
         return [
-            'title' => 'Knockout match is today',
+            'title' => '🏆 Knockout match is today',
             'body' => sprintf(
                 '%s / %s is scheduled for today: %s.',
                 $this->match->round?->knockout?->name ?? 'Knockout',

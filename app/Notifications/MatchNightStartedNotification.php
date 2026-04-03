@@ -33,7 +33,7 @@ class MatchNightStartedNotification extends Notification
         ]);
 
         return [
-            'title' => 'Your match has started',
+            'title' => '🚀 Your match has started',
             'body' => 'Your match has started. Pick your players, keep things moving, and get ready to submit the result.',
             'action_url' => route('result.create', $this->fixture),
             'fixture_id' => $this->fixture->id,

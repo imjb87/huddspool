@@ -25,7 +25,7 @@ class NewsPublishedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'News published',
+            'title' => sprintf('📰 %s', $this->news->title),
             'body' => $this->news->excerpt(140),
             'action_url' => route('news.show', $this->news),
             'news_id' => $this->news->id,

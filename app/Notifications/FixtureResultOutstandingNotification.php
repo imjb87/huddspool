@@ -35,7 +35,7 @@ class FixtureResultOutstandingNotification extends Notification implements Shoul
         ]);
 
         return [
-            'title' => 'Your match is outstanding',
+            'title' => '⏰ Your match is outstanding',
             'body' => sprintf(
                 '%s vs %s still needs a submitted result.',
                 $this->fixture->homeTeam?->name ?? 'TBC',

@@ -36,7 +36,7 @@ class KnockoutResultOutstandingNotification extends Notification implements Shou
         ]);
 
         return [
-            'title' => 'Knockout result is outstanding',
+            'title' => '🏆 Knockout result is outstanding',
             'body' => sprintf(
                 '%s / %s still needs a submitted result: %s.',
                 $this->match->round?->knockout?->name ?? 'Knockout',
