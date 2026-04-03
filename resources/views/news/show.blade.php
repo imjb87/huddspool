@@ -23,42 +23,6 @@
                     ['label' => $newsArticle->title, 'current' => true],
                 ]" />
                 <div class="space-y-4">
-                    <div class="flex justify-end"
-                        x-data="{
-                            shareUrl: @js($shareUrl),
-                            shareTitle: @js($shareTitle),
-                            async shareArticle() {
-                                if (navigator.share) {
-                                    try {
-                                        await navigator.share({
-                                            title: this.shareTitle,
-                                            text: 'Read this Huddspool news update',
-                                            url: this.shareUrl,
-                                        });
-                                        return;
-                                    } catch (error) {
-                                        if (error?.name === 'AbortError') {
-                                            return;
-                                        }
-                                    }
-                                }
-
-                                if (navigator.clipboard?.writeText) {
-                                    await navigator.clipboard.writeText(this.shareUrl);
-                                }
-                            },
-                        }">
-                        <button type="button"
-                            class="ui-button-secondary gap-2"
-                            x-on:click="shareArticle()"
-                            data-news-share-button>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V3.75m0 12.75 4.5-4.5m-4.5 4.5-4.5-4.5M3.75 15v3A2.25 2.25 0 0 0 6 20.25h12A2.25 2.25 0 0 0 20.25 18v-3" />
-                            </svg>
-                            <span>Share article</span>
-                        </button>
-                    </div>
-
                     <div class="min-w-0">
                         <div class="ui-page-title-with-icon">
                             <div class="ui-page-title-icon">
@@ -91,6 +55,42 @@
                                     <p>{{ $paragraph }}</p>
                                 @endif
                             @endforeach
+                        </div>
+
+                        <div class="mt-6 flex justify-end border-t border-gray-200 pt-4 dark:border-gray-800"
+                            x-data="{
+                                shareUrl: @js($shareUrl),
+                                shareTitle: @js($shareTitle),
+                                async shareArticle() {
+                                    if (navigator.share) {
+                                        try {
+                                            await navigator.share({
+                                                title: this.shareTitle,
+                                                text: 'Read this Huddspool news update',
+                                                url: this.shareUrl,
+                                            });
+                                            return;
+                                        } catch (error) {
+                                            if (error?.name === 'AbortError') {
+                                                return;
+                                            }
+                                        }
+                                    }
+
+                                    if (navigator.clipboard?.writeText) {
+                                        await navigator.clipboard.writeText(this.shareUrl);
+                                    }
+                                },
+                            }">
+                            <button type="button"
+                                class="ui-button-secondary gap-2"
+                                x-on:click="shareArticle()"
+                                data-news-share-button>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 8.566-4.283m-8.566 6.469 8.566 4.283m0-10.752a2.25 2.25 0 1 0 2.434.513m-2.434 9.726a2.25 2.25 0 1 0 2.434-.513" />
+                                </svg>
+                                <span>Share article</span>
+                            </button>
                         </div>
                     </div>
                 </div>

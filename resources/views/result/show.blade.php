@@ -106,8 +106,8 @@
                             class="ui-button-secondary gap-2"
                             x-on:click="shareCard()"
                             data-result-share-card-button>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V3.75m0 12.75 4.5-4.5m-4.5 4.5-4.5-4.5M3.75 15v3A2.25 2.25 0 0 0 6 20.25h12A2.25 2.25 0 0 0 20.25 18v-3" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 8.566-4.283m-8.566 6.469 8.566 4.283m0-10.752a2.25 2.25 0 1 0 2.434.513m-2.434 9.726a2.25 2.25 0 1 0 2.434-.513" />
                             </svg>
                             <span>Share result</span>
                         </button>
