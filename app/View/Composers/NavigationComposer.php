@@ -33,7 +33,7 @@ class NavigationComposer
     protected function desktopNavigationRulesets(Request $request): Collection
     {
         $currentRuleset = $request->route('ruleset');
-        $isRulesetRoute = $request->routeIs('ruleset.show', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
+        $isRulesetRoute = $request->routeIs('ruleset.show', 'ruleset.rules', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
 
         return $this->provider()
             ->navigationRulesets()

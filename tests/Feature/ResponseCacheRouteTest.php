@@ -21,6 +21,7 @@ class ResponseCacheRouteTest extends TestCase
     {
         return [
             'ruleset.show' => ['ruleset.show'],
+            'ruleset.rules' => ['ruleset.rules'],
             'fixture.show' => ['fixture.show'],
             'fixture.download' => ['fixture.download'],
             'result.show' => ['result.show'],

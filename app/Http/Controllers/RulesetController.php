@@ -40,7 +40,20 @@ class RulesetController extends Controller
             ));
         }
 
+        $ruleset->loadMissing([
+            'openSections' => fn ($query) => $query->with('season'),
+        ]);
+
         return view('ruleset.show', [
+            'title' => $ruleset->name,
+            'ruleset' => $ruleset,
+            'sections' => $ruleset->openSections,
+        ]);
+    }
+
+    public function rules(Ruleset $ruleset): View
+    {
+        return view('ruleset.rules', [
             'title' => $ruleset->name,
             'ruleset' => $ruleset,
         ]);

@@ -43,6 +43,7 @@ Route::get('/search', SiteSearchController::class)->name('search.index');
 Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
     Route::prefix('rulesets')->group(function () {
         Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
+        Route::get('/{ruleset}/rules', [RulesetController::class, 'rules'])->name('ruleset.rules');
         Route::get('/{ruleset}/{section}', [RulesetController::class, 'section'])->name('ruleset.section.show');
     });
 });
