@@ -18,6 +18,10 @@
     <div class="ui-page-shell bg-neutral-100 dark:bg-neutral-950" data-news-show>
         <div class="ui-section" data-section-shared-header>
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
+                <x-ui-breadcrumb class="mb-3" :items="[
+                    ['label' => 'News', 'url' => route('news.index')],
+                    ['label' => $newsArticle->title, 'current' => true],
+                ]" />
                 <div class="space-y-4">
                     <div class="flex justify-end"
                         x-data="{
@@ -55,11 +59,7 @@
                         </button>
                     </div>
 
-                    <div class="min-w-0 space-y-3">
-                        <x-ui-breadcrumb :items="[
-                            ['label' => 'News', 'url' => route('news.index')],
-                            ['label' => $newsArticle->title, 'current' => true],
-                        ]" />
+                    <div class="min-w-0">
                         <div class="ui-page-title-with-icon">
                             <div class="ui-page-title-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
