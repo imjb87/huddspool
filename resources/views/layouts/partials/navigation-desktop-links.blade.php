@@ -62,7 +62,7 @@
                                 </div>
                             </a>
                         @endforeach
-                        <a href="{{ route('ruleset.show', $navigationRuleset['ruleset']) }}"
+                        <a href="{{ route('ruleset.rules', $navigationRuleset['ruleset']) }}"
                             class="ui-card-row-link">
                             <div class="ui-card-row px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
                                 {{ $navigationRuleset['ruleset']->name }}

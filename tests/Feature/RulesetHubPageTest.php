@@ -21,7 +21,43 @@ class RulesetHubPageTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_ruleset_show_renders_ruleset_content_page(): void
+    public function test_ruleset_show_renders_ruleset_sections_hub(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'name' => 'Summer 2026',
+        ]);
+        $ruleset = Ruleset::factory()->create([
+            'name' => 'International Rules',
+            'slug' => 'international-rules',
+            'content' => '<p>World rules guidance.</p>',
+        ]);
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $response = $this->get(route('ruleset.show', $ruleset));
+
+        $response->assertOk();
+        $response->assertSeeText('International Rules');
+        $response->assertSee('data-ruleset-hub', false);
+        $response->assertSee('ui-page-shell', false);
+        $response->assertSee('data-section-shared-header', false);
+        $response->assertSee('data-ruleset-sections', false);
+        $response->assertSee('data-ruleset-sections-list', false);
+        $response->assertSee('ui-section', false);
+        $response->assertSee('dark:text-gray-100', false);
+        $response->assertSeeText('Current sections');
+        $response->assertSeeText('Premier Division');
+        $response->assertSeeText('Summer 2026');
+        $response->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]).'"', false);
+        $response->assertDontSeeLivewire(RulesetSectionPage::class);
+        $this->assertSame('/rulesets/international-rules', route('ruleset.show', $ruleset, false));
+    }
+
+    public function test_ruleset_rules_route_renders_ruleset_content_page(): void
     {
         $ruleset = Ruleset::factory()->create([
             'name' => 'International Rules',
@@ -29,20 +65,14 @@ class RulesetHubPageTest extends TestCase
             'content' => '<p>World rules guidance.</p>',
         ]);
 
-        $response = $this->get(route('ruleset.show', $ruleset));
+        $response = $this->get(route('ruleset.rules', $ruleset));
 
         $response->assertOk();
-        $response->assertSeeText('International Rules');
         $response->assertSee('data-ruleset-content-page', false);
-        $response->assertSee('ui-page-shell', false);
-        $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-ruleset-content-section', false);
-        $response->assertSee('ui-section', false);
-        $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('dark:prose-invert', false);
-        $response->assertSee('World rules guidance.', false);
-        $response->assertDontSeeLivewire(RulesetSectionPage::class);
-        $this->assertSame('/rulesets/international-rules', route('ruleset.show', $ruleset, false));
+        $response->assertSeeText('World rules guidance.');
+        $this->assertSame('/rulesets/international-rules/rules', route('ruleset.rules', $ruleset, false));
     }
 
     public function test_ruleset_section_route_uses_section_slug(): void
@@ -160,7 +190,7 @@ class RulesetHubPageTest extends TestCase
         $response = $this->get('/rulesets/international-rules/premier-division');
 
         $response->assertOk();
-        $response->assertSeeText($openSeason->name);
+        $response->assertSeeText($ruleset->name);
         $response->assertSeeText($currentSection->name);
     }
 
@@ -256,7 +286,7 @@ class RulesetHubPageTest extends TestCase
         );
     }
 
-    public function test_ruleset_show_renders_empty_state_without_content(): void
+    public function test_ruleset_show_renders_empty_state_without_open_sections(): void
     {
         $ruleset = Ruleset::factory()->create([
             'content' => null,
@@ -266,8 +296,21 @@ class RulesetHubPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('ui-page-shell', false);
-        $response->assertSee('data-ruleset-content-empty', false);
+        $response->assertSee('data-ruleset-sections-empty', false);
         $response->assertSee('ui-section', false);
+        $response->assertSeeText('No open sections are available for this ruleset yet.');
+    }
+
+    public function test_ruleset_rules_route_renders_empty_state_without_content(): void
+    {
+        $ruleset = Ruleset::factory()->create([
+            'content' => null,
+        ]);
+
+        $response = $this->get(route('ruleset.rules', $ruleset));
+
+        $response->assertOk();
+        $response->assertSee('data-ruleset-content-empty', false);
         $response->assertSee('dark:prose-invert', false);
         $response->assertSeeText('No ruleset content has been published yet.');
     }
@@ -360,8 +403,8 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $fixturesResponse->assertSee('data-section-shared-header', false);
         $fixturesResponse->assertSee('data-section-header-icon', false);
+        $fixturesResponse->assertSee(route('ruleset.show', $ruleset), false);
         $fixturesResponse->assertSeeText('Division A');
-        $fixturesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $fixturesResponse->assertSee('data-ruleset-active-panel="fixtures-results"', false);
         $fixturesResponse->assertSee('data-section-tab-skeleton', false);
         $fixturesResponse->assertSee('data-section-tab-skeleton="fixtures-results"', false);
@@ -402,8 +445,8 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $tablesResponse->assertSee('data-section-shared-header', false);
         $tablesResponse->assertSee('data-section-header-icon', false);
+        $tablesResponse->assertSee(route('ruleset.show', $ruleset), false);
         $tablesResponse->assertSeeText('Division A');
-        $tablesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $tablesResponse->assertSee('data-section-tabs', false);
         $tablesResponse->assertSee('data-section-tabs-scroll', false);
         $tablesResponse->assertSee('data-active-section-tab="tables"', false);
@@ -416,8 +459,8 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-tab-skeleton', false);
         $tablesResponse->assertSee('data-section-tab-skeleton="tables"', false);
         $this->assertSame(10, substr_count($tablesResponse->getContent(), 'data-section-tab-skeleton-row="tables"'));
-        $tablesResponse->assertSee('border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75', false);
-        $tablesResponse->assertSee('mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6', false);
+        $tablesResponse->assertSee('ui-tab-strip-shell', false);
+        $tablesResponse->assertSee('ui-tab-strip', false);
         $tablesResponse->assertSee('data-section-tabs-track', false);
         $tablesResponse->assertSee('ui-button-primary', false);
         $tablesResponse->assertSee('ui-button-secondary', false);
@@ -461,8 +504,8 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSeeLivewire(RulesetSectionPage::class);
         $averagesResponse->assertSee('data-section-shared-header', false);
         $averagesResponse->assertSee('data-section-header-icon', false);
+        $averagesResponse->assertSee(route('ruleset.show', $ruleset), false);
         $averagesResponse->assertSeeText('Division A');
-        $averagesResponse->assertSeeText('Standings, fixtures, and averages for this section.');
         $averagesResponse->assertSee('data-ruleset-active-panel="averages"', false);
         $averagesResponse->assertSee('ui-page-shell', false);
         $averagesResponse->assertSee('data-section-tab-skeleton', false);

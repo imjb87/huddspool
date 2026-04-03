@@ -55,7 +55,11 @@
                         </button>
                     </div>
 
-                    <div class="min-w-0">
+                    <div class="min-w-0 space-y-3">
+                        <x-ui-breadcrumb :items="[
+                            ['label' => 'News', 'url' => route('news.index')],
+                            ['label' => $newsArticle->title, 'current' => true],
+                        ]" />
                         <div class="ui-page-title-with-icon">
                             <div class="ui-page-title-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
@@ -63,8 +67,7 @@
                                 </svg>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-xs text-gray-500 dark:text-gray-400">News</p>
-                                <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $newsArticle->title }}</h1>
+                                <h1 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $newsArticle->title }}</h1>
                             </div>
                         </div>
                     </div>
@@ -93,13 +96,6 @@
                 </div>
             </section>
 
-            <section class="ui-section mt-4">
-                <div class="flex justify-end">
-                    <a href="{{ route('news.index') }}" class="ui-button-secondary">
-                        Back to all news
-                    </a>
-                </div>
-            </section>
         </div>
 
         <x-logo-clouds />

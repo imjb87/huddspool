@@ -164,7 +164,7 @@
   }
 
   .ui-page-title-with-icon {
-    @apply flex items-start gap-4;
+    @apply flex items-center gap-4;
   }
 
   .ui-page-title-icon {

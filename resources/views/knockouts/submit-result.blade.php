@@ -8,15 +8,21 @@
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
                 <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
                     <div class="min-w-0 lg:col-span-2">
-                        <div class="ui-page-title-with-icon">
-                            <div class="ui-page-title-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M9 5.25H7.5A2.25 2.25 0 0 0 5.25 7.5v9A2.25 2.25 0 0 0 7.5 18.75h9A2.25 2.25 0 0 0 18.75 16.5v-9A2.25 2.25 0 0 0 16.5 5.25H15m-6 0V3.75A.75.75 0 0 1 9.75 3h4.5a.75.75 0 0 1 .75.75v1.5m-6 0h6" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Submit knockout result</p>
-                                <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $match->round?->knockout?->name ?? 'Unassigned knockout' }}</h1>
+                        <div class="min-w-0 space-y-3">
+                            <x-ui-breadcrumb :items="[
+                                ['label' => 'Knockouts', 'url' => route('knockout.index')],
+                                ['label' => $match->round?->knockout?->name ?? 'Unassigned knockout', 'url' => $match->round?->knockout ? route('knockout.show', $match->round->knockout) : null],
+                                ['label' => 'Submit result', 'current' => true],
+                            ]" />
+                            <div class="ui-page-title-with-icon">
+                                <div class="ui-page-title-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M9 5.25H7.5A2.25 2.25 0 0 0 5.25 7.5v9A2.25 2.25 0 0 0 7.5 18.75h9A2.25 2.25 0 0 0 18.75 16.5v-9A2.25 2.25 0 0 0 16.5 5.25H15m-6 0V3.75A.75.75 0 0 1 9.75 3h4.5a.75.75 0 0 1 .75.75v1.5m-6 0h6" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <h1 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $match->round?->knockout?->name ?? 'Unassigned knockout' }}</h1>
+                                </div>
                             </div>
                         </div>
                     </div>
