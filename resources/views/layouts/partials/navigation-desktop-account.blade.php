@@ -74,6 +74,17 @@
                                 <span class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{{ auth()->user()->name }}</span>
                             </div>
                         </a>
+                        <a href="{{ route('page.show', 'handbook') }}"
+                            class="ui-card-row-link">
+                            <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 3.75 12c0 1.574.408 3.052 1.125 4.334m14.25-8.668A8.967 8.967 0 0 1 20.25 12c0 1.574-.408 3.052-1.125 4.334m-14.25 0A8.966 8.966 0 0 0 12 20.958c2.933 0 5.536-1.408 7.125-3.624m-14.25 0h14.25M12 3v17.25" />
+                                    </svg>
+                                </span>
+                                <span>Handbook</span>
+                            </div>
+                        </a>
                         <button type="button"
                             class="ui-card-row w-full cursor-pointer justify-start gap-3 px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:px-5"
                             x-cloak x-show="canInstallApp"
@@ -193,6 +204,16 @@
                                     </svg>
                                 </span>
                                 <span>Log in</span>
+                            </div>
+                        </a>
+                        <a href="{{ route('page.show', 'handbook') }}" class="ui-card-row-link">
+                            <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 3.75 12c0 1.574.408 3.052 1.125 4.334m14.25-8.668A8.967 8.967 0 0 1 20.25 12c0 1.574-.408 3.052-1.125 4.334m-14.25 0A8.966 8.966 0 0 0 12 20.958c2.933 0 5.536-1.408 7.125-3.624m-14.25 0h14.25M12 3v17.25" />
+                                    </svg>
+                                </span>
+                                <span>Handbook</span>
                             </div>
                         </a>
                         <button type="button"

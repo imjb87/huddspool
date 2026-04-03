@@ -78,6 +78,12 @@
                         <path fill-rule="evenodd" d="M7.22 4.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 11-1.06-1.06L10.94 10 7.22 6.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
                     </svg>
                 </button>
+                <a href="{{ route('news.index') }}"
+                    class="ui-card-row-link">
+                    <div class="ui-card-row px-4 text-base font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:px-5">
+                        News
+                    </div>
+                </a>
                 <a href="{{ route('page.show', 'handbook') }}"
                     class="ui-card-row-link">
                     <div class="ui-card-row px-4 text-base font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:px-5">

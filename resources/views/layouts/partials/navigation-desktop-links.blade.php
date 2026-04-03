@@ -151,8 +151,8 @@
         class="text-sm font-semibold leading-6 transition {{ $historyNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-neutral-900 hover:text-green-700 dark:text-neutral-100 dark:hover:text-green-500' }}">
         History
     </a>
-    <a href="{{ route('page.show', 'handbook') }}"
-        class="text-sm font-semibold leading-6 transition {{ $handbookNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-neutral-900 hover:text-green-700 dark:text-neutral-100 dark:hover:text-green-500' }}">
-        Handbook
+    <a href="{{ route('news.index') }}"
+        class="text-sm font-semibold leading-6 transition {{ request()->routeIs('news.index', 'news.show') ? 'text-green-700 dark:text-green-500' : 'text-neutral-900 hover:text-green-700 dark:text-neutral-100 dark:hover:text-green-500' }}">
+        News
     </a>
 </div>
