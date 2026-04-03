@@ -202,7 +202,8 @@ class User extends Authenticatable implements FilamentUser
 
     public function isTeamAdmin(): bool
     {
-        return $this->hasRole(RoleName::TeamAdmin->value);
+        return $this->hasRole(RoleName::TeamAdmin->value)
+            || $this->hasRole(RoleName::Admin->value);
     }
 
     public function isAdmin(): bool

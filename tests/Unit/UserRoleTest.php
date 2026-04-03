@@ -39,7 +39,7 @@ class UserRoleTest extends TestCase
         $teamAdmin->setRelation('team', new Team(['captain_id' => 99]));
         $player->setRelation('team', new Team(['captain_id' => 99]));
 
-        $this->assertFalse($teamAdmin->isTeamAdmin());
+        $this->assertTrue($teamAdmin->isTeamAdmin());
         $this->assertTrue($teamAdmin->isAdmin());
         $this->assertTrue($teamAdmin->hasRole(RoleName::Admin->value));
         $this->assertSame('Admin', $teamAdmin->roleLabel());

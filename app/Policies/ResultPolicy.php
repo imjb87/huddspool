@@ -10,6 +10,10 @@ class ResultPolicy
 {
     public function resumeSubmission(User $user, Result $result): bool
     {
+        if ($user->isAdmin()) {
+            return $user->can(PermissionName::SubmitLeagueResults->value);
+        }
+
         $teamId = $user->team?->id;
 
         if ($teamId === null) {

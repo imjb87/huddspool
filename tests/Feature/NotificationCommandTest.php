@@ -104,6 +104,7 @@ class NotificationCommandTest extends TestCase
     public function test_outstanding_fixture_command_only_notifies_team_admins_and_deduplicates_reruns(): void
     {
         Carbon::setTestNow('2026-04-03 12:00:00');
+        Notification::fake();
 
         [
             'fixture' => $fixture,

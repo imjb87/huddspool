@@ -138,6 +138,21 @@ class ResultAuthorizationTest extends TestCase
             ->assertSeeLivewire(ResultForm::class);
     }
 
+    public function test_site_admin_not_on_fixture_team_can_open_result_create_route(): void
+    {
+        ['fixture' => $fixture] = $this->createResultFixtureContext(now()->subDay());
+
+        $siteAdmin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $siteAdmin->assignRole('admin');
+
+        $this->actingAs($siteAdmin)
+            ->get(route('result.create', $fixture))
+            ->assertOk()
+            ->assertSeeLivewire(ResultForm::class);
+    }
+
     public function test_site_admin_on_fixture_team_does_not_see_a_public_result_submission_link(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());

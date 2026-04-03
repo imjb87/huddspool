@@ -296,6 +296,35 @@ class HomePageTest extends TestCase
             ->assertDontSee('href="'.route('result.show', $result).'"', false);
     }
 
+    public function test_home_page_links_site_admin_not_on_fixture_team_to_resume_in_progress_match(): void
+    {
+        $data = $this->createLiveScoreFixtureData();
+
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $admin->assignRole('admin');
+
+        $result = Result::factory()->create([
+            'fixture_id' => $data['fixture']->id,
+            'home_team_id' => $data['homeTeam']->id,
+            'home_team_name' => $data['homeTeam']->name,
+            'away_team_id' => $data['awayTeam']->id,
+            'away_team_name' => $data['awayTeam']->name,
+            'home_score' => 3,
+            'away_score' => 2,
+            'is_confirmed' => false,
+            'section_id' => $data['section']->id,
+            'ruleset_id' => $data['ruleset']->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('result.create', $data['fixture']).'"', false)
+            ->assertDontSee('href="'.route('result.show', $result).'"', false);
+    }
+
     public function test_home_page_live_scores_list_keeps_all_in_progress_results_in_a_scrollable_five_row_container(): void
     {
         $season = Season::factory()->create(['is_open' => true]);

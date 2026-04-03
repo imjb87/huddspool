@@ -14,11 +14,19 @@ class FixturePolicy
             return false;
         }
 
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         return $this->isOnFixtureTeam($user, $fixture);
     }
 
     public function submitResult(User $user, Fixture $fixture): bool
     {
+        if ($user->isAdmin()) {
+            return $user->can(PermissionName::SubmitLeagueResults->value);
+        }
+
         if (! $this->isOnFixtureTeam($user, $fixture)) {
             return false;
         }
