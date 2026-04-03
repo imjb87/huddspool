@@ -10,8 +10,10 @@ use App\Models\News;
 use App\Models\Season;
 use App\Models\User;
 use App\Models\Venue;
+use App\Notifications\NewsPublishedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class DeeperModelSideEffectsTest extends TestCase
@@ -127,5 +129,38 @@ class DeeperModelSideEffectsTest extends TestCase
 
         $this->assertSame('league-update', $firstArticle->slug);
         $this->assertSame('league-update-1', $secondArticle->slug);
+    }
+
+    public function test_publishing_news_notifies_login_capable_users(): void
+    {
+        Notification::fake();
+
+        $author = User::factory()->create();
+        $recipient = User::factory()->create();
+        $deletedRecipient = User::factory()->create([
+            'deleted_at' => now(),
+        ]);
+        $noEmailRecipient = User::factory()->create([
+            'email' => null,
+        ]);
+
+        $this->actingAs($author);
+
+        $article = News::create([
+            'title' => 'League update',
+            'content' => 'Fixtures confirmed for next week.',
+            'published_at' => null,
+        ]);
+
+        Notification::assertNothingSent();
+
+        $article->update([
+            'published_at' => now(),
+        ]);
+
+        Notification::assertSentTo($recipient, NewsPublishedNotification::class);
+        Notification::assertSentTo($author, NewsPublishedNotification::class);
+        Notification::assertNotSentTo($deletedRecipient, NewsPublishedNotification::class);
+        Notification::assertNotSentTo($noEmailRecipient, NewsPublishedNotification::class);
     }
 }

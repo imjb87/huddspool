@@ -134,12 +134,13 @@ class SitemapBuilder
         $sitemap->add($this->makeUrl(route('news.index', absolute: false)));
 
         News::query()
+            ->published()
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->orderByDesc('id')
+            ->orderByDesc('published_at')
             ->get()
             ->each(function (News $article) use ($sitemap): void {
-                $sitemap->add($this->makeModelUrl(route('news.show', $article, false), $article));
+                $sitemap->add($this->makeModelUrl(route('news.show', $article, false), $article, $article->published_at));
             });
     }
 

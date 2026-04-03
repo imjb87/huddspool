@@ -14,7 +14,8 @@ class NewsListing extends Component
     public function news(): Collection
     {
         return News::query()
-            ->orderByDesc('created_at')
+            ->published()
+            ->orderByDesc('published_at')
             ->take(3)
             ->get();
     }

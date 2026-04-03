@@ -88,8 +88,9 @@ class HomeController extends Controller
     private function news(): Collection
     {
         return News::query()
+            ->published()
             ->with('author:id,name')
-            ->latest()
+            ->latest('published_at')
             ->limit(3)
             ->get();
     }

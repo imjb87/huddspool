@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NewsController extends Controller
 {
@@ -18,6 +19,10 @@ class NewsController extends Controller
 
     public function show(News $news): View
     {
+        if (! $news->isPublished()) {
+            throw new NotFoundHttpException;
+        }
+
         return view('news.show', [
             'title' => $news->title,
             'newsArticle' => $news->load('author:id,name'),
@@ -27,8 +32,9 @@ class NewsController extends Controller
     private function news(): Collection
     {
         return News::query()
+            ->published()
             ->with('author:id,name')
-            ->latest()
+            ->latest('published_at')
             ->get();
     }
 }

@@ -104,6 +104,18 @@ class NotificationAudienceResolver
     /**
      * @return Collection<int, User>
      */
+    public function usersForPublishedNews(): Collection
+    {
+        return User::query()
+            ->whereNull('deleted_at')
+            ->whereNotNull('email')
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
     public function playersForTeam(Team $team): Collection
     {
         $players = $team->relationLoaded('players') ? $team->players : $team->players()->get();

@@ -2,17 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\NewsResource\Pages;
-use App\Filament\Resources\NewsResource\RelationManagers;
 use App\Models\News;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NewsResource extends Resource
 {
@@ -26,14 +24,45 @@ class NewsResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
+                Section::make('Information')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->label('Title')
                             ->required()
                             ->placeholder('News title')
+                            ->columnSpanFull(),
+                        Forms\Components\Hidden::make('published_at'),
+                        Forms\Components\ToggleButtons::make('publication_status')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'published' => 'Published',
+                            ])
+                            ->inline()
+                            ->live()
+                            ->default('draft')
+                            ->dehydrated(false)
+                            ->afterStateHydrated(function (Forms\Components\ToggleButtons $component, ?News $record, callable $set): void {
+                                if ($record?->published_at) {
+                                    $set('published_at', $record->published_at->toDateTimeString());
+                                    $component->state('published');
+
+                                    return;
+                                }
+
+                                $component->state('draft');
+                            })
+                            ->afterStateUpdated(function (?string $state, callable $get, callable $set): void {
+                                if ($state === 'published') {
+                                    $set('published_at', $get('published_at') ?: now()->toDateTimeString());
+
+                                    return;
+                                }
+
+                                $set('published_at', null);
+                            })
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('content')
                             ->rows(10)
@@ -51,6 +80,12 @@ class NewsResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('published_at')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => filled($state) ? 'Published' : 'Draft')
+                    ->color(fn (?string $state): string => filled($state) ? 'success' : 'gray')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->date()

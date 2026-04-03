@@ -356,6 +356,7 @@ class HomePageTest extends TestCase
                 'title' => 'Captains meeting',
                 'slug' => 'captains-meeting',
                 'content' => "Captains should arrive for 7:15pm.\nImportant league notices will be covered before the break.",
+                'published_at' => now()->subDay(),
                 'author_id' => $author->id,
             ]);
 
@@ -363,6 +364,15 @@ class HomePageTest extends TestCase
                 'title' => 'Fixture dates updated',
                 'slug' => 'fixture-dates-updated',
                 'content' => 'Several fixture dates have changed following venue availability updates.',
+                'published_at' => now(),
+                'author_id' => $author->id,
+            ]);
+
+            News::query()->create([
+                'title' => 'Draft article',
+                'slug' => 'draft-article',
+                'content' => 'This draft should stay hidden from the homepage.',
+                'published_at' => null,
                 'author_id' => $author->id,
             ]);
         });
@@ -377,8 +387,9 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-news-item', false);
         $response->assertSeeText('Fixture dates updated');
         $response->assertSeeText('Captains meeting');
+        $response->assertDontSeeText('Draft article');
         $response->assertSeeText($expectedDate);
-        $response->assertSee(route('news.show', News::query()->latest()->first()), false);
+        $response->assertSee(route('news.show', News::query()->published()->latest('published_at')->firstOrFail()), false);
         $response->assertSee('See more');
         $response->assertSee(route('news.index'), false);
         $response->assertDontSee('data-home-news-empty', false);
@@ -426,6 +437,7 @@ class HomePageTest extends TestCase
         News::query()->create([
             'title' => 'League handbook update',
             'content' => 'The latest handbook revision is now available for all captains and players.',
+            'published_at' => now(),
         ]);
 
         $this->get(route('home'))
