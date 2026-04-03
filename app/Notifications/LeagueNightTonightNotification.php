@@ -33,20 +33,10 @@ class LeagueNightTonightNotification extends Notification implements ShouldQueue
             'awayTeam',
         ]);
 
-        $isTeamAdmin = method_exists($notifiable, 'isTeamAdmin') && $notifiable->isTeamAdmin();
-
-        $title = '🎱 League night is tonight';
-        $body = $isTeamAdmin
-            ? 'It\'s match night. Prepare your team ahead of time, pick your players, and get ready to submit the result.'
-            : 'Get ready for match night. View your fixture, check your opponents, and make sure you\'re set for tonight.';
-        $actionUrl = $isTeamAdmin
-            ? route('result.create', $this->fixture)
-            : route('fixture.show', $this->fixture);
-
         return [
-            'title' => $title,
-            'body' => $body,
-            'action_url' => $actionUrl,
+            'title' => '🎱 League night is tonight',
+            'body' => 'Get ready for match night. View your fixture, check your opponents, and make sure you\'re set for tonight.',
+            'action_url' => route('fixture.show', $this->fixture),
             'fixture_id' => $this->fixture->id,
             'fixture_date' => $this->fixture->fixture_date?->toDateString(),
             'dedupe_key' => sprintf(

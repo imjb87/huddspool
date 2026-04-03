@@ -58,21 +58,10 @@ class NotificationCommandTest extends TestCase
         Notification::assertNotSentTo($futureContext['homeAdmin'], LeagueNightTonightNotification::class);
         Notification::assertNotSentTo($futureContext['awayPlayer'], LeagueNightTonightNotification::class);
         Notification::assertSentTo(
-            $homeAdmin,
+            [$homeAdmin, $homePlayer],
             LeagueNightTonightNotification::class,
             function (LeagueNightTonightNotification $notification) use ($fixture, $homeAdmin): bool {
                 $payload = $notification->toArray($homeAdmin);
-
-                return $notification->fixture->is($fixture)
-                    && $payload['action_url'] === route('result.create', $fixture)
-                    && $payload['body'] === 'It\'s match night. Prepare your team ahead of time, pick your players, and get ready to submit the result.';
-            }
-        );
-        Notification::assertSentTo(
-            $homePlayer,
-            LeagueNightTonightNotification::class,
-            function (LeagueNightTonightNotification $notification) use ($fixture, $homePlayer): bool {
-                $payload = $notification->toArray($homePlayer);
 
                 return $notification->fixture->is($fixture)
                     && $payload['action_url'] === route('fixture.show', $fixture)
