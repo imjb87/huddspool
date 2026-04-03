@@ -21,11 +21,11 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class AccountPageTest extends TestCase
@@ -36,6 +36,123 @@ class AccountPageTest extends TestCase
     {
         $this->get(route('account.show'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_account_page_displays_an_unread_notification_badge_in_the_navigation(): void
+    {
+        $user = User::factory()->create();
+        $result = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSee('data-mobile-notifications-toggle', false)
+            ->assertSee('Open notifications menu', false)
+            ->assertSee('data-mobile-notifications-drawer', false)
+            ->assertSee('data-mobile-notifications-links', false);
+    }
+
+    public function test_opening_a_notification_marks_it_as_read_and_redirects_to_its_target(): void
+    {
+        $user = User::factory()->create();
+        $result = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
+
+        $notification = $user->notifications()->firstOrFail();
+
+        $this->actingAs($user)
+            ->get(route('account.notifications.open', $notification->id))
+            ->assertRedirect(route('result.show', $result));
+
+        $this->assertNotNull($notification->fresh()->read_at);
+    }
+
+    public function test_user_can_mark_all_notifications_as_read(): void
+    {
+        $user = User::factory()->create();
+        $firstResult = Result::factory()->create();
+        $secondResult = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($firstResult));
+        $user->notify(new LeagueResultSubmittedNotification($secondResult));
+
+        $this->actingAs($user)
+            ->from(route('account.show'))
+            ->post(route('account.notifications.read-all'))
+            ->assertRedirect(route('account.show'));
+
+        $this->assertSame(0, $user->fresh()->unreadNotifications()->count());
+    }
+
+    public function test_notifications_summary_endpoint_returns_latest_notifications_and_unread_count(): void
+    {
+        $user = User::factory()->create();
+        $firstResult = Result::factory()->create();
+        $secondResult = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($firstResult));
+        $user->notify(new LeagueResultSubmittedNotification($secondResult));
+
+        $this->actingAs($user)
+            ->getJson(route('account.notifications.summary'))
+            ->assertOk()
+            ->assertJsonPath('unread_count', 2)
+            ->assertJsonCount(2, 'notifications')
+            ->assertJsonPath('notifications.0.open_url', route('account.notifications.open', $user->notifications()->latest()->firstOrFail()->id));
+    }
+
+    public function test_user_can_mark_a_single_notification_as_read(): void
+    {
+        $user = User::factory()->create();
+        $result = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
+
+        $notification = $user->notifications()->firstOrFail();
+
+        $this->actingAs($user)
+            ->from(route('account.show'))
+            ->post(route('account.notifications.read', $notification->id))
+            ->assertRedirect(route('account.show'));
+
+        $this->assertNotNull($notification->fresh()->read_at);
+    }
+
+    public function test_user_can_mark_all_notifications_as_read_with_json_response(): void
+    {
+        $user = User::factory()->create();
+        $firstResult = Result::factory()->create();
+        $secondResult = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($firstResult));
+        $user->notify(new LeagueResultSubmittedNotification($secondResult));
+
+        $this->actingAs($user)
+            ->postJson(route('account.notifications.read-all'))
+            ->assertOk()
+            ->assertJsonPath('unread_count', 0);
+
+        $this->assertSame(0, $user->fresh()->unreadNotifications()->count());
+    }
+
+    public function test_user_can_mark_a_single_notification_as_read_with_json_response(): void
+    {
+        $user = User::factory()->create();
+        $result = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
+
+        $notification = $user->notifications()->firstOrFail();
+
+        $this->actingAs($user)
+            ->postJson(route('account.notifications.read', $notification->id))
+            ->assertOk()
+            ->assertJsonPath('unread_count', 0);
+
+        $this->assertNotNull($notification->fresh()->read_at);
     }
 
     public function test_authenticated_user_can_view_account_page(): void
@@ -51,6 +168,8 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-profile-section', false)
             ->assertSee('ui-page-shell', false)
             ->assertSee('ui-button-primary', false)
+            ->assertSee('ui-tab-strip-shell', false)
+            ->assertSee('ui-tab-strip', false)
             ->assertSee('ui-card', false)
             ->assertSee('dark:bg-neutral-950', false)
             ->assertSee('dark:border-neutral-800', false)
@@ -59,7 +178,100 @@ class AccountPageTest extends TestCase
             ->assertSee('dark:text-gray-100', false)
             ->assertSee('href="'.route('player.show', $user).'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
+            ->assertDontSee('href="/account/notifications"', false)
             ->assertSeeText('Email address');
+    }
+
+    public function test_account_page_displays_push_notification_settings_in_profile_section(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSee('data-account-profile-section', false)
+            ->assertSee('data-account-push-settings', false)
+            ->assertSee('role="switch"', false)
+            ->assertSeeText('Push notifications');
+    }
+
+    public function test_account_page_includes_the_one_time_native_push_prompt_for_users_who_have_not_been_asked(): void
+    {
+        config()->set('services.web_push.public_key', 'public-key');
+        config()->set('services.web_push.private_key', 'private-key');
+        config()->set('services.web_push.subject', 'mailto:notifications@example.com');
+
+        $user = User::factory()->create([
+            'push_prompted_at' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSee('data-auto-push-permission-prompt', false);
+    }
+
+    public function test_account_page_does_not_include_the_one_time_native_push_prompt_after_the_user_has_been_asked(): void
+    {
+        config()->set('services.web_push.public_key', 'public-key');
+        config()->set('services.web_push.private_key', 'private-key');
+        config()->set('services.web_push.subject', 'mailto:notifications@example.com');
+
+        $user = User::factory()->create([
+            'push_prompted_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSee('data-auto-push-permission-prompt', false);
+    }
+
+    public function test_account_page_does_not_include_the_one_time_native_push_prompt_for_users_with_push_enabled(): void
+    {
+        config()->set('services.web_push.public_key', 'public-key');
+        config()->set('services.web_push.private_key', 'private-key');
+        config()->set('services.web_push.subject', 'mailto:notifications@example.com');
+
+        $user = User::factory()->create([
+            'push_prompted_at' => null,
+        ]);
+
+        $user->pushSubscriptions()->create([
+            'endpoint' => 'https://example.com/push/123',
+            'public_key' => 'public-key',
+            'auth_token' => 'auth-token',
+            'content_encoding' => 'aes128gcm',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSee('data-auto-push-permission-prompt', false);
+    }
+
+    public function test_account_page_does_not_render_a_notifications_tab(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSee('href="/account/notifications"', false);
+    }
+
+    public function test_team_account_page_does_not_render_a_notifications_tab(): void
+    {
+        $team = Team::factory()->create();
+        $user = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.team'))
+            ->assertOk()
+            ->assertDontSee('href="/account/notifications"', false);
     }
 
     public function test_user_can_upload_and_delete_avatar_from_account_page(): void
@@ -131,7 +343,7 @@ class AccountPageTest extends TestCase
             ->assertDontSee('data-account-team-section', false);
     }
 
-    public function test_team_admin_sees_result_submission_prompt_on_account_page_when_fixture_is_due(): void
+    public function test_team_admin_does_not_see_result_submission_prompt_on_account_page_when_fixture_is_due(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -158,13 +370,12 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-account-result-submission-prompt', false)
-            ->assertSeeText($team->name.' vs '.$opponentTeam->name)
-            ->assertSee(route('result.create', $fixture), false)
-            ->assertDontSee('bg-linear-to-br from-red-700 via-red-600 to-red-500', false);
+            ->assertDontSee('data-account-result-submission-prompt', false)
+            ->assertDontSeeText($team->name.' vs '.$opponentTeam->name)
+            ->assertDontSee(route('result.create', $fixture), false);
     }
 
-    public function test_team_admin_prompt_accounts_for_multiple_outstanding_results(): void
+    public function test_team_admin_does_not_see_result_submission_prompt_for_multiple_outstanding_results(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -201,14 +412,15 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSeeText('League matches')
-            ->assertSeeText('Home vs First Opponent')
-            ->assertSeeText('Second Opponent vs Home')
-            ->assertSee(route('result.create', $firstFixture), false)
-            ->assertSee(route('result.create', $secondFixture), false);
+            ->assertDontSee('data-account-result-submission-prompt', false)
+            ->assertDontSeeText('League matches')
+            ->assertDontSeeText('Home vs First Opponent')
+            ->assertDontSeeText('Second Opponent vs Home')
+            ->assertDontSee(route('result.create', $firstFixture), false)
+            ->assertDontSee(route('result.create', $secondFixture), false);
     }
 
-    public function test_account_prompt_lists_submit_eligible_singles_and_doubles_knockouts(): void
+    public function test_account_page_does_not_render_due_knockout_result_prompt_for_players(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $user = User::factory()->create(['role' => UserRole::Player->value]);
@@ -284,16 +496,11 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-account-result-submission-prompt', false)
-            ->assertSeeText('2 knockout results are ready to submit.')
-            ->assertSeeText('Knockouts')
-            ->assertSeeText('Singles Cup / Quarter-finals')
-            ->assertSeeText('Doubles Shield / Round 1')
-            ->assertSee(route('knockout.matches.submit', $singlesMatch), false)
-            ->assertSee(route('knockout.matches.submit', $doublesMatch), false);
+            ->assertDontSee('data-account-result-submission-prompt', false)
+            ->assertDontSeeText('2 knockout results are ready to submit.');
     }
 
-    public function test_account_prompt_does_not_list_knockouts_before_they_are_due(): void
+    public function test_account_page_still_does_not_render_a_result_prompt_before_knockouts_are_due(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $user = User::factory()->create(['role' => UserRole::Player->value]);
@@ -338,7 +545,7 @@ class AccountPageTest extends TestCase
             ->assertSee(route('knockout.matches.submit', $futureMatch), false);
     }
 
-    public function test_account_prompt_lists_knockout_results_beneath_league_matches(): void
+    public function test_account_page_does_not_render_combined_league_and_knockout_result_prompt(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -399,13 +606,12 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSeeText('1 team result and 1 knockout result are ready to submit.')
-            ->assertSeeText('League matches')
-            ->assertSeeText('Knockouts')
-            ->assertSeeText('Home vs Opposition')
-            ->assertSeeText('Team KO / Semi-finals')
-            ->assertSee(route('result.create', $fixture), false)
-            ->assertSee(route('knockout.matches.submit', $teamMatch), false);
+            ->assertDontSee('data-account-result-submission-prompt', false)
+            ->assertDontSeeText('1 team result and 1 knockout result are ready to submit.')
+            ->assertDontSeeText('Home vs Opposition')
+            ->assertDontSeeText('Team KO / Semi-finals')
+            ->assertDontSee(route('result.create', $fixture), false)
+            ->assertDontSee(route('knockout.matches.submit', $teamMatch), false);
     }
 
     public function test_admin_is_not_prompted_for_unrelated_knockout_results_on_account_page(): void

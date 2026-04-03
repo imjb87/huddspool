@@ -20,3 +20,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('sitemap:generate')->daily();
+Schedule::command('app:purge-old-notifications')->dailyAt('01:00');
+Schedule::command('app:send-league-night-tonight-notifications')->dailyAt('12:00');
+Schedule::command('app:send-knockout-match-reminder-notifications')->dailyAt('12:00');
+Schedule::command('app:send-match-night-started-notifications')->dailyAt('20:00');
+Schedule::command('app:send-outstanding-fixture-notifications')->dailyAt('12:00');
+Schedule::command('app:send-outstanding-knockout-notifications')->dailyAt('12:00');

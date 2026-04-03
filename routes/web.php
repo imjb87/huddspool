@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AccountNotificationController;
 use App\Http\Controllers\DesignSystemController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\KnockoutMatchController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RulesetController;
 use App\Http\Controllers\SeasonEntryController;
 use App\Http\Controllers\SiteSearchController;
@@ -80,6 +82,13 @@ Route::get('/manifest.json', [LaravelPWAController::class, 'manifestJson'])->nam
 Route::get('/offline', [LaravelPWAController::class, 'offline'])->name('laravelpwa.offline');
 Route::middleware('auth')->group(function () {
     Route::view('/account', 'account.show')->name('account.show');
+    Route::get('/account/notifications/summary', [AccountNotificationController::class, 'summary'])->name('account.notifications.summary');
+    Route::post('/account/notifications/read-all', [AccountNotificationController::class, 'markAllAsRead'])->name('account.notifications.read-all');
+    Route::post('/account/notifications/{notification}/read', [AccountNotificationController::class, 'markAsRead'])->name('account.notifications.read');
+    Route::get('/account/notifications/{notification}/open', [AccountNotificationController::class, 'open'])->name('account.notifications.open');
+    Route::post('/account/push-permission/acknowledge', [PushSubscriptionController::class, 'acknowledge'])->name('account.push-permission.acknowledge');
+    Route::post('/account/push-subscriptions', [PushSubscriptionController::class, 'store'])->name('account.push-subscriptions.store');
+    Route::delete('/account/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('account.push-subscriptions.destroy');
     Route::view('/account/team', 'account.team')->name('account.team');
     Route::get('/design-system', DesignSystemController::class)->name('design-system.index');
     Route::get('/stop-impersonating', function () {

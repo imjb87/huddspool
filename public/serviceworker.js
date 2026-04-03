@@ -96,3 +96,47 @@ self.addEventListener("fetch", (event) => {
         }),
     );
 });
+
+self.addEventListener("push", (event) => {
+    const payload = (() => {
+        try {
+            return event.data ? event.data.json() : {};
+        } catch (_error) {
+            return {};
+        }
+    })();
+
+    event.waitUntil(
+        self.registration.showNotification(payload.title || "HuddsPool notification", {
+            body: payload.body || "",
+            icon: payload.icon || "/images/icons/icon-192-192.png",
+            badge: payload.badge || "/images/icons/icon-96-96.png",
+            data: {
+                url: payload.url || "/account/notifications",
+            },
+            tag: payload.tag || undefined,
+        }),
+    );
+});
+
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+
+    const targetUrl = event.notification.data?.url || "/account/notifications";
+
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url === targetUrl && "focus" in client) {
+                    return client.focus();
+                }
+            }
+
+            if (clients.openWindow) {
+                return clients.openWindow(targetUrl);
+            }
+
+            return undefined;
+        }),
+    );
+});

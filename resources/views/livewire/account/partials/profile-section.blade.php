@@ -140,6 +140,54 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="mt-5 border-t border-gray-200 pt-5 dark:border-neutral-800/75"
+                            x-data="pushNotificationsPanel({
+                                configured: @js($this->webPushConfigured),
+                                enabled: @js($this->hasPushSubscriptions),
+                                publicKey: @js(config('services.web_push.public_key')),
+                                subscribeUrl: @js(route('account.push-subscriptions.store')),
+                                unsubscribeUrl: @js(route('account.push-subscriptions.destroy')),
+                            })"
+                            x-init="init()"
+                            data-account-push-settings>
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Push notifications</p>
+                                    <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-300" x-show="configured && supported && enabled">
+                                        You will receive live reminders from Huddspool on your device.
+                                    </p>
+                                    <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-300" x-show="configured && supported && !enabled">
+                                        Enable this to receive live reminders on your device.
+                                    </p>
+                                    <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-300" x-show="configured && !supported">
+                                        This browser does not support push notifications.
+                                    </p>
+                                    <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-300" x-show="!configured">
+                                        Push notifications are not configured on the server yet.
+                                    </p>
+                                    <p class="mt-2 text-xs text-red-600 dark:text-red-400" x-show="error" x-text="error"></p>
+                                </div>
+
+                                <div class="flex shrink-0 items-center">
+                                    <button type="button"
+                                        role="switch"
+                                        aria-label="Toggle push notifications"
+                                        x-bind:aria-checked="enabled ? 'true' : 'false'"
+                                        x-bind:disabled="busy || !configured || !supported"
+                                        @click="enabled ? disable() : enable()"
+                                        class="group relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-neutral-900"
+                                        :class="enabled
+                                            ? 'bg-green-700 dark:bg-green-600'
+                                            : 'bg-gray-300 dark:bg-neutral-700'">
+                                        <span class="sr-only">Toggle push notifications</span>
+                                        <span aria-hidden="true"
+                                            class="inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition duration-200 ease-out dark:bg-neutral-100"
+                                            :class="enabled ? 'translate-x-6' : 'translate-x-1'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

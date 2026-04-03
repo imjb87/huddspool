@@ -5,7 +5,9 @@ namespace App\Support;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Result;
 use App\Models\Team;
-use App\Models\User;
+use App\Notifications\LeagueResultSubmittedNotification;
+use App\Support\Notifications\DatabaseNotificationDispatcher;
+use App\Support\Notifications\NotificationAudienceResolver;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -26,21 +28,27 @@ class LeagueResultSubmissionMailer
             'submittedBy.team',
         ]);
 
-        $submittedBy = $result->submittedBy;
+        $audienceResolver = new NotificationAudienceResolver;
+        $dispatcher = new DatabaseNotificationDispatcher;
 
-        if (! $submittedBy instanceof User || blank($submittedBy->email)) {
-            return;
-        }
-
-        $ccRecipients = $this->teamAdminsForFixture($result)
-            ->reject(fn (User $user) => $user->is($submittedBy) || blank($user->email))
+        $mailRecipients = $this->teamAdminsForFixture($result, $audienceResolver)
             ->pluck('email')
+            ->filter(fn (?string $email): bool => filled($email))
             ->unique()
             ->values()
             ->all();
 
-        Mail::to($submittedBy->email)
-            ->cc($ccRecipients)
+        $dispatcher->sendOnce(
+            $audienceResolver->resultSubmissionRecipients($result),
+            new LeagueResultSubmittedNotification($result),
+        );
+
+        if ($mailRecipients === []) {
+            return;
+        }
+
+        Mail::to(array_shift($mailRecipients))
+            ->cc($mailRecipients)
             ->queue(new LeagueResultSubmittedMail($result));
     }
 
@@ -54,28 +62,15 @@ class LeagueResultSubmissionMailer
     /**
      * @return Collection<int, User>
      */
-    private function teamAdminsForFixture(Result $result): Collection
+    private function teamAdminsForFixture(Result $result, NotificationAudienceResolver $audienceResolver): Collection
     {
         return collect([
             $result->fixture?->homeTeam,
             $result->fixture?->awayTeam,
         ])
             ->filter(fn ($team) => $team instanceof Team)
-            ->flatMap(fn (Team $team) => $this->adminsForTeam($team))
+            ->flatMap(fn (Team $team) => $audienceResolver->adminsForTeam($team))
             ->unique(fn (User $user) => $user->getKey())
             ->values();
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    private function adminsForTeam(Team $team): Collection
-    {
-        $players = $team->relationLoaded('players') ? $team->players : $team->players()->get();
-        $captain = $team->relationLoaded('captain') ? $team->captain : $team->captain()->first();
-
-        return $players
-            ->filter(fn (User $user) => $user->isTeamAdmin())
-            ->when($captain instanceof User, fn (Collection $users) => $users->push($captain));
     }
 }

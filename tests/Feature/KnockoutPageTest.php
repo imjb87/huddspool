@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Knockout\Show as KnockoutShow;
 use App\Models\Knockout;
@@ -12,7 +13,9 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Notifications\KnockoutMatchReadyNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -77,6 +80,125 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('Current Cup');
 
         $this->assertSame('/knockouts/shared-knockout', route('knockout.show', $currentKnockout, false));
+    }
+
+    public function test_participants_are_notified_when_a_knockout_round_becomes_visible(): void
+    {
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $knockout = Knockout::create([
+            'season_id' => $season->id,
+            'name' => 'Ready Cup',
+            'type' => KnockoutType::Singles,
+            'best_of' => 5,
+        ]);
+
+        $round = KnockoutRound::create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'scheduled_for' => now()->addWeek(),
+            'is_visible' => false,
+        ]);
+
+        $homePlayer = User::factory()->create(['name' => 'Ready Home']);
+        $awayPlayer = User::factory()->create(['name' => 'Ready Away']);
+
+        $homeParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $homePlayer->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $awayPlayer->id,
+        ]);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 5,
+        ]);
+
+        $round->update(['is_visible' => true]);
+
+        Notification::assertSentTo(
+            [$homePlayer, $awayPlayer],
+            KnockoutMatchReadyNotification::class,
+            function (KnockoutMatchReadyNotification $notification, array $channels) use ($match): bool {
+                return $channels === ['database', 'mail']
+                    && $notification->match->is($match);
+            }
+        );
+    }
+
+    public function test_team_knockout_ready_notification_reaches_everyone_involved_when_a_round_becomes_visible(): void
+    {
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $knockout = Knockout::create([
+            'season_id' => $season->id,
+            'name' => 'Team Cup',
+            'type' => KnockoutType::Team,
+        ]);
+
+        $round = KnockoutRound::create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'scheduled_for' => now()->addWeek(),
+            'is_visible' => false,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $homeAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => UserRole::TeamAdmin->value,
+            'is_admin' => false,
+        ]);
+        $homePlayer = User::factory()->create(['team_id' => $homeTeam->id]);
+        $awayAdmin = User::factory()->create([
+            'team_id' => $awayTeam->id,
+            'role' => UserRole::TeamAdmin->value,
+            'is_admin' => false,
+        ]);
+        $awayPlayer = User::factory()->create(['team_id' => $awayTeam->id]);
+
+        $homeParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'team_id' => $homeTeam->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'team_id' => $awayTeam->id,
+        ]);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+        ]);
+
+        $round->update(['is_visible' => true]);
+
+        Notification::assertSentTo(
+            [$homeAdmin, $homePlayer, $awayAdmin, $awayPlayer],
+            KnockoutMatchReadyNotification::class,
+            function (KnockoutMatchReadyNotification $notification, array $channels) use ($match): bool {
+                return $channels === ['database', 'mail']
+                    && $notification->match->is($match);
+            }
+        );
     }
 
     public function test_historical_knockout_pages_have_canonical_season_scoped_urls(): void

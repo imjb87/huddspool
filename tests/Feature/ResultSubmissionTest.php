@@ -14,6 +14,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +23,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -156,6 +158,7 @@ class ResultSubmissionTest extends TestCase
         Carbon::setTestNow('2026-03-13 19:00:00');
         Event::fake([LeagueResultSubmitted::class]);
         Mail::fake();
+        Notification::fake();
 
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -272,9 +275,32 @@ class ResultSubmissionTest extends TestCase
                 && $mail->hasCc($homeSecondaryAdmin->email)
                 && $mail->hasCc($awayCaptain->email)
                 && $mail->hasCc($awayAdmin->email)
-                && ! $mail->hasCc($teamAdmin->email)
                 && $mail->result->is($result);
         });
+        Notification::assertSentTo(
+            [$teamAdmin, $homeSecondaryAdmin, $awayCaptain, $awayAdmin],
+            LeagueResultSubmittedNotification::class,
+            function (LeagueResultSubmittedNotification $notification, array $channels) use ($result): bool {
+                return $channels === ['database']
+                    && $notification->result->is($result);
+            }
+        );
+        Notification::assertSentTo(
+            $homePlayers,
+            LeagueResultSubmittedNotification::class,
+            function (LeagueResultSubmittedNotification $notification, array $channels) use ($result): bool {
+                return $channels === ['database']
+                    && $notification->result->is($result);
+            }
+        );
+        Notification::assertSentTo(
+            $awayPlayers,
+            LeagueResultSubmittedNotification::class,
+            function (LeagueResultSubmittedNotification $notification, array $channels) use ($result): bool {
+                return $channels === ['database']
+                    && $notification->result->is($result);
+            }
+        );
         Event::assertDispatched(LeagueResultSubmitted::class, function (LeagueResultSubmitted $event) use ($fixture, $result, $teamAdmin) {
             return $event->payload['fixture_id'] === $fixture->id
                 && $event->payload['result_id'] === $result->id

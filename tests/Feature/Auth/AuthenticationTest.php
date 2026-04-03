@@ -298,7 +298,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('account.show'));
     }
 
-    public function test_team_admin_sees_result_submission_shortcut_after_login_when_a_fixture_is_due(): void
+    public function test_team_admin_is_redirected_to_account_page_after_login_when_a_fixture_is_due(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -313,7 +313,7 @@ class AuthenticationTest extends TestCase
             'role' => UserRole::TeamAdmin->value,
         ]);
 
-        $fixture = Fixture::factory()->create([
+        Fixture::factory()->create([
             'season_id' => $season->id,
             'section_id' => $section->id,
             'ruleset_id' => $ruleset->id,
@@ -330,8 +330,8 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticated();
         $response
             ->assertOk()
-            ->assertSeeText('A team result is ready to submit.')
-            ->assertSee(route('result.create', $fixture), false);
+            ->assertDontSee('data-account-result-submission-prompt', false)
+            ->assertSee(route('account.show'), false);
     }
 
     public function test_login_with_remember_me_sets_a_recaller_cookie_and_token(): void

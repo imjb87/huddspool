@@ -48,11 +48,17 @@ abstract class BaseAccountComponent extends Component
     }
 
     #[Computed]
-    public function resultSubmissionPrompt(): ?object
+    public function hasPushSubscriptions(): bool
     {
-        $prompt = $this->resultSubmissionPromptResolver()->promptFor($this->user);
+        return $this->user->pushSubscriptions()->exists();
+    }
 
-        return $prompt ? (object) $prompt : null;
+    #[Computed]
+    public function webPushConfigured(): bool
+    {
+        return filled(config('services.web_push.public_key'))
+            && filled(config('services.web_push.private_key'))
+            && filled(config('services.web_push.subject'));
     }
 
     protected function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver

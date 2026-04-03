@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
@@ -39,6 +40,7 @@ class User extends Authenticatable implements FilamentUser
         'team_id',
         'is_admin',
         'email_verified_at',
+        'push_prompted_at',
         'invitation_token',
     ];
 
@@ -59,6 +61,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'push_prompted_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
 
@@ -105,6 +108,21 @@ class User extends Authenticatable implements FilamentUser
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(PushSubscription::class);
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')->whereNull('deleted_at');
+    }
+
+    public function unreadNotifications(): MorphMany
+    {
+        return $this->notifications()->whereNull('read_at');
     }
 
     public function frames(): HasMany

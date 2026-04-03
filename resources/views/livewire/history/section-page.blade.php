@@ -24,10 +24,10 @@
     <section class="border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75"
         data-section-tabs
         data-active-section-tab="{{ $activeTab }}">
-        <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6"
+        <div class="ui-tab-strip-shell"
             data-section-tabs-scroll
             data-section-tabs-track>
-            <nav class="flex gap-2">
+            <nav class="ui-tab-strip">
                 @foreach ($tabs as $tabKey => $tabLabel)
                     <a href="{{ $this->tabUrl($tabKey) }}"
                         wire:click.prevent="setActiveTab('{{ $tabKey }}')"

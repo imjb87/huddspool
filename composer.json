@@ -21,6 +21,7 @@
         "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^4.0",
+        "minishlink/web-push": "^9.0",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.13",
         "silviolleite/laravelpwa": "^2.0",

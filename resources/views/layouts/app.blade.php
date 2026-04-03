@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-neutral-100 text-gray-900 dark:bg-neutral-950">
 
-@php
-    $usesLivewire = trim($__env->yieldContent('uses-livewire')) === 'true';
-@endphp
-
 <head>
     @php
         $metaDescription = trim($__env->yieldContent('meta_description')) ?: config('app.description');
@@ -75,12 +71,8 @@
     @include('layouts.partials.theme-head')
 
     <!-- Scripts -->
-    @if ($usesLivewire)
-        @vite(['resources/css/app.css', 'resources/js/livewire-app.js'])
-        @livewireStyles
-    @else
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
+    @vite(['resources/css/app.css', 'resources/js/livewire-app.js'])
+    @livewireStyles
     @laravelPWA
 </head>
 
@@ -90,8 +82,21 @@
         data-google-analytics-measurement-id="{{ config('services.google_analytics.measurement_id') }}"
     @endif
 >
+    @php
+        /** @var \App\Models\User|null $authenticatedUser */
+        $authenticatedUser = auth()->user();
+        $shouldAutoPromptForPushNotifications = $authenticatedUser
+            && filled(config('services.web_push.public_key'))
+            && filled(config('services.web_push.private_key'))
+            && filled(config('services.web_push.subject'))
+            && $authenticatedUser->push_prompted_at === null
+            && ! $authenticatedUser->pushSubscriptions()->exists();
+    @endphp
     <div class="min-h-screen bg-neutral-100 dark:bg-neutral-950">
         @include('layouts.navigation')
+        @if ($shouldAutoPromptForPushNotifications)
+            @include('layouts.partials.push-notification-native-prompt')
+        @endif
         <!-- Page Content -->
         <main>
             @yield('content')
@@ -99,9 +104,7 @@
         @include('layouts.footer')
         @include('layouts.partials.site-search')
     </div>
-    @if ($usesLivewire)
-        @livewireScriptConfig
-    @endif
+    @livewireScriptConfig
 </body>
 
 </html>

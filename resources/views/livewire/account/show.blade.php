@@ -1,8 +1,4 @@
     <div class="grid gap-6">
-        @if ($this->resultSubmissionPrompt)
-            @include('livewire.account.partials.result-submission-prompt', ['resultSubmissionPrompt' => $this->resultSubmissionPrompt])
-        @endif
-
     <div class="ui-section" data-section-shared-header data-account-header>
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
@@ -26,8 +22,8 @@
     </div>
 
     <section class="border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75" data-account-nav>
-        <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
-            <nav class="flex gap-2">
+        <div class="ui-tab-strip-shell">
+            <nav class="ui-tab-strip">
                 <a href="{{ route('account.show') }}" class="ui-button-primary shrink-0">
                     Profile
                 </a>

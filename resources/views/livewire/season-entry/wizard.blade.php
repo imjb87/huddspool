@@ -15,8 +15,8 @@
     </div>
 
     <div class="border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75">
-        <div class="mx-auto flex w-full max-w-4xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-6">
-            <nav class="-ml-3 flex gap-2">
+        <div class="ui-tab-strip-shell">
+            <nav class="ui-tab-strip -ml-3">
                 @foreach ($steps as $wizardStep)
                     <button
                         type="button"

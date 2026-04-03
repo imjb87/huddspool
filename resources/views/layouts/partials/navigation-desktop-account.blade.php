@@ -1,5 +1,7 @@
-<div class="hidden lg:flex lg:justify-end lg:gap-x-6">
+<div class="hidden lg:flex lg:justify-end lg:gap-x-4">
     @if (@auth()->user())
+        @include('components.account.⚡notifications-dropdown')
+
         <div class="relative"
             x-data="{
                 id: 'account',
@@ -37,21 +39,20 @@
             @close.stop="open = false"
             @nav-dropdown-open.window="if ($event.detail.id !== id) open = false">
             <button type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-neutral-900 dark:text-neutral-100"
-                aria-expanded="false" @click="toggle()" :aria-expanded="open">
-                <img
-                    src="{{ auth()->user()->avatar_url }}"
-                    alt="{{ auth()->user()->name }} avatar"
-                    class="h-8 w-8 rounded-full object-cover bg-neutral-50">
+                class="flex items-center text-sm font-semibold leading-6 text-neutral-900 dark:text-neutral-100"
+                aria-expanded="false"
+                @click="toggle()"
+                :aria-expanded="open">
+                <span class="relative">
+                    <img
+                        src="{{ auth()->user()->avatar_url }}"
+                        alt="{{ auth()->user()->name }} avatar"
+                        class="h-8 w-8 rounded-full object-cover bg-neutral-50">
+                </span>
                 <span class="sr-only">Open user menu for {{ auth()->user()->name }}</span>
-                <svg class="h-5 w-5 flex-none text-neutral-400 dark:text-neutral-500" viewBox="0 0 20 20" fill="currentColor"
-                    aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clip-rule="evenodd" />
-                </svg>
             </button>
-            <div class="absolute right-0 top-full z-10 mt-3 w-56"
+
+            <div class="absolute right-0 top-full z-10 mt-3 w-72"
                 x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-y-1"
                 x-transition:enter-end="opacity-100 translate-y-0"
@@ -65,22 +66,36 @@
                         </div>
                         <a href="{{ route('account.show') }}"
                             class="ui-card-row-link">
-                            <div class="ui-card-row px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
-                                Account
+                            <div class="ui-card-row justify-start gap-3 px-4 sm:px-5">
+                                <img
+                                    src="{{ auth()->user()->avatar_url }}"
+                                    alt="{{ auth()->user()->name }} avatar"
+                                    class="size-8 rounded-full object-cover">
+                                <span class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{{ auth()->user()->name }}</span>
                             </div>
                         </a>
                         <button type="button"
-                            class="ui-card-row w-full cursor-pointer px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:px-5"
+                            class="ui-card-row w-full cursor-pointer justify-start gap-3 px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:px-5"
                             x-cloak x-show="canInstallApp"
                             @click="installApp()"
                             data-install-app-trigger>
-                            Install app
+                            <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5v-9m0 9-3-3m3 3 3-3M3.75 17.25v.75A2.25 2.25 0 0 0 6 20.25h12A2.25 2.25 0 0 0 20.25 18v-.75" />
+                                </svg>
+                            </span>
+                            <span>Install app</span>
                         </button>
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('filament.admin.pages.dashboard') }}"
                                 class="ui-card-row-link">
-                                <div class="ui-card-row px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
-                                    Admin
+                                <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                    <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h12a2.25 2.25 0 0 0 2.25-2.25V3.75M3.75 3h16.5M9 20.25h6" />
+                                        </svg>
+                                    </span>
+                                    <span>Admin</span>
                                 </div>
                             </a>
                         @endif
@@ -97,8 +112,13 @@
                             <a href="{{ route('logout') }}"
                                 class="ui-card-row-link"
                                 onclick="event.preventDefault(); this.closest('form').submit();">
-                                <div class="ui-card-row px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
-                                    Log out
+                                <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                    <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-7.5a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 6 21h7.5a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                        </svg>
+                                    </span>
+                                    <span>Log out</span>
                                 </div>
                             </a>
                         </form>
@@ -166,17 +186,27 @@
                             @include('layouts.partials.theme-switcher', ['fullWidth' => true])
                         </div>
                         <a href="{{ route('login') }}" class="ui-card-row-link">
-                            <div class="ui-card-row px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
-                                Log in
+                            <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-7.5a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 6 21h7.5a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                    </svg>
+                                </span>
+                                <span>Log in</span>
                             </div>
                         </a>
                         <button type="button"
-                            class="ui-card-row w-full cursor-pointer px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800/85 sm:px-5"
+                            class="ui-card-row w-full cursor-pointer justify-start gap-3 px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800/85 sm:px-5"
                             x-cloak
                             x-show="canInstallApp"
                             @click="installApp()"
                             data-install-app-trigger>
-                            Install app
+                            <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5v-9m0 9-3-3m3 3 3-3M3.75 17.25v.75A2.25 2.25 0 0 0 6 20.25h12A2.25 2.25 0 0 0 20.25 18v-.75" />
+                                </svg>
+                            </span>
+                            <span>Install app</span>
                         </button>
                     </div>
                 </div>

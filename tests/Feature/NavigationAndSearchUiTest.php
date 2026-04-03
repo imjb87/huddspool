@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\Page;
+use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\User;
+use App\Notifications\LeagueResultSubmittedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -114,7 +116,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@mouseleave="closeOnHover()"', false);
         $response->assertSee('@click="toggle()"', false);
         $response->assertSee("\$dispatch('nav-dropdown-open', { id: this.id })", false);
-        $response->assertSee('@nav-dropdown-open.window="if ($event.detail.id !== id) open = false"', false);
+        $response->assertSee('Open notifications menu', false);
         $response->assertSee('@click.stop', false);
         $response->assertSee('translate-x-full', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
@@ -238,6 +240,35 @@ class NavigationAndSearchUiTest extends TestCase
         ]).'"', false);
     }
 
+    public function test_authenticated_home_page_renders_mobile_notifications_trigger_and_drawer(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create(['name' => 'International Rules']);
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+
+        $user = User::factory()->create();
+        $result = Result::factory()->create([
+            'section_id' => $section->id,
+        ]);
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('data-mobile-notifications-toggle', false);
+        $response->assertSee('aria-label="Open notifications drawer"', false);
+        $response->assertSee('data-mobile-notifications-links', false);
+        $response->assertSee('data-mobile-menu-panel="notifications"', false);
+        $response->assertSeeText('Notifications');
+        $response->assertSee('Mark all as read', false);
+        $response->assertSee('headerNotifications', false);
+    }
+
     public function test_knockout_index_redirects_to_knockout_dates_page(): void
     {
         $response = $this->get(route('knockout.index'));
@@ -283,12 +314,15 @@ class NavigationAndSearchUiTest extends TestCase
     public function test_authenticated_navigation_points_profile_links_to_account_page(): void
     {
         $user = User::factory()->create();
+        $result = Result::factory()->create();
+
+        $user->notify(new LeagueResultSubmittedNotification($result));
 
         $response = $this->actingAs($user)->get(route('home'));
 
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
-        $response->assertSeeText('Account');
+        $response->assertSeeText($user->name);
         $response->assertSee('src="'.$user->avatar_url.'"', false);
         $response->assertSee('alt="'.$user->name.' avatar"', false);
         $response->assertSee('data-theme-toggle', false);
@@ -302,6 +336,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('href="'.route('player.show', $user).'"', false);
         $response->assertDontSee('href="'.route('support.tickets').'"', false);
         $response->assertSee('Open user menu for '.$user->name, false);
+        $response->assertSee('Open notifications menu', false);
+        $response->assertSeeText('Notifications');
+        $response->assertSee('Mark all as read', false);
+        $response->assertSee('headerNotifications', false);
         $response->assertSeeText('Install app');
         $response->assertSeeText('Log out');
         $response->assertDontSee('href="'.route('filament.admin.pages.dashboard').'"', false);

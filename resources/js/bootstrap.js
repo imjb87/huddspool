@@ -1,30 +1,57 @@
 
-import _ from 'lodash';
+const csrfToken = document.head.querySelector('meta[name="csrf-token"]')?.content ?? '';
+let echoLoader = null;
 
-window._ = _;
+const isPlainObject = (value) => Object.prototype.toString.call(value) === '[object Object]';
 
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
+const isDeepEqual = (left, right) => {
+    if (Object.is(left, right)) {
+        return true;
+    }
 
-import axios from 'axios';
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+    if (Array.isArray(left) && Array.isArray(right)) {
+        if (left.length !== right.length) {
+            return false;
+        }
 
-window.axios = axios;
-window.Pusher = Pusher;
+        return left.every((value, index) => isDeepEqual(value, right[index]));
+    }
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    if (isPlainObject(left) && isPlainObject(right)) {
+        const leftKeys = Object.keys(left);
+        const rightKeys = Object.keys(right);
 
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
+        if (leftKeys.length !== rightKeys.length) {
+            return false;
+        }
 
-window.ensureEcho = () => {
+        return leftKeys.every((key) => rightKeys.includes(key) && isDeepEqual(left[key], right[key]));
+    }
+
+    return false;
+};
+
+const request = async (url, { method = 'GET', body = null } = {}) => {
+    const response = await window.fetch(url, {
+        method,
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: body ? JSON.stringify(body) : null,
+    });
+
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}.`);
+    }
+
+    return response;
+};
+
+window.ensureEcho = async () => {
     if (window.Echo) {
         return window.Echo;
     }
@@ -33,20 +60,36 @@ window.ensureEcho = () => {
         return null;
     }
 
-    const reverbScheme = import.meta.env.VITE_REVERB_SCHEME ?? 'https';
-    const forceTls = reverbScheme === 'https' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    if (echoLoader) {
+        return echoLoader;
+    }
 
-    window.Echo = new Echo({
-        broadcaster: 'reverb',
-        key: import.meta.env.VITE_REVERB_APP_KEY,
-        wsHost: import.meta.env.VITE_REVERB_HOST,
-        wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 80),
-        wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
-        forceTLS: forceTls,
-        enabledTransports: ['ws', 'wss'],
+    echoLoader = Promise.all([
+        import('laravel-echo'),
+        import('pusher-js'),
+    ]).then(([{ default: Echo }, { default: Pusher }]) => {
+        const reverbScheme = import.meta.env.VITE_REVERB_SCHEME ?? 'https';
+        const forceTls = reverbScheme === 'https' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+        window.Pusher = Pusher;
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: import.meta.env.VITE_REVERB_APP_KEY,
+            wsHost: import.meta.env.VITE_REVERB_HOST,
+            wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 80),
+            wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
+            forceTLS: forceTls,
+            enabledTransports: ['ws', 'wss'],
+        });
+
+        return window.Echo;
+    }).catch((error) => {
+        echoLoader = null;
+
+        throw error;
     });
 
-    return window.Echo;
+    return echoLoader;
 };
 
 window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
@@ -168,8 +211,19 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
             this.queueForegroundSync();
         });
     },
-    init() {
-        const echo = window.ensureEcho?.() ?? window.Echo ?? null;
+    async init() {
+        let echo = window.Echo ?? null;
+
+        if (!echo) {
+            try {
+                echo = await window.ensureEcho?.();
+            } catch (error) {
+                this.updateConnectionState('failed');
+                console.error('[result-collaboration] Failed to initialize Echo.', error);
+
+                return;
+            }
+        }
 
         if (!echo || !window.Livewire) {
             this.updateConnectionState('failed');
@@ -244,6 +298,277 @@ window.resultFormFlashRow = (frameNumber) => ({
         });
     },
 });
+
+const urlBase64ToUint8Array = (base64String) => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const normalized = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+    const rawData = window.atob(normalized);
+
+    return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+};
+
+window.pushNotificationsPanel = ({ configured, enabled, publicKey, subscribeUrl, unsubscribeUrl }) => ({
+    configured,
+    enabled,
+    supported: false,
+    busy: false,
+    permission: typeof window.Notification === 'undefined' ? 'unsupported' : window.Notification.permission,
+    error: '',
+    async init() {
+        this.supported = this.configured
+            && 'Notification' in window
+            && 'serviceWorker' in navigator
+            && 'PushManager' in window;
+
+        if (!this.supported) {
+            return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+        const existingSubscription = await registration.pushManager.getSubscription();
+
+        this.enabled = Boolean(existingSubscription) || this.enabled;
+        this.permission = window.Notification.permission;
+    },
+    async enable() {
+        if (this.busy || !this.supported) {
+            return;
+        }
+
+        this.busy = true;
+        this.error = '';
+
+        try {
+            let permission = window.Notification.permission;
+
+            if (permission === 'default') {
+                permission = await window.Notification.requestPermission();
+            }
+
+            this.permission = permission;
+
+            if (permission !== 'granted') {
+                this.error = 'Browser notifications are currently blocked for this device.';
+
+                return;
+            }
+
+            const registration = await navigator.serviceWorker.ready;
+
+            let subscription = await registration.pushManager.getSubscription();
+
+            if (!subscription) {
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicKey),
+                });
+            }
+
+            const payload = subscription.toJSON();
+
+            await request(subscribeUrl, {
+                method: 'POST',
+                body: {
+                endpoint: payload.endpoint,
+                public_key: payload.keys?.p256dh,
+                auth_token: payload.keys?.auth,
+                content_encoding: payload.contentEncoding ?? 'aes128gcm',
+                },
+            });
+
+            this.enabled = true;
+        } catch (error) {
+            this.error = 'We could not enable browser notifications just now.';
+            console.error('[push-notifications] Failed to subscribe.', error);
+        } finally {
+            this.busy = false;
+        }
+    },
+    async disable() {
+        if (this.busy || !this.supported) {
+            return;
+        }
+
+        this.busy = true;
+        this.error = '';
+
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.getSubscription();
+
+            if (subscription) {
+                await request(unsubscribeUrl, {
+                    method: 'DELETE',
+                    body: {
+                        endpoint: subscription.endpoint,
+                    },
+                });
+
+                await subscription.unsubscribe();
+            }
+
+            this.enabled = false;
+        } catch (error) {
+            this.error = 'We could not disable browser notifications just now.';
+            console.error('[push-notifications] Failed to unsubscribe.', error);
+        } finally {
+            this.busy = false;
+        }
+    },
+});
+
+window.nativePushPermissionPrompt = ({ publicKey, subscribeUrl, acknowledgeUrl }) => ({
+    acknowledged: false,
+    async init() {
+        const supported = 'Notification' in window
+            && 'serviceWorker' in navigator
+            && 'PushManager' in window;
+
+        if (!supported) {
+            await this.acknowledge();
+
+            return;
+        }
+
+        let permission = window.Notification.permission;
+
+        if (permission === 'denied') {
+            await this.acknowledge();
+
+            return;
+        }
+
+        if (permission === 'default') {
+            permission = await window.Notification.requestPermission();
+        }
+
+        if (permission !== 'granted') {
+            await this.acknowledge();
+
+            return;
+        }
+
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            let subscription = await registration.pushManager.getSubscription();
+
+            if (!subscription) {
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicKey),
+                });
+            }
+
+            const payload = subscription.toJSON();
+
+            await request(subscribeUrl, {
+                method: 'POST',
+                body: {
+                    endpoint: payload.endpoint,
+                    public_key: payload.keys?.p256dh,
+                    auth_token: payload.keys?.auth,
+                    content_encoding: payload.contentEncoding ?? 'aes128gcm',
+                },
+            });
+        } catch (error) {
+            console.error('[push-notifications] Failed to complete the one-time native permission prompt flow.', error);
+
+            await this.acknowledge();
+        }
+    },
+    async acknowledge() {
+        if (this.acknowledged) {
+            return;
+        }
+
+        this.acknowledged = true;
+
+        try {
+            await request(acknowledgeUrl, {
+                method: 'POST',
+            });
+        } catch (error) {
+            console.error('[push-notifications] Failed to acknowledge the one-time native permission prompt.', error);
+        }
+    },
+});
+
+window.registerHeaderNotificationsStore = (Alpine) => {
+    Alpine.store('headerNotifications', {
+        initialized: false,
+        loading: false,
+        unreadCount: 0,
+        notifications: [],
+        summaryUrl: null,
+        readAllUrl: null,
+        readUrlTemplate: null,
+        configure({ summaryUrl, readAllUrl, readUrlTemplate }) {
+            this.summaryUrl = summaryUrl;
+            this.readAllUrl = readAllUrl;
+            this.readUrlTemplate = readUrlTemplate;
+
+            if (! this.initialized) {
+                this.refresh();
+            }
+        },
+        async refresh() {
+            if (this.loading || ! this.summaryUrl) {
+                return;
+            }
+
+            this.loading = true;
+
+            try {
+                const response = await request(this.summaryUrl);
+                const payload = await response.json();
+                this.applyPayload(payload);
+                this.initialized = true;
+            } catch (error) {
+                console.error('[header-notifications] Failed to refresh notification summary.', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        async markAllAsRead() {
+            if (! this.readAllUrl) {
+                return;
+            }
+
+            try {
+                const response = await request(this.readAllUrl, {
+                    method: 'POST',
+                });
+                this.applyPayload(await response.json());
+            } catch (error) {
+                console.error('[header-notifications] Failed to mark all notifications as read.', error);
+            }
+        },
+        async markAsRead(notificationId) {
+            if (! this.readUrlTemplate || ! notificationId) {
+                return;
+            }
+
+            try {
+                const response = await request(
+                    this.readUrlTemplate.replace('__NOTIFICATION__', notificationId),
+                    {
+                        method: 'POST',
+                    },
+                );
+
+                this.applyPayload(await response.json());
+            } catch (error) {
+                console.error('[header-notifications] Failed to mark notification as read.', error);
+            }
+        },
+        applyPayload(payload) {
+            this.unreadCount = Number(payload?.unread_count ?? 0);
+            this.notifications = Array.isArray(payload?.notifications) ? payload.notifications : [];
+        },
+    });
+};
 
 window.resultFormEditors = (initialCollaborators = []) => ({
     collaboratorsUi: [],
@@ -358,7 +683,7 @@ window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked })
 
         const savedFrames = this.normalizeFrames(payload.frames ?? {});
 
-        if (_.isEqual(savedFrames, this.readFramesFromDom())) {
+        if (isDeepEqual(savedFrames, this.readFramesFromDom())) {
             return;
         }
 
@@ -382,7 +707,7 @@ window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked })
                 latestFrames,
             );
 
-            if (!_.isEqual(mergedFrames, latestFrames)) {
+            if (!isDeepEqual(mergedFrames, latestFrames)) {
                 this.currentDraftVersion = nextDraftVersion;
 
                 window.localStorage.setItem(this.storageKey, JSON.stringify({
@@ -479,11 +804,11 @@ window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked })
             const localFrame = localFrames[frameNumber] ?? {};
 
             ['home_player_id', 'away_player_id', 'home_score', 'away_score'].forEach((field) => {
-                if (_.isEqual(localFrame[field], baseFrame[field])) {
+                if (isDeepEqual(localFrame[field], baseFrame[field])) {
                     return;
                 }
 
-                if (_.isEqual(latestFrames[frameNumber]?.[field], baseFrame[field])) {
+                if (isDeepEqual(latestFrames[frameNumber]?.[field], baseFrame[field])) {
                     mergedFrame[field] = localFrame[field];
                 }
             });

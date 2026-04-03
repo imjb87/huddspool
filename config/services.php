@@ -51,6 +51,12 @@ return [
         'embed_key' => env('GOOGLE_MAPS_EMBED_KEY'),
     ],
 
+    'web_push' => [
+        'subject' => env('WEB_PUSH_VAPID_SUBJECT'),
+        'public_key' => env('WEB_PUSH_VAPID_PUBLIC_KEY'),
+        'private_key' => env('WEB_PUSH_VAPID_PRIVATE_KEY'),
+    ],
+
     'nominatim' => [
         'search_url' => env('NOMINATIM_SEARCH_URL', 'https://nominatim.openstreetmap.org/search'),
         'user_agent' => env('NOMINATIM_USER_AGENT', env('APP_NAME', 'HuddsPool').' geocoder'),

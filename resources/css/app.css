@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 @custom-variant dark (&:where(.dark, .dark *));
+@source '../views/**/*.blade.php';
+@source '../../app/Livewire/**/*.php';
+@source '../../app/View/**/*.php';
+@source '../js/**/*.js';
 
 @theme {
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
@@ -169,6 +173,14 @@
 
   .ui-page-title-glyph {
     @apply h-6 w-6 text-neutral-700 dark:text-neutral-200;
+  }
+
+  .ui-tab-strip-shell {
+    @apply mx-auto w-full max-w-4xl min-w-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 py-3 sm:px-6 lg:px-6;
+  }
+
+  .ui-tab-strip {
+    @apply flex min-w-max gap-2;
   }
 
   .ui-panel-hero {
