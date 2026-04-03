@@ -21,7 +21,14 @@
                 <div class="space-y-4">
                     <div class="ui-card overflow-hidden">
                         <div class="ui-card-row justify-between px-4 ring-1 ring-inset ring-gray-200 sm:px-5 dark:ring-neutral-800">
-                            <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Notifications</p>
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75v-.7V9a6 6 0 0 0-12 0v.05c0 .237 0 .476-.003.713A8.967 8.967 0 0 1 3.69 15.772a23.852 23.852 0 0 0 5.454 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                                    </svg>
+                                </span>
+                                <p class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Notifications</p>
+                            </div>
                             <template x-if="$store.headerNotifications.unreadCount > 0">
                                 <button type="button"
                                     class="text-xs font-medium text-neutral-500 underline underline-offset-2 transition hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"

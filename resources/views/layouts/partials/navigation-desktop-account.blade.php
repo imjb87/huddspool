@@ -79,7 +79,7 @@
                             <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
                                 <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 3.75 12c0 1.574.408 3.052 1.125 4.334m14.25-8.668A8.967 8.967 0 0 1 20.25 12c0 1.574-.408 3.052-1.125 4.334m-14.25 0A8.966 8.966 0 0 0 12 20.958c2.933 0 5.536-1.408 7.125-3.624m-14.25 0h14.25M12 3v17.25" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5A2.25 2.25 0 0 1 6 2.25h9.75A2.25 2.25 0 0 1 18 4.5v15.75a.75.75 0 0 1-1.28.53l-1.94-1.94a.75.75 0 0 0-1.06 0l-1.94 1.94a.75.75 0 0 1-1.06 0l-1.94-1.94a.75.75 0 0 0-1.06 0l-1.94 1.94A.75.75 0 0 1 3.75 20.25V4.5Z" />
                                     </svg>
                                 </span>
                                 <span>Handbook</span>
@@ -210,7 +210,7 @@
                             <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
                                 <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 3.75 12c0 1.574.408 3.052 1.125 4.334m14.25-8.668A8.967 8.967 0 0 1 20.25 12c0 1.574-.408 3.052-1.125 4.334m-14.25 0A8.966 8.966 0 0 0 12 20.958c2.933 0 5.536-1.408 7.125-3.624m-14.25 0h14.25M12 3v17.25" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5A2.25 2.25 0 0 1 6 2.25h9.75A2.25 2.25 0 0 1 18 4.5v15.75a.75.75 0 0 1-1.28.53l-1.94-1.94a.75.75 0 0 0-1.06 0l-1.94 1.94a.75.75 0 0 1-1.06 0l-1.94-1.94a.75.75 0 0 0-1.06 0l-1.94 1.94A.75.75 0 0 1 3.75 20.25V4.5Z" />
                                     </svg>
                                 </span>
                                 <span>Handbook</span>
