@@ -57,42 +57,43 @@
                             @endforeach
                         </div>
 
-                        <div class="mt-6 flex justify-end border-t border-gray-200 pt-4 dark:border-gray-800"
-                            x-data="{
-                                shareUrl: @js($shareUrl),
-                                shareTitle: @js($shareTitle),
-                                async shareArticle() {
-                                    if (navigator.share) {
-                                        try {
-                                            await navigator.share({
-                                                title: this.shareTitle,
-                                                text: 'Read this Huddspool news update',
-                                                url: this.shareUrl,
-                                            });
-                                            return;
-                                        } catch (error) {
-                                            if (error?.name === 'AbortError') {
-                                                return;
-                                            }
-                                        }
-                                    }
-
-                                    if (navigator.clipboard?.writeText) {
-                                        await navigator.clipboard.writeText(this.shareUrl);
-                                    }
-                                },
-                            }">
-                            <button type="button"
-                                class="ui-button-secondary gap-2"
-                                x-on:click="shareArticle()"
-                                data-news-share-button>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 8.566-4.283m-8.566 6.469 8.566 4.283m0-10.752a2.25 2.25 0 1 0 2.434.513m-2.434 9.726a2.25 2.25 0 1 0 2.434-.513" />
-                                </svg>
-                                <span>Share article</span>
-                            </button>
-                        </div>
                     </div>
+                </div>
+
+                <div class="mt-4 flex justify-end"
+                    x-data="{
+                        shareUrl: @js($shareUrl),
+                        shareTitle: @js($shareTitle),
+                        async shareArticle() {
+                            if (navigator.share) {
+                                try {
+                                    await navigator.share({
+                                        title: this.shareTitle,
+                                        text: 'Read this Huddspool news update',
+                                        url: this.shareUrl,
+                                    });
+                                    return;
+                                } catch (error) {
+                                    if (error?.name === 'AbortError') {
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (navigator.clipboard?.writeText) {
+                                await navigator.clipboard.writeText(this.shareUrl);
+                            }
+                        },
+                    }">
+                    <button type="button"
+                        class="ui-button-secondary gap-2"
+                        x-on:click="shareArticle()"
+                        data-news-share-button>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                        </svg>
+                        <span>Share article</span>
+                    </button>
                 </div>
             </section>
 
