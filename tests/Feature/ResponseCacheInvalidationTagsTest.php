@@ -17,7 +17,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
     {
         ResponseCache::shouldReceive('clear')
             ->once()
-            ->with([ResponseCacheTags::HOME]);
+            ->with([ResponseCacheTags::HOME, ResponseCacheTags::NEWS]);
 
         $this->tagAwareInvalidator()->forgetForNews();
         $this->addToAssertionCount(1);

@@ -12,9 +12,16 @@
                         </div>
                         <div class="group relative">
                             <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600 dark:text-gray-100 dark:group-hover:text-gray-300">
-                                {{ $article->title }}
+                                <a href="{{ route('news.show', $article) }}">
+                                    {{ $article->title }}
+                                </a>
                             </h3>
-                            <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-400">{!! nl2br(e($article->content)) !!}</p>
+                            <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-400">{{ $article->excerpt(220) }}</p>
+                            <div class="mt-4">
+                                <a href="{{ route('news.show', $article) }}" class="text-sm font-semibold text-gray-900 transition hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300">
+                                    See more
+                                </a>
+                            </div>
                         </div>
                     </article>
                 @endforeach

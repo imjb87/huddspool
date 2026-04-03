@@ -53,6 +53,11 @@ class CompetitionResponseCacheInvalidator
         $this->clear([ResponseCacheTags::HOME]);
     }
 
+    public function forgetNewsContent(): void
+    {
+        $this->clear(ResponseCacheTagSet::newsContent());
+    }
+
     public function forgetVenueContent(): void
     {
         $this->clear(ResponseCacheTagSet::venueContent());

@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Fixture;
 use App\Models\Knockout;
+use App\Models\News;
 use App\Models\Page;
 use App\Models\Result;
 use App\Models\Ruleset;
@@ -27,6 +28,7 @@ class SitemapBuilder
         $this->addRulesetUrls($sitemap);
         $this->addSectionUrls($sitemap);
         $this->addHistoryUrls($sitemap);
+        $this->addNewsUrls($sitemap);
         $this->addPageUrls($sitemap);
         $this->addKnockoutUrls($sitemap);
         $this->addTeamUrls($sitemap);
@@ -124,6 +126,20 @@ class SitemapBuilder
             ->get()
             ->each(function (Page $page) use ($sitemap): void {
                 $sitemap->add($this->makeModelUrl(route('page.show', $page, false), $page));
+            });
+    }
+
+    private function addNewsUrls(Sitemap $sitemap): void
+    {
+        $sitemap->add($this->makeUrl(route('news.index', absolute: false)));
+
+        News::query()
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->orderByDesc('id')
+            ->get()
+            ->each(function (News $article) use ($sitemap): void {
+                $sitemap->add($this->makeModelUrl(route('news.show', $article, false), $article));
             });
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KnockoutController;
 use App\Http\Controllers\KnockoutMatchController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RulesetController;
@@ -34,6 +35,10 @@ require __DIR__.'/auth.php';
 Route::pattern('season', '[^/]*[0-9][^/]*');
 
 Route::get('/', HomeController::class)->name('home');
+Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::NEWS]))->group(function () {
+    Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+    Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
+});
 Route::get('/search', SiteSearchController::class)->name('search.index');
 Route::middleware(CacheResponse::for(tags: [ResponseCacheTags::RULESETS]))->group(function () {
     Route::prefix('rulesets')->group(function () {

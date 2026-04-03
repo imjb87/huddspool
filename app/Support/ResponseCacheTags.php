@@ -6,6 +6,8 @@ class ResponseCacheTags
 {
     public const HOME = 'home';
 
+    public const NEWS = 'news';
+
     public const RULESETS = 'rulesets';
 
     public const HISTORY = 'history';

@@ -36,13 +36,19 @@
                                 </div>
 
                                 <h3 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ $featuredArticle->title }}
+                                    <a href="{{ route('news.show', $featuredArticle) }}" class="transition hover:text-gray-600 dark:hover:text-gray-300">
+                                        {{ $featuredArticle->title }}
+                                    </a>
                                 </h3>
 
-                                <div class="mt-4 space-y-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                    @foreach ($featuredParagraphs as $paragraph)
-                                        <p>{{ $paragraph }}</p>
-                                    @endforeach
+                                <p class="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                                    {{ $featuredArticle->excerpt(260) }}
+                                </p>
+
+                                <div class="mt-4 flex justify-end">
+                                    <a href="{{ route('news.show', $featuredArticle) }}" class="text-xs font-medium text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                        See more...
+                                    </a>
                                 </div>
                             </article>
 
@@ -57,17 +63,33 @@
                                             </div>
 
                                             <h3 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
-                                                {{ $article->title }}
+                                                <a href="{{ route('news.show', $article) }}" class="transition hover:text-gray-600 dark:hover:text-gray-300">
+                                                    {{ $article->title }}
+                                                </a>
                                             </h3>
 
                                             <p class="mt-3 line-clamp-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                                {{ \Illuminate\Support\Str::limit($article->content, 180) }}
+                                                {{ $article->excerpt() }}
                                             </p>
+
+                                            <div class="mt-3 flex justify-end">
+                                                <a href="{{ route('news.show', $article) }}" class="text-xs font-medium text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                                    See more...
+                                                </a>
+                                            </div>
                                         </article>
                                     @endforeach
                                 </div>
                             @endif
                         </div>
+                    </div>
+                @endif
+
+                @if ($featuredArticle)
+                    <div class="mt-4 flex justify-end">
+                        <a href="{{ route('news.index') }}" class="ui-button-secondary">
+                            View all news
+                        </a>
                     </div>
                 @endif
             </div>

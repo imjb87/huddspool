@@ -144,4 +144,15 @@ class ResponseCacheTagSet
             ResponseCacheTags::KNOCKOUTS,
         ];
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function newsContent(): array
+    {
+        return [
+            ResponseCacheTags::HOME,
+            ResponseCacheTags::NEWS,
+        ];
+    }
 }

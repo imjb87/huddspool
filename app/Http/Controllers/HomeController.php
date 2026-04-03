@@ -10,7 +10,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -25,7 +24,6 @@ class HomeController extends Controller
             'entrySeason' => $this->entrySeason(),
             'entrySeasonCountdown' => $this->entrySeasonCountdown(),
             'featuredArticle' => $news->first(),
-            'featuredParagraphs' => $this->featuredArticleParagraphs($news->first()),
             'secondaryArticles' => $news->slice(1),
         ]);
     }
@@ -94,18 +92,6 @@ class HomeController extends Controller
             ->latest()
             ->limit(3)
             ->get();
-    }
-
-    private function featuredArticleParagraphs(?News $article): Collection
-    {
-        if (! $article) {
-            return collect();
-        }
-
-        return collect(preg_split('/\r\n|\r|\n/', trim((string) $article->content)))
-            ->filter(fn (?string $paragraph): bool => filled(Str::of((string) $paragraph)->trim()))
-            ->take(3)
-            ->values();
     }
 
     /**

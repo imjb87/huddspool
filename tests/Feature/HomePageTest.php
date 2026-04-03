@@ -354,12 +354,14 @@ class HomePageTest extends TestCase
         News::withoutEvents(function () use ($author): void {
             News::query()->create([
                 'title' => 'Captains meeting',
+                'slug' => 'captains-meeting',
                 'content' => "Captains should arrive for 7:15pm.\nImportant league notices will be covered before the break.",
                 'author_id' => $author->id,
             ]);
 
             News::query()->create([
                 'title' => 'Fixture dates updated',
+                'slug' => 'fixture-dates-updated',
                 'content' => 'Several fixture dates have changed following venue availability updates.',
                 'author_id' => $author->id,
             ]);
@@ -376,6 +378,9 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Fixture dates updated');
         $response->assertSeeText('Captains meeting');
         $response->assertSeeText($expectedDate);
+        $response->assertSee(route('news.show', News::query()->latest()->first()), false);
+        $response->assertSee('See more');
+        $response->assertSee(route('news.index'), false);
         $response->assertDontSee('data-home-news-empty', false);
     }
 

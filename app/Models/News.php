@@ -5,10 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class News extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saving(function (News $news): void {
+            if ($news->isDirty('title') || blank($news->slug)) {
+                $news->slug = $news->generateSlug($news->title, $news->id);
+            }
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -17,6 +27,7 @@ class News extends Model
      */
     protected $fillable = [
         'title',
+        'slug',
         'content',
         'author_id',
     ];
@@ -27,5 +38,32 @@ class News extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    public function excerpt(int $limit = 180): string
+    {
+        return Str::limit(preg_replace('/\s+/', ' ', trim($this->content)) ?? '', $limit);
+    }
+
+    private function generateSlug(string $title, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($title) ?: 'news';
+        $original = $slug;
+        $index = 1;
+
+        while (self::query()
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = "{$original}-{$index}";
+            $index++;
+        }
+
+        return $slug;
     }
 }

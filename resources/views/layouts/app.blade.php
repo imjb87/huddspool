@@ -14,6 +14,9 @@
         $metaOgImageHeight = trim($__env->yieldContent('og_image_height'));
         $metaFacebookAppId = trim($__env->yieldContent('facebook_app_id')) ?: config('services.facebook.client_id');
     @endphp
+    @php
+        $usesLivewire = trim($__env->yieldContent('uses-livewire')) === 'true';
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -71,8 +74,10 @@
     @include('layouts.partials.theme-head')
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/livewire-app.js'])
-    @livewireStyles
+    @vite(['resources/css/app.css', $usesLivewire ? 'resources/js/livewire-app.js' : 'resources/js/app.js'])
+    @if ($usesLivewire)
+        @livewireStyles
+    @endif
     @laravelPWA
 </head>
 
@@ -104,7 +109,9 @@
         @include('layouts.footer')
         @include('layouts.partials.site-search')
     </div>
-    @livewireScriptConfig
+    @if ($usesLivewire)
+        @livewireScriptConfig
+    @endif
 </body>
 
 </html>

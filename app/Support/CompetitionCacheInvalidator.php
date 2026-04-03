@@ -156,7 +156,7 @@ class CompetitionCacheInvalidator
 
     public function forgetForNews(): void
     {
-        $this->responseCaches()->forgetHomeContent();
+        $this->responseCaches()->forgetNewsContent();
     }
 
     public function forgetForVenue(Venue $venue): void

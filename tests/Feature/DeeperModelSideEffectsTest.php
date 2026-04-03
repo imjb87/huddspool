@@ -108,4 +108,24 @@ class DeeperModelSideEffectsTest extends TestCase
 
         $this->assertSame($author->id, $news->author_id);
     }
+
+    public function test_creating_news_generates_a_unique_slug(): void
+    {
+        $author = User::factory()->create();
+
+        $this->actingAs($author);
+
+        $firstArticle = News::create([
+            'title' => 'League update',
+            'content' => 'Fixtures confirmed for next week.',
+        ]);
+
+        $secondArticle = News::create([
+            'title' => 'League update',
+            'content' => 'Another update with the same title.',
+        ]);
+
+        $this->assertSame('league-update', $firstArticle->slug);
+        $this->assertSame('league-update-1', $secondArticle->slug);
+    }
 }
