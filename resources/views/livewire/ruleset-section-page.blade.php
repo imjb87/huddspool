@@ -47,15 +47,17 @@
         data-active-section-tab="{{ $activeTab }}">
         <div class="ui-tab-strip-shell"
             data-section-tabs-scroll
-            data-section-tabs-track>
-            <nav class="ui-tab-strip">
+            data-section-tabs-track
+            tabindex="0"
+            aria-label="Section tabs">
+            <nav class="ui-tab-strip" aria-label="Section tabs">
                 @foreach ($tabs as $tabKey => $tabLabel)
                     <a href="{{ $this->tabUrl($tabKey) }}"
                         wire:click.prevent="setActiveTab('{{ $tabKey }}')"
                         wire:key="section-tab-{{ $tabKey }}"
                         data-section-tab="{{ $tabKey }}"
                         @if ($activeTab === $tabKey) aria-current="page" @endif
-                        class="{{ $activeTab === $tabKey ? 'ui-button-primary' : 'ui-button-secondary' }} shrink-0 data-loading:opacity-60">
+                        class="{{ $activeTab === $tabKey ? 'ui-button-primary' : 'ui-button-secondary' }} shrink-0 snap-start data-loading:opacity-60">
                         {{ $tabLabel }}
                     </a>
                 @endforeach

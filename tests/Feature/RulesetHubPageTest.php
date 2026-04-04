@@ -451,6 +451,8 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('data-section-tabs-scroll', false);
         $tablesResponse->assertSee('data-active-section-tab="tables"', false);
         $tablesResponse->assertSee('data-section-tab="fixtures-results"', false);
+        $tablesResponse->assertSee('tabindex="0"', false);
+        $tablesResponse->assertSee('aria-label="Section tabs"', false);
         $tablesResponse->assertSee('aria-current="page"', false);
         $tablesResponse->assertSee('wire:click.prevent="setActiveTab(\'fixtures-results\')"', false);
         $tablesResponse->assertSee('wire:target="setActiveTab(\'tables\')"', false);
@@ -461,6 +463,7 @@ class RulesetHubPageTest extends TestCase
         $this->assertSame(10, substr_count($tablesResponse->getContent(), 'data-section-tab-skeleton-row="tables"'));
         $tablesResponse->assertSee('ui-tab-strip-shell', false);
         $tablesResponse->assertSee('ui-tab-strip', false);
+        $tablesResponse->assertSee('snap-start', false);
         $tablesResponse->assertSee('data-section-tabs-track', false);
         $tablesResponse->assertSee('ui-button-primary', false);
         $tablesResponse->assertSee('ui-button-secondary', false);

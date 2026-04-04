@@ -326,6 +326,9 @@ class HistoryPageTest extends TestCase
         $response->assertSee('data-history-section-page', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-tabs', false);
+        $response->assertSee('data-section-tabs-scroll', false);
+        $response->assertSee('tabindex="0"', false);
+        $response->assertSee('aria-label="Section tabs"', false);
         $response->assertSee('data-ruleset-active-panel="tables"', false);
         $response->assertSee('border-y border-gray-200 bg-white dark:border-neutral-800/80 dark:bg-neutral-900/75', false);
         $response->assertDontSee('sticky top-[72px] z-30 bg-linear-to-br from-green-900 via-green-800 to-green-700 shadow-xl', false);
