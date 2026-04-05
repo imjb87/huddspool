@@ -309,6 +309,68 @@ const urlBase64ToUint8Array = (base64String) => {
     return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 };
 
+const detectPushDeviceMetadata = () => {
+    const userAgent = navigator.userAgent ?? '';
+    const platform = (() => {
+        if (/iPhone/i.test(userAgent)) {
+            return 'iPhone';
+        }
+
+        if (/iPad/i.test(userAgent)) {
+            return 'iPad';
+        }
+
+        if (/Android/i.test(userAgent)) {
+            return 'Android';
+        }
+
+        if (/Mac OS X|Macintosh/i.test(userAgent)) {
+            return 'macOS';
+        }
+
+        if (/Windows/i.test(userAgent)) {
+            return 'Windows';
+        }
+
+        if (/Linux/i.test(userAgent)) {
+            return 'Linux';
+        }
+
+        return 'Unknown platform';
+    })();
+
+    const browser = (() => {
+        if (/Edg\//i.test(userAgent)) {
+            return 'Edge';
+        }
+
+        if (/CriOS/i.test(userAgent)) {
+            return 'Chrome';
+        }
+
+        if (/Chrome\//i.test(userAgent) && !/Edg\//i.test(userAgent)) {
+            return 'Chrome';
+        }
+
+        if (/Firefox\//i.test(userAgent)) {
+            return 'Firefox';
+        }
+
+        if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent) && !/CriOS/i.test(userAgent)) {
+            return 'Safari';
+        }
+
+        return 'Unknown browser';
+    })();
+
+    return {
+        device_label: `${browser} on ${platform}`,
+        browser,
+        platform,
+        user_agent: userAgent,
+    };
+};
+
 window.pushNotificationsPanel = ({ configured, enabled, publicKey, subscribeUrl, unsubscribeUrl }) => ({
     configured,
     enabled,
@@ -371,10 +433,11 @@ window.pushNotificationsPanel = ({ configured, enabled, publicKey, subscribeUrl,
             await request(subscribeUrl, {
                 method: 'POST',
                 body: {
-                endpoint: payload.endpoint,
-                public_key: payload.keys?.p256dh,
-                auth_token: payload.keys?.auth,
-                content_encoding: payload.contentEncoding ?? 'aes128gcm',
+                    endpoint: payload.endpoint,
+                    public_key: payload.keys?.p256dh,
+                    auth_token: payload.keys?.auth,
+                    content_encoding: payload.contentEncoding ?? 'aes128gcm',
+                    ...detectPushDeviceMetadata(),
                 },
             });
 
@@ -470,6 +533,7 @@ window.nativePushPermissionPrompt = ({ publicKey, subscribeUrl, acknowledgeUrl }
                     public_key: payload.keys?.p256dh,
                     auth_token: payload.keys?.auth,
                     content_encoding: payload.contentEncoding ?? 'aes128gcm',
+                    ...detectPushDeviceMetadata(),
                 },
             });
         } catch (error) {

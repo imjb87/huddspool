@@ -31,6 +31,10 @@ class PushSubscriptionTest extends TestCase
                 'public_key' => 'public-key',
                 'auth_token' => 'auth-token',
                 'content_encoding' => 'aes128gcm',
+                'device_label' => 'Safari on iPhone',
+                'browser' => 'Safari',
+                'platform' => 'iPhone',
+                'user_agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
             ])
             ->assertOk()
             ->assertJson([
@@ -43,6 +47,10 @@ class PushSubscriptionTest extends TestCase
             'public_key' => 'public-key',
             'auth_token' => 'auth-token',
             'content_encoding' => 'aes128gcm',
+            'device_label' => 'Safari on iPhone',
+            'browser' => 'Safari',
+            'platform' => 'iPhone',
+            'user_agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
         ]);
         $this->assertNotNull($user->fresh()->push_prompted_at);
     }
@@ -136,7 +144,7 @@ class PushSubscriptionTest extends TestCase
         Queue::assertPushed(
             SendBrowserPushNotification::class,
             fn (SendBrowserPushNotification $job): bool => $job->userId === $user->id
-                && data_get($job->payload, 'title') === 'League night is tonight'
+                && data_get($job->payload, 'title') === '🎱 League night is tonight'
         );
     }
 }

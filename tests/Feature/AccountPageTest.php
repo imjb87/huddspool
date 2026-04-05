@@ -275,6 +275,26 @@ class AccountPageTest extends TestCase
             ->assertDontSee('href="/account/notifications"', false);
     }
 
+    public function test_account_page_does_not_list_connected_push_devices(): void
+    {
+        $user = User::factory()->create();
+        $user->pushSubscriptions()->create([
+            'endpoint' => 'https://example.com/push/123',
+            'public_key' => 'public-key',
+            'auth_token' => 'auth-token',
+            'content_encoding' => 'aes128gcm',
+            'device_label' => 'Safari on iPhone',
+            'browser' => 'Safari',
+            'platform' => 'iPhone',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSeeText('Connected devices')
+            ->assertDontSeeText('Safari on iPhone');
+    }
+
     public function test_user_can_upload_and_delete_avatar_from_account_page(): void
     {
         Storage::fake('public');

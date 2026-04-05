@@ -54,6 +54,21 @@ abstract class BaseAccountComponent extends Component
     }
 
     #[Computed]
+    public function pushDevices(): Collection
+    {
+        return $this->user->pushSubscriptions()
+            ->latest('id')
+            ->get()
+            ->map(fn ($subscription) => (object) [
+                'id' => $subscription->id,
+                'label' => $subscription->device_label ?: 'Unknown device',
+                'browser' => $subscription->browser,
+                'platform' => $subscription->platform,
+                'last_used_at' => $subscription->last_used_at,
+            ]);
+    }
+
+    #[Computed]
     public function webPushConfigured(): bool
     {
         return filled(config('services.web_push.public_key'))

@@ -167,6 +167,7 @@
                                         Push notifications are not configured on the server yet.
                                     </p>
                                     <p class="mt-2 text-xs text-red-600 dark:text-red-400" x-show="error" x-text="error"></p>
+
                                 </div>
 
                                 <div class="flex shrink-0 items-center">

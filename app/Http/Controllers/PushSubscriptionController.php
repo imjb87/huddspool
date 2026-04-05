@@ -25,6 +25,10 @@ class PushSubscriptionController extends Controller
                 'public_key' => $request->string('public_key')->toString(),
                 'auth_token' => $request->string('auth_token')->toString(),
                 'content_encoding' => $request->string('content_encoding')->toString() ?: 'aes128gcm',
+                'device_label' => $request->string('device_label')->toString() ?: null,
+                'browser' => $request->string('browser')->toString() ?: null,
+                'platform' => $request->string('platform')->toString() ?: null,
+                'user_agent' => $request->string('user_agent')->toString() ?: null,
             ]
         );
 

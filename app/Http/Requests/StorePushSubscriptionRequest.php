@@ -22,6 +22,10 @@ class StorePushSubscriptionRequest extends FormRequest
             'public_key' => ['required', 'string', 'max:4096'],
             'auth_token' => ['required', 'string', 'max:4096'],
             'content_encoding' => ['nullable', 'string', 'max:255'],
+            'device_label' => ['nullable', 'string', 'max:255'],
+            'browser' => ['nullable', 'string', 'max:255'],
+            'platform' => ['nullable', 'string', 'max:255'],
+            'user_agent' => ['nullable', 'string', 'max:2048'],
         ];
     }
 }
