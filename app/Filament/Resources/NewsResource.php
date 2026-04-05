@@ -43,7 +43,6 @@ class NewsResource extends Resource
                             ->required()
                             ->placeholder('News title')
                             ->columnSpanFull(),
-                        Forms\Components\Hidden::make('published_at'),
                         Forms\Components\ToggleButtons::make('publication_status')
                             ->label('Status')
                             ->options([
@@ -74,6 +73,12 @@ class NewsResource extends Resource
                                 $set('published_at', null);
                             })
                             ->columnSpanFull(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label('Published at')
+                            ->seconds(false)
+                            ->displayFormat('j M Y H:i')
+                            ->hidden(fn (callable $get): bool => $get('publication_status') !== 'published')
+                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('content')
                             ->rows(10)
                             ->label('Content')
@@ -100,6 +105,11 @@ class NewsResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => filled($state) ? 'Published' : 'Draft')
                     ->color(fn (?string $state): string => filled($state) ? 'success' : 'gray')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('published_at')
+                    ->label('Published')
+                    ->dateTime('j M Y H:i')
+                    ->placeholder('Draft')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->date()
