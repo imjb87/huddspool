@@ -9,10 +9,12 @@ use App\Models\User;
 use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
@@ -34,6 +36,15 @@ class UserResource extends Resource
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
+                        SpatieMediaLibraryFileUpload::make('avatar')
+                            ->label('Avatar')
+                            ->collection('avatars')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->image()
+                            ->avatar()
+                            ->imageEditor()
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('name')
                             ->label('Name')
                             ->required()
@@ -63,6 +74,11 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->label('Avatar')
+                    ->collection('avatars')
+                    ->circular()
+                    ->defaultImageUrl(asset('/images/user.jpg')),
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
                     ->searchable()

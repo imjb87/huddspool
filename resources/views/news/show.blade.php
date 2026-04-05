@@ -13,35 +13,33 @@
 @section('og_description', $shareDescription ?: config('app.description'))
 @section('og_type', 'article')
 @section('og_url', $shareUrl)
+@if ($newsArticle->featured_image_url)
+    @section('og_image', $newsArticle->featured_image_url)
+@endif
 
 @section('content')
     <div class="ui-page-shell bg-neutral-100 dark:bg-neutral-950" data-news-show>
         <div class="ui-section" data-section-shared-header>
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
-                <x-ui-breadcrumb class="mb-3" :items="[
+                <x-ui-breadcrumb :items="[
                     ['label' => 'News', 'url' => route('news.index')],
                     ['label' => $newsArticle->title, 'current' => true],
                 ]" />
-                <div class="space-y-4">
-                    <div class="min-w-0">
-                        <div class="ui-page-title-with-icon">
-                            <div class="ui-page-title-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 7.5v9a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 16.5v-9m15 0A2.25 2.25 0 0 0 17.25 5.25H6.75A2.25 2.25 0 0 0 4.5 7.5m15 0v.75A2.25 2.25 0 0 1 17.25 10.5H6.75A2.25 2.25 0 0 1 4.5 8.25V7.5m4.5 6h6" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <h1 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $newsArticle->title }}</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
             <section class="ui-section">
                 <div class="ui-card">
+                    @if ($newsArticle->featured_image_url)
+                        <div class="border-b border-gray-200 dark:border-gray-800" data-news-featured-image>
+                            <img
+                                src="{{ $newsArticle->featured_image_url }}"
+                                alt="{{ $newsArticle->title }} featured image"
+                                class="h-56 w-full object-cover sm:h-72"
+                            >
+                        </div>
+                    @endif
                     <div class="ui-card-body">
                         <div class="text-xs text-gray-500 dark:text-gray-400">
                             <time datetime="{{ $newsArticle->created_at?->toDateString() }}">
@@ -49,7 +47,11 @@
                             </time>
                         </div>
 
-                        <div class="mt-6 space-y-4 text-sm leading-7 text-gray-700 dark:text-gray-300" data-news-content>
+                        <h1 class="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {{ $newsArticle->title }}
+                        </h1>
+
+                        <div class="mt-4 space-y-4 text-sm leading-7 text-gray-700 dark:text-gray-300" data-news-content>
                             @foreach (preg_split('/\r\n|\r|\n/', trim((string) $newsArticle->content)) as $paragraph)
                                 @if (filled(trim((string) $paragraph)))
                                     <p>{{ $paragraph }}</p>

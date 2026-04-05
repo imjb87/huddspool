@@ -43,6 +43,15 @@
                         @foreach ($news as $article)
                             <article class="ui-card" data-news-index-item>
                                 <div class="ui-card-body">
+                                    @if ($article->featured_image_url)
+                                        <div class="mb-4 overflow-hidden rounded-2xl" data-news-index-featured-image>
+                                            <img
+                                                src="{{ $article->featured_image_url }}"
+                                                alt="{{ $article->title }} featured image"
+                                                class="h-44 w-full object-cover"
+                                            >
+                                        </div>
+                                    @endif
                                     <div class="text-xs text-gray-500 dark:text-gray-400">
                                         <time datetime="{{ $article->created_at?->toDateString() }}">
                                             {{ $article->created_at?->format('j F Y') }}

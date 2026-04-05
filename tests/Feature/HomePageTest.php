@@ -13,6 +13,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Spatie\ResponseCache\Facades\ResponseCache;
 use Tests\TestCase;
 
@@ -375,8 +376,10 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Away Team 7');
     }
 
-    public function test_home_page_shows_latest_news_in_a_featured_layout(): void
+    public function test_home_page_shows_latest_news_in_card_rows(): void
     {
+        Storage::fake('public');
+
         $author = User::factory()->create(['name' => 'John Bell']);
         $expectedDate = now()->format('j F Y');
 
@@ -389,13 +392,18 @@ class HomePageTest extends TestCase
                 'author_id' => $author->id,
             ]);
 
-            News::query()->create([
+            $featuredArticle = News::query()->create([
                 'title' => 'Fixture dates updated',
                 'slug' => 'fixture-dates-updated',
                 'content' => 'Several fixture dates have changed following venue availability updates.',
                 'published_at' => now(),
                 'author_id' => $author->id,
             ]);
+
+            $featuredArticle->addMediaFromString('featured-image')
+                ->usingFileName('fixture-dates.jpg')
+                ->usingName('fixture-dates')
+                ->toMediaCollection('featured-images', 'public');
 
             News::query()->create([
                 'title' => 'Draft article',
@@ -410,8 +418,7 @@ class HomePageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-home-news', false);
-        $response->assertSee('data-home-news-grid', false);
-        $response->assertSee('data-home-news-featured', false);
+        $response->assertSee('data-home-news-rows', false);
         $response->assertSee('data-home-news-list', false);
         $response->assertSee('data-home-news-item', false);
         $response->assertSeeText('Fixture dates updated');
@@ -419,7 +426,9 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('Draft article');
         $response->assertSeeText($expectedDate);
         $response->assertSee(route('news.show', News::query()->published()->latest('published_at')->firstOrFail()), false);
-        $response->assertSee('See more');
+        $response->assertSee('data-home-news-featured-image', false);
+        $response->assertSee(News::query()->where('slug', 'fixture-dates-updated')->firstOrFail()->featured_image_url, false);
+        $response->assertDontSee('See more');
         $response->assertSee(route('news.index'), false);
         $response->assertDontSee('data-home-news-empty', false);
     }
@@ -471,7 +480,7 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('data-home-news-featured', false)
+            ->assertSee('data-home-news-rows', false)
             ->assertSeeText('League handbook update')
             ->assertDontSeeText('No league news has been published yet.');
     }

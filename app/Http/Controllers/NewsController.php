@@ -25,7 +25,7 @@ class NewsController extends Controller
 
         return view('news.show', [
             'title' => $news->title,
-            'newsArticle' => $news->load('author:id,name'),
+            'newsArticle' => $news->load('author:id,name', 'media'),
         ]);
     }
 
@@ -33,7 +33,7 @@ class NewsController extends Controller
     {
         return News::query()
             ->published()
-            ->with('author:id,name')
+            ->with('author:id,name', 'media')
             ->latest('published_at')
             ->get();
     }

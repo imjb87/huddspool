@@ -33,11 +33,12 @@ class PlayerAvatarUpdateTest extends TestCase
             ->assertSessionHas('status', 'Avatar updated');
 
         $player->refresh();
+        $media = $player->getFirstMedia('avatars');
 
-        $this->assertNotSame('avatars/old-avatar.jpg', $player->avatar_path);
-        $this->assertStringStartsWith('avatars/', $player->avatar_path);
+        $this->assertNull($player->avatar_path);
+        $this->assertNotNull($media);
         Storage::disk('public')->assertMissing('avatars/old-avatar.jpg');
-        Storage::disk('public')->assertExists($player->avatar_path);
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot());
     }
 
     public function test_avatar_upload_requires_an_image_file(): void
@@ -55,7 +56,7 @@ class PlayerAvatarUpdateTest extends TestCase
             ->assertRedirect(route('player.show', $player))
             ->assertSessionHasErrors(['avatar']);
 
-        $this->assertNull($player->fresh()->avatar_path);
+        $this->assertFalse($player->fresh()->hasMedia('avatars'));
         $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
@@ -95,7 +96,7 @@ class PlayerAvatarUpdateTest extends TestCase
 
         $response->assertForbidden();
 
-        $this->assertNull($player->fresh()->avatar_path);
+        $this->assertFalse($player->fresh()->hasMedia('avatars'));
         $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
@@ -118,8 +119,11 @@ class PlayerAvatarUpdateTest extends TestCase
             ->assertRedirect(route('player.show', $player))
             ->assertSessionHas('status', 'Avatar updated');
 
-        $this->assertStringStartsWith('avatars/', $player->fresh()->avatar_path);
-        Storage::disk('public')->assertExists($player->fresh()->avatar_path);
+        $media = $player->fresh()->getFirstMedia('avatars');
+
+        $this->assertNotNull($media);
+        $this->assertNull($player->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot());
     }
 
     public function test_player_profile_does_not_show_avatar_upload_for_admin_viewing_another_player(): void

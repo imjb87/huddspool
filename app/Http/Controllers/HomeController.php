@@ -23,8 +23,7 @@ class HomeController extends Controller
             'liveScores' => $this->liveScores(),
             'entrySeason' => $this->entrySeason(),
             'entrySeasonCountdown' => $this->entrySeasonCountdown(),
-            'featuredArticle' => $news->first(),
-            'secondaryArticles' => $news->slice(1),
+            'news' => $news,
         ]);
     }
 
@@ -89,7 +88,7 @@ class HomeController extends Controller
     {
         return News::query()
             ->published()
-            ->with('author:id,name')
+            ->with('author:id,name', 'media')
             ->latest('published_at')
             ->limit(3)
             ->get();

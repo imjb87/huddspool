@@ -6,10 +6,12 @@ use App\Filament\Resources\NewsResource\Pages;
 use App\Models\News;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
 class NewsResource extends Resource
@@ -28,6 +30,14 @@ class NewsResource extends Resource
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
+                        SpatieMediaLibraryFileUpload::make('featured_image')
+                            ->label('Featured image')
+                            ->collection('featured-images')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->image()
+                            ->imageEditor()
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('title')
                             ->label('Title')
                             ->required()
@@ -78,6 +88,10 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('featured_image')
+                    ->label('Image')
+                    ->collection('featured-images')
+                    ->square(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->sortable(),

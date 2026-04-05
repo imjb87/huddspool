@@ -8,7 +8,6 @@ use App\Queries\GetPlayerSeasonHistory;
 use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -44,26 +43,15 @@ class Show extends BaseAccountComponent
             'avatarUpload' => ['nullable', 'image', 'max:5120'],
         ]);
 
-        $avatarPath = $this->user->avatar_path;
-
         if ($this->removeAvatar) {
-            if ($this->user->avatar_path) {
-                Storage::disk('public')->delete($this->user->avatar_path);
-            }
-
-            $avatarPath = null;
+            $this->user->clearAvatar();
         } elseif ($this->avatarUpload) {
-            $avatarPath = $this->avatarUpload->store('avatars', 'public');
-
-            if ($this->user->avatar_path) {
-                Storage::disk('public')->delete($this->user->avatar_path);
-            }
+            $this->user->replaceAvatarWithUpload($this->avatarUpload);
         }
 
         $this->user->update([
             'email' => $validated['email'] ?: null,
             'telephone' => $validated['telephone'] ?: null,
-            'avatar_path' => $avatarPath,
         ]);
 
         $this->avatarUpload = null;

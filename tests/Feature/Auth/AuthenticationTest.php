@@ -90,8 +90,11 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $response->assertRedirect(route('account.show'));
-        $this->assertStringStartsWith('avatars/google-', $user->fresh()->avatar_path);
-        Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+        $media = $user->fresh()->getFirstMedia('avatars');
+        $this->assertNotNull($media);
+        $this->assertStringStartsWith('google-', $media->file_name);
+        $this->assertNull($user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot());
         $this->assertNotNull($user->fresh()->remember_token);
         $this->assertNotNull(
             collect($response->headers->getCookies())
@@ -148,8 +151,11 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $response->assertRedirect(route('account.show'));
-        $this->assertStringStartsWith('avatars/facebook-', $user->fresh()->avatar_path);
-        Storage::disk('public')->assertExists($user->fresh()->avatar_path);
+        $media = $user->fresh()->getFirstMedia('avatars');
+        $this->assertNotNull($media);
+        $this->assertStringStartsWith('facebook-', $media->file_name);
+        $this->assertNull($user->fresh()->avatar_path);
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot());
         $this->assertNotNull($user->fresh()->remember_token);
         $this->assertNotNull(
             collect($response->headers->getCookies())

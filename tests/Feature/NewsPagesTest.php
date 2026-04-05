@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\News;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class NewsPagesTest extends TestCase
@@ -61,6 +62,39 @@ class NewsPagesTest extends TestCase
             ->assertSeeText('Important league notices will be covered before the break.');
 
         $this->assertSame('/news/captains-meeting', route('news.show', $article, false));
+    }
+
+    public function test_news_pages_render_a_featured_image_when_present(): void
+    {
+        Storage::fake('public');
+
+        $author = User::factory()->create(['name' => 'John Bell']);
+
+        $article = News::withoutEvents(function () use ($author): News {
+            return News::query()->create([
+                'title' => 'Summer finals update',
+                'slug' => 'summer-finals-update',
+                'content' => 'Finals night details have been confirmed.',
+                'published_at' => now(),
+                'author_id' => $author->id,
+            ]);
+        });
+
+        $article->addMediaFromString('featured-image')
+            ->usingFileName('summer-finals.jpg')
+            ->usingName('summer-finals')
+            ->toMediaCollection('featured-images', 'public');
+
+        $response = $this->get(route('news.show', $article));
+
+        $response->assertOk()
+            ->assertSee('data-news-featured-image', false)
+            ->assertSee($article->fresh()->featured_image_url, false);
+
+        $this->get(route('news.index'))
+            ->assertOk()
+            ->assertSee('data-news-index-featured-image', false)
+            ->assertSee($article->fresh()->featured_image_url, false);
     }
 
     public function test_news_index_hides_draft_articles(): void

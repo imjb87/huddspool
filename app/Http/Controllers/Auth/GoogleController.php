@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,7 +48,7 @@ class GoogleController extends Controller
 
     private function storeGoogleAvatarForUser(User $user, ?string $avatarUrl): void
     {
-        if ($user->avatar_path || ! $avatarUrl) {
+        if ($user->hasAvatar() || ! $avatarUrl) {
             return;
         }
 
@@ -76,12 +75,9 @@ class GoogleController extends Controller
             default => 'jpg',
         };
 
-        $path = 'avatars/google-'.$user->getKey().'-'.Str::random(12).'.'.$extension;
-
-        Storage::disk('public')->put($path, $response->body());
-
-        $user->forceFill([
-            'avatar_path' => $path,
-        ])->save();
+        $user->replaceAvatarWithContents(
+            $response->body(),
+            'google-'.$user->getKey().'-'.Str::random(12).'.'.$extension,
+        );
     }
 }

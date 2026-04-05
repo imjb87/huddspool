@@ -11,7 +11,6 @@ use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
 {
@@ -52,15 +51,7 @@ class PlayerController extends Controller
     {
         $this->authorize('updateAvatar', $player);
 
-        $newPath = $request->file('avatar')->store('avatars', 'public');
-
-        if ($player->avatar_path) {
-            Storage::disk('public')->delete($player->avatar_path);
-        }
-
-        $player->update([
-            'avatar_path' => $newPath,
-        ]);
+        $player->replaceAvatarWithUpload($request->file('avatar'));
 
         return redirect()
             ->route('player.show', $player)

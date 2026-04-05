@@ -10,6 +10,8 @@ use App\Models\Team;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -78,6 +80,44 @@ class AdminMassAssignmentTest extends TestCase
             'id' => $team->id,
             'captain_id' => $captain->id,
         ]);
+    }
+
+    public function test_admin_can_update_a_users_avatar_from_the_filament_edit_page(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/existing-avatar.jpg', 'old-avatar');
+
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $player = User::factory()->create([
+            'avatar_path' => 'avatars/existing-avatar.jpg',
+        ]);
+
+        Filament::setCurrentPanel('admin');
+
+        Livewire::actingAs($admin)
+            ->test(EditUser::class, [
+                'record' => $player->getRouteKey(),
+            ])
+            ->set('data.avatar', UploadedFile::fake()->image('new-avatar.jpg'))
+            ->fillForm([
+                'name' => $player->name,
+                'email' => $player->email,
+                'team_id' => $player->team_id,
+                'telephone' => $player->telephone,
+                'site_role' => RoleName::Player->value,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $player->refresh();
+        $media = $player->getFirstMedia('avatars');
+
+        $this->assertNotNull($media);
+        $this->assertNull($player->avatar_path);
+        Storage::disk('public')->assertMissing('avatars/existing-avatar.jpg');
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot());
     }
 
     public function test_admin_can_impersonate_a_user_from_the_filament_edit_page(): void

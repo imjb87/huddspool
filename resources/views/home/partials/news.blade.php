@@ -16,7 +16,7 @@
             </div>
 
             <div class="lg:col-span-2">
-                @if (! $featuredArticle)
+                @if ($news->isEmpty())
                     <div class="ui-card" data-home-news-empty>
                         <div class="ui-card-body">
                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">No league news has been published yet.</p>
@@ -26,66 +26,44 @@
                         </div>
                     </div>
                 @else
-                    <div class="ui-card" data-home-news-grid>
+                    <div class="ui-card" data-home-news-rows>
                         <div class="ui-card-body">
-                            <article data-home-news-featured>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
-                                    <time datetime="{{ $featuredArticle->created_at?->toDateString() }}">
-                                        {{ $featuredArticle->created_at?->format('j F Y') }}
-                                    </time>
-                                </div>
+                            <div class="ui-card-rows" data-home-news-list>
+                                @foreach ($news as $article)
+                                    <article class="px-0 py-5 first:pt-0 last:pb-0" data-home-news-item>
+                                        <a href="{{ route('news.show', $article) }}" class="block space-y-4 rounded-2xl transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-green-400 dark:focus-visible:ring-offset-gray-900">
+                                            @if ($article->featured_image_url)
+                                                <div class="overflow-hidden rounded-2xl" data-home-news-featured-image>
+                                                    <img
+                                                        src="{{ $article->featured_image_url }}"
+                                                        alt="{{ $article->title }} featured image"
+                                                        class="h-40 w-full object-cover"
+                                                    >
+                                                </div>
+                                            @endif
 
-                                <h3 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
-                                    <a href="{{ route('news.show', $featuredArticle) }}" class="transition hover:text-gray-600 dark:hover:text-gray-300">
-                                        {{ $featuredArticle->title }}
-                                    </a>
-                                </h3>
-
-                                <p class="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                    {{ $featuredArticle->excerpt(260) }}
-                                </p>
-
-                                <div class="mt-4 flex justify-end">
-                                    <a href="{{ route('news.show', $featuredArticle) }}" class="text-xs font-medium text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                                        See more...
-                                    </a>
-                                </div>
-                            </article>
-
-                            @if ($secondaryArticles->isNotEmpty())
-                                <div class="ui-card-rows mt-6 border-t border-gray-200 dark:border-neutral-800/75" data-home-news-list>
-                                    @foreach ($secondaryArticles as $article)
-                                        <article class="px-0 py-5 first:pt-4 last:pb-0" data-home-news-item>
                                             <div class="text-xs text-gray-500 dark:text-gray-400">
-                                                <time datetime="{{ $article->created_at?->toDateString() }}">
-                                                    {{ $article->created_at?->format('j F Y') }}
+                                                <time datetime="{{ $article->published_at?->toDateString() ?? $article->created_at?->toDateString() }}">
+                                                    {{ $article->published_at?->format('j F Y') ?? $article->created_at?->format('j F Y') }}
                                                 </time>
                                             </div>
 
-                                            <h3 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
-                                                <a href="{{ route('news.show', $article) }}" class="transition hover:text-gray-600 dark:hover:text-gray-300">
-                                                    {{ $article->title }}
-                                                </a>
+                                            <h3 class="text-base font-semibold text-gray-900 transition hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300">
+                                                {{ $article->title }}
                                             </h3>
 
-                                            <p class="mt-3 line-clamp-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                                {{ $article->excerpt() }}
+                                            <p class="line-clamp-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                                                {{ $article->excerpt(220) }}
                                             </p>
-
-                                            <div class="mt-3 flex justify-end">
-                                                <a href="{{ route('news.show', $article) }}" class="text-xs font-medium text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                                                    See more...
-                                                </a>
-                                            </div>
-                                        </article>
-                                    @endforeach
-                                </div>
-                            @endif
+                                        </a>
+                                    </article>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @endif
 
-                @if ($featuredArticle)
+                @if ($news->isNotEmpty())
                     <div class="mt-4 flex justify-end">
                         <a href="{{ route('news.index') }}" class="ui-button-secondary">
                             View all news

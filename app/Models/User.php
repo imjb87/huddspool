@@ -15,15 +15,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasMedia
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -118,6 +121,14 @@ class User extends Authenticatable implements FilamentUser
     public function notifications(): MorphMany
     {
         return $this->morphMany(DatabaseNotification::class, 'notifiable')->whereNull('deleted_at');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatars')
+            ->useDisk('public')
+            ->singleFile()
+            ->useFallbackUrl(asset('/images/user.jpg'));
     }
 
     public function unreadNotifications(): MorphMany
@@ -234,12 +245,71 @@ class User extends Authenticatable implements FilamentUser
         return UserRole::tryFrom((string) $this->role);
     }
 
+    public function hasAvatar(): bool
+    {
+        return $this->hasMedia('avatars') || filled($this->avatar_path);
+    }
+
+    public function clearAvatar(): void
+    {
+        $this->clearMediaCollection('avatars');
+        $this->deleteLegacyAvatarFile();
+
+        if ($this->avatar_path !== null) {
+            $this->forceFill([
+                'avatar_path' => null,
+            ])->saveQuietly();
+        }
+    }
+
+    public function replaceAvatarWithUpload(UploadedFile $file): void
+    {
+        $this->clearAvatar();
+
+        $this->addMedia($file->getRealPath())
+            ->usingFileName($file->hashName())
+            ->usingName(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+            ->toMediaCollection('avatars', 'public');
+    }
+
+    public function replaceAvatarWithContents(string $contents, string $fileName): void
+    {
+        $this->clearAvatar();
+
+        $this->addMediaFromString($contents)
+            ->usingFileName($fileName)
+            ->usingName(pathinfo($fileName, PATHINFO_FILENAME))
+            ->toMediaCollection('avatars', 'public');
+    }
+
+    public function clearLegacyAvatarPath(): void
+    {
+        $this->deleteLegacyAvatarFile();
+
+        if ($this->avatar_path !== null) {
+            $this->forceFill([
+                'avatar_path' => null,
+            ])->saveQuietly();
+        }
+    }
+
     public function getAvatarUrlAttribute(): string
     {
+        if ($this->hasMedia('avatars')) {
+            return $this->getFirstMediaUrl('avatars');
+        }
+
         if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
             return Storage::url($this->avatar_path);
         }
 
         return asset('/images/user.jpg');
+    }
+
+    private function deleteLegacyAvatarFile(): void
+    {
+        if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
+            Storage::disk('public')->delete($this->avatar_path);
+        }
     }
 }

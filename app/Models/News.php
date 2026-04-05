@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class News extends Model
+class News extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected static function booted(): void
     {
@@ -53,6 +55,13 @@ class News extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('featured-images')
+            ->useDisk('public')
+            ->singleFile();
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -74,6 +83,15 @@ class News extends Model
     public function excerpt(int $limit = 180): string
     {
         return Str::limit(preg_replace('/\s+/', ' ', trim($this->content)) ?? '', $limit);
+    }
+
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        if (! $this->hasMedia('featured-images')) {
+            return null;
+        }
+
+        return $this->getFirstMediaUrl('featured-images');
     }
 
     private function generateSlug(string $title, ?int $ignoreId = null): string

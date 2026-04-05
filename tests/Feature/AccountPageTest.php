@@ -26,6 +26,7 @@ use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class AccountPageTest extends TestCase
@@ -290,20 +291,20 @@ class AccountPageTest extends TestCase
             ->call('saveProfile');
 
         $user->refresh();
-        $uploadedPath = $user->avatar_path;
+        $uploadedMedia = $user->getFirstMedia('avatars');
 
-        $this->assertNotNull($uploadedPath);
-        $this->assertStringStartsWith('avatars/', $uploadedPath);
+        $this->assertNotNull($uploadedMedia);
+        $this->assertNull($user->avatar_path);
         Storage::disk('public')->assertMissing('avatars/old-avatar.jpg');
-        Storage::disk('public')->assertExists($uploadedPath);
+        Storage::disk('public')->assertExists($uploadedMedia->getPathRelativeToRoot());
 
         Livewire::actingAs($user)
             ->test(AccountShow::class)
             ->call('clearAvatar')
             ->call('saveProfile');
 
-        $this->assertNull($user->fresh()->avatar_path);
-        Storage::disk('public')->assertMissing($uploadedPath);
+        $this->assertFalse($user->fresh()->hasMedia('avatars'));
+        Storage::disk('public')->assertMissing($uploadedMedia->getPathRelativeToRoot());
     }
 
     public function test_user_can_update_contact_details_from_account_page(): void

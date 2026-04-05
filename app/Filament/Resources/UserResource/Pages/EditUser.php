@@ -41,10 +41,18 @@ class EditUser extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data);
-
         SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
 
         return $record;
+    }
+
+    protected function afterSave(): void
+    {
+        $record = $this->getRecord()->refresh();
+
+        if ($record->hasMedia('avatars')) {
+            $record->clearLegacyAvatarPath();
+        }
     }
 
     protected function getHeaderActions(): array
