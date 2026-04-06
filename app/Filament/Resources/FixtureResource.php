@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\FixtureResource\CopilotTools\ListFixturesTool;
+use App\Filament\Resources\FixtureResource\CopilotTools\SearchFixturesTool;
+use App\Filament\Resources\FixtureResource\CopilotTools\ViewFixtureTool;
 use App\Filament\Resources\FixtureResource\Pages;
 use App\Models\Fixture;
 use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
@@ -123,6 +126,10 @@ class FixtureResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListFixturesTool,
+            new ViewFixtureTool,
+            new SearchFixturesTool,
+        ];
     }
 }
