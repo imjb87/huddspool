@@ -99,9 +99,7 @@ class CopilotStreamController extends BaseStreamController
 
                 $provider = $plugin->getProvider();
                 $model = $plugin->getModel();
-                $tools = $provider === 'openai'
-                    ? []
-                    : $toolRegistry->buildTools($panelId, $user, $tenant, $conversation->id);
+                $tools = $toolRegistry->buildTools($panelId, $user, $tenant, $conversation->id);
 
                 $agent->forPanel($panelId)
                     ->forUser($user)

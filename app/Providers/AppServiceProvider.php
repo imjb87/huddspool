@@ -25,7 +25,17 @@ use App\Observers\SeasonObserver;
 use App\Observers\TeamObserver;
 use App\Observers\UserObserver;
 use App\Observers\VenueObserver;
+use App\Support\Copilot\Tools\ListPagesTool as AppListPagesTool;
+use App\Support\Copilot\Tools\ListResourcesTool as AppListResourcesTool;
+use App\Support\Copilot\Tools\ListWidgetsTool as AppListWidgetsTool;
+use App\Support\Copilot\Tools\RecallTool as AppRecallTool;
+use App\Support\Copilot\Tools\RunToolTool as AppRunToolTool;
 use EslamRedaDiv\FilamentCopilot\Http\Controllers\StreamController as PackageCopilotStreamController;
+use EslamRedaDiv\FilamentCopilot\Tools\ListPagesTool as PackageListPagesTool;
+use EslamRedaDiv\FilamentCopilot\Tools\ListResourcesTool as PackageListResourcesTool;
+use EslamRedaDiv\FilamentCopilot\Tools\ListWidgetsTool as PackageListWidgetsTool;
+use EslamRedaDiv\FilamentCopilot\Tools\RecallTool as PackageRecallTool;
+use EslamRedaDiv\FilamentCopilot\Tools\RunToolTool as PackageRunToolTool;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -44,6 +54,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(PackageCopilotStreamController::class, CopilotStreamController::class);
+        $this->app->bind(PackageListResourcesTool::class, AppListResourcesTool::class);
+        $this->app->bind(PackageListPagesTool::class, AppListPagesTool::class);
+        $this->app->bind(PackageListWidgetsTool::class, AppListWidgetsTool::class);
+        $this->app->bind(PackageRecallTool::class, AppRecallTool::class);
+        $this->app->bind(PackageRunToolTool::class, AppRunToolTool::class);
     }
 
     /**
