@@ -134,13 +134,7 @@ class FixturesSection extends Component
             return 1;
         }
 
-        foreach ($this->section->season->dates ?? [] as $key => $date) {
-            if (date('W', strtotime($date)) === now()->format('W')) {
-                return $key + 1;
-            }
-        }
-
-        return 1;
+        return $this->section->season->currentOrPreviousScheduledWeek();
     }
 
     private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver

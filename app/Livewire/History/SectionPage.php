@@ -9,7 +9,6 @@ use App\Models\Section;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
 
 class SectionPage extends BaseSectionPage
@@ -59,21 +58,6 @@ class SectionPage extends BaseSectionPage
 
     protected function defaultWeek(): int
     {
-        $currentDate = $this->season->lastScheduledDate() ?? now();
-
-        foreach (collect($this->season->dates ?? [])->flatten()->values() as $key => $date) {
-            try {
-                $seasonWeekDate = Carbon::parse($date);
-            } catch (\Throwable) {
-                continue;
-            }
-
-            if ($seasonWeekDate->isoWeek() === $currentDate->isoWeek()
-                && $seasonWeekDate->isoWeekYear() === $currentDate->isoWeekYear()) {
-                return $key + 1;
-            }
-        }
-
-        return 1;
+        return $this->season->currentOrPreviousScheduledWeek($this->season->lastScheduledDate());
     }
 }

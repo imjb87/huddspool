@@ -149,6 +149,49 @@ class Season extends Model
             ->last();
     }
 
+    public function currentOrPreviousScheduledWeek(?Carbon $date = null): int
+    {
+        $referenceDate = ($date ?? now())->copy()->startOfDay();
+
+        $scheduledWeeks = collect($this->dates ?? [])
+            ->flatten()
+            ->values()
+            ->map(function ($value, int $index) use ($referenceDate): ?array {
+                if ($value instanceof Carbon) {
+                    $scheduledDate = $value->copy()->startOfDay();
+                } elseif (is_string($value)) {
+                    try {
+                        $scheduledDate = Carbon::parse($value)->startOfDay();
+                    } catch (\Throwable) {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+
+                return [
+                    'week' => $index + 1,
+                    'date' => $scheduledDate,
+                    'is_same_week' => $scheduledDate->isoWeek() === $referenceDate->isoWeek()
+                        && $scheduledDate->isoWeekYear() === $referenceDate->isoWeekYear(),
+                ];
+            })
+            ->filter();
+
+        $currentWeek = $scheduledWeeks->firstWhere('is_same_week', true);
+
+        if ($currentWeek) {
+            return (int) $currentWeek['week'];
+        }
+
+        $previousWeek = $scheduledWeeks
+            ->filter(fn (array $week): bool => $week['date']->lessThan($referenceDate))
+            ->sortByDesc(fn (array $week): int => $week['date']->getTimestamp())
+            ->first();
+
+        return (int) ($previousWeek['week'] ?? 1);
+    }
+
     /**
      * Get the expulsions for the season.
      */

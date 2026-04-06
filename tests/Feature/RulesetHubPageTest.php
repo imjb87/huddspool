@@ -378,6 +378,34 @@ class RulesetHubPageTest extends TestCase
             ->assertSet('week', 2);
     }
 
+    public function test_switching_to_fixtures_results_uses_previous_scheduled_week_during_a_week_off(): void
+    {
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => [
+                now()->copy()->subWeeks(2)->toDateString(),
+                now()->copy()->subWeek()->toDateString(),
+                now()->copy()->addWeek()->toDateString(),
+            ],
+        ]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Division A',
+        ]);
+
+        Livewire::test(RulesetSectionPage::class, [
+            'ruleset' => $ruleset,
+            'section' => $section,
+            'initialTab' => 'tables',
+        ])
+            ->set('week', 1)
+            ->call('setActiveTab', 'fixtures-results')
+            ->assertSet('activeTab', 'fixtures-results')
+            ->assertSet('week', 2);
+    }
+
     public function test_section_page_mounts_only_the_requested_tab_component(): void
     {
         $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->toDateString()]]);

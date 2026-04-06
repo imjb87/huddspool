@@ -999,6 +999,66 @@ class AccountPageTest extends TestCase
             ->assertDontSeeText('Account Opponent Week 01');
     }
 
+    public function test_team_account_page_defaults_fixtures_to_the_previous_scheduled_week_during_a_week_off(): void
+    {
+        $today = now();
+
+        $season = Season::factory()->create([
+            'is_open' => true,
+            'dates' => collect(range(1, 8))
+                ->map(fn (int $week): string => $today->copy()->addWeeks(match ($week) {
+                    1 => -6,
+                    2 => -5,
+                    3 => -4,
+                    4 => -3,
+                    5 => -2,
+                    6 => -1,
+                    7 => 1,
+                    8 => 2,
+                })->toDateString())
+                ->all(),
+        ]);
+
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create(['name' => 'Account Fixtures Team']);
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+
+        foreach (range(1, 8) as $week) {
+            $opponent = Team::factory()->create(['name' => sprintf('Account Opponent Week %02d', $week)]);
+            $section->teams()->attach($opponent->id, ['sort' => $week + 1]);
+
+            Fixture::factory()->create([
+                'season_id' => $season->id,
+                'section_id' => $section->id,
+                'ruleset_id' => $ruleset->id,
+                'home_team_id' => $team->id,
+                'away_team_id' => $opponent->id,
+                'week' => $week,
+                'fixture_date' => $season->dates[$week - 1],
+            ]);
+        }
+
+        Livewire::actingAs($teamAdmin)
+            ->test(TeamFixturesSection::class, [
+                'team' => $team,
+                'section' => $section,
+                'forAccount' => true,
+            ])
+            ->assertSeeText('Page 2')
+            ->assertSeeText('Account Opponent Week 06')
+            ->assertDontSeeText('Account Opponent Week 01');
+    }
+
     public function test_team_account_fixtures_use_shortnames_on_mobile(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
