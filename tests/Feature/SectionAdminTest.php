@@ -77,6 +77,18 @@ class SectionAdminTest extends TestCase
             ->mountTableAction('DeductPoints', (string) $homePivotId)
             ->assertTableActionDataSet([
                 'deducted' => 2,
-            ]);
+            ])
+            ->setTableActionData([
+                'deducted' => 3,
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $this->assertDatabaseHas('section_team', [
+            'id' => $homePivotId,
+            'section_id' => $section->id,
+            'team_id' => $homeTeam->id,
+            'deducted' => 3,
+        ]);
     }
 }

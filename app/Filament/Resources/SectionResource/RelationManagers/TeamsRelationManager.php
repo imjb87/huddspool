@@ -100,28 +100,14 @@ class TeamsRelationManager extends RelationManager
                             ->default(0),
                     ])
                     ->fillForm(function (RelationManager $livewire, Model $record): array {
-                        $pivot = $record->pivot;
-
-                        if (! $pivot) {
-                            $section = $livewire->getOwnerRecord();
-
-                            $pivot = SectionTeam::query()
-                                ->where('section_id', $section->id)
-                                ->where('team_id', $record->id)
-                                ->first();
-                        }
+                        $pivot = $this->resolveSectionTeamPivot($livewire, $record);
 
                         return [
                             'deducted' => (int) ($pivot->deducted ?? 0),
                         ];
                     })
                     ->action(function (RelationManager $livewire, Model $record, array $data): void {
-                        $section = $livewire->getOwnerRecord();
-
-                        $pivot = SectionTeam::query()
-                            ->where('section_id', $section->id)
-                            ->where('team_id', $record->id)
-                            ->first();
+                        $pivot = $this->resolveSectionTeamPivot($livewire, $record);
 
                         if (! $pivot) {
                             return;
@@ -191,6 +177,22 @@ class TeamsRelationManager extends RelationManager
             ->paginated(false)
             ->defaultSort('sort')
             ->reorderable('sort');
+    }
+
+    private function resolveSectionTeamPivot(RelationManager $livewire, Model $record): ?SectionTeam
+    {
+        $pivot = $record->pivot;
+
+        if ($pivot?->getKey()) {
+            return SectionTeam::query()->find($pivot->getKey());
+        }
+
+        $section = $livewire->getOwnerRecord();
+
+        return SectionTeam::query()
+            ->where('section_id', $section->id)
+            ->where('team_id', $record->id)
+            ->first();
     }
 
     public function getTableRecordKey(Model|array $record): string
