@@ -6,10 +6,29 @@ use App\Filament\Resources\SectionResource;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditSection extends EditRecord
 {
     protected static string $resource = SectionResource::class;
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Section';
+    }
+
+    public static function getNavigationIcon(): string|\BackedEnum|Htmlable|null
+    {
+        return null;
+    }
+
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+            'season' => $this->getRecord()->season,
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

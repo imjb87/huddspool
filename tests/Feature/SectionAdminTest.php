@@ -96,7 +96,7 @@ class SectionAdminTest extends TestCase
         ]);
     }
 
-    public function test_section_teams_relation_manager_can_add_existing_team(): void
+    public function test_section_teams_relation_manager_can_add_multiple_existing_teams(): void
     {
         $admin = User::factory()->create([
             'is_admin' => true,
@@ -110,6 +110,7 @@ class SectionAdminTest extends TestCase
         ]);
         $existingTeam = Team::factory()->create(['name' => 'Existing']);
         $newTeam = Team::factory()->create(['name' => 'New Team']);
+        $anotherTeam = Team::factory()->create(['name' => 'Another Team']);
 
         $section->teams()->attach($existingTeam->id, ['sort' => 1, 'deducted' => 0]);
 
@@ -121,7 +122,7 @@ class SectionAdminTest extends TestCase
                 'pageClass' => EditSection::class,
             ])
             ->callTableAction('AddExistingTeam', data: [
-                'team_id' => $newTeam->id,
+                'team_ids' => [$newTeam->id, $anotherTeam->id],
             ])
             ->assertHasNoActionErrors();
 
@@ -129,6 +130,13 @@ class SectionAdminTest extends TestCase
             'section_id' => $section->id,
             'team_id' => $newTeam->id,
             'sort' => 2,
+            'deducted' => 0,
+        ]);
+
+        $this->assertDatabaseHas('section_team', [
+            'section_id' => $section->id,
+            'team_id' => $anotherTeam->id,
+            'sort' => 3,
             'deducted' => 0,
         ]);
     }

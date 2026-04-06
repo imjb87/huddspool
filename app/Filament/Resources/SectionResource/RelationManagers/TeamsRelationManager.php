@@ -56,23 +56,32 @@ class TeamsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Actions\Action::make('AddExistingTeam')
-                    ->label('Add an existing team')
+                    ->label('Add existing teams')
                     ->form([
-                        Forms\Components\Select::make('team_id')
-                            ->label('Team')
+                        Forms\Components\Select::make('team_ids')
+                            ->label('Teams')
                             ->options(fn (RelationManager $livewire): array => $this->selectableTeamOptions($livewire))
+                            ->multiple()
                             ->searchable()
                             ->preload()
                             ->required(),
                     ])
                     ->action(function (RelationManager $livewire, array $data): void {
-                        $livewire->getOwnerRecord()
-                            ->sectionTeams()
-                            ->create([
-                                'team_id' => $data['team_id'],
-                                'sort' => $this->nextSortFor($livewire),
-                                'deducted' => 0,
-                            ]);
+                        $nextSort = $this->nextSortFor($livewire);
+
+                        collect($data['team_ids'])
+                            ->map(fn (mixed $teamId): int => (int) $teamId)
+                            ->each(function (int $teamId) use ($livewire, &$nextSort): void {
+                                $livewire->getOwnerRecord()
+                                    ->sectionTeams()
+                                    ->create([
+                                        'team_id' => $teamId,
+                                        'sort' => $nextSort,
+                                        'deducted' => 0,
+                                    ]);
+
+                                $nextSort++;
+                            });
                     }),
                 Actions\Action::make('CreateTeam')
                     ->label('Create a new team')

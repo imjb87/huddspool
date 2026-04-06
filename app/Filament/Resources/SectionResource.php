@@ -11,6 +11,7 @@ use App\Models\Season;
 use App\Models\Section;
 use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Forms;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -93,12 +94,21 @@ class SectionResource extends Resource implements CopilotResource
         ];
     }
 
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\EditSection::class,
+            Pages\PreviewFixtures::class,
+        ]);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListSections::route('/'),
             'create' => Pages\CreateSection::route('/create'),
             'edit' => Pages\EditSection::route('/{record}/edit'),
+            'preview-fixtures' => Pages\PreviewFixtures::route('/{record}/preview-fixtures'),
         ];
     }
 
