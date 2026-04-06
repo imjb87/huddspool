@@ -37,7 +37,20 @@ class TeamsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
                     ->formatStateUsing(fn (string $state): string => (string) SectionTeam::displaySortValue((int) $state)),
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('pivot.deducted'),
+                Tables\Columns\TextColumn::make('pivot.deducted')
+                    ->label('Deducted')
+                    ->default(0)
+                    ->formatStateUsing(function (mixed $state): string {
+                        $deducted = (int) $state;
+
+                        if ($deducted <= 0) {
+                            return '0 pts';
+                        }
+
+                        return sprintf('-%d pts', $deducted);
+                    })
+                    ->badge()
+                    ->color(fn (mixed $state): string => (int) $state > 0 ? 'danger' : 'gray'),
             ])
             ->filters([
                 //
