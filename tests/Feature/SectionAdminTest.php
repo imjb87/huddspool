@@ -9,6 +9,7 @@ use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
+use App\Models\SectionTeam;
 use App\Models\Team;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -58,6 +59,10 @@ class SectionAdminTest extends TestCase
             'ruleset_id' => $ruleset->id,
             'is_confirmed' => true,
         ]);
+        $homePivotId = SectionTeam::query()
+            ->where('section_id', $section->id)
+            ->where('team_id', $homeTeam->id)
+            ->value('id');
 
         Filament::setCurrentPanel('admin');
 
@@ -67,7 +72,11 @@ class SectionAdminTest extends TestCase
                 'pageClass' => EditSection::class,
             ])
             ->assertCanSeeTableRecords([$homeTeam, $awayTeam])
-            ->assertTableColumnFormattedStateSet('pivot.deducted', '-2 pts', $homeTeam)
-            ->assertTableColumnFormattedStateSet('pivot.deducted', '0 pts', $awayTeam);
+            ->assertTableColumnFormattedStateSet('deducted', '-2 pts', $homeTeam)
+            ->assertTableColumnFormattedStateSet('deducted', '0 pts', $awayTeam)
+            ->mountTableAction('DeductPoints', (string) $homePivotId)
+            ->assertTableActionDataSet([
+                'deducted' => 2,
+            ]);
     }
 }
