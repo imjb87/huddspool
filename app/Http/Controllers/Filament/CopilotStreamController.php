@@ -97,15 +97,18 @@ class CopilotStreamController extends BaseStreamController
                 /** @var FilamentCopilotPlugin $plugin */
                 $plugin = FilamentCopilotPlugin::get();
 
+                $provider = $plugin->getProvider();
+                $model = $plugin->getModel();
+                $tools = $provider === 'openai'
+                    ? []
+                    : $toolRegistry->buildTools($panelId, $user, $tenant, $conversation->id);
+
                 $agent->forPanel($panelId)
                     ->forUser($user)
                     ->forTenant($tenant)
-                    ->withTools($toolRegistry->buildTools($panelId, $user, $tenant, $conversation->id))
+                    ->withTools($tools)
                     ->withMessages($messages)
                     ->withSystemPrompt($plugin->getSystemPrompt());
-
-                $provider = $plugin->getProvider();
-                $model = $plugin->getModel();
 
                 $lastUserMessage = '';
                 foreach ($messages as $message) {
@@ -214,7 +217,7 @@ class CopilotStreamController extends BaseStreamController
 
     protected function shouldUseBufferedResponse(string $provider): bool
     {
-        return $provider === 'gemini';
+        return in_array($provider, ['gemini', 'openai'], true);
     }
 
     protected function emitBufferedResponse(AgentResponse $response): void
