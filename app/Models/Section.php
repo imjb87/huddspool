@@ -83,6 +83,11 @@ class Section extends Model
             ->withPivot(['id', 'sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']);
     }
 
+    public function sectionTeams(): HasMany
+    {
+        return $this->hasMany(SectionTeam::class);
+    }
+
     public function players(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'section_team', 'section_id', 'team_id', 'id', 'team_id')

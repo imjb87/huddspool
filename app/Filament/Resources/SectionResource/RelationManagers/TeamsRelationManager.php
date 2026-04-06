@@ -10,13 +10,12 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class TeamsRelationManager extends RelationManager
 {
     protected static ?string $title = 'Teams';
 
-    protected static string $relationship = 'teams';
+    protected static string $relationship = 'sectionTeams';
 
     public function form(Schema $schema): Schema
     {
@@ -31,12 +30,12 @@ class TeamsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
-            ->allowDuplicates()
+            ->recordTitle(fn (SectionTeam $record): ?string => $record->team?->name)
             ->columns([
-                Tables\Columns\TextColumn::make('row')->label(false)->rowIndex()
-                    ->formatStateUsing(fn (string $state): string => (string) SectionTeam::displaySortValue((int) $state)),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('display_sort')
+                    ->label(false),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->label('Team'),
                 Tables\Columns\TextColumn::make('deducted')
                     ->label('Deducted')
                     ->formatStateUsing(function (mixed $state): string {
@@ -51,41 +50,55 @@ class TeamsRelationManager extends RelationManager
                     ->badge()
                     ->color(fn (mixed $state): string => (int) $state > 0 ? 'danger' : 'gray'),
             ])
-            ->modifyQueryUsing(fn ($query) => $query
-                ->select('teams.*')
-                ->addSelect('section_team.deducted as deducted'))
+            ->modifyQueryUsing(fn ($query) => $query->with('team'))
             ->filters([
                 //
             ])
             ->headerActions([
-                Actions\AttachAction::make()
+                Actions\Action::make('AddExistingTeam')
                     ->label('Add an existing team')
-                    ->recordSelectOptionsQuery(function ($query, RelationManager $livewire) {
-                        $section = $livewire->getOwnerRecord();
-
-                        $existingTeamIds = $section->teams()->pluck('teams.id')->all();
-                        $byeTeamId = Team::query()
-                            ->where('name', Team::BYE_NAME)
-                            ->value('id');
-
-                        $excludedTeamIds = array_values(array_filter(
-                            $existingTeamIds,
-                            fn (int $teamId): bool => $teamId !== $byeTeamId
-                        ));
-
-                        if ($excludedTeamIds === []) {
-                            return $query;
-                        }
-
-                        return $query->whereNotIn('teams.id', $excludedTeamIds);
+                    ->form([
+                        Forms\Components\Select::make('team_id')
+                            ->label('Team')
+                            ->options(fn (RelationManager $livewire): array => $this->selectableTeamOptions($livewire))
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                    ])
+                    ->action(function (RelationManager $livewire, array $data): void {
+                        $livewire->getOwnerRecord()
+                            ->sectionTeams()
+                            ->create([
+                                'team_id' => $data['team_id'],
+                                'sort' => $this->nextSortFor($livewire),
+                                'deducted' => 0,
+                            ]);
                     }),
-                Actions\CreateAction::make()
+                Actions\Action::make('CreateTeam')
                     ->label('Create a new team')
                     ->slideOver(true)
-                    ->modalHeading('Create a new team'),
+                    ->modalHeading('Create a new team')
+                    ->form([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->action(function (RelationManager $livewire, array $data): void {
+                        $team = Team::query()->create([
+                            'name' => $data['name'],
+                        ]);
+
+                        $livewire->getOwnerRecord()
+                            ->sectionTeams()
+                            ->create([
+                                'team_id' => $team->id,
+                                'sort' => $this->nextSortFor($livewire),
+                                'deducted' => 0,
+                            ]);
+                    }),
             ])
             ->actions([
-                Actions\DetachAction::make()
+                Actions\DeleteAction::make()
                     ->label('Remove team')
                     ->visible(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->results->count() == 0),
                 Actions\Action::make('DeductPoints')
@@ -99,40 +112,31 @@ class TeamsRelationManager extends RelationManager
                             ->rules('numeric')
                             ->default(0),
                     ])
-                    ->fillForm(function (RelationManager $livewire, Model $record): array {
-                        $pivot = $this->resolveSectionTeamPivot($livewire, $record);
-
+                    ->fillForm(function (SectionTeam $record): array {
                         return [
-                            'deducted' => (int) ($pivot->deducted ?? 0),
+                            'deducted' => (int) $record->deducted,
                         ];
                     })
-                    ->action(function (RelationManager $livewire, Model $record, array $data): void {
-                        $pivot = $this->resolveSectionTeamPivot($livewire, $record);
-
-                        if (! $pivot) {
-                            return;
-                        }
-
-                        $pivot->deducted = (int) $data['deducted'];
-                        $pivot->save();
+                    ->action(function (SectionTeam $record, array $data): void {
+                        $record->deducted = (int) $data['deducted'];
+                        $record->save();
                     })
                     ->color('warning')
                     ->icon('heroicon-o-arrow-down'),
                 Actions\Action::make('Withdraw')
                     ->label('Withdraw')
-                    ->visible(function (RelationManager $livewire, Model $record): bool {
-                        return is_null($record->pivot?->withdrawn_at ?? null);
-                    })
+                    ->visible(fn (SectionTeam $record): bool => is_null($record->withdrawn_at))
                     ->color('danger')
                     ->icon('heroicon-o-trash')
                     ->requiresConfirmation()
-                    ->action(function (RelationManager $livewire, Model $record): void {
+                    ->action(function (RelationManager $livewire, SectionTeam $record): void {
                         $byeTeam = Team::byeOrFail();
                         $week = 0;
 
                         $section = $livewire->getOwnerRecord();
 
-                        $section->teams()->updateExistingPivot($record->id, ['withdrawn_at' => now()]);
+                        $record->withdrawn_at = now();
+                        $record->save();
 
                         foreach ($section->season->dates as $date) {
                             $week++;
@@ -143,14 +147,14 @@ class TeamsRelationManager extends RelationManager
 
                         if ($week < 9) {
                             $livewire->getOwnerRecord()->results()->each(function ($result) use ($record) {
-                                if ($result->home_team_id == $record->id || $result->away_team_id == $record->id) {
+                                if ($result->home_team_id == $record->team_id || $result->away_team_id == $record->team_id) {
                                     $result->frames()->delete();
                                     $result->delete();
                                 }
                             });
                         } else {
                             $livewire->getOwnerRecord()->results()->where('week', '>', 9)->each(function ($result) use ($record) {
-                                if ($result->home_team_id == $record->id || $result->away_team_id == $record->id) {
+                                if ($result->home_team_id == $record->team_id || $result->away_team_id == $record->team_id) {
                                     $result->frames()->delete();
                                     $result->delete();
                                 }
@@ -158,13 +162,13 @@ class TeamsRelationManager extends RelationManager
                         }
 
                         $section->fixtures()->each(function ($fixture) use ($byeTeam, $record) {
-                            if ($fixture->home_team_id == $record->id) {
+                            if ($fixture->home_team_id == $record->team_id) {
                                 if (! $fixture->result) {
                                     $fixture->home_team_id = $byeTeam->getKey();
                                     $fixture->save();
                                 }
                             }
-                            if ($fixture->away_team_id == $record->id) {
+                            if ($fixture->away_team_id == $record->team_id) {
                                 if (! $fixture->result) {
                                     $fixture->away_team_id = $byeTeam->getKey();
                                     $fixture->save();
@@ -179,37 +183,29 @@ class TeamsRelationManager extends RelationManager
             ->reorderable('sort');
     }
 
-    private function resolveSectionTeamPivot(RelationManager $livewire, Model $record): ?SectionTeam
+    private function selectableTeamOptions(RelationManager $livewire): array
     {
-        $pivot = $record->pivot;
-
-        if ($pivot?->getKey()) {
-            return SectionTeam::query()->find($pivot->getKey());
-        }
-
         $section = $livewire->getOwnerRecord();
 
-        return SectionTeam::query()
-            ->where('section_id', $section->id)
-            ->where('team_id', $record->id)
-            ->first();
+        $existingTeamIds = $section->sectionTeams()->pluck('team_id')->all();
+        $byeTeamId = Team::query()
+            ->where('name', Team::BYE_NAME)
+            ->value('id');
+
+        $excludedTeamIds = array_values(array_filter(
+            $existingTeamIds,
+            fn (int $teamId): bool => $teamId !== $byeTeamId
+        ));
+
+        return Team::query()
+            ->when($excludedTeamIds !== [], fn ($query) => $query->whereNotIn('id', $excludedTeamIds))
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
     }
 
-    public function getTableRecordKey(Model|array $record): string
+    private function nextSortFor(RelationManager $livewire): int
     {
-        if (is_array($record)) {
-            return (string) ($record['id'] ?? '');
-        }
-
-        $relationship = $this->getTable()->getRelationship();
-        $pivotAccessor = $relationship?->getPivotAccessor();
-
-        $pivot = $pivotAccessor ? $record->getRelationValue($pivotAccessor) : null;
-
-        if ($pivot?->getKey()) {
-            return (string) $pivot->getKey();
-        }
-
-        return (string) $record->getKey();
+        return ((int) $livewire->getOwnerRecord()->sectionTeams()->max('sort')) + 1;
     }
 }

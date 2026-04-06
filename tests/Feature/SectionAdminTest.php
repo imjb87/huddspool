@@ -59,10 +59,14 @@ class SectionAdminTest extends TestCase
             'ruleset_id' => $ruleset->id,
             'is_confirmed' => true,
         ]);
-        $homePivotId = SectionTeam::query()
+        $homeSectionTeam = SectionTeam::query()
             ->where('section_id', $section->id)
             ->where('team_id', $homeTeam->id)
-            ->value('id');
+            ->firstOrFail();
+        $awaySectionTeam = SectionTeam::query()
+            ->where('section_id', $section->id)
+            ->where('team_id', $awayTeam->id)
+            ->firstOrFail();
 
         Filament::setCurrentPanel('admin');
 
@@ -71,10 +75,10 @@ class SectionAdminTest extends TestCase
                 'ownerRecord' => $section,
                 'pageClass' => EditSection::class,
             ])
-            ->assertCanSeeTableRecords([$homeTeam, $awayTeam])
-            ->assertTableColumnFormattedStateSet('deducted', '-2 pts', $homeTeam)
-            ->assertTableColumnFormattedStateSet('deducted', '0 pts', $awayTeam)
-            ->mountTableAction('DeductPoints', (string) $homePivotId)
+            ->assertCanSeeTableRecords([$homeSectionTeam, $awaySectionTeam])
+            ->assertTableColumnFormattedStateSet('deducted', '-2 pts', $homeSectionTeam)
+            ->assertTableColumnFormattedStateSet('deducted', '0 pts', $awaySectionTeam)
+            ->mountTableAction('DeductPoints', (string) $homeSectionTeam->getKey())
             ->assertTableActionDataSet([
                 'deducted' => 2,
             ])
@@ -85,10 +89,47 @@ class SectionAdminTest extends TestCase
             ->assertHasNoTableActionErrors();
 
         $this->assertDatabaseHas('section_team', [
-            'id' => $homePivotId,
+            'id' => $homeSectionTeam->getKey(),
             'section_id' => $section->id,
             'team_id' => $homeTeam->id,
             'deducted' => 3,
+        ]);
+    }
+
+    public function test_section_teams_relation_manager_can_add_existing_team(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'name' => 'Premier Division',
+        ]);
+        $existingTeam = Team::factory()->create(['name' => 'Existing']);
+        $newTeam = Team::factory()->create(['name' => 'New Team']);
+
+        $section->teams()->attach($existingTeam->id, ['sort' => 1, 'deducted' => 0]);
+
+        Filament::setCurrentPanel('admin');
+
+        Livewire::actingAs($admin)
+            ->test(TeamsRelationManager::class, [
+                'ownerRecord' => $section,
+                'pageClass' => EditSection::class,
+            ])
+            ->callTableAction('AddExistingTeam', data: [
+                'team_id' => $newTeam->id,
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertDatabaseHas('section_team', [
+            'section_id' => $section->id,
+            'team_id' => $newTeam->id,
+            'sort' => 2,
+            'deducted' => 0,
         ]);
     }
 }

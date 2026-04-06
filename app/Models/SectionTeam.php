@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\CompetitionCacheInvalidator;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -44,6 +45,16 @@ class SectionTeam extends Pivot
     public function getDisplaySortAttribute(): int
     {
         return self::displaySortValue((int) $this->sort);
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function results(): HasManyThrough
