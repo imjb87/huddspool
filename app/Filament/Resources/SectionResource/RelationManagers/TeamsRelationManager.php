@@ -39,7 +39,6 @@ class TeamsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('deducted')
                     ->label('Deducted')
-                    ->state(fn (Model $record, RelationManager $livewire): int => $livewire->deductedPointsFor($record))
                     ->formatStateUsing(function (mixed $state): string {
                         $deducted = (int) $state;
 
@@ -52,6 +51,9 @@ class TeamsRelationManager extends RelationManager
                     ->badge()
                     ->color(fn (mixed $state): string => (int) $state > 0 ? 'danger' : 'gray'),
             ])
+            ->modifyQueryUsing(fn ($query) => $query
+                ->select('teams.*')
+                ->addSelect('section_team.deducted as deducted'))
             ->filters([
                 //
             ])
@@ -189,20 +191,6 @@ class TeamsRelationManager extends RelationManager
             ->paginated(false)
             ->defaultSort('sort')
             ->reorderable('sort');
-    }
-
-    public function deductedPointsFor(Model $record): int
-    {
-        $pivotDeducted = $record->pivot?->deducted;
-
-        if ($pivotDeducted !== null) {
-            return (int) $pivotDeducted;
-        }
-
-        return (int) SectionTeam::query()
-            ->where('section_id', $this->getOwnerRecord()->getKey())
-            ->where('team_id', $record->getKey())
-            ->value('deducted');
     }
 
     public function getTableRecordKey(Model|array $record): string
