@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Result;
 use App\Models\Team;
+use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\Notifications\DatabaseNotificationDispatcher;
 use App\Support\Notifications\NotificationAudienceResolver;

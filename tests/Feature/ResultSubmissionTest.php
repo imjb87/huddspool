@@ -15,6 +15,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
+use App\Support\LeagueResultSubmissionMailer;
 use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -346,6 +347,75 @@ class ResultSubmissionTest extends TestCase
         $this->assertStringContainsString('league result submitted', strtolower($html));
         $this->assertStringContainsString('images/logo.png', $html);
         $this->assertStringNotContainsString('notification-logo.png', $html);
+    }
+
+    public function test_league_result_submission_mailer_resolves_team_admin_recipients_without_throwing(): void
+    {
+        Mail::fake();
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $submitter = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+            'email' => 'submitter@example.com',
+        ]);
+        $homeAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+            'email' => 'home-admin@example.com',
+        ]);
+        $awayAdmin = User::factory()->create([
+            'team_id' => $awayTeam->id,
+            'role' => 2,
+            'is_admin' => false,
+            'email' => 'away-admin@example.com',
+        ]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_name' => $awayTeam->name,
+            'home_score' => 5,
+            'away_score' => 4,
+            'submitted_by' => 0,
+            'submitted_at' => null,
+            'is_confirmed' => false,
+        ]);
+
+        $result->forceFill([
+            'submitted_by' => $submitter->id,
+            'submitted_at' => now(),
+            'is_confirmed' => true,
+        ])->save();
+
+        (new LeagueResultSubmissionMailer)->sendIfNeeded($result);
+
+        Mail::assertQueued(LeagueResultSubmittedMail::class);
+        Notification::assertSentTo([$submitter, $homeAdmin, $awayAdmin], LeagueResultSubmittedNotification::class);
     }
 
     public function test_partial_draft_keeps_incomplete_frame_state_without_leaving_stale_persisted_frames(): void
