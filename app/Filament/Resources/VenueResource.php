@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\VenueResource\CopilotTools\ListVenuesTool;
+use App\Filament\Resources\VenueResource\CopilotTools\SearchVenuesTool;
+use App\Filament\Resources\VenueResource\CopilotTools\ViewVenueTool;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
@@ -110,6 +113,10 @@ class VenueResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListVenuesTool,
+            new ViewVenueTool,
+            new SearchVenuesTool,
+        ];
     }
 }

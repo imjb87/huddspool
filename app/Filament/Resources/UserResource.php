@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\UserResource\CopilotTools\ListUsersTool;
+use App\Filament\Resources\UserResource\CopilotTools\SearchUsersTool;
+use App\Filament\Resources\UserResource\CopilotTools\ViewUserTool;
 use App\Enums\RoleName;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
@@ -137,6 +140,10 @@ class UserResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListUsersTool,
+            new ViewUserTool,
+            new SearchUsersTool,
+        ];
     }
 }

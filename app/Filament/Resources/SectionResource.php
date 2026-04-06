@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\SectionResource\CopilotTools\ListSectionsTool;
+use App\Filament\Resources\SectionResource\CopilotTools\SearchSectionsTool;
+use App\Filament\Resources\SectionResource\CopilotTools\ViewSectionTool;
 use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Season;
@@ -106,6 +109,10 @@ class SectionResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListSectionsTool,
+            new ViewSectionTool,
+            new SearchSectionsTool,
+        ];
     }
 }

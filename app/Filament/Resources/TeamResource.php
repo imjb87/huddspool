@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TeamResource\CopilotTools\ListTeamsTool;
+use App\Filament\Resources\TeamResource\CopilotTools\SearchTeamsTool;
+use App\Filament\Resources\TeamResource\CopilotTools\ViewTeamTool;
 use App\Filament\Resources\TeamResource\Pages;
 use App\Filament\Resources\TeamResource\RelationManagers;
 use App\Models\Team;
@@ -124,6 +127,10 @@ class TeamResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListTeamsTool,
+            new ViewTeamTool,
+            new SearchTeamsTool,
+        ];
     }
 }

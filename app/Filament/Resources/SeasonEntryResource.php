@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\SeasonEntryResource\CopilotTools\ListSeasonEntriesTool;
+use App\Filament\Resources\SeasonEntryResource\CopilotTools\SearchSeasonEntriesTool;
+use App\Filament\Resources\SeasonEntryResource\CopilotTools\ViewSeasonEntryTool;
 use App\Filament\Resources\SeasonEntryResource\Pages;
 use App\Filament\Resources\SeasonEntryResource\RelationManagers;
 use App\Models\SeasonEntry;
@@ -143,6 +146,10 @@ class SeasonEntryResource extends Resource implements CopilotResource
 
     public static function copilotTools(): array
     {
-        return [];
+        return [
+            new ListSeasonEntriesTool,
+            new ViewSeasonEntryTool,
+            new SearchSeasonEntriesTool,
+        ];
     }
 }
