@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\RulesetResource\Pages;
 use App\Models\Ruleset;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class RulesetResource extends Resource
+class RulesetResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Ruleset::class;
 
@@ -25,18 +27,18 @@ class RulesetResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
-                ->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->label('Name')
-                        ->required()
-                        ->placeholder('Ruleset name'),
-                    Forms\Components\RichEditor::make('content')
-                        ->label('Content')
-                        ->required()
-                        ->placeholder('Ruleset content'),
-                ]),
+                Section::make('Information')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->placeholder('Ruleset name'),
+                        Forms\Components\RichEditor::make('content')
+                            ->label('Content')
+                            ->required()
+                            ->placeholder('Ruleset content'),
+                    ]),
             ]);
     }
 
@@ -73,5 +75,15 @@ class RulesetResource extends Resource
             'create' => Pages\CreateRuleset::route('/create'),
             'edit' => Pages\EditRuleset::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage rulesets and handbook content used across sections and public rules pages.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

@@ -5,6 +5,8 @@ namespace App\Providers\Filament;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Resources\SupportTicketResource;
 use App\Http\Middleware\AdminMiddleware;
+use App\Models\User;
+use EslamRedaDiv\FilamentCopilot\FilamentCopilotPlugin;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationItem;
@@ -42,6 +44,9 @@ class CpPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
+                FilamentCopilotPlugin::make()
+                    ->authorizeUsing(fn (User $user): bool => $user->isAdmin())
+                    ->respectAuthorization(),
             ])
             ->resources([
                 SupportTicketResource::class,

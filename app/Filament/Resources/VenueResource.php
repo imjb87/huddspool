@@ -6,6 +6,7 @@ use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
 use App\Support\CoordinateFormatter;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -14,7 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class VenueResource extends Resource
+class VenueResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Venue::class;
 
@@ -100,5 +101,15 @@ class VenueResource extends Resource
             'create' => Pages\CreateVenue::route('/create'),
             'edit' => Pages\EditVenue::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage venues, addresses, contact details, and mapped locations used by teams and fixtures.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

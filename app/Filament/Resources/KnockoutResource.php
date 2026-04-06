@@ -7,6 +7,7 @@ use App\Filament\Resources\KnockoutResource\RelationManagers;
 use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\Season;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -16,7 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class KnockoutResource extends Resource
+class KnockoutResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Knockout::class;
 
@@ -136,5 +137,15 @@ class KnockoutResource extends Resource
             ->whereKey($seasonIdentifier)
             ->orWhere('slug', $seasonIdentifier)
             ->value('id');
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage knockout competitions, competition types, entry fees, participants, rounds, and matches.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

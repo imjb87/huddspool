@@ -4,15 +4,17 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FixtureResource\Pages;
 use App\Models\Fixture;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class FixtureResource extends Resource
+class FixtureResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Fixture::class;
 
@@ -28,7 +30,7 @@ class FixtureResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Fixture Information')
+                Section::make('Fixture Information')
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
@@ -112,5 +114,15 @@ class FixtureResource extends Resource
             'index' => Pages\ListFixtures::route('/'),
             'edit' => Pages\EditFixture::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage league fixtures, fixture dates, venues, and section schedules.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

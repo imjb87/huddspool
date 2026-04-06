@@ -2,19 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\PageResource\Pages;
-use App\Filament\Resources\PageResource\RelationManagers;
 use App\Models\Page;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PageResource extends Resource
+class PageResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Page::class;
 
@@ -26,8 +25,8 @@ class PageResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
+                Section::make('Information')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
@@ -89,5 +88,15 @@ class PageResource extends Resource
             'create' => Pages\CreatePage::route('/create'),
             'edit' => Pages\EditPage::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage static public pages, page slugs, and rich page content.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

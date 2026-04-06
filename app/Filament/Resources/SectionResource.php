@@ -6,13 +6,14 @@ use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Season;
 use App\Models\Section;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SectionResource extends Resource
+class SectionResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Section::class;
 
@@ -96,5 +97,15 @@ class SectionResource extends Resource
             'create' => Pages\CreateSection::route('/create'),
             'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage sections, linked rulesets, teams, and generated fixtures within each season.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

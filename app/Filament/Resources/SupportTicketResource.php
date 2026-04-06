@@ -4,8 +4,9 @@ namespace App\Filament\Resources;
 
 use daacreators\CreatorsTicketing\Filament\Resources\Tickets\TicketResource as BaseTicketResource;
 use daacreators\CreatorsTicketing\Models\Ticket;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 
-class SupportTicketResource extends BaseTicketResource
+class SupportTicketResource extends BaseTicketResource implements CopilotResource
 {
     protected static ?string $slug = 'tickets';
 
@@ -19,5 +20,15 @@ class SupportTicketResource extends BaseTicketResource
     public static function getNavigationBadgeColor(): ?string
     {
         return 'warning';
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage support tickets, ticket status, and unresolved support workload.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

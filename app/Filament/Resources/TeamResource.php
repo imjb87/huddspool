@@ -2,17 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Actions;
 use App\Filament\Resources\TeamResource\Pages;
 use App\Filament\Resources\TeamResource\RelationManagers;
 use App\Models\Team;
+use App\Models\User;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TeamResource extends Resource
+class TeamResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Team::class;
 
@@ -26,8 +29,8 @@ class TeamResource extends Resource
     {
         return $schema
             ->schema([
-                \Filament\Schemas\Components\Section::make('Information')
-                ->columnSpanFull()
+                Section::make('Information')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -48,14 +51,14 @@ class TeamResource extends Resource
                             ->label('Captain')
                             ->searchable()
                             ->options(fn (?Team $record) => $record
-                                ? \App\Models\User::query()
+                                ? User::query()
                                     ->where('team_id', $record->getKey())
                                     ->orderBy('name')
                                     ->pluck('name', 'id')
                                     ->toArray()
                                 : [])
                             ->placeholder('Select a captain'),
-                        
+
                     ]),
             ]);
     }
@@ -84,7 +87,7 @@ class TeamResource extends Resource
                     ->badge()
                     ->color('gray')
                     ->label(false)
-                    ->formatStateUsing(fn(string $state): string => $state ? 'Folded' : ''),
+                    ->formatStateUsing(fn (string $state): string => $state ? 'Folded' : ''),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('folded_at')
@@ -112,5 +115,15 @@ class TeamResource extends Resource
             'create' => Pages\CreateTeam::route('/create'),
             'edit' => Pages\EditTeam::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage teams, captains, venues, folded status, and linked players and matches.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 }

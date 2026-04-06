@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Filament\CopilotStreamController;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
@@ -24,6 +25,7 @@ use App\Observers\SeasonObserver;
 use App\Observers\TeamObserver;
 use App\Observers\UserObserver;
 use App\Observers\VenueObserver;
+use EslamRedaDiv\FilamentCopilot\Http\Controllers\StreamController as PackageCopilotStreamController;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -39,7 +41,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->bind(PackageCopilotStreamController::class, CopilotStreamController::class);
+    }
 
     /**
      * Bootstrap any application services.

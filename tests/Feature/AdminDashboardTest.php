@@ -23,5 +23,9 @@ class AdminDashboardTest extends TestCase
         $response->assertOk();
         $response->assertSeeLivewire(UserStatsOverview::class);
         $response->assertSeeLivewire(SeasonStatsChart::class);
+        $response->assertSee('filament-copilot-button', false);
+        $response->assertSee('filament-copilot-chat', false);
+        $response->assertSee('dispatchLivewire(name, params = {}, bubbles = true)', false);
+        $response->assertSee('await $wire.handleStreamComplete(', false);
     }
 }

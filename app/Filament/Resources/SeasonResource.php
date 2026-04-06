@@ -10,6 +10,7 @@ use App\Filament\Resources\SectionResource\Pages\ListSections;
 use App\Models\Season;
 use App\Support\CompetitionCacheInvalidator;
 use Carbon\Carbon;
+use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\Page;
@@ -21,7 +22,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SeasonResource extends Resource
+class SeasonResource extends Resource implements CopilotResource
 {
     protected static ?string $model = Season::class;
 
@@ -154,6 +155,16 @@ class SeasonResource extends Resource
             'create' => Pages\CreateSeason::route('/create'),
             'edit' => Pages\EditSeason::route('/{record}/edit'),
         ];
+    }
+
+    public static function copilotResourceDescription(): ?string
+    {
+        return 'Manage seasons, weekly schedule dates, sign-up windows, open-season status, and linked competition records.';
+    }
+
+    public static function copilotTools(): array
+    {
+        return [];
     }
 
     /**
