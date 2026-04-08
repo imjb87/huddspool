@@ -7,9 +7,11 @@ use App\Models\User;
 use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
 class PlayersRelationManager extends RelationManager
@@ -20,6 +22,15 @@ class PlayersRelationManager extends RelationManager
     {
         return $schema
             ->schema([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->label('Avatar')
+                    ->collection('avatars')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -42,6 +53,11 @@ class PlayersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->label('Avatar')
+                    ->collection('avatars')
+                    ->circular()
+                    ->defaultImageUrl(asset('/images/user.jpg')),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('site_role')
                     ->getStateUsing(fn (User $record): string => $record->roleLabel())
@@ -70,6 +86,7 @@ class PlayersRelationManager extends RelationManager
             ->actions([
                 Actions\ActionGroup::make([
                     Actions\EditAction::make()
+                        ->slideOver()
                         ->fillForm(fn (User $record): array => [
                             'name' => $record->name,
                             'email' => $record->email,
@@ -88,6 +105,10 @@ class PlayersRelationManager extends RelationManager
                         ->using(function (User $record, array $data): User {
                             $record->update($data);
                             SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
+
+                            if ($record->hasMedia('avatars')) {
+                                $record->clearLegacyAvatarPath();
+                            }
 
                             return $record;
                         }),

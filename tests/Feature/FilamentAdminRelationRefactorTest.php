@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RoleName;
 use App\Filament\Resources\SectionResource\Pages\PreviewFixtures;
+use App\Filament\Resources\TeamResource\Pages\EditTeam;
+use App\Filament\Resources\TeamResource\RelationManagers\PlayersRelationManager;
 use App\Filament\Resources\VenueResource\Pages\EditVenue;
 use App\Filament\Resources\VenueResource\RelationManagers\TeamsRelationManager;
 use App\KnockoutType;
@@ -18,6 +21,7 @@ use App\Models\Venue;
 use App\Support\KnockoutMatchVenueOptions;
 use App\Support\SectionFixturePreviewBuilder;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -25,6 +29,49 @@ use Tests\TestCase;
 class FilamentAdminRelationRefactorTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_team_players_relation_manager_edit_action_uses_a_slide_over_with_avatar_support(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $team = Team::factory()->create();
+        $player = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => RoleName::Player->value,
+            'is_admin' => false,
+        ]);
+
+        Filament::setCurrentPanel('admin');
+
+        $component = Livewire::actingAs($admin)
+            ->test(PlayersRelationManager::class, [
+                'ownerRecord' => $team,
+                'pageClass' => EditTeam::class,
+            ])
+            ->assertTableColumnExists('avatar')
+            ->mountTableAction('edit', (string) $player->getKey())
+            ->assertTableActionDataSet([
+                'name' => $player->name,
+                'email' => $player->email,
+                'telephone' => $player->telephone,
+                'site_role' => RoleName::Player->value,
+            ]);
+
+        $mountedAction = $component->instance()->getMountedTableAction();
+
+        $this->assertNotNull($mountedAction);
+        $this->assertTrue($mountedAction->isModalSlideOver());
+
+        $mountedActionForm = $component->instance()->getMountedTableActionForm();
+
+        $this->assertNotNull($mountedActionForm);
+        $this->assertArrayHasKey('avatar', $mountedActionForm->getFlatComponents(withHidden: true));
+        $this->assertInstanceOf(
+            SpatieMediaLibraryFileUpload::class,
+            $mountedActionForm->getFlatComponents(withHidden: true)['avatar'],
+        );
+    }
 
     public function test_venue_teams_relation_manager_dissociates_teams_from_a_venue(): void
     {
