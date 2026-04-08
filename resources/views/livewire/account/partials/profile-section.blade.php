@@ -60,11 +60,11 @@
                         </div>
 
                         <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
-                            <div class="min-w-0">
+                            <div class="col-span-full min-w-0 sm:col-span-1">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Name</p>
                                 <a href="{{ route('player.show', $this->user) }}"
-                                    class="ui-link inline-flex max-w-full text-sm font-semibold">
-                                    <span>{{ $this->user->name }}</span>
+                                    class="ui-link flex w-full max-w-full text-sm font-semibold">
+                                    <span class="block w-full break-words">{{ $this->user->name }}</span>
                                 </a>
                             </div>
 

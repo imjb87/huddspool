@@ -167,6 +167,8 @@ class AccountPageTest extends TestCase
             ->assertSee('data-account-header', false)
             ->assertSee('data-account-nav', false)
             ->assertSee('data-account-profile-section', false)
+            ->assertSee('col-span-full min-w-0 sm:col-span-1', false)
+            ->assertSee('ui-link flex w-full max-w-full text-sm font-semibold', false)
             ->assertSee('ui-page-shell', false)
             ->assertSee('ui-button-primary', false)
             ->assertSee('ui-tab-strip-shell', false)

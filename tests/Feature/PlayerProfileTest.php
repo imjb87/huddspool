@@ -136,6 +136,9 @@ class PlayerProfileTest extends TestCase
         $response->assertSee('data-player-profile-section', false);
         $response->assertSee('data-player-frames-section', false);
         $response->assertSee('data-player-history-section', false);
+        $response->assertSee('flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-8', false);
+        $response->assertSee('grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2', false);
+        $response->assertSee('col-span-full min-w-0 sm:col-span-1', false);
         $response->assertSeeLivewire(HistorySection::class);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
