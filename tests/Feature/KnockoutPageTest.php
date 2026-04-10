@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Venue;
 use App\Notifications\KnockoutMatchReadyNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -341,6 +342,55 @@ class KnockoutPageTest extends TestCase
             ->assertDontSeeText('Quarter Final')
             ->assertDontSeeText('Riverside Club')
             ->assertDontSeeText('Championship Match');
+    }
+
+    public function test_knockout_show_page_displays_bst_match_times_without_a_server_offset(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+
+        $knockout = Knockout::create([
+            'season_id' => $season->id,
+            'name' => 'Summer Singles Cup',
+            'type' => KnockoutType::Singles,
+            'best_of' => 5,
+        ]);
+
+        $round = KnockoutRound::create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Semi Final',
+            'position' => 1,
+            'scheduled_for' => now()->subDay(),
+            'is_visible' => true,
+        ]);
+
+        $homePlayer = User::factory()->create(['name' => 'Cara Cole']);
+        $awayPlayer = User::factory()->create(['name' => 'Drew Dale']);
+
+        $homeParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $homePlayer->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $awayPlayer->id,
+        ]);
+
+        KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'starts_at' => Carbon::create(2026, 7, 3, 20, 15, 0, 'UTC'),
+            'best_of' => 5,
+        ]);
+
+        $this->get(route('knockout.show', $knockout))
+            ->assertOk()
+            ->assertSeeText('3 Jul')
+            ->assertSeeText('3 July 2026 at 20:15')
+            ->assertDontSeeText('3 July 2026 at 21:15');
     }
 
     public function test_knockout_round_pager_can_navigate_between_published_rounds_and_hides_future_rounds(): void

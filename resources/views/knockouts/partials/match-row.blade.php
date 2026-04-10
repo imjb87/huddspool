@@ -57,7 +57,7 @@
             </p>
 
             <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
-                {{ $matchRow->match->starts_at?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                {{ $matchRow->match->startsAtForDisplay()?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
             </p>
         @endif
 
@@ -93,7 +93,7 @@
                 </span>
             </span>
         @elseif ($matchRow->match->starts_at)
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $matchRow->match->starts_at->format('j M') }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $matchRow->match->startsAtForDisplay()?->format('j M') }}</p>
         @else
             <span class="ui-score-pill-chip ui-score-pill-neutral">
                 Vs

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\PermissionName;
 use App\KnockoutType;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -186,6 +188,17 @@ class KnockoutMatch extends Model
     public function type(): ?KnockoutType
     {
         return $this->knockout?->type;
+    }
+
+    public function startsAtForDisplay(): ?CarbonInterface
+    {
+        $rawStartsAt = $this->getRawOriginal('starts_at');
+
+        if (filled($rawStartsAt)) {
+            return Carbon::parse($rawStartsAt, config('app.timezone'));
+        }
+
+        return $this->starts_at?->copy();
     }
 
     public function recordResult(int $homeScore, int $awayScore, User $user, ?string $reason = null): void

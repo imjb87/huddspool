@@ -138,7 +138,7 @@ class KnockoutMatchSummaryRow
             'home_score' => $match->home_score,
             'away_score' => $match->away_score,
             'result_pill_classes' => $resultPillClasses,
-            'date_label' => $match->starts_at ? $match->starts_at->format('j M \a\t H:i') : 'Date TBC',
+            'date_label' => $match->startsAtForDisplay()?->format('j M \a\t H:i') ?? 'Date TBC',
         ];
     }
 
