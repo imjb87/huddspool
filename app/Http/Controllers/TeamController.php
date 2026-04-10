@@ -34,7 +34,7 @@ class TeamController extends Controller
             ];
 
         $teamKnockoutMatches = new GetTeamKnockoutMatches($team)();
-        $allowKnockoutSubmission = auth()->user()?->isAdmin() ?? false;
+        $allowKnockoutSubmission = auth()->check();
         $teamKnockoutRows = $teamKnockoutMatches->map(fn ($match) => KnockoutMatchSummaryRow::forTeam($match, $team, $allowKnockoutSubmission));
 
         return view('team.show', compact('team', 'section', 'currentStanding', 'teamKnockoutMatches', 'teamKnockoutRows'));

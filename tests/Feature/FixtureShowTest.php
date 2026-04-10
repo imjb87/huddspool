@@ -176,6 +176,42 @@ class FixtureShowTest extends TestCase
             ->assertDontSee('Away Player 01');
     }
 
+    public function test_fixture_show_displays_submission_prompt_for_authorized_team_admin(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+
+        $section->teams()->attach($homeTeam->id, ['sort' => 1]);
+        $section->teams()->attach($awayTeam->id, ['sort' => 2]);
+
+        $teamAdmin = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('fixture.show', $fixture))
+            ->assertOk()
+            ->assertSeeText('Result submission')
+            ->assertSee('href="'.route('result.create', $fixture).'"', false);
+    }
+
     public function test_fixture_show_uses_actual_section_positions_in_head_to_head(): void
     {
         $season = Season::factory()->create(['is_open' => true]);

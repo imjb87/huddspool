@@ -50,19 +50,21 @@ class ResultSubmissionPromptResolver
                         $outstandingFixture->homeTeam?->name ?? 'TBC',
                         $outstandingFixture->awayTeam?->name ?? 'TBC',
                     ),
+                    'date_label' => $outstandingFixture->fixture_date?->format('\D\a\t\e\: j M Y \a\t 20:00') ?? 'Date: TBC',
                     'url' => route('result.create', $outstandingFixture),
+                    'action_label' => $outstandingFixture->result instanceof Result ? 'Continue submission' : 'Submit result',
                 ])
                 ->all(),
             'knockouts_heading' => $knockoutCount > 0 ? 'Knockouts' : null,
             'knockouts' => $knockoutMatches
                 ->map(fn (KnockoutMatch $match) => [
-                    'label' => sprintf(
-                        '%s / %s: %s',
-                        $match->knockout?->name ?? 'Knockout',
-                        $match->round?->name ?? 'Round TBC',
-                        $match->title(),
-                    ),
+                    'knockout_name' => $match->knockout?->name ?? 'Knockout',
+                    'round_name' => $match->round?->name ?? 'Round TBC',
+                    'participants_label' => $match->title(),
+                    'venue_label' => $match->venue?->name ?? 'Venue TBC',
+                    'date_label' => $match->starts_at?->format('\D\a\t\e\: j M Y \a\t 20:00') ?? 'Date: TBC',
                     'url' => route('knockout.matches.submit', $match),
+                    'action_label' => 'Submit result',
                 ])
                 ->all(),
         ];
@@ -109,6 +111,7 @@ class ResultSubmissionPromptResolver
                 'awayParticipant.playerOne',
                 'awayParticipant.playerTwo',
                 'awayParticipant.team',
+                'venue',
             ])
             ->whereHas('knockout.season', fn (Builder $query) => $query->where('is_open', true))
             ->whereNull('winner_participant_id')

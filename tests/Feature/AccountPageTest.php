@@ -6,7 +6,6 @@ use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Account\Show as AccountShow;
-use App\Livewire\Player\FramesSection;
 use App\Livewire\Team\FixturesSection as TeamFixturesSection;
 use App\Livewire\Team\PlayersSection as TeamPlayersSection;
 use App\Models\Fixture;
@@ -164,6 +163,7 @@ class AccountPageTest extends TestCase
             ->get(route('account.show'))
             ->assertOk()
             ->assertSee('data-account-page', false)
+            ->assertDontSee('data-account-action-centre', false)
             ->assertSee('data-account-header', false)
             ->assertSee('data-account-nav', false)
             ->assertSee('data-account-profile-section', false)
@@ -348,7 +348,7 @@ class AccountPageTest extends TestCase
         $this->assertSame('09876 543210', $user->telephone);
     }
 
-    public function test_team_admin_sees_team_nav_link_on_account_page(): void
+    public function test_team_admin_sees_support_tab_but_not_team_tab_on_account_page(): void
     {
         $team = Team::factory()->create();
 
@@ -360,13 +360,14 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('href="'.route('account.team').'"', false)
+            ->assertDontSee('href="'.route('account.team').'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
-            ->assertSeeText('Team')
+            ->assertSeeText('Account')
+            ->assertSeeText('Support')
             ->assertDontSee('data-account-team-section', false);
     }
 
-    public function test_team_admin_does_not_see_result_submission_prompt_on_account_page_when_fixture_is_due(): void
+    public function test_team_admin_sees_action_centre_on_account_page_when_fixture_is_due(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -393,12 +394,12 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false)
-            ->assertDontSeeText($team->name.' vs '.$opponentTeam->name)
-            ->assertDontSee(route('result.create', $fixture), false);
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText($team->name.' vs '.$opponentTeam->name)
+            ->assertSee(route('result.create', $fixture), false);
     }
 
-    public function test_team_admin_does_not_see_result_submission_prompt_for_multiple_outstanding_results(): void
+    public function test_team_admin_sees_multiple_outstanding_league_results_in_action_centre(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -435,15 +436,15 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false)
-            ->assertDontSeeText('League matches')
-            ->assertDontSeeText('Home vs First Opponent')
-            ->assertDontSeeText('Second Opponent vs Home')
-            ->assertDontSee(route('result.create', $firstFixture), false)
-            ->assertDontSee(route('result.create', $secondFixture), false);
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('League matches')
+            ->assertSeeText('Home vs First Opponent')
+            ->assertSeeText('Second Opponent vs Home')
+            ->assertSee(route('result.create', $firstFixture), false)
+            ->assertSee(route('result.create', $secondFixture), false);
     }
 
-    public function test_account_page_does_not_render_due_knockout_result_prompt_for_players(): void
+    public function test_account_page_shows_due_knockout_result_prompt_for_players(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $user = User::factory()->create(['role' => UserRole::Player->value]);
@@ -519,8 +520,10 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false)
-            ->assertDontSeeText('2 knockout results are ready to submit.');
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('2 knockout results are ready to submit.')
+            ->assertSee(route('knockout.matches.submit', $singlesMatch), false)
+            ->assertSee(route('knockout.matches.submit', $doublesMatch), false);
     }
 
     public function test_account_page_still_does_not_render_a_result_prompt_before_knockouts_are_due(): void
@@ -564,11 +567,11 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false)
-            ->assertSee(route('knockout.matches.submit', $futureMatch), false);
+            ->assertDontSee('data-account-action-centre', false)
+            ->assertDontSee(route('knockout.matches.submit', $futureMatch), false);
     }
 
-    public function test_account_page_does_not_render_combined_league_and_knockout_result_prompt(): void
+    public function test_account_page_renders_combined_league_and_knockout_result_prompt(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -629,12 +632,12 @@ class AccountPageTest extends TestCase
         $this->actingAs($teamAdmin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false)
-            ->assertDontSeeText('1 team result and 1 knockout result are ready to submit.')
-            ->assertDontSeeText('Home vs Opposition')
-            ->assertDontSeeText('Team KO / Semi-finals')
-            ->assertDontSee(route('result.create', $fixture), false)
-            ->assertDontSee(route('knockout.matches.submit', $teamMatch), false);
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('1 team result and 1 knockout result are ready to submit.')
+            ->assertSeeText('Home vs Opposition')
+            ->assertSeeText('Team KO / Semi-finals')
+            ->assertSee(route('result.create', $fixture), false)
+            ->assertSee(route('knockout.matches.submit', $teamMatch), false);
     }
 
     public function test_admin_is_not_prompted_for_unrelated_knockout_results_on_account_page(): void
@@ -685,7 +688,7 @@ class AccountPageTest extends TestCase
         $this->actingAs($admin)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-result-submission-prompt', false);
+            ->assertDontSee('data-account-action-centre', false);
 
         $this->actingAs($admin)
             ->get(route('knockout.matches.submit', $match))
@@ -827,6 +830,7 @@ class AccountPageTest extends TestCase
             ->get(route('account.team'))
             ->assertOk()
             ->assertSee('data-account-team-page', false)
+            ->assertSee('data-account-action-centre', false)
             ->assertSee('dark:bg-neutral-950', false)
             ->assertSee('dark:border-neutral-800/80', false)
             ->assertSee('dark:bg-neutral-900/75', false)
@@ -841,6 +845,7 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Team members')
             ->assertSeeText('Fixtures')
             ->assertSeeText('Team knockouts')
+            ->assertSeeText('Outstanding results')
             ->assertSeeText(UserRole::labelFor($teamAdmin->role))
             ->assertSeeText($team->name)
             ->assertSeeText('Premier Division')
@@ -857,7 +862,7 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $continueFixture), false)
             ->assertDontSee(route('result.create', $futureFixture), false)
             ->assertSee('data-account-team-fixture-ready', false)
-            ->assertDontSeeText('Submit result')
+            ->assertSeeText('Submit result')
             ->assertDontSee('href="'.route('fixture.show', $dueFixture).'"', false)
             ->assertDontSee('href="'.route('result.show', $continueFixture->result).'"', false)
             ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
@@ -1168,17 +1173,11 @@ class AccountPageTest extends TestCase
         $this->actingAs($player)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-account-frames-section', false)
-            ->assertSee('data-account-history-section', false)
-            ->assertSeeText('History')
-            ->assertSeeText($season->name)
-            ->assertSeeText($homeTeam->name)
-            ->assertSeeText('Premier Division')
-            ->assertSeeText('Played')
-            ->assertSeeText('Won')
-            ->assertSeeText('Lost')
-            ->assertSeeText($opponent->name)
-            ->assertSeeText($awayTeam->name);
+            ->assertDontSee('data-account-frames-section', false)
+            ->assertDontSee('data-account-history-section', false)
+            ->assertSee('data-account-profile-section', false)
+            ->assertSeeText('Personal information')
+            ->assertSeeText($player->name);
     }
 
     public function test_account_page_paginates_frames_section(): void
@@ -1243,26 +1242,9 @@ class AccountPageTest extends TestCase
         $this->actingAs($player)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-account-frames-controls', false)
-            ->assertSeeText('Page 1')
-            ->assertSeeText('Account Opponent 21')
-            ->assertSeeText('Account Opponent 17')
-            ->assertDontSeeText('Account Opponent 16')
+            ->assertDontSee('data-account-frames-controls', false)
+            ->assertDontSeeText('Account Opponent 21')
             ->assertDontSeeText('Account Opponent 01');
-
-        Livewire::actingAs($player)
-            ->test(FramesSection::class, [
-                'player' => $player,
-                'section' => $section,
-                'forAccount' => true,
-            ])
-            ->assertSeeText('Page 1')
-            ->assertDontSeeText('Account Opponent 01')
-            ->call('nextPage')
-            ->assertSeeText('Page 2')
-            ->assertSeeText('Account Opponent 16')
-            ->assertDontSeeText('Account Opponent 17')
-            ->assertDontSeeText('Account Opponent 11');
     }
 
     public function test_account_page_shows_knockout_history_and_pending_actions(): void
@@ -1358,15 +1340,13 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-account-knockout-section', false)
-            ->assertSeeText('Knockouts')
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('Outstanding results')
             ->assertSeeText($knockout->name)
             ->assertSeeText($teamKnockout->name)
-            ->assertSeeText('4')
-            ->assertSeeText('2')
             ->assertSee(route('knockout.matches.submit', $pendingMatch), false)
-            ->assertSee(route('knockout.show', $knockout), false)
+            ->assertSee(route('knockout.matches.submit', $teamKnockout->matches()->first()), false)
             ->assertDontSee(route('knockout.matches.submit', $completedMatch), false)
-            ->assertSee(route('knockout.show', $teamKnockout), false);
+            ->assertDontSee('data-account-knockout-section', false);
     }
 }

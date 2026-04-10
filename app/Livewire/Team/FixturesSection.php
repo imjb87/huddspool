@@ -20,15 +20,18 @@ class FixturesSection extends Component
 
     public bool $forAccount = false;
 
+    public bool $showSubmissionActions = false;
+
     public int $page = 1;
 
     public int $perPage = 5;
 
-    public function mount(Team $team, ?Section $section = null, bool $forAccount = false): void
+    public function mount(Team $team, ?Section $section = null, bool $forAccount = false, bool $showSubmissionActions = false): void
     {
         $this->team = $team;
         $this->section = $section;
         $this->forAccount = $forAccount;
+        $this->showSubmissionActions = $showSubmissionActions;
         $this->page = $this->defaultPage();
     }
 
@@ -63,7 +66,7 @@ class FixturesSection extends Component
                 $actionUrl = null;
                 $actionLabel = null;
 
-                if ($this->forAccount && auth()->user()) {
+                if (($this->forAccount || $this->showSubmissionActions) && auth()->user()) {
                     $actionUrl = $this->resultSubmissionPromptResolver()->actionUrlFor(auth()->user(), $fixture);
                     $actionLabel = $actionUrl ? 'Submit result' : null;
                 }

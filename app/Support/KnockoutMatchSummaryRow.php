@@ -102,11 +102,32 @@ class KnockoutMatchSummaryRow
                     ? 'ui-score-pill-success'
                     : 'ui-score-pill-danger'));
 
+        $homeIsWinner = $match->winner_participant_id !== null
+            && $match->home_participant_id !== null
+            && (int) $match->winner_participant_id === (int) $match->home_participant_id;
+        $awayIsWinner = $match->winner_participant_id !== null
+            && $match->away_participant_id !== null
+            && (int) $match->winner_participant_id === (int) $match->away_participant_id;
+        $homeIsLoser = $match->winner_participant_id !== null
+            && $match->home_participant_id !== null
+            && $match->away_participant_id !== null
+            && ! $homeIsWinner;
+        $awayIsLoser = $match->winner_participant_id !== null
+            && $match->home_participant_id !== null
+            && $match->away_participant_id !== null
+            && ! $awayIsWinner;
+
         return (object) [
             'id' => $match->id,
             'row_url' => $rowUrl,
             'home_label' => $match->homeParticipant?->display_name ?? 'TBC',
             'away_label' => $match->awayParticipant?->display_name ?? 'TBC',
+            'home_label_classes' => $homeIsLoser
+                ? 'text-gray-400 dark:text-gray-500'
+                : 'text-gray-900 dark:text-gray-100',
+            'away_label_classes' => $awayIsLoser
+                ? 'text-gray-400 dark:text-gray-500'
+                : 'text-gray-900 dark:text-gray-100',
             'is_doubles' => $match->type() === KnockoutType::Doubles,
             'home_parts' => self::participantParts($match->homeParticipant, $match->homeParticipant?->display_name ?? 'TBC', $match->type()),
             'away_parts' => self::participantParts($match->awayParticipant, $match->awayParticipant?->display_name ?? 'TBC', $match->type()),
@@ -117,7 +138,7 @@ class KnockoutMatchSummaryRow
             'home_score' => $match->home_score,
             'away_score' => $match->away_score,
             'result_pill_classes' => $resultPillClasses,
-            'date_label' => $match->starts_at ? $match->starts_at->format('j M') : 'Date TBC',
+            'date_label' => $match->starts_at ? $match->starts_at->format('j M \a\t H:i') : 'Date TBC',
         ];
     }
 

@@ -27,7 +27,7 @@
                     wire:target="previousPage, nextPage">
                     @foreach ($this->fixtureRows as $fixtureRow)
                         @php
-                            $isReadyToSubmit = $forAccount && $fixtureRow->action_url;
+                            $isReadyToSubmit = ($forAccount || $showSubmissionActions) && $fixtureRow->action_url;
                         @endphp
                         <div wire:key="team-fixture-{{ $fixtureRow->fixture_id }}">
                             @if ($fixtureRow->row_url)

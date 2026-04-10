@@ -16,15 +16,24 @@
 
         <div class="lg:col-span-2">
             <div class="ui-card">
-                <div class="divide-y divide-gray-200 dark:divide-neutral-800/75">
+                <div class="ui-card-column-headings justify-start px-4 sm:px-5" data-team-fixtures-headings>
+                    <p class="ui-card-column-header">Home vs Away</p>
+                </div>
+
+                <div class="ui-card-rows">
                     @foreach ($fixtureRows as $fixtureRow)
                         <div wire:key="team-fixture-{{ $fixtureRow->fixture_id }}">
                             @if ($fixtureRow->row_url)
-                                <a href="{{ $fixtureRow->row_url }}" class="block py-4 transition sm:-mx-3 sm:-my-px sm:rounded-lg sm:px-3 sm:hover:bg-gray-200/70 dark:sm:hover:bg-neutral-900/70">
+                                <a href="{{ $fixtureRow->row_url }}" class="ui-card-row-link">
                             @endif
-                            <div class="flex items-start justify-between gap-4 {{ $fixtureRow->row_url ? '' : 'py-4 sm:rounded-lg sm:px-3' }}">
+                            <div class="ui-card-row items-start px-4 sm:px-5">
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 sm:hidden">
+                                        {{ $fixtureRow->home_team_shortname ?: $fixtureRow->home_team_name }}
+                                        <span class="font-normal text-gray-400 dark:text-gray-500">vs</span>
+                                        {{ $fixtureRow->away_team_shortname ?: $fixtureRow->away_team_name }}
+                                    </p>
+                                    <p class="hidden text-sm font-semibold text-gray-900 dark:text-gray-100 sm:block">
                                         {{ $fixtureRow->home_team_name }}
                                         <span class="font-normal text-gray-400 dark:text-gray-500">vs</span>
                                         {{ $fixtureRow->away_team_name }}
@@ -53,6 +62,38 @@
                     @endforeach
                 </div>
             </div>
+
+            @if ($fixtures->hasPages())
+                <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" data-team-fixtures-controls>
+                    <div class="flex items-center justify-between gap-4">
+                        @if ($fixtures->onFirstPage())
+                            <span class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-400 dark:border-neutral-800 dark:text-gray-500">
+                                Previous
+                            </span>
+                        @else
+                            <a href="{{ $fixtures->previousPageUrl() }}"
+                                class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-neutral-800 dark:text-gray-200 dark:hover:bg-neutral-900">
+                                Previous
+                            </a>
+                        @endif
+
+                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            Page {{ $fixtures->currentPage() }}
+                        </span>
+
+                        @if ($fixtures->hasMorePages())
+                            <a href="{{ $fixtures->nextPageUrl() }}"
+                                class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-neutral-800 dark:text-gray-200 dark:hover:bg-neutral-900">
+                                Next
+                            </a>
+                        @else
+                            <span class="inline-flex w-24 items-center justify-center rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-400 dark:border-neutral-800 dark:text-gray-500">
+                                Next
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </section>

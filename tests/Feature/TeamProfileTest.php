@@ -264,10 +264,12 @@ class TeamProfileTest extends TestCase
 
         Livewire::test(FixturesSection::class, ['team' => $team, 'section' => $section])
             ->assertSet('page', 2)
+            ->assertSee('Page 2')
             ->assertSee('Opponents 6')
             ->assertDontSee('Opponents 1')
             ->call('previousPage')
             ->assertSet('page', 1)
+            ->assertSee('Page 1')
             ->assertSee('Opponents 1')
             ->assertDontSee('Opponents 6');
     }
@@ -524,5 +526,40 @@ class TeamProfileTest extends TestCase
             ->get(route('team.show', $team))
             ->assertOk()
             ->assertSee(route('knockout.matches.submit', $match), false);
+    }
+
+    public function test_team_admin_sees_league_result_submission_link_on_public_team_profile(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('team.show', $team))
+            ->assertOk()
+            ->assertSee(route('result.create', $fixture), false)
+            ->assertSeeText('Submit result');
     }
 }

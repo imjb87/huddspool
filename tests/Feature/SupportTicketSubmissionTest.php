@@ -43,6 +43,15 @@ class SupportTicketSubmissionTest extends TestCase
         $this->assertSame(3, FormField::query()->count());
     }
 
+    public function test_legacy_support_ticket_route_redirects_to_account_support(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get('/support/tickets')
+            ->assertRedirect('/account/support');
+    }
+
     public function test_authenticated_user_can_submit_a_support_ticket(): void
     {
         $this->seed(TicketStatusSeeder::class);

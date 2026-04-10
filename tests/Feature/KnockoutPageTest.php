@@ -304,7 +304,7 @@ class KnockoutPageTest extends TestCase
             'position' => 1,
             'home_participant_id' => $currentHomeParticipant->id,
             'away_participant_id' => $currentAwayParticipant->id,
-            'starts_at' => now()->setDate(2026, 4, 3),
+            'starts_at' => now()->setDate(2026, 4, 3)->setTime(20, 0),
             'best_of' => 5,
         ]);
 
@@ -336,6 +336,7 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('Summer Singles Cup')
             ->assertSeeText('Semi Final')
             ->assertSeeText('3 Apr')
+            ->assertSeeText('3 April 2026 at 20:00')
             ->assertSee('href="'.route('player.show', $currentHomePlayer).'"', false)
             ->assertDontSeeText('Quarter Final')
             ->assertDontSeeText('Riverside Club')

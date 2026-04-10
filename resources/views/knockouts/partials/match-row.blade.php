@@ -7,24 +7,24 @@
         @endif
 
             @if (count($matchRow->home_parts) > 1 && count($matchRow->away_parts) > 1)
-                <div class="space-y-0.5 text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
-                    <p class="[overflow-wrap:anywhere]">
+                <div class="space-y-0.5 text-sm leading-5 font-semibold">
+                    <p class="[overflow-wrap:anywhere] {{ $matchRow->home_label_classes }}">
                         <span>{{ $matchRow->home_label }}</span>
                         <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
                     </p>
-                    <p class="[overflow-wrap:anywhere] text-gray-700 dark:text-gray-300">
+                    <p class="[overflow-wrap:anywhere] {{ $matchRow->away_label_classes }}">
                         {{ $matchRow->away_label }}
                     </p>
                 </div>
             @else
-                <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
+                <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold">
                     @foreach ($matchRow->home_parts as $part)
                         @if ($part['url'])
-                            <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
+                            <a href="{{ $part['url'] }}" class="transition {{ $matchRow->home_label_classes }} hover:text-gray-500 dark:hover:text-gray-300">
                                 {{ $part['label'] }}
                             </a>
                         @else
-                            <span>{{ $part['label'] }}</span>
+                            <span class="{{ $matchRow->home_label_classes }}">{{ $part['label'] }}</span>
                         @endif
                     @endforeach
 
@@ -32,11 +32,11 @@
 
                     @foreach ($matchRow->away_parts as $part)
                         @if ($part['url'])
-                            <a href="{{ $part['url'] }}" class="transition hover:text-gray-500 dark:hover:text-gray-300">
+                            <a href="{{ $part['url'] }}" class="transition {{ $matchRow->away_label_classes }} hover:text-gray-500 dark:hover:text-gray-300">
                                 {{ $part['label'] }}
                             </a>
                         @else
-                            <span>{{ $part['label'] }}</span>
+                            <span class="{{ $matchRow->away_label_classes }}">{{ $part['label'] }}</span>
                         @endif
                     @endforeach
                 </p>
@@ -54,6 +54,10 @@
                 @else
                     <span>Venue TBC</span>
                 @endif
+            </p>
+
+            <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
+                {{ $matchRow->match->starts_at?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
             </p>
         @endif
 

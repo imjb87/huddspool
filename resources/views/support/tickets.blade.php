@@ -30,13 +30,8 @@
             <div class="ui-tab-strip-shell">
                 <nav class="ui-tab-strip">
                     <a href="{{ route('account.show') }}" class="ui-button-secondary shrink-0">
-                        Profile
+                        Account
                     </a>
-                    @if (auth()->user()?->can(\App\Enums\PermissionName::SubmitLeagueResults->value))
-                        <a href="{{ route('account.team') }}" class="ui-button-secondary shrink-0">
-                            Team
-                        </a>
-                    @endif
                     <a href="{{ route('support.tickets') }}" class="ui-button-primary shrink-0">
                         Support
                     </a>

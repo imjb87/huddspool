@@ -113,7 +113,7 @@ class ResultAuthorizationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_fixture_page_does_not_show_submit_result_entry_point_for_site_admin(): void
+    public function test_fixture_page_shows_submit_result_entry_point_for_site_admin(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam] = $this->createResultFixtureContext(now()->subDay());
 
@@ -122,8 +122,9 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('fixture.show', $fixture))
             ->assertOk()
-            ->assertDontSeeText('Result submission')
-            ->assertDontSeeText('Submit result');
+            ->assertSeeText('Result submission')
+            ->assertSeeText('Submit result')
+            ->assertSee(route('result.create', $fixture), false);
     }
 
     public function test_site_admin_on_fixture_team_can_open_result_create_route(): void

@@ -16,6 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
 class MatchesRelationManager extends RelationManager
@@ -334,9 +335,11 @@ class MatchesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('round.name')->label('Round')->sortable(),
+                Tables\Columns\TextColumn::make('round.name')->label('Round')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('position')->sortable(),
-                Tables\Columns\TextColumn::make('homeParticipant.display_name')->label('Home'),
+                Tables\Columns\TextColumn::make('homeParticipant.display_name')
+                    ->label('Home')
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $this->applyParticipantSearch($query, 'homeParticipant', $search)),
                 Tables\Columns\TextColumn::make('score')
                     ->state(function (KnockoutMatch $record) {
                         if ($record->forfeitParticipant) {
@@ -350,9 +353,11 @@ class MatchesRelationManager extends RelationManager
                         return 'TBC';
                     })
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('awayParticipant.display_name')->label('Away'),
+                Tables\Columns\TextColumn::make('awayParticipant.display_name')
+                    ->label('Away')
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $this->applyParticipantSearch($query, 'awayParticipant', $search)),
                 Tables\Columns\TextColumn::make('starts_at')->label('Scheduled')->dateTime(),
-                Tables\Columns\TextColumn::make('venue.name')->label('Venue')->wrap(),
+                Tables\Columns\TextColumn::make('venue.name')->label('Venue')->wrap()->searchable(),
                 Tables\Columns\TextColumn::make('reporter.name')
                     ->label('Reported by')
                     ->placeholder('Not recorded'),
@@ -363,6 +368,7 @@ class MatchesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('report_reason')
                     ->label('Why')
                     ->wrap()
+                    ->searchable()
                     ->placeholder('No reason recorded'),
             ])
             ->filters([
@@ -372,7 +378,9 @@ class MatchesRelationManager extends RelationManager
                         titleAttribute: 'name',
                         modifyQueryUsing: fn ($query) => $query->where('knockout_id', $this->getOwnerRecord()->id)
                     )
-                    ->label('Round'),
+                    ->label('Round')
+                    ->searchable()
+                    ->preload(),
             ])
             ->modifyQueryUsing(fn ($query) => $query->orderBy('knockout_round_id')->orderBy('position'))
             ->headerActions([
@@ -396,5 +404,18 @@ class MatchesRelationManager extends RelationManager
                     ->successNotificationTitle('Result cleared'),
                 Actions\DeleteAction::make(),
             ]);
+    }
+
+    private function applyParticipantSearch(Builder $query, string $relationship, string $search): Builder
+    {
+        return $query->whereHas($relationship, function (Builder $participantQuery) use ($search): void {
+            $participantQuery->where(function (Builder $participantSearchQuery) use ($search): void {
+                $participantSearchQuery
+                    ->where('label', 'like', "%{$search}%")
+                    ->orWhereHas('team', fn (Builder $teamQuery) => $teamQuery->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('playerOne', fn (Builder $playerQuery) => $playerQuery->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('playerTwo', fn (Builder $playerQuery) => $playerQuery->where('name', 'like', "%{$search}%"));
+            });
+        });
     }
 }

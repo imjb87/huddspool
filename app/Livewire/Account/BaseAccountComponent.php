@@ -14,6 +14,12 @@ use Livewire\Component;
 abstract class BaseAccountComponent extends Component
 {
     #[Computed]
+    public function submissionActions(): ?array
+    {
+        return $this->resultSubmissionPromptResolver()->promptFor($this->user);
+    }
+
+    #[Computed]
     public function user(): User
     {
         /** @var User $user */

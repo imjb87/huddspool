@@ -7,6 +7,7 @@ use App\Models\Ruleset;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Support\FixtureShowPageData;
+use App\Support\ResultSubmissionPromptResolver;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -52,10 +53,14 @@ class FixtureController extends Controller
         }
 
         $pageData = (new FixtureShowPageData)->build($fixture);
+        $submissionUrl = auth()->user()
+            ? (new ResultSubmissionPromptResolver)->actionUrlFor(auth()->user(), $fixture)
+            : null;
 
         return view('fixture.show', [
             'fixture' => $fixture,
             'standings' => $pageData->standings,
+            'submissionUrl' => $submissionUrl,
         ]);
     }
 

@@ -35,7 +35,7 @@
             <div class="space-y-6">
                 @include('team.partials.info-section')
                 <livewire:team.players-section :team="$team" :section="$section" />
-                <livewire:team.fixtures-section :team="$team" :section="$section" />
+                <livewire:team.fixtures-section :team="$team" :section="$section" :show-submission-actions="true" />
                 @include('team.partials.knockout-section')
                 <livewire:team.history-section :team="$team" :current-section="$section" />
             </div>

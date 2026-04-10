@@ -45,6 +45,7 @@
         @endif
 
         <div class="space-y-6">
+            @include('livewire.account.partials.action-centre')
             @include('livewire.account.team-partials.info-section')
             <livewire:team.players-section :team="$this->team" :section="$this->currentSection" :for-account="true" :key="'account-team-players-'.$this->team->id" />
             <livewire:team.fixtures-section :team="$this->team" :section="$this->currentSection" :for-account="true" :key="'account-team-fixtures-'.$this->team->id" />

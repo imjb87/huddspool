@@ -22,12 +22,32 @@ class KnockoutRoundMatchViewDataBuilder
             $awayLabel = $slotLabelResolver($match, 'away');
             $hasBye = ($match->home_participant_id && ! $match->away_participant_id)
                 || ($match->away_participant_id && ! $match->home_participant_id);
+            $homeIsWinner = $match->winner_participant_id !== null
+                && $match->home_participant_id !== null
+                && (int) $match->winner_participant_id === (int) $match->home_participant_id;
+            $awayIsWinner = $match->winner_participant_id !== null
+                && $match->away_participant_id !== null
+                && (int) $match->winner_participant_id === (int) $match->away_participant_id;
+            $homeIsLoser = $match->winner_participant_id !== null
+                && $match->home_participant_id !== null
+                && $match->away_participant_id !== null
+                && ! $homeIsWinner;
+            $awayIsLoser = $match->winner_participant_id !== null
+                && $match->home_participant_id !== null
+                && $match->away_participant_id !== null
+                && ! $awayIsWinner;
 
             return (object) [
                 'match' => $match,
                 'match_label' => isset($matchNumbers[$match->id]) ? 'Match '.$matchNumbers[$match->id] : null,
                 'home_label' => $homeLabel,
                 'away_label' => $awayLabel,
+                'home_label_classes' => $homeIsLoser
+                    ? 'text-gray-400 dark:text-gray-500'
+                    : 'text-gray-900 dark:text-gray-100',
+                'away_label_classes' => $awayIsLoser
+                    ? 'text-gray-400 dark:text-gray-500'
+                    : 'text-gray-900 dark:text-gray-100',
                 'has_bye' => $hasBye,
                 'home_parts' => $this->participantParts($match->homeParticipant, $homeLabel, $knockout->type),
                 'away_parts' => $this->participantParts($match->awayParticipant, $awayLabel, $knockout->type),
