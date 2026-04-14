@@ -528,7 +528,7 @@ class TeamProfileTest extends TestCase
             ->assertSee(route('knockout.matches.submit', $match), false);
     }
 
-    public function test_team_admin_sees_league_result_submission_link_on_public_team_profile(): void
+    public function test_team_admin_sees_short_due_date_on_public_team_profile_instead_of_submit_result_copy(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -560,6 +560,44 @@ class TeamProfileTest extends TestCase
             ->get(route('team.show', $team))
             ->assertOk()
             ->assertSee(route('result.create', $fixture), false)
-            ->assertSeeText('Submit result');
+            ->assertSeeText($fixture->fixture_date->format('j M'))
+            ->assertDontSeeText('Submit result');
+    }
+
+    public function test_team_admin_does_not_see_outstanding_result_state_for_bye_fixture_on_public_team_profile(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $byeTeam = Team::factory()->create(['name' => Team::BYE_NAME]);
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($byeTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $byeTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('team.show', $team))
+            ->assertOk()
+            ->assertDontSee(route('result.create', $fixture), false)
+            ->assertDontSee('data-account-team-fixture-ready', false)
+            ->assertSeeText($fixture->fixture_date->format('j M'))
+            ->assertDontSeeText('Submit result');
     }
 }

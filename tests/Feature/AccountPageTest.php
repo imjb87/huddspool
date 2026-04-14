@@ -862,13 +862,76 @@ class AccountPageTest extends TestCase
             ->assertSee(route('result.create', $continueFixture), false)
             ->assertDontSee(route('result.create', $futureFixture), false)
             ->assertSee('data-account-team-fixture-ready', false)
-            ->assertSeeText('Submit result')
+            ->assertSeeText($dueFixture->fixture_date->format('j M'))
+            ->assertSeeText($continueFixture->fixture_date->format('j M'))
+            ->assertDontSeeText('Submit result')
             ->assertDontSee('href="'.route('fixture.show', $dueFixture).'"', false)
             ->assertDontSee('href="'.route('result.show', $continueFixture->result).'"', false)
             ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
             ->assertSee(route('knockout.show', $teamKnockout), false)
             ->assertSee(route('knockout.matches.submit', $pendingTeamMatch), false)
             ->assertDontSee(route('knockout.matches.submit', $completedTeamMatch), false);
+    }
+
+    public function test_team_account_page_shows_short_due_dates_in_fixture_rows_instead_of_submit_result_copy(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+        ]);
+
+        $team->update(['captain_id' => $teamAdmin->id]);
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponentTeam->id, ['sort' => 2]);
+
+        $dueFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponentTeam->id,
+            'fixture_date' => now()->subDay(),
+        ]);
+
+        $draftFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $opponentTeam->id,
+            'away_team_id' => $team->id,
+            'fixture_date' => now()->subDays(2),
+        ]);
+
+        Result::factory()->create([
+            'fixture_id' => $draftFixture->id,
+            'home_team_id' => $draftFixture->home_team_id,
+            'home_team_name' => $opponentTeam->name,
+            'home_score' => 0,
+            'away_team_id' => $draftFixture->away_team_id,
+            'away_team_name' => $team->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => false,
+        ]);
+
+        $this->actingAs($teamAdmin)
+            ->get(route('account.team'))
+            ->assertOk()
+            ->assertSee(route('result.create', $dueFixture), false)
+            ->assertSee(route('result.create', $draftFixture), false)
+            ->assertSee('data-account-team-fixture-ready', false)
+            ->assertSeeText($dueFixture->fixture_date->format('j M'))
+            ->assertSeeText($draftFixture->fixture_date->format('j M'))
+            ->assertDontSeeText('Submit result');
     }
 
     public function test_regular_player_can_not_view_team_account_page(): void

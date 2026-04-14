@@ -41,10 +41,8 @@
                                         <div class="ui-score-pill-divider"></div>
                                         <div class="ui-score-pill-segment pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                     </div>
-                                @elseif ($fixtureRow->action_url)
-                                    <span class="ui-score-pill-chip ui-score-pill-danger">
-                                        {{ $fixtureRow->action_label }}
-                                    </span>
+                                @else
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $fixtureRow->compact_date_label }}</p>
                                 @endif
                             </div>
                         </div>

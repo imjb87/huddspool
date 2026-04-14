@@ -145,6 +145,57 @@ class NotificationCommandTest extends TestCase
         $this->assertSame(0, $awayPlayer->notifications()->where('type', FixtureResultOutstandingNotification::class)->count());
     }
 
+    public function test_outstanding_fixture_command_skips_bye_fixtures(): void
+    {
+        Carbon::setTestNow('2026-04-03 12:00:00');
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $byeTeam = Team::factory()->create(['name' => Team::BYE_NAME]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($byeTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $byeTeam->id,
+            'fixture_date' => today()->subDay(),
+        ]);
+
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+            'is_admin' => false,
+        ]);
+
+        Result::query()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $fixture->home_team_id,
+            'home_team_name' => $fixture->homeTeam->name,
+            'home_score' => 6,
+            'away_team_id' => $fixture->away_team_id,
+            'away_team_name' => $fixture->awayTeam->name,
+            'away_score' => 0,
+            'is_confirmed' => false,
+        ]);
+
+        $this->artisan('app:send-outstanding-fixture-notifications')
+            ->assertSuccessful();
+
+        Notification::assertNothingSent();
+        $this->assertSame(0, $teamAdmin->notifications()->where('type', FixtureResultOutstandingNotification::class)->count());
+    }
+
     public function test_match_night_started_command_only_notifies_team_admins_with_result_submission_link(): void
     {
         Carbon::setTestNow('2026-04-02 20:00:00');
@@ -222,6 +273,57 @@ class NotificationCommandTest extends TestCase
         Notification::assertNotSentTo($awayPlayer, TuesdayResultCatchupNotification::class);
         Notification::assertNotSentTo($otherContext['homeAdmin'], TuesdayResultCatchupNotification::class);
         Notification::assertNotSentTo($otherContext['awayAdmin'], TuesdayResultCatchupNotification::class);
+    }
+
+    public function test_tuesday_result_catchup_command_skips_bye_fixtures(): void
+    {
+        Carbon::setTestNow('2026-04-12 12:00:00');
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+
+        $team = Team::factory()->create();
+        $byeTeam = Team::factory()->create(['name' => Team::BYE_NAME]);
+
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($byeTeam->id, ['sort' => 2]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $byeTeam->id,
+            'fixture_date' => today()->previous(Carbon::TUESDAY),
+        ]);
+
+        $teamAdmin = User::factory()->create([
+            'team_id' => $team->id,
+            'role' => UserRole::TeamAdmin->value,
+            'is_admin' => false,
+        ]);
+
+        Result::query()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $fixture->home_team_id,
+            'home_team_name' => $fixture->homeTeam->name,
+            'home_score' => 6,
+            'away_team_id' => $fixture->away_team_id,
+            'away_team_name' => $fixture->awayTeam->name,
+            'away_score' => 0,
+            'is_confirmed' => false,
+        ]);
+
+        $this->artisan('app:send-tuesday-result-catchup-notifications')
+            ->assertSuccessful();
+
+        Notification::assertNothingSent();
+        $this->assertSame(0, $teamAdmin->notifications()->where('type', TuesdayResultCatchupNotification::class)->count());
     }
 
     public function test_outstanding_knockout_command_notifies_participants_and_deduplicates_reruns(): void

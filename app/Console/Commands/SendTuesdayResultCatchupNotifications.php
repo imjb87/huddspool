@@ -36,7 +36,7 @@ class SendTuesdayResultCatchupNotifications extends Command
             ->orderBy('fixture_date')
             ->orderBy('id')
             ->get()
-            ->filter(fn (Fixture $fixture): bool => ! $fixture->result?->is_confirmed)
+            ->filter(fn (Fixture $fixture): bool => ! $fixture->isBye() && ! $fixture->result?->is_confirmed)
             ->values();
 
         $notificationsSent = 0;

@@ -58,14 +58,8 @@
                                             <div class="ui-score-pill-divider"></div>
                                             <div class="ui-score-pill-segment pr-1">{{ $fixtureRow->away_score ?? '' }}</div>
                                         </div>
-                                    @elseif ($forAccount && $fixtureRow->action_url)
-                                        <p class="text-sm text-red-800 dark:text-red-300">{{ $fixtureRow->compact_date_label }}</p>
-                                    @elseif ($fixtureRow->action_url)
-                                        <span class="ui-score-pill-chip ui-score-pill-danger">
-                                            {{ $fixtureRow->action_label }}
-                                        </span>
                                     @else
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $fixtureRow->compact_date_label }}</p>
+                                        <p class="text-sm {{ $isReadyToSubmit ? 'text-red-800 dark:text-red-300' : 'text-gray-500 dark:text-gray-400' }}">{{ $fixtureRow->compact_date_label }}</p>
                                     @endif
                                 </div>
                             </div>

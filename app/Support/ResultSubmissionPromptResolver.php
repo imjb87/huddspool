@@ -125,6 +125,10 @@ class ResultSubmissionPromptResolver
 
     public function actionUrlFor(User $user, Fixture $fixture): ?string
     {
+        if ($fixture->isBye()) {
+            return null;
+        }
+
         $isDue = $fixture->fixture_date?->isPast() || $fixture->fixture_date?->isToday();
 
         if (! $isDue) {
