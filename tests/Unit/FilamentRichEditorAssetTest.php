@@ -12,8 +12,11 @@ class FilamentRichEditorAssetTest extends TestCase
 
         $this->assertIsString($asset);
         $this->assertStringNotContainsString('blur-sm', $asset);
-        $this->assertStringContainsString('Se.blur=', $asset);
+        $this->assertStringNotContainsString('??', $asset);
+        $this->assertStringNotContainsString('window?.getSelection()', $asset);
+        $this->assertStringNotContainsString('findLast(', $asset);
+        $this->assertStringContainsString('setMeta("blur",{event:', $asset);
         $this->assertStringContainsString('this.on("blur",this.options.onBlur)', $asset);
-        $this->assertStringContainsString('z.on("blur",()=>{V||this.$wire.commit()})', $asset);
+        $this->assertStringContainsString('this.$wire.commit()', $asset);
     }
 }
