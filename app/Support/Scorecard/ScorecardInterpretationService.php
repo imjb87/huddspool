@@ -25,8 +25,8 @@ class ScorecardInterpretationService
             );
         }
 
-        // Guard against oversized files. The Livewire component validates max:10240 before
-        // calling this method, but we defensively enforce the limit here as well.
+        // Guard against oversized files. The Livewire component validates max:10240 (kilobytes = 10 MB)
+        // before calling this method, but we defensively enforce the same limit here as well.
         if ($file->getSize() === false || $file->getSize() > 10 * 1024 * 1024) {
             return new ScorecardExtractionResult(
                 frames: [],

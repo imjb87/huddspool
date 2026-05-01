@@ -13,6 +13,11 @@ class ScorecardPlayerResolver
     private const int MAX_DISTANCE_RATIO = 40;
 
     /**
+     * The PHP `levenshtein()` function only accepts strings up to this many characters.
+     */
+    private const int LEVENSHTEIN_MAX_LENGTH = 255;
+
+    /**
      * Attempt to resolve a player name string against a collection of eligible players.
      *
      * Returns the matched player's ID, or null with a warning when no confident match is found.
@@ -41,7 +46,7 @@ class ScorecardPlayerResolver
         $bestDistance = PHP_INT_MAX;
 
         foreach ($players as $player) {
-            if (strlen($name) > 255 || strlen($player->name) > 255) {
+            if (strlen($name) > self::LEVENSHTEIN_MAX_LENGTH || strlen($player->name) > self::LEVENSHTEIN_MAX_LENGTH) {
                 continue;
             }
 

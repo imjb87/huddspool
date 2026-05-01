@@ -56,7 +56,11 @@ class ResultForm extends Component
     #[Locked]
     public ?string $lastEditedAt = null;
 
-    /** @var mixed Livewire temporary file upload for scorecard image. */
+    /**
+     * Livewire temporary file upload for scorecard image.
+     *
+     * @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null
+     */
     public $scorecardPhoto = null;
 
     /** @var list<string> */
