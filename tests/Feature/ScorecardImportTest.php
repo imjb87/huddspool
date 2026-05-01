@@ -357,7 +357,7 @@ class ScorecardImportTest extends TestCase
             'ruleset_id' => $ruleset->id,
         ]);
 
-        Team::factory()->create();
+        Team::factory()->create(); // Extra team not on the fixture, ensuring correct scoping of players/authorization.
 
         $homeTeam = Team::factory()->create();
         $awayTeam = Team::factory()->create();

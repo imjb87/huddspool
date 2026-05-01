@@ -25,6 +25,15 @@ class ScorecardInterpretationService
             );
         }
 
+        // Guard against oversized files. The Livewire component validates max:10240 before
+        // calling this method, but we defensively enforce the limit here as well.
+        if ($file->getSize() === false || $file->getSize() > 10 * 1024 * 1024) {
+            return new ScorecardExtractionResult(
+                frames: [],
+                warnings: ['Scorecard image is too large to process. Please use a smaller photo.'],
+            );
+        }
+
         $imageData = base64_encode((string) file_get_contents($file->getRealPath()));
         $mimeType = $file->getMimeType() ?? 'image/jpeg';
 

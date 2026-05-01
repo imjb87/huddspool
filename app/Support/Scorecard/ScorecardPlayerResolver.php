@@ -36,10 +36,15 @@ class ScorecardPlayerResolver
         }
 
         // Fuzzy match via Levenshtein distance.
+        // The levenshtein() function only handles strings up to 255 characters.
         $best = null;
         $bestDistance = PHP_INT_MAX;
 
         foreach ($players as $player) {
+            if (strlen($name) > 255 || strlen($player->name) > 255) {
+                continue;
+            }
+
             $distance = levenshtein(strtolower($name), strtolower($player->name));
             if ($distance < $bestDistance) {
                 $bestDistance = $distance;
