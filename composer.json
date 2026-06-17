@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "achyutn/filament-storage-monitor": "^1.2",
         "althinect/filament-spatie-roles-permissions": "^3.2",
         "awobaz/compoships": "^2.2",
         "barryvdh/laravel-dompdf": "^3.1",

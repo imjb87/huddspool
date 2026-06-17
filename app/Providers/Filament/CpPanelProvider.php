@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use AchyutN\FilamentStorageMonitor\FilamentStorageMonitor;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Resources\SupportTicketResource;
 use App\Http\Middleware\AdminMiddleware;
@@ -44,6 +45,9 @@ class CpPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
+                FilamentStorageMonitor::make()
+                    ->addDisk('/', label: 'Server Storage')
+                    ->laravelDisk(name: 'public', label: 'Public Storage'),
                 FilamentCopilotPlugin::make()
                     ->authorizeUsing(fn (User $user): bool => $user->isAdmin())
                     ->respectAuthorization(),
