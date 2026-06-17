@@ -47,7 +47,10 @@ class CpPanelProvider extends PanelProvider
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 FilamentStorageMonitor::make()
                     ->addDisk('/', label: 'Server Storage')
-                    ->laravelDisk(name: 'public', label: 'Public Storage'),
+                    ->laravelDisk(name: 'public', label: 'Public Storage')
+                    ->compact()
+                    ->columnSpan('full')
+                    ->lazy(false),
                 FilamentCopilotPlugin::make()
                     ->authorizeUsing(fn (User $user): bool => $user->isAdmin())
                     ->respectAuthorization(),
