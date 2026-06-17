@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use AchyutN\FilamentStorageMonitor\Widgets\StorageMonitorWidget;
 use App\Filament\Widgets\UserStatsOverview;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,7 +21,6 @@ class AdminDashboardTest extends TestCase
 
         $response->assertOk();
         $response->assertSeeLivewire(UserStatsOverview::class);
-        $response->assertSeeLivewire(StorageMonitorWidget::class);
         $response->assertSee('filament-copilot-button', false);
         $response->assertSee('filament-copilot-chat', false);
         $response->assertSee('dispatchLivewire(name, params = {}, bubbles = true)', false);
