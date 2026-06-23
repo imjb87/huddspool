@@ -66,4 +66,9 @@ return [
         'user_agent' => env('NOMINATIM_USER_AGENT', env('APP_NAME', 'HuddsPool').' geocoder'),
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o'),
+    ],
+
 ];
