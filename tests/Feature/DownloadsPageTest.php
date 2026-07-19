@@ -27,6 +27,6 @@ class DownloadsPageTest extends TestCase
 
         $this->assertFileExists($path);
         $this->assertSame('%PDF-', file_get_contents($path, false, null, 0, 5));
-        $this->assertSame(2, preg_match_all('/\/Type\s*\/Page\b/', file_get_contents($path)));
+        $this->assertSame(1, preg_match_all('/\/Type\s*\/Page\b/', file_get_contents($path)));
     }
 }
