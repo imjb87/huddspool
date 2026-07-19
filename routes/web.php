@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountNotificationController;
 use App\Http\Controllers\DesignSystemController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FixtureController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HomeController;
@@ -40,6 +41,9 @@ Route::pattern('season', '[^/]*[0-9][^/]*');
 Route::get('/', HomeController::class)->name('home');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
+Route::prefix('downloads')->group(function () {
+    Route::get('/', [DownloadController::class, 'index'])->name('downloads.index');
+});
 Route::get('/search', SiteSearchController::class)->name('search.index');
 Route::prefix('rulesets')->group(function () {
     Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');

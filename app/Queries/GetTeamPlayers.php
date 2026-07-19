@@ -27,8 +27,7 @@ class GetTeamPlayers
             ->leftJoin('results', 'results.id', '=', 'frames.result_id')
             ->whereNull('frames.deleted_at')
             ->whereNull('results.deleted_at')
-            ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role')
-            ->orderBy('users.name');
+            ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role');
 
         if ($sectionId) {
             $query->selectRaw(
@@ -51,6 +50,10 @@ class GetTeamPlayers
             );
         }
 
-        return $query->get();
+        return $query
+            ->orderByDesc('frames_won')
+            ->orderBy('frames_lost')
+            ->orderBy('users.name')
+            ->get();
     }
 }

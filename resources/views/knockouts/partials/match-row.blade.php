@@ -43,18 +43,20 @@
             @endif
 
         @if (! $matchRow->has_bye)
-            <p class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
-                <span>Venue: </span>
-                @if ($matchRow->match->venue)
-                    <a href="{{ route('venue.show', $matchRow->match->venue) }}"
-                        class="transition hover:text-gray-700 dark:hover:text-gray-300"
-                        title="{{ $matchRow->match->venue->name }}">
-                        {{ $matchRow->match->venue->name }}
-                    </a>
-                @else
-                    <span>Venue TBC</span>
-                @endif
-            </p>
+            @if ($matchRow->match->venue || $matchRow->match->knockout?->type !== \App\KnockoutType::Singles)
+                <p class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
+                    <span>Venue: </span>
+                    @if ($matchRow->match->venue)
+                        <a href="{{ route('venue.show', $matchRow->match->venue) }}"
+                            class="transition hover:text-gray-700 dark:hover:text-gray-300"
+                            title="{{ $matchRow->match->venue->name }}">
+                            {{ $matchRow->match->venue->name }}
+                        </a>
+                    @else
+                        <span>Venue TBC</span>
+                    @endif
+                </p>
+            @endif
 
             <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
                 {{ $matchRow->match->startsAtForDisplay()?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}

@@ -73,6 +73,8 @@ class KnockoutMatch extends Model
             }
 
             if (
+                $type !== KnockoutType::Singles
+                &&
                 ! $match->override_home_venue
                 && $match->venue_id
                 && $match->venueConflictsWithParticipants()

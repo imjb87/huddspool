@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
+use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
+use App\Models\KnockoutRound;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class KnockoutBracketBuilder
 {
-    public function __construct(protected Knockout $knockout)
-    {
-    }
+    public function __construct(protected Knockout $knockout) {}
 
     public function generate(bool $shuffle = false): void
     {
@@ -62,14 +62,13 @@ class KnockoutBracketBuilder
 
             $position = 1;
 
-
             for ($i = 0; $i < $firstRoundMatchCount; $i++) {
                 $home = $firstRoundParticipants[$i * 2] ?? null;
                 $away = $firstRoundParticipants[$i * 2 + 1] ?? null;
 
                 $venueId = null;
                 // Set venue for team knockouts up to semi-finals
-                if ($this->knockout->type === \App\KnockoutType::Team && !str_contains(strtolower($firstRound->name), 'semi') && !str_contains(strtolower($firstRound->name), 'final')) {
+                if ($this->knockout->type === KnockoutType::Team && ! str_contains(strtolower($firstRound->name), 'semi') && ! str_contains(strtolower($firstRound->name), 'final')) {
                     if ($home && $home->team) {
                         $venueId = $home->team->venue_id;
                     }
@@ -89,7 +88,7 @@ class KnockoutBracketBuilder
 
             foreach ($byeParticipants as $participant) {
                 $venueId = null;
-                if ($this->knockout->type === \App\KnockoutType::Team && !str_contains(strtolower($firstRound->name), 'semi') && !str_contains(strtolower($firstRound->name), 'final')) {
+                if ($this->knockout->type === KnockoutType::Team && ! str_contains(strtolower($firstRound->name), 'semi') && ! str_contains(strtolower($firstRound->name), 'final')) {
                     if ($participant && $participant->team) {
                         $venueId = $participant->team->venue_id;
                     }
@@ -151,6 +150,116 @@ class KnockoutBracketBuilder
         });
     }
 
+    public function randomizeNextRound(): KnockoutRound
+    {
+        $rounds = $this->knockout->rounds()
+            ->with('matches')
+            ->orderBy('position')
+            ->get()
+            ->values();
+
+        foreach ($rounds as $roundIndex => $round) {
+            if ($roundIndex === 0) {
+                continue;
+            }
+
+            $previousRound = $rounds->get($roundIndex - 1);
+
+            if (! $previousRound || ! $this->roundCanBeRedrawn($previousRound, $round)) {
+                continue;
+            }
+
+            $this->redrawRound($previousRound->matches, $round->matches);
+
+            return $round;
+        }
+
+        throw ValidationException::withMessages([
+            'draw' => 'Complete the current knockout round before randomising the next draw.',
+        ]);
+    }
+
+    private function roundCanBeRedrawn(KnockoutRound $previousRound, KnockoutRound $round): bool
+    {
+        if ($previousRound->matches->isEmpty() || $round->matches->isEmpty()) {
+            return false;
+        }
+
+        $previousRoundComplete = $previousRound->matches->every(fn (KnockoutMatch $match): bool => $match->completed_at !== null && $match->winner_participant_id !== null
+        );
+
+        $roundNotStarted = $round->matches->every(fn (KnockoutMatch $match): bool => $match->completed_at === null
+            && $match->home_score === null
+            && $match->away_score === null
+            && $match->forfeit_participant_id === null
+        );
+
+        return $previousRoundComplete && $roundNotStarted;
+    }
+
+    /**
+     * @param  Collection<int, KnockoutMatch>  $previousMatches
+     * @param  Collection<int, KnockoutMatch>  $roundMatches
+     */
+    private function redrawRound(Collection $previousMatches, Collection $roundMatches): void
+    {
+        $winnerIds = $previousMatches
+            ->pluck('winner_participant_id')
+            ->filter()
+            ->values();
+
+        if ($winnerIds->count() > ($roundMatches->count() * 2)) {
+            throw ValidationException::withMessages([
+                'draw' => 'There are not enough match slots for the completed winners.',
+            ]);
+        }
+
+        $shuffledWinnerIds = $winnerIds->shuffle()->values();
+        $previousMatchesByWinner = $previousMatches->keyBy('winner_participant_id');
+
+        DB::transaction(function () use ($previousMatches, $roundMatches, $shuffledWinnerIds, $previousMatchesByWinner): void {
+            KnockoutMatch::query()
+                ->whereKey($previousMatches->modelKeys())
+                ->update([
+                    'next_match_id' => null,
+                    'next_slot' => null,
+                ]);
+
+            foreach ($roundMatches as $matchIndex => $match) {
+                $homeParticipantId = $shuffledWinnerIds->get($matchIndex * 2);
+                $awayParticipantId = $shuffledWinnerIds->get(($matchIndex * 2) + 1);
+
+                KnockoutMatch::query()
+                    ->whereKey($match->id)
+                    ->update([
+                        'home_participant_id' => $homeParticipantId,
+                        'away_participant_id' => $awayParticipantId,
+                        'winner_participant_id' => null,
+                        'completed_at' => null,
+                    ]);
+
+                foreach ([$homeParticipantId, $awayParticipantId] as $slotIndex => $winnerId) {
+                    if (! $winnerId) {
+                        continue;
+                    }
+
+                    $previousMatch = $previousMatchesByWinner->get($winnerId);
+
+                    if (! $previousMatch) {
+                        continue;
+                    }
+
+                    KnockoutMatch::query()
+                        ->whereKey($previousMatch->id)
+                        ->update([
+                            'next_match_id' => $match->id,
+                            'next_slot' => $slotIndex === 0 ? 'home' : 'away',
+                        ]);
+                }
+            }
+        });
+    }
+
     private function calculateBracketSize(int $participants): int
     {
         $size = 1;
@@ -170,7 +279,7 @@ class KnockoutBracketBuilder
 
         while ($rounds->count() < $roundCount) {
             $rounds->push($this->knockout->rounds()->create([
-                'name' => "Round " . ($rounds->count() + 1),
+                'name' => 'Round '.($rounds->count() + 1),
                 'position' => $position,
             ]));
 
@@ -214,6 +323,6 @@ class KnockoutBracketBuilder
             return 'Quarter Finals';
         }
 
-        return 'Round ' . ($roundIndex + 1);
+        return 'Round '.($roundIndex + 1);
     }
 }

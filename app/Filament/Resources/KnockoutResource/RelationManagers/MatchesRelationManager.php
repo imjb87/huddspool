@@ -214,6 +214,10 @@ class MatchesRelationManager extends RelationManager
                                 return;
                             }
 
+                            if ($knockout->type === KnockoutType::Singles) {
+                                return;
+                            }
+
                             $record = $livewire->getMountedTableActionRecord();
                             $homeParticipantId = $get('home_participant_id') ?: $record?->home_participant_id;
                             $awayParticipantId = $get('away_participant_id') ?: $record?->away_participant_id;

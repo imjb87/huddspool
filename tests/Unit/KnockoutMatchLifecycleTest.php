@@ -105,6 +105,24 @@ class KnockoutMatchLifecycleTest extends TestCase
         ]);
     }
 
+    public function test_singles_knockout_allows_a_participant_venue_to_be_used(): void
+    {
+        ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Singles, 5, 'Round 1');
+        ['homeParticipant' => $homeParticipant, 'awayParticipant' => $awayParticipant, 'homeVenue' => $homeVenue] = $this->createTeamParticipants($knockout);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'venue_id' => $homeVenue->id,
+            'best_of' => 5,
+        ]);
+
+        $this->assertSame($homeVenue->id, $match->venue_id);
+    }
+
     public function test_team_knockout_allows_the_home_team_venue_for_rounds_without_semi_or_final_in_the_name(): void
     {
         ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Team, 11, 'Round 1');

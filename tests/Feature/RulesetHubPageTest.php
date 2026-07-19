@@ -557,8 +557,8 @@ class RulesetHubPageTest extends TestCase
         $averagesResponse->assertSee('ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5', false);
         $averagesResponse->assertSee('data-section-averages-row-skeleton', false);
         $averagesResponse->assertSee('wire:target="previousPage, nextPage"', false);
-        $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-tab-skeleton-row="averages"'));
-        $this->assertSame(5, substr_count($averagesResponse->getContent(), 'data-section-averages-row-skeleton-row'));
+        $this->assertSame(10, substr_count($averagesResponse->getContent(), 'data-section-tab-skeleton-row="averages"'));
+        $this->assertSame(10, substr_count($averagesResponse->getContent(), 'data-section-averages-row-skeleton-row'));
         $averagesResponse->assertSee('ui-button-primary min-w-24', false);
         $averagesResponse->assertSee('Page 1');
         $averagesResponse->assertSee('Previous');

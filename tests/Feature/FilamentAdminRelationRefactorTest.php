@@ -267,8 +267,8 @@ class FilamentAdminRelationRefactorTest extends TestCase
             null,
         );
 
-        $this->assertArrayNotHasKey($homeVenue->id, $options);
-        $this->assertArrayNotHasKey($awayVenue->id, $options);
+        $this->assertArrayHasKey($homeVenue->id, $options);
+        $this->assertArrayHasKey($awayVenue->id, $options);
         $this->assertArrayHasKey($neutralVenue->id, $options);
         $this->assertStringContainsString('km from neutral point', $options[$neutralVenue->id]);
     }

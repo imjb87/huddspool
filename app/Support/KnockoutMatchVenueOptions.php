@@ -33,7 +33,7 @@ class KnockoutMatchVenueOptions
         $point = $this->neutralPoint($knockout, $homeParticipantId, $awayParticipantId);
         $excludedVenueIds = collect();
 
-        if (in_array($knockout->type, [KnockoutType::Singles, KnockoutType::Doubles], true)) {
+        if ($knockout->type === KnockoutType::Doubles) {
             $excludedVenueIds = collect([$homeParticipantId, $awayParticipantId])
                 ->filter()
                 ->flatMap(fn (int $participantId) => $this->participantVenueIds($participantId))

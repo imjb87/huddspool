@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            @if ($this->players->hasPages())
+            @if ($forAccount && $this->players->hasPages())
                 <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" @if ($forAccount) data-account-team-players-controls @else data-team-players-controls @endif>
                     <div class="flex items-center justify-between gap-4">
                         <button wire:click="previousPage"

@@ -167,6 +167,10 @@
             </div>
         </div>
     </div>
+    <a href="{{ route('downloads.index') }}"
+        class="text-sm font-semibold leading-6 transition {{ $downloadsNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-neutral-900 hover:text-green-700 dark:text-neutral-100 dark:hover:text-green-500' }}">
+        Downloads
+    </a>
     <a href="{{ route('history.index') }}"
         class="text-sm font-semibold leading-6 transition {{ $historyNavIsActive ? 'text-green-700 dark:text-green-500' : 'text-neutral-900 hover:text-green-700 dark:text-neutral-100 dark:hover:text-green-500' }}">
         History

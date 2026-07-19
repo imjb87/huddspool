@@ -10,10 +10,11 @@ use App\Services\KnockoutBracketBuilder;
 use App\Support\KnockoutParticipantSheetParser;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -26,8 +27,35 @@ class EditKnockout extends EditRecord
         return [
             $this->getParticipantImportAction(),
             $this->getGenerateBracketAction(),
+            $this->getRandomizeNextRoundAction(),
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function getRandomizeNextRoundAction(): Actions\Action
+    {
+        return Actions\Action::make('randomizeNextRound')
+            ->label('Randomise next round')
+            ->icon('heroicon-o-sparkles')
+            ->color('warning')
+            ->requiresConfirmation()
+            ->modalDescription('This will redraw the first unplayed round after the latest completed knockout round.')
+            ->action(function (): void {
+                try {
+                    $round = (new KnockoutBracketBuilder($this->record))->randomizeNextRound();
+                    $this->record->refresh();
+
+                    Notification::make()
+                        ->title("{$round->name} randomised successfully.")
+                        ->success()
+                        ->send();
+                } catch (ValidationException $exception) {
+                    Notification::make()
+                        ->title($exception->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
     }
 
     protected function getGenerateBracketAction(): Actions\Action
@@ -79,7 +107,7 @@ class EditKnockout extends EditRecord
     protected function getParticipantImportFormSchema(): array
     {
         return [
-            \Filament\Schemas\Components\Section::make('Source data')
+            Section::make('Source data')
                 ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('raw_csv')
@@ -95,7 +123,7 @@ class EditKnockout extends EditRecord
                         ->default(true),
                 ])
                 ->columns(1),
-            \Filament\Schemas\Components\Section::make('Participants')
+            Section::make('Participants')
                 ->columnSpanFull()
                 ->visible(fn (Get $get) => filled($get('participants')))
                 ->schema([
@@ -155,7 +183,7 @@ class EditKnockout extends EditRecord
             ->getSearchResultsUsing(function (string $search) {
                 return User::query()
                     ->with('team')
-                    ->where('name', 'like', '%' . $search . '%')
+                    ->where('name', 'like', '%'.$search.'%')
                     ->orderBy('name')
                     ->limit(50)
                     ->get()
@@ -179,6 +207,7 @@ class EditKnockout extends EditRecord
     {
         if (blank($state)) {
             $set('participants', []);
+
             return;
         }
 

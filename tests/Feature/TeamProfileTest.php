@@ -187,7 +187,7 @@ class TeamProfileTest extends TestCase
 
     }
 
-    public function test_team_players_section_paginates_five_players_without_page_params(): void
+    public function test_public_team_players_section_shows_all_players_without_pagination(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $ruleset = Ruleset::factory()->create();
@@ -215,12 +215,66 @@ class TeamProfileTest extends TestCase
         ]));
 
         Livewire::test(PlayersSection::class, ['team' => $team, 'section' => $section])
-            ->assertSeeInOrder($players->take(5)->pluck('name')->all())
-            ->assertDontSee($players->last()->name)
-            ->call('nextPage')
+            ->assertSeeInOrder($players->pluck('name')->all())
             ->assertSee($players->last()->name)
-            ->assertDontSee($players->first()->name)
-            ->assertSee('Page 2');
+            ->assertDontSee('Page 2');
+    }
+
+    public function test_public_team_players_start_with_the_top_player(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $team = Team::factory()->create();
+        $opponent = Team::factory()->create();
+        $section->teams()->attach($team->id, ['sort' => 1]);
+        $section->teams()->attach($opponent->id, ['sort' => 2]);
+
+        $topPlayer = User::factory()->create(['team_id' => $team->id, 'name' => 'Top Player']);
+        $unplayedPlayer = User::factory()->create(['team_id' => $team->id, 'name' => 'Unplayed Player']);
+        $lowerPlayer = User::factory()->create(['team_id' => $team->id, 'name' => 'Lower Player']);
+        $opponentPlayer = User::factory()->create(['team_id' => $opponent->id]);
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+        ]);
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 2,
+            'away_team_id' => $opponent->id,
+            'away_team_name' => $opponent->name,
+            'away_score' => 1,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $topPlayer->id,
+        ]);
+        Frame::create([
+            'result_id' => $result->id,
+            'home_player_id' => $topPlayer->id,
+            'home_score' => 1,
+            'away_player_id' => $opponentPlayer->id,
+            'away_score' => 0,
+        ]);
+        Frame::create([
+            'result_id' => $result->id,
+            'home_player_id' => $lowerPlayer->id,
+            'home_score' => 0,
+            'away_player_id' => $opponentPlayer->id,
+            'away_score' => 1,
+        ]);
+
+        $this->assertSame(
+            [$topPlayer->id, $unplayedPlayer->id, $lowerPlayer->id],
+            (new GetTeamPlayers($team, $section))()->pluck('id')->all(),
+        );
     }
 
     public function test_team_fixtures_section_defaults_to_the_page_containing_the_current_week_and_paginates_by_five(): void

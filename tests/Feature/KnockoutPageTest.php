@@ -336,10 +336,12 @@ class KnockoutPageTest extends TestCase
             ->assertSee('data-knockout-round-skeleton', false)
             ->assertSeeText('Summer Singles Cup')
             ->assertSeeText('Semi Final')
+            ->assertSeeText('To be played by')
             ->assertSeeText('3 Apr')
             ->assertSeeText('3 April 2026 at 20:00')
             ->assertSee('href="'.route('player.show', $currentHomePlayer).'"', false)
             ->assertDontSeeText('Quarter Final')
+            ->assertDontSeeText('Venue TBC')
             ->assertDontSeeText('Riverside Club')
             ->assertDontSeeText('Championship Match');
     }
@@ -362,6 +364,7 @@ class KnockoutPageTest extends TestCase
             'scheduled_for' => now()->subDay(),
             'is_visible' => true,
         ]);
+        $venue = Venue::factory()->create(['name' => 'Singles Venue']);
 
         $homePlayer = User::factory()->create(['name' => 'Cara Cole']);
         $awayPlayer = User::factory()->create(['name' => 'Drew Dale']);
@@ -382,12 +385,15 @@ class KnockoutPageTest extends TestCase
             'position' => 1,
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
+            'venue_id' => $venue->id,
             'starts_at' => Carbon::create(2026, 7, 3, 20, 15, 0, 'UTC'),
             'best_of' => 5,
         ]);
 
         $this->get(route('knockout.show', $knockout))
             ->assertOk()
+            ->assertSeeText('To be played by')
+            ->assertSeeText('Singles Venue')
             ->assertSeeText('3 Jul')
             ->assertSeeText('3 July 2026 at 20:15')
             ->assertDontSeeText('3 July 2026 at 21:15');

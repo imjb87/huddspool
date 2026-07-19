@@ -41,8 +41,12 @@ class PlayersSection extends Component
     }
 
     #[Computed]
-    public function players(): LengthAwarePaginator
+    public function players(): Collection|LengthAwarePaginator
     {
+        if (! $this->forAccount) {
+            return $this->allPlayers;
+        }
+
         $page = $this->getPage();
         $players = $this->allPlayers;
 

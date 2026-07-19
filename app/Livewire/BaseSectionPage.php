@@ -31,7 +31,7 @@ abstract class BaseSectionPage extends Component
     #[Url(except: 1, history: true)]
     public int $page = 1;
 
-    public int $perPage = 5;
+    public int $perPage = 10;
 
     /**
      * @var array<int, string>

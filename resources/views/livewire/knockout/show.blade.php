@@ -16,7 +16,11 @@
                         <div class="ui-section-intro-copy">
                             <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->currentRound->name }}</h2>
                             <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                {{ $this->currentRound->scheduled_for?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                                @if ($this->knockout->type === \App\KnockoutType::Singles)
+                                    To be played by {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'date TBC' }}
+                                @else
+                                    {{ $this->currentRound->scheduled_for?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                                @endif
                                 <span class="text-gray-300 dark:text-neutral-600">/</span>
                                 Best of {{ $this->currentRound->bestOfValue() }} frames
                             </p>

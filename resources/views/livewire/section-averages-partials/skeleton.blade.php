@@ -1,6 +1,6 @@
 <div class="animate-pulse" wire:loading.block wire:target="previousPage, nextPage" data-section-averages-row-skeleton>
     <div class="ui-card-rows">
-        @foreach (range(1, 5) as $row)
+        @foreach (range(1, 10) as $row)
             <div data-section-averages-row-skeleton-row>
                 <div class="ui-card-row items-center px-4 sm:px-5" data-section-averages-band>
                     <div class="min-w-0 flex-1">
