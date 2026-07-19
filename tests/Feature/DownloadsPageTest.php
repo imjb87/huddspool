@@ -8,6 +8,8 @@ class DownloadsPageTest extends TestCase
 {
     public function test_downloads_page_lists_the_score_card_without_registration_sheets(): void
     {
+        $this->assertSame('/download-centre', parse_url(route('downloads.index'), PHP_URL_PATH));
+
         $this->get(route('downloads.index'))
             ->assertOk()
             ->assertSee('data-downloads-page', false)
