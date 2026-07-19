@@ -85,6 +85,18 @@
                                 <span>Handbook</span>
                             </div>
                         </a>
+                        <a href="{{ route('downloads.index') }}"
+                            class="ui-card-row-link"
+                            data-user-menu-link="downloads">
+                            <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5M6.75 3.75h10.5A2.25 2.25 0 0 1 19.5 6v12a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25Zm2.25 9 3 3 3-3m-3 3V9" />
+                                    </svg>
+                                </span>
+                                <span>Downloads</span>
+                            </div>
+                        </a>
                         <button type="button"
                             class="ui-card-row w-full cursor-pointer justify-start gap-3 px-4 text-left text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:px-5"
                             x-cloak x-show="canInstallApp"
@@ -214,6 +226,18 @@
                                     </svg>
                                 </span>
                                 <span>Handbook</span>
+                            </div>
+                        </a>
+                        <a href="{{ route('downloads.index') }}"
+                            class="ui-card-row-link"
+                            data-user-menu-link="downloads">
+                            <div class="ui-card-row justify-start gap-3 px-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100 sm:px-5">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full ring-1 ring-gray-200 dark:ring-neutral-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-neutral-600 dark:text-neutral-300" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5M6.75 3.75h10.5A2.25 2.25 0 0 1 19.5 6v12a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25Zm2.25 9 3 3 3-3m-3 3V9" />
+                                    </svg>
+                                </span>
+                                <span>Downloads</span>
                             </div>
                         </a>
                         <button type="button"

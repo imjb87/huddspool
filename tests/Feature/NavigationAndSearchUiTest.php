@@ -81,6 +81,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSeeText('History');
         $response->assertSeeText('Knockouts');
         $response->assertSeeText('Handbook');
+        $response->assertSee('href="'.route('downloads.index').'"', false);
+        $response->assertSee('data-user-menu-link="downloads"', false);
         $response->assertDontSeeText('Ruleset');
         $response->assertSee('href="'.route('ruleset.show', $firstRuleset).'"', false);
         $response->assertSee('<a href="/" class="-m-1.5 p-1.5">', false);
@@ -341,6 +343,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('Mark all as read', false);
         $response->assertSee('headerNotifications', false);
         $response->assertSeeText('Install app');
+        $response->assertSee('href="'.route('downloads.index').'"', false);
+        $response->assertSee('data-user-menu-link="downloads"', false);
         $response->assertSeeText('Log out');
         $response->assertDontSee('href="'.route('filament.admin.pages.dashboard').'"', false);
         $response->assertDontSeeText('Log in');
