@@ -202,6 +202,46 @@ class KnockoutPageTest extends TestCase
         );
     }
 
+    public function test_knockout_round_visibility_does_not_notify_for_a_closed_season(): void
+    {
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => false]);
+        $knockout = Knockout::create([
+            'season_id' => $season->id,
+            'name' => 'Archived Cup',
+            'type' => KnockoutType::Singles,
+        ]);
+        $round = KnockoutRound::create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'is_visible' => false,
+        ]);
+        $homePlayer = User::factory()->create();
+        $awayPlayer = User::factory()->create();
+        $homeParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $homePlayer->id,
+        ]);
+        $awayParticipant = KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $awayPlayer->id,
+        ]);
+
+        KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+        ]);
+
+        $round->update(['is_visible' => true]);
+
+        Notification::assertNothingSent();
+    }
+
     public function test_historical_knockout_pages_have_canonical_season_scoped_urls(): void
     {
         $season = Season::factory()->create([

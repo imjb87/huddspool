@@ -418,6 +418,53 @@ class ResultSubmissionTest extends TestCase
         Notification::assertSentTo([$submitter, $homeAdmin, $awayAdmin], LeagueResultSubmittedNotification::class);
     }
 
+    public function test_league_result_submission_mailer_skips_closed_seasons(): void
+    {
+        Mail::fake();
+        Notification::fake();
+
+        $season = Season::factory()->create(['is_open' => false]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+        $submitter = User::factory()->create([
+            'team_id' => $homeTeam->id,
+            'email' => 'submitter@example.com',
+        ]);
+
+        $fixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+        ]);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'submitted_by' => 0,
+            'submitted_at' => null,
+            'is_confirmed' => false,
+        ]);
+
+        $result->forceFill([
+            'submitted_by' => $submitter->id,
+            'submitted_at' => now(),
+            'is_confirmed' => true,
+        ])->save();
+
+        Mail::assertNothingQueued();
+        Notification::assertNothingSent();
+    }
+
     public function test_partial_draft_keeps_incomplete_frame_state_without_leaving_stale_persisted_frames(): void
     {
         [

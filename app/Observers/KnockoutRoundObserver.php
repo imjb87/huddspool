@@ -38,7 +38,7 @@ class KnockoutRoundObserver
             $dispatcher = new DatabaseNotificationDispatcher;
 
             $round->loadMissing([
-                'knockout',
+                'knockout.season',
                 'matches.homeParticipant.team.players',
                 'matches.homeParticipant.team.captain',
                 'matches.homeParticipant.playerOne',
@@ -49,14 +49,16 @@ class KnockoutRoundObserver
                 'matches.awayParticipant.playerTwo',
             ]);
 
-            $round->matches
-                ->filter(fn (KnockoutMatch $match): bool => filled($match->home_participant_id) && filled($match->away_participant_id))
-                ->each(function (KnockoutMatch $match) use ($audienceResolver, $dispatcher): void {
-                    $dispatcher->sendOnce(
-                        $audienceResolver->participantsForKnockoutMatch($match),
-                        new KnockoutMatchReadyNotification($match),
-                    );
-                });
+            if ($round->knockout?->season?->isOpen()) {
+                $round->matches
+                    ->filter(fn (KnockoutMatch $match): bool => filled($match->home_participant_id) && filled($match->away_participant_id))
+                    ->each(function (KnockoutMatch $match) use ($audienceResolver, $dispatcher): void {
+                        $dispatcher->sendOnce(
+                            $audienceResolver->participantsForKnockoutMatch($match),
+                            new KnockoutMatchReadyNotification($match),
+                        );
+                    });
+            }
         }
 
         $round->loadMissing('knockout');

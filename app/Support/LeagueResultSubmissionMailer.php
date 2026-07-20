@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Result;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
@@ -55,9 +56,16 @@ class LeagueResultSubmissionMailer
 
     private function shouldSend(Result $result): bool
     {
-        return $result->is_confirmed
-            && filled($result->submitted_by)
-            && ($result->wasChanged('submitted_at') || $result->wasChanged('submitted_by'));
+        if (! $result->is_confirmed
+            || blank($result->submitted_by)
+            || (! $result->wasChanged('submitted_at') && ! $result->wasChanged('submitted_by'))) {
+            return false;
+        }
+
+        $seasonId = $result->fixture?->season_id;
+
+        return $seasonId !== null
+            && Season::query()->whereKey($seasonId)->where('is_open', true)->exists();
     }
 
     /**
