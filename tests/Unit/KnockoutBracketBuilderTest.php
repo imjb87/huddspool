@@ -9,6 +9,7 @@ use App\Models\KnockoutParticipant;
 use App\Models\Season;
 use App\Services\KnockoutBracketBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class KnockoutBracketBuilderTest extends TestCase
@@ -37,6 +38,26 @@ class KnockoutBracketBuilderTest extends TestCase
         $this->assertSame($final->id, $byeMatch->next_match_id);
         $this->assertSame($byeMatch->home_participant_id, $final->away_participant_id);
         $this->assertSame('Final', $final->round->name);
+    }
+
+    public function test_generated_matches_default_to_815_pm(): void
+    {
+        Carbon::setTestNow('2026-07-20 12:00:00');
+
+        $knockout = $this->createKnockout(KnockoutType::Singles);
+
+        collect(range(1, 4))->each(fn (int $number) => KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'label' => "Player {$number}",
+        ]));
+
+        (new KnockoutBracketBuilder($knockout))->generate();
+
+        $this->assertTrue(
+            $knockout->matches()->get()->every(fn (KnockoutMatch $match): bool => $match->starts_at?->format('Y-m-d H:i:s') === '2026-07-20 20:15:00')
+        );
+
+        Carbon::setTestNow();
     }
 
     public function test_completed_round_can_be_redrawn_before_the_next_round_starts(): void

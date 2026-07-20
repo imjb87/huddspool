@@ -81,6 +81,7 @@ class KnockoutBracketBuilder
                     'home_participant_id' => $home?->id,
                     'away_participant_id' => $away?->id,
                     'venue_id' => $venueId,
+                    'starts_at' => ($firstRound->scheduled_for ?? now())->copy()->setTime(20, 15),
                 ]);
 
                 $matchesByRound[0]->push($match);
@@ -100,6 +101,7 @@ class KnockoutBracketBuilder
                     'home_participant_id' => $participant?->id,
                     'away_participant_id' => null,
                     'venue_id' => $venueId,
+                    'starts_at' => ($firstRound->scheduled_for ?? now())->copy()->setTime(20, 15),
                 ]);
 
                 $matchesByRound[0]->push($match);
@@ -119,6 +121,7 @@ class KnockoutBracketBuilder
                         'knockout_id' => $this->knockout->id,
                         'knockout_round_id' => $round->id,
                         'position' => $pairIndex + 1,
+                        'starts_at' => ($round->scheduled_for ?? now())->copy()->setTime(20, 15),
                     ]);
 
                     if ($pair->contains(fn ($entry) => $entry instanceof KnockoutMatch)) {
