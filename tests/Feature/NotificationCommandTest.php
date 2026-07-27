@@ -8,6 +8,7 @@ use App\Models\Fixture;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
+use App\Models\NotificationSetting;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -68,6 +69,23 @@ class NotificationCommandTest extends TestCase
                     && $payload['body'] === 'Get ready for match night. View your fixture, check your opponents, and make sure you\'re set for tonight.';
             }
         );
+    }
+
+    public function test_disabled_league_night_notification_is_not_dispatched(): void
+    {
+        Carbon::setTestNow('2026-04-02 12:00:00');
+        Notification::fake();
+
+        NotificationSetting::query()
+            ->where('notification_type', LeagueNightTonightNotification::class)
+            ->update(['enabled' => false]);
+
+        $this->createFixtureNotificationContext(today());
+
+        $this->artisan('app:send-league-night-tonight-notifications')
+            ->assertSuccessful();
+
+        Notification::assertNothingSent();
     }
 
     public function test_league_night_command_skips_users_without_an_email_address(): void

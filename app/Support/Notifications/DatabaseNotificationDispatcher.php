@@ -3,6 +3,7 @@
 namespace App\Support\Notifications;
 
 use App\Jobs\SendBrowserPushNotification;
+use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
@@ -14,6 +15,10 @@ class DatabaseNotificationDispatcher
      */
     public function sendOnce(Collection $users, Notification $notification): int
     {
+        if (! NotificationSetting::isEnabledFor($notification::class)) {
+            return 0;
+        }
+
         $sent = 0;
 
         foreach ($users as $user) {
