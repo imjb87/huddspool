@@ -42,6 +42,7 @@ class KnockoutMatchVenueOptions
         }
 
         $venues = Venue::query()
+            ->withActiveTeams()
             ->orderBy('name')
             ->get(['id', 'name', 'latitude', 'longitude']);
 
@@ -92,6 +93,20 @@ class KnockoutMatchVenueOptions
 
                 return [$venue->id => $label];
             })
+            ->toArray();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function searchVenueOptions(string $search): array
+    {
+        return Venue::query()
+            ->withActiveTeams()
+            ->where('name', 'like', '%'.$search.'%')
+            ->orderBy('name')
+            ->limit(50)
+            ->pluck('name', 'id')
             ->toArray();
     }
 

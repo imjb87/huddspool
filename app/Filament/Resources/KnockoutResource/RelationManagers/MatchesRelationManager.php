@@ -169,14 +169,7 @@ class MatchesRelationManager extends RelationManager
                     ->options(fn (callable $get) => $venueOptions($get))
                     ->searchable()
                     ->preload()
-                    ->getSearchResultsUsing(function (string $search) {
-                        return Venue::query()
-                            ->where('name', 'like', '%'.$search.'%')
-                            ->orderBy('name')
-                            ->limit(50)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
+                    ->getSearchResultsUsing(fn (string $search): array => $venueOptionsBuilder->searchVenueOptions($search))
                     ->getOptionLabelUsing(function ($value) {
                         static $cache = [];
 

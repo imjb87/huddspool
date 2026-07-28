@@ -225,8 +225,12 @@ class FilamentAdminRelationRefactorTest extends TestCase
         ]));
     }
 
-    public function test_knockout_match_form_schema_excludes_participant_venues_from_neutral_venue_options(): void
+    public function test_knockout_match_venue_options_only_include_venues_with_active_teams(): void
     {
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $closedSeason = Season::factory()->create(['is_open' => false]);
+        $openSection = Section::factory()->create(['season_id' => $openSeason->id]);
+        $closedSection = Section::factory()->create(['season_id' => $closedSeason->id]);
         $homeVenue = Venue::factory()->create([
             'name' => 'Home Venue',
             'latitude' => 53.645,
@@ -242,8 +246,19 @@ class FilamentAdminRelationRefactorTest extends TestCase
             'latitude' => 53.670,
             'longitude' => -1.790,
         ]);
+        $inactiveVenue = Venue::factory()->create(['name' => 'Inactive Venue']);
+        $foldedVenue = Venue::factory()->create(['name' => 'Folded Venue']);
+        $unusedVenue = Venue::factory()->create(['name' => 'Unused Venue']);
         $homeTeam = Team::factory()->create(['venue_id' => $homeVenue->id]);
         $awayTeam = Team::factory()->create(['venue_id' => $awayVenue->id]);
+        $neutralTeam = Team::factory()->create(['venue_id' => $neutralVenue->id]);
+        $inactiveTeam = Team::factory()->create(['venue_id' => $inactiveVenue->id]);
+        $foldedTeam = Team::factory()->create([
+            'venue_id' => $foldedVenue->id,
+            'folded_at' => now(),
+        ]);
+        $openSection->teams()->attach([$homeTeam->id, $awayTeam->id, $neutralTeam->id, $foldedTeam->id]);
+        $closedSection->teams()->attach($inactiveTeam->id);
         $homePlayer = User::factory()->create(['team_id' => $homeTeam->id]);
         $awayPlayer = User::factory()->create(['team_id' => $awayTeam->id]);
         $knockout = Knockout::factory()->create([
@@ -270,6 +285,27 @@ class FilamentAdminRelationRefactorTest extends TestCase
         $this->assertArrayHasKey($homeVenue->id, $options);
         $this->assertArrayHasKey($awayVenue->id, $options);
         $this->assertArrayHasKey($neutralVenue->id, $options);
+        $this->assertArrayNotHasKey($inactiveVenue->id, $options);
+        $this->assertArrayNotHasKey($foldedVenue->id, $options);
+        $this->assertArrayNotHasKey($unusedVenue->id, $options);
         $this->assertStringContainsString('km from neutral point', $options[$neutralVenue->id]);
+
+        $searchOptions = app(KnockoutMatchVenueOptions::class)->searchVenueOptions('Venue');
+
+        $this->assertArrayHasKey($homeVenue->id, $searchOptions);
+        $this->assertArrayHasKey($awayVenue->id, $searchOptions);
+        $this->assertArrayHasKey($neutralVenue->id, $searchOptions);
+        $this->assertArrayNotHasKey($inactiveVenue->id, $searchOptions);
+        $this->assertArrayNotHasKey($foldedVenue->id, $searchOptions);
+        $this->assertArrayNotHasKey($unusedVenue->id, $searchOptions);
+
+        $editingOptions = app(KnockoutMatchVenueOptions::class)->venueOptions(
+            $knockout,
+            $homeParticipant->id,
+            $awayParticipant->id,
+            $inactiveVenue->id,
+        );
+
+        $this->assertArrayHasKey($inactiveVenue->id, $editingOptions);
     }
 }

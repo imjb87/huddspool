@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,5 +33,13 @@ class Venue extends Model
     public function teams(): HasMany
     {
         return $this->hasMany(Team::class);
+    }
+
+    public function scopeWithActiveTeams(Builder $query): Builder
+    {
+        return $query->whereHas('teams', fn (Builder $teamQuery): Builder => $teamQuery
+            ->inOpenSeason()
+            ->whereNull('folded_at')
+            ->notBye());
     }
 }
