@@ -59,7 +59,11 @@
             @endif
 
             <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
-                {{ $matchRow->match->startsAtForDisplay()?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                @if ($matchRow->match->knockout?->type === \App\KnockoutType::Singles)
+                    Deadline: {{ $matchRow->match->startsAtForDisplay()?->format('j F Y') ?? 'date TBC' }}
+                @else
+                    {{ $matchRow->match->startsAtForDisplay()?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                @endif
             </p>
         @endif
 

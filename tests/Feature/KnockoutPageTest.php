@@ -378,7 +378,8 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('Semi Final')
             ->assertSeeText('To be played by')
             ->assertSeeText('3 Apr')
-            ->assertSeeText('3 April 2026 at 20:00')
+            ->assertSeeText('Deadline: 3 April 2026')
+            ->assertDontSeeText('3 April 2026 at 20:00')
             ->assertSee('href="'.route('player.show', $currentHomePlayer).'"', false)
             ->assertDontSeeText('Quarter Final')
             ->assertDontSeeText('Venue TBC')
@@ -435,7 +436,8 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('To be played by')
             ->assertSeeText('Singles Venue')
             ->assertSeeText('3 Jul')
-            ->assertSeeText('3 July 2026 at 20:15')
+            ->assertSeeText('Deadline: 3 July 2026')
+            ->assertDontSeeText('3 July 2026 at 20:15')
             ->assertDontSeeText('3 July 2026 at 21:15');
     }
 
