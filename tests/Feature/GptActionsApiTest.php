@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\GptActionAudit;
+use App\Models\News;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
@@ -189,6 +190,31 @@ class GptActionsApiTest extends TestCase
             ->assertJsonPath('team.name', 'Black Horse Bandits')
             ->assertJsonPath('players.0.name', 'Ash Rees')
             ->assertJsonPath('players.1.name', 'Jamie Taylor');
+    }
+
+    public function test_administrator_can_list_news_with_its_author(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        Passport::actingAs($admin, ['gpt:read']);
+        $news = News::query()->create([
+            'title' => 'Season update',
+            'content' => 'The season starts next week.',
+            'published_at' => now(),
+        ]);
+
+        $this->getJson(route('api.gpt.resources.index', [
+            'resource' => 'news',
+            'limit' => 1,
+        ]))->assertOk()
+            ->assertJsonPath('records.0.id', $news->id)
+            ->assertJsonPath('records.0.author.id', $admin->id);
+
+        $this->getJson(route('api.gpt.resources.show', [
+            'resource' => 'news',
+            'record' => $news->id,
+        ]))->assertOk()
+            ->assertJsonPath('record.id', $news->id)
+            ->assertJsonPath('record.author.id', $admin->id);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
