@@ -624,6 +624,41 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_support_ticket', 'subject_id' => $ticket->id]);
     }
 
+    public function test_administrator_can_delete_unreferenced_content_with_explicit_confirmation(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $page = Page::query()->create(['title' => 'Temporary', 'slug' => 'temporary', 'content' => 'Temporary body']);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->deleteJson(route('api.gpt.resources.destroy', ['resource' => 'pages', 'record' => $page->id]), [
+            'expected_updated_at' => $page->updated_at->toAtomString(),
+            'reason' => 'Temporary page is no longer required.',
+            'confirmation' => 'DELETE',
+        ])->assertOk()->assertJsonPath('record_id', $page->id);
+
+        $this->assertDatabaseMissing('pages', ['id' => $page->id]);
+        $audit = GptActionAudit::query()->where('action', 'delete_pages')->firstOrFail();
+        $this->assertArrayNotHasKey('content', $audit->before);
+        $this->assertSame(strlen('Temporary body'), $audit->before['content_length']);
+    }
+
+    public function test_delete_action_protects_referenced_records_and_administrators(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $season = Season::factory()->create(['is_open' => false]);
+        Section::factory()->create(['season_id' => $season->id, 'ruleset_id' => $ruleset->id]);
+        Passport::actingAs($admin, ['gpt:write']);
+        $payload = ['reason' => 'Confirmed administrative cleanup.', 'confirmation' => 'DELETE'];
+
+        $this->deleteJson(route('api.gpt.resources.destroy', ['resource' => 'rulesets', 'record' => $ruleset->id]), $payload + ['expected_updated_at' => $ruleset->updated_at->toAtomString()])
+            ->assertUnprocessable()->assertJsonValidationErrors('record');
+        $this->deleteJson(route('api.gpt.resources.destroy', ['resource' => 'users', 'record' => $admin->id]), $payload + ['expected_updated_at' => $admin->updated_at->toAtomString()])
+            ->assertUnprocessable()->assertJsonValidationErrors('record');
+        $this->deleteJson(route('api.gpt.resources.destroy', ['resource' => 'teams', 'record' => 1]), $payload + ['expected_updated_at' => now()->toAtomString()])
+            ->assertUnprocessable()->assertJsonValidationErrors('resource');
+    }
+
     public function test_administrator_can_manage_expulsions_notifications_and_entry_payment(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

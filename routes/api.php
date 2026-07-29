@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
 use App\Http\Controllers\Api\Gpt\ContentAdministrationController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
+use App\Http\Controllers\Api\Gpt\DeleteAdministrationRecordController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
 use App\Http\Controllers\Api\Gpt\KnockoutAdministrationController;
 use App\Http\Controllers\Api\Gpt\LeagueStructureController;
@@ -83,5 +84,6 @@ Route::prefix('gpt')
             Route::post('/season-entries/{entry}/mark-paid', [OperationalAdministrationController::class, 'markEntryPaid'])->name('api.gpt.season-entries.mark-paid');
             Route::post('/content/{resource}', [ContentAdministrationController::class, 'store'])->name('api.gpt.content.store');
             Route::patch('/content/{resource}/{record}', [ContentAdministrationController::class, 'update'])->name('api.gpt.content.update');
+            Route::delete('/resources/{resource}/{record}', DeleteAdministrationRecordController::class)->name('api.gpt.resources.destroy');
         });
     });

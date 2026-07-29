@@ -62,6 +62,37 @@ paths:
       responses:
         '200': { description: Resource record }
         '404': { description: Record or resource not found }
+    delete:
+      operationId: deleteAdministrationRecord
+      summary: Delete or archive a supported administration record.
+      description: Inspect the record immediately before calling and ask for explicit confirmation. Requires its updated_at value, a reason, and the literal confirmation DELETE. Teams must use the fold action instead. Historical results and referenced competition structure are protected. Every deletion is audited.
+      x-openai-isConsequential: true
+      parameters:
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [users, venues, seasons, sections, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, expulsions, news, pages, support-tickets, media]
+        - name: record
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expected_updated_at, reason, confirmation]
+              properties:
+                expected_updated_at: { type: string, format: date-time }
+                reason: { type: string, minLength: 5, maxLength: 500 }
+                confirmation: { type: string, enum: [DELETE] }
+      responses:
+        '200': { description: Record deleted or archived }
+        '404': { description: Record not found }
+        '422': { description: 'Stale state, protected dependency, or unsupported resource' }
   /players:
     get:
       operationId: searchPlayers
