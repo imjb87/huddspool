@@ -65,17 +65,7 @@ paths:
     post:
       operationId: performAdministrationCommand
       summary: Perform one validated and audited Huddspool administration command.
-      description: |
-        Inspect affected records first. For consequential changes, explain the exact change and obtain explicit confirmation immediately before calling this operation. Put route identifiers and command fields together in arguments. Existing endpoint validation, stale-state checks, dependency guards, events and audit logging still apply.
-
-        Player commands: create_player, update_player, send_password_reset, move_player.
-        Team and venue commands: create_team, update_team, fold_team, set_team_captain, set_team_venue, create_venue, update_venue, add_team_to_section, set_points_deduction, withdraw_team.
-        Season commands: create_season, update_season, open_season, create_section, update_section.
-        Fixture commands: reschedule_fixture, correct_result.
-        Knockout commands: create_knockout, update_knockout, add_knockout_participant, update_knockout_participant, create_knockout_round, update_knockout_round, record_knockout_result, record_knockout_forfeit, clear_knockout_result, generate_knockout_bracket, randomize_knockout_round.
-        Operational commands: create_expulsion, update_notification_setting, mark_season_entry_paid, update_support_ticket.
-        Content commands: create_content, update_content. Use resource news, pages or rulesets.
-        Deletion command: delete_record. It requires resource, record, expected_updated_at, reason and confirmation set to DELETE. Teams must be folded instead.
+      description: Inspect affected records first. Explain consequential changes and obtain explicit confirmation immediately before calling. Put identifiers and fields in arguments. Existing validation, stale-state checks, dependency guards, events and audit logging apply.
       x-openai-isConsequential: true
       requestBody:
         required: true
