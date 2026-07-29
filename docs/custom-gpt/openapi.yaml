@@ -497,6 +497,31 @@ paths:
       parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, position, is_visible], properties: { name: { type: string }, position: { type: integer, minimum: 1 }, scheduled_for: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, is_visible: { type: boolean } } } } } }
       responses: { '201': { description: Round created }, '422': { description: Duplicate position or invalid input } }
+  /expulsions:
+    post:
+      operationId: createExpulsion
+      summary: Record a player or team expulsion.
+      description: Inspect the season and subject first. Requires a reason and confirmation; audited.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [season_id, subject_type, subject_id, reason, date], properties: { season_id: { type: integer }, subject_type: { type: string, enum: [player, team] }, subject_id: { type: integer }, reason: { type: string, minLength: 5, maxLength: 255 }, date: { type: string, format: date } } } } } }
+      responses: { '201': { description: Expulsion recorded }, '422': { description: Invalid subject or input } }
+  /notification-settings/{setting}:
+    patch:
+      operationId: updateNotificationSetting
+      summary: Enable or disable a notification type.
+      description: Inspect first. Uses the current enabled value as a stale-state guard, requires confirmation, and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: setting, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [enabled, expected_enabled], properties: { enabled: { type: boolean }, expected_enabled: { type: boolean } } } } } }
+      responses: { '200': { description: Notification setting updated }, '422': { description: Stale state or invalid input } }
+  /season-entries/{entry}/mark-paid:
+    post:
+      operationId: markSeasonEntryPaid
+      summary: Mark a season registration as paid.
+      description: Inspect the entry first and ask for confirmation. Already-paid entries are rejected. Audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: entry, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: Entry marked paid }, '422': { description: Entry already paid } }
 components:
   schemas: {}
   securitySchemes:

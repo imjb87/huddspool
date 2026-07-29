@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Expulsion;
 use App\Models\Fixture;
 use App\Models\GptActionAudit;
 use App\Models\Knockout;
@@ -9,9 +10,11 @@ use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
 use App\Models\News;
+use App\Models\NotificationSetting;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
+use App\Models\SeasonEntry;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Models\Team;
@@ -575,6 +578,24 @@ class GptActionsApiTest extends TestCase
 
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_knockout', 'subject_id' => $knockout->id]);
         $this->assertDatabaseCount('knockout_participants', 1);
+    }
+
+    public function test_administrator_can_manage_expulsions_notifications_and_entry_payment(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create();
+        $player = User::factory()->create();
+        $setting = NotificationSetting::query()->create(['notification_type' => 'test_notice', 'name' => 'Test notice', 'description' => 'Test', 'enabled' => true]);
+        $entry = SeasonEntry::factory()->create(['paid_at' => null]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.expulsions.store'), ['season_id' => $season->id, 'subject_type' => 'player', 'subject_id' => $player->id, 'reason' => 'Disciplinary decision.', 'date' => now()->toDateString()])->assertCreated();
+        $this->assertNotNull(Expulsion::query()->find($response->json('expulsion_id')));
+        $this->patchJson(route('api.gpt.notification-settings.update', $setting), ['enabled' => false, 'expected_enabled' => true])->assertOk()->assertJsonPath('enabled', false);
+        $this->postJson(route('api.gpt.season-entries.mark-paid', $entry))->assertOk();
+
+        $this->assertFalse($setting->refresh()->enabled);
+        $this->assertTrue($entry->refresh()->isPaid());
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void

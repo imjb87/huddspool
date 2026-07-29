@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
 use App\Http\Controllers\Api\Gpt\KnockoutAdministrationController;
 use App\Http\Controllers\Api\Gpt\LeagueStructureController;
+use App\Http\Controllers\Api\Gpt\OperationalAdministrationController;
 use App\Http\Controllers\Api\Gpt\PlayerAccountController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
 use App\Http\Controllers\Api\Gpt\PlayerPasswordResetController;
@@ -71,5 +72,8 @@ Route::prefix('gpt')
             Route::post('/knockouts', [KnockoutAdministrationController::class, 'storeKnockout'])->name('api.gpt.knockouts.store');
             Route::post('/knockouts/{knockout:id}/participants', [KnockoutAdministrationController::class, 'storeParticipant'])->name('api.gpt.knockouts.participants.store');
             Route::post('/knockouts/{knockout:id}/rounds', [KnockoutAdministrationController::class, 'storeRound'])->name('api.gpt.knockouts.rounds.store');
+            Route::post('/expulsions', [OperationalAdministrationController::class, 'storeExpulsion'])->name('api.gpt.expulsions.store');
+            Route::patch('/notification-settings/{setting}', [OperationalAdministrationController::class, 'updateNotificationSetting'])->name('api.gpt.notification-settings.update');
+            Route::post('/season-entries/{entry}/mark-paid', [OperationalAdministrationController::class, 'markEntryPaid'])->name('api.gpt.season-entries.mark-paid');
         });
     });
