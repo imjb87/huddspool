@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
+use App\Http\Controllers\Api\Gpt\PlayerAccountController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
+use App\Http\Controllers\Api\Gpt\PlayerPasswordResetController;
 use App\Http\Controllers\Api\Gpt\PlayerTeamController;
 use App\Http\Controllers\Api\Gpt\ResourceController;
 use App\Http\Controllers\Api\Gpt\ResultCorrectionController;
@@ -38,7 +40,10 @@ Route::prefix('gpt')
         });
 
         Route::middleware('scope:gpt:write')->group(function (): void {
+            Route::post('/players', [PlayerAccountController::class, 'store'])->name('api.gpt.players.store');
+            Route::patch('/players/{player}', [PlayerAccountController::class, 'update'])->name('api.gpt.players.update');
             Route::post('/players/{player}/team', PlayerTeamController::class)->name('api.gpt.players.team.update');
+            Route::post('/players/{player}/password-reset', PlayerPasswordResetController::class)->name('api.gpt.players.password-reset');
             Route::post('/fixtures/{fixture}/date', FixtureDateController::class)->name('api.gpt.fixtures.date.update');
             Route::post('/results/{result}/correction', ResultCorrectionController::class)->name('api.gpt.results.correction');
             Route::post('/teams/{team}/captain', TeamCaptainController::class)->name('api.gpt.teams.captain.update');

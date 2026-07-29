@@ -39,7 +39,7 @@ class AdminResourceReader
     public function definitions(): array
     {
         return [
-            'users' => $this->definition(User::class, ['id', 'name', 'email', 'telephone', 'team_id', 'role', 'is_admin', 'email_verified_at'], ['name', 'email'], ['team'], 'Player and administrator accounts.'),
+            'users' => $this->definition(User::class, ['id', 'name', 'email', 'telephone', 'team_id', 'role', 'is_admin', 'email_verified_at', 'updated_at'], ['name', 'email'], ['team'], 'Player and administrator accounts.'),
             'teams' => $this->definition(Team::class, ['id', 'name', 'shortname', 'venue_id', 'captain_id', 'folded_at'], ['name', 'shortname'], ['venue', 'captain', 'openSections.ruleset'], 'Teams, venues, captains, and current sections.'),
             'venues' => $this->definition(Venue::class, ['id', 'name', 'telephone', 'address', 'latitude', 'longitude'], ['name', 'address'], ['teams'], 'Venues and their teams.'),
             'seasons' => $this->definition(Season::class, ['id', 'name', 'dates', 'is_open', 'signup_opens_at', 'signup_closes_at', 'team_entry_fee'], ['name'], [], 'League seasons, schedules, and signup windows.'),

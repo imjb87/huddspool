@@ -30,6 +30,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
 {
     use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
 
+    protected string $guard_name = 'web';
+
     /**
      * The attributes that are mass assignable.
      *

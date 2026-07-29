@@ -74,6 +74,83 @@ paths:
       responses:
         '200': { description: Matching players }
         '422': { description: Search query is too short }
+    post:
+      operationId: createPlayerAccount
+      summary: Create a player or administrator account.
+      description: Search for the player first. Creation is rejected when that name already exists, including an archived account. Creates an audited account. Ask for confirmation immediately before calling it. Use the dedicated team-move action for later team transfers.
+      x-openai-isConsequential: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, site_role]
+              properties:
+                name: { type: string, maxLength: 255 }
+                email:
+                  oneOf:
+                    - { type: string, format: email }
+                    - { type: 'null' }
+                telephone:
+                  oneOf:
+                    - { type: string, maxLength: 255 }
+                    - { type: 'null' }
+                team_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+                site_role: { type: string, enum: [player, team-admin, admin] }
+      responses:
+        '201': { description: Account created and audit recorded }
+        '422': { description: Input is invalid }
+  /players/{player}:
+    patch:
+      operationId: updatePlayerAccount
+      summary: Update a player's name, contact details, or role.
+      description: This audited action checks that the account has not changed since inspection. It cannot move the player between teams. Ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expected_updated_at]
+              properties:
+                expected_updated_at: { type: string, format: date-time }
+                name: { type: string, maxLength: 255 }
+                email:
+                  oneOf:
+                    - { type: string, format: email }
+                    - { type: 'null' }
+                telephone:
+                  oneOf:
+                    - { type: string, maxLength: 255 }
+                    - { type: 'null' }
+                site_role: { type: string, enum: [player, team-admin, admin] }
+      responses:
+        '200': { description: Account updated and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
+  /players/{player}/password-reset:
+    post:
+      operationId: sendPlayerPasswordReset
+      summary: Send the standard password-reset email to a player.
+      description: Sends an email and records an audit entry. Ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Password-reset email sent and audit recorded }
+        '422': { description: The account has no email address or delivery could not be started }
   /teams:
     get:
       operationId: searchOpenSeasonTeams

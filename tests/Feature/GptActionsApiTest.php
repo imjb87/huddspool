@@ -12,7 +12,9 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -370,6 +372,83 @@ class GptActionsApiTest extends TestCase
 
         $this->assertSame(2, $result->refresh()->draft_version);
         $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'correct_result', 'subject_id' => $result->id]);
+    }
+
+    public function test_administrator_can_create_and_update_a_player_account(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = Team::factory()->create();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.players.store'), [
+            'name' => 'Jamie Taylor',
+            'email' => 'jamie@example.com',
+            'telephone' => null,
+            'team_id' => $team->id,
+            'site_role' => 'player',
+        ])->assertCreated()
+            ->assertJsonPath('player.name', 'Jamie Taylor')
+            ->assertJsonPath('player.team_id', $team->id);
+
+        $player = User::query()->findOrFail($response->json('player.id'));
+        $this->patchJson(route('api.gpt.players.update', $player), [
+            'expected_updated_at' => $player->updated_at->toAtomString(),
+            'name' => 'James Taylor',
+            'site_role' => 'team-admin',
+        ])->assertOk()
+            ->assertJsonPath('player.name', 'James Taylor')
+            ->assertJsonPath('player.role', 'Team Admin');
+
+        $this->assertTrue($player->refresh()->hasRole('team-admin'));
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_player', 'subject_id' => $player->id]);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_player', 'subject_id' => $player->id]);
+    }
+
+    public function test_player_account_update_rejects_stale_state(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $player = User::factory()->create(['name' => 'Jamie Taylor']);
+        $staleUpdatedAt = $player->updated_at->copy()->subMinute();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->patchJson(route('api.gpt.players.update', $player), [
+            'expected_updated_at' => $staleUpdatedAt->toAtomString(),
+            'name' => 'James Taylor',
+        ])->assertUnprocessable()->assertJsonValidationErrors('expected_updated_at');
+
+        $this->assertSame('Jamie Taylor', $player->refresh()->name);
+        $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_player', 'subject_id' => $player->id]);
+    }
+
+    public function test_player_creation_rejects_an_existing_name_case_insensitively(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        User::factory()->create(['name' => 'Jamie Taylor'])->delete();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.players.store'), [
+            'name' => 'jamie taylor',
+            'site_role' => 'player',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('name')
+            ->assertJsonPath('errors.name.0', 'A player with this name already exists. Find the existing account instead of creating a duplicate.');
+
+        $this->assertSame(1, User::withTrashed()->whereRaw('LOWER(name) = ?', ['jamie taylor'])->count());
+    }
+
+    public function test_administrator_can_send_a_player_password_reset(): void
+    {
+        Notification::fake();
+        $admin = User::factory()->create(['is_admin' => true]);
+        $player = User::factory()->create(['email' => 'jamie@example.com']);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.players.password-reset', $player))
+            ->assertOk()
+            ->assertJsonPath('player_id', $player->id);
+
+        Notification::assertSentTo($player, ResetPassword::class);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'send_player_password_reset', 'subject_id' => $player->id]);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
