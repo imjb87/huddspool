@@ -3,6 +3,7 @@
 namespace App\Services\Gpt;
 
 use App\Models\GptActionAudit;
+use App\Models\Season;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Models\Team;
@@ -15,6 +16,59 @@ use Illuminate\Validation\ValidationException;
 
 class ManageLeagueStructure
 {
+    public function createSeason(User $admin, array $data, ?string $ip, ?string $agent): array
+    {
+        return DB::transaction(function () use ($admin, $data, $ip, $agent): array {
+            $season = Season::query()->create($data + ['is_open' => false]);
+
+            return [$season, $this->audit($admin, 'create_season', $season, null, $season->toArray(), $ip, $agent)];
+        });
+    }
+
+    public function updateSeason(User $admin, Season $season, array $data, Carbon $expected, ?string $ip, ?string $agent): array
+    {
+        return DB::transaction(function () use ($admin, $season, $data, $expected, $ip, $agent): array {
+            $locked = Season::query()->lockForUpdate()->findOrFail($season->id);
+            $this->ensureUpdatedAt($locked, $expected);
+            $before = $locked->toArray();
+            $locked->update($data);
+
+            return [$locked, $this->audit($admin, 'update_season', $locked, $before, $locked->refresh()->toArray(), $ip, $agent)];
+        });
+    }
+
+    public function openSeason(User $admin, Season $season, ?string $ip, ?string $agent): GptActionAudit
+    {
+        return DB::transaction(function () use ($admin, $season, $ip, $agent): GptActionAudit {
+            $before = ['is_open' => $season->is_open, 'previous_open_season_ids' => Season::query()->where('is_open', true)->pluck('id')->all()];
+            Season::query()->where('id', '!=', $season->id)->where('is_open', true)->update(['is_open' => false]);
+            $season->update(['is_open' => true]);
+
+            return $this->audit($admin, 'open_season', $season, $before, ['is_open' => true], $ip, $agent);
+        });
+    }
+
+    public function createSection(User $admin, array $data, ?string $ip, ?string $agent): array
+    {
+        return DB::transaction(function () use ($admin, $data, $ip, $agent): array {
+            $section = Section::query()->create($data);
+
+            return [$section, $this->audit($admin, 'create_section', $section, null, $section->toArray(), $ip, $agent)];
+        });
+    }
+
+    public function updateSection(User $admin, Section $section, array $data, Carbon $expected, ?string $ip, ?string $agent): array
+    {
+        return DB::transaction(function () use ($admin, $section, $data, $expected, $ip, $agent): array {
+            $locked = Section::query()->lockForUpdate()->findOrFail($section->id);
+            $this->ensureUpdatedAt($locked, $expected);
+            $before = $locked->toArray();
+            $locked->update($data);
+
+            return [$locked, $this->audit($admin, 'update_section', $locked, $before, $locked->refresh()->toArray(), $ip, $agent)];
+        });
+    }
+
     public function createTeam(User $admin, array $data, ?string $ip, ?string $agent): array
     {
         return DB::transaction(function () use ($admin, $data, $ip, $agent): array {

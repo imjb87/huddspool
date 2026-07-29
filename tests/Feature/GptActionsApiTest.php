@@ -517,6 +517,25 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'withdraw_team_from_section', 'subject_id' => $membership->id]);
     }
 
+    public function test_administrator_can_create_a_season_section_and_open_the_season(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $oldSeason = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        Passport::actingAs($admin, ['gpt:write']);
+        $dates = collect(range(0, 17))->map(fn (int $week): string => now()->addWeeks($week)->toDateString())->all();
+
+        $response = $this->postJson(route('api.gpt.seasons.store'), ['name' => 'Winter 2027', 'dates' => $dates, 'team_entry_fee' => 30, 'signup_opens_at' => null, 'signup_closes_at' => null])->assertCreated();
+        $season = Season::query()->findOrFail($response->json('season_id'));
+        $this->assertFalse($season->is_open);
+        $this->postJson(route('api.gpt.sections.store'), ['name' => 'Section One', 'season_id' => $season->id, 'ruleset_id' => $ruleset->id])->assertCreated();
+        $this->postJson(route('api.gpt.seasons.open', $season->id))->assertOk();
+
+        $this->assertTrue($season->refresh()->is_open);
+        $this->assertFalse($oldSeason->refresh()->is_open);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'open_season', 'subject_id' => $season->id]);
+    }
+
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

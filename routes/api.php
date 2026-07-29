@@ -55,6 +55,11 @@ Route::prefix('gpt')
             Route::post('/venues', [LeagueStructureController::class, 'storeVenue'])->name('api.gpt.venues.store');
             Route::patch('/venues/{venue}', [LeagueStructureController::class, 'updateVenue'])->name('api.gpt.venues.update');
             Route::post('/sections/{section:id}/teams', [LeagueStructureController::class, 'addTeamToSection'])->name('api.gpt.sections.teams.store');
+            Route::post('/seasons', [LeagueStructureController::class, 'storeSeason'])->name('api.gpt.seasons.store');
+            Route::patch('/seasons/{season:id}', [LeagueStructureController::class, 'updateSeason'])->name('api.gpt.seasons.update');
+            Route::post('/seasons/{season:id}/open', [LeagueStructureController::class, 'openSeason'])->name('api.gpt.seasons.open');
+            Route::post('/sections', [LeagueStructureController::class, 'storeSection'])->name('api.gpt.sections.store');
+            Route::patch('/sections/{section:id}', [LeagueStructureController::class, 'updateSection'])->name('api.gpt.sections.update');
             Route::patch('/section-teams/{sectionTeam}/deduction', [LeagueStructureController::class, 'updateDeduction'])->name('api.gpt.section-teams.deduction');
             Route::post('/section-teams/{sectionTeam}/withdraw', [LeagueStructureController::class, 'withdrawTeam'])->name('api.gpt.section-teams.withdraw');
         });

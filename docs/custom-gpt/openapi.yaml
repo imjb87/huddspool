@@ -385,6 +385,48 @@ paths:
       x-openai-isConsequential: true
       parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
       responses: { '200': { description: Team withdrawn }, '422': { description: Closed season or team already withdrawn } }
+  /seasons:
+    post:
+      operationId: createSeason
+      summary: Create a closed season with its 18 scheduled dates.
+      description: The season is created closed. Opening it is a separate consequential action. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, dates, team_entry_fee], properties: { name: { type: string }, dates: { type: array, minItems: 18, maxItems: 18, items: { type: string, format: date } }, team_entry_fee: { type: number, minimum: 0 }, signup_opens_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, signup_closes_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '201': { description: Closed season created }, '422': { description: Invalid schedule or input } }
+  /seasons/{season}:
+    patch:
+      operationId: updateSeason
+      summary: Update season details or schedule.
+      description: Inspect first. Uses updated_at as a stale-state guard, requires confirmation, and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: season, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, dates: { type: array, minItems: 18, maxItems: 18, items: { type: string, format: date } }, team_entry_fee: { type: number, minimum: 0 }, signup_opens_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, signup_closes_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Season updated }, '422': { description: Stale state or invalid input } }
+  /seasons/{season}/open:
+    post:
+      operationId: openSeason
+      summary: Open one season and close every other season.
+      description: This changes the active competition across the site. Ask for explicit confirmation immediately before calling it. Audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: season, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: Season opened and all others closed } }
+  /sections:
+    post:
+      operationId: createSection
+      summary: Create a section within a season.
+      description: Inspect the season and ruleset first. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, season_id, ruleset_id], properties: { name: { type: string }, season_id: { type: integer }, ruleset_id: { type: integer } } } } } }
+      responses: { '201': { description: Section created }, '422': { description: Invalid input } }
+  /sections/{section}:
+    patch:
+      operationId: updateSection
+      summary: Update a section name or ruleset.
+      description: Inspect first. Uses updated_at as a stale-state guard, requires confirmation, and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: section, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, ruleset_id: { type: integer } } } } } }
+      responses: { '200': { description: Section updated }, '422': { description: Stale state or invalid input } }
 components:
   schemas: {}
   securitySchemes:

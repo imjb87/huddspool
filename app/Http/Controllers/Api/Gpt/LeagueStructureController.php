@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Gpt;
 
 use App\Http\Controllers\Controller;
+use App\Models\Season;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Models\Team;
@@ -15,6 +16,49 @@ use Illuminate\Validation\Rule;
 
 class LeagueStructureController extends Controller
 {
+    public function storeSeason(Request $request, ManageLeagueStructure $service): JsonResponse
+    {
+        $data = $request->validate($this->seasonRules());
+        [$season, $audit] = $service->createSeason($request->user(), $data, $request->ip(), $request->userAgent());
+
+        return response()->json(['message' => 'The season was created closed.', 'season_id' => $season->id, 'audit_id' => $audit->id], 201);
+    }
+
+    public function updateSeason(Request $request, Season $season, ManageLeagueStructure $service): JsonResponse
+    {
+        $data = $request->validate(['expected_updated_at' => ['required', 'date']] + $this->seasonRules(required: false));
+        $expected = Carbon::parse($data['expected_updated_at']);
+        unset($data['expected_updated_at']);
+        [$season, $audit] = $service->updateSeason($request->user(), $season, $data, $expected, $request->ip(), $request->userAgent());
+
+        return response()->json(['message' => 'The season was updated.', 'season_id' => $season->id, 'audit_id' => $audit->id]);
+    }
+
+    public function openSeason(Request $request, Season $season, ManageLeagueStructure $service): JsonResponse
+    {
+        $audit = $service->openSeason($request->user(), $season, $request->ip(), $request->userAgent());
+
+        return response()->json(['message' => 'The season is now open and all other seasons are closed.', 'season_id' => $season->id, 'audit_id' => $audit->id]);
+    }
+
+    public function storeSection(Request $request, ManageLeagueStructure $service): JsonResponse
+    {
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'season_id' => ['required', 'integer', Rule::exists('seasons', 'id')], 'ruleset_id' => ['required', 'integer', Rule::exists('rulesets', 'id')]]);
+        [$section, $audit] = $service->createSection($request->user(), $data, $request->ip(), $request->userAgent());
+
+        return response()->json(['message' => 'The section was created.', 'section_id' => $section->id, 'audit_id' => $audit->id], 201);
+    }
+
+    public function updateSection(Request $request, Section $section, ManageLeagueStructure $service): JsonResponse
+    {
+        $data = $request->validate(['expected_updated_at' => ['required', 'date'], 'name' => ['sometimes', 'required', 'string', 'max:255'], 'ruleset_id' => ['sometimes', 'required', 'integer', Rule::exists('rulesets', 'id')]]);
+        $expected = Carbon::parse($data['expected_updated_at']);
+        unset($data['expected_updated_at']);
+        [$section, $audit] = $service->updateSection($request->user(), $section, $data, $expected, $request->ip(), $request->userAgent());
+
+        return response()->json(['message' => 'The section was updated.', 'section_id' => $section->id, 'audit_id' => $audit->id]);
+    }
+
     public function storeTeam(Request $request, ManageLeagueStructure $service): JsonResponse
     {
         $data = $request->validate(['name' => ['required', 'string', 'max:255', Rule::unique('teams', 'name')], 'shortname' => ['nullable', 'string', 'max:255'], 'venue_id' => ['nullable', 'integer', Rule::exists('venues', 'id')->whereNull('deleted_at')]]);
@@ -89,5 +133,12 @@ class LeagueStructureController extends Controller
     private function venueSummary(Venue $venue): array
     {
         return $venue->only(['id', 'name', 'address', 'telephone', 'updated_at']);
+    }
+
+    private function seasonRules(bool $required = true): array
+    {
+        $prefix = $required ? 'required' : 'sometimes';
+
+        return ['name' => [$prefix, 'string', 'max:255', Rule::unique('seasons', 'name')], 'dates' => [$prefix, 'array', 'size:18'], 'dates.*' => ['required', 'date'], 'team_entry_fee' => [$prefix, 'numeric', 'min:0'], 'signup_opens_at' => ['nullable', 'date'], 'signup_closes_at' => ['nullable', 'date', 'after_or_equal:signup_opens_at']];
     }
 }
