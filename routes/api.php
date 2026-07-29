@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Gpt\AdministrationCommandController;
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
 use App\Http\Controllers\Api\Gpt\ContentAdministrationController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
@@ -46,6 +47,7 @@ Route::prefix('gpt')
         });
 
         Route::middleware('scope:gpt:write')->group(function (): void {
+            Route::post('/command', AdministrationCommandController::class)->name('api.gpt.command');
             Route::post('/players', [PlayerAccountController::class, 'store'])->name('api.gpt.players.store');
             Route::patch('/players/{player}', [PlayerAccountController::class, 'update'])->name('api.gpt.players.update');
             Route::post('/players/{player}/team', PlayerTeamController::class)->name('api.gpt.players.team.update');

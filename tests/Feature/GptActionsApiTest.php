@@ -642,6 +642,20 @@ class GptActionsApiTest extends TestCase
         $this->assertSame(strlen('Temporary body'), $audit->before['content_length']);
     }
 
+    public function test_consolidated_command_gateway_preserves_existing_validation_and_auditing(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.command'), [
+            'command' => 'create_content',
+            'arguments' => ['resource' => 'pages', 'title' => 'Command page', 'slug' => 'command-page', 'content' => 'Created through the consolidated command.'],
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('pages', ['id' => $response->json('record_id'), 'slug' => 'command-page']);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_pages', 'subject_id' => $response->json('record_id')]);
+    }
+
     public function test_delete_action_protects_referenced_records_and_administrators(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
