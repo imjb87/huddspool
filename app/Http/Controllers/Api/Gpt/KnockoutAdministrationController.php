@@ -7,6 +7,8 @@ use App\KnockoutType;
 use App\Models\GptActionAudit;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
+use App\Models\KnockoutParticipant;
+use App\Models\KnockoutRound;
 use App\Services\KnockoutBracketBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -66,6 +68,50 @@ class KnockoutAdministrationController extends Controller
         $audit = $this->audit($request, 'create_knockout_round', $round, null, $round->toArray());
 
         return response()->json(['message' => 'The knockout round was created.', 'round_id' => $round->id, 'audit_id' => $audit->id], 201);
+    }
+
+    public function updateKnockout(Request $request, Knockout $knockout): JsonResponse
+    {
+        $data = $request->validate(['expected_updated_at' => ['required', 'date'], 'name' => ['sometimes', 'string', 'max:255'], 'best_of' => ['sometimes', 'nullable', 'integer', 'min:1'], 'entry_fee' => ['sometimes', 'nullable', 'numeric', 'min:0'], 'published_at' => ['sometimes', 'nullable', 'date']]);
+        $this->guardUpdatedAt($knockout, $data['expected_updated_at']);
+        unset($data['expected_updated_at']);
+        if ($knockout->type !== KnockoutType::Team && isset($data['best_of']) && $data['best_of'] % 2 === 0) {
+            throw ValidationException::withMessages(['best_of' => 'Singles and doubles best-of values must be odd.']);
+        }
+        $before = $knockout->only(['id', 'name', 'best_of', 'entry_fee', 'published_at', 'updated_at']);
+        $knockout->update($data);
+        $audit = $this->audit($request, 'update_knockout', $knockout, $before, $knockout->fresh()->only(array_keys($before)));
+
+        return response()->json(['message' => 'The knockout was updated.', 'knockout' => $knockout->fresh()->only(array_keys($before)), 'audit_id' => $audit->id]);
+    }
+
+    public function updateParticipant(Request $request, KnockoutParticipant $participant): JsonResponse
+    {
+        $data = $request->validate(['expected_updated_at' => ['required', 'date'], 'label' => ['sometimes', 'nullable', 'string', 'max:255'], 'seed' => ['sometimes', 'nullable', 'integer', 'min:1'], 'team_id' => ['sometimes', 'nullable', 'integer', Rule::exists('teams', 'id')], 'player_one_id' => ['sometimes', 'nullable', 'integer', Rule::exists('users', 'id')], 'player_two_id' => ['sometimes', 'nullable', 'integer', Rule::exists('users', 'id')]]);
+        $this->guardUpdatedAt($participant, $data['expected_updated_at']);
+        unset($data['expected_updated_at']);
+        $candidate = array_merge($participant->only(['team_id', 'player_one_id', 'player_two_id']), $data);
+        $this->validateParticipant($participant->knockout, $candidate, $participant);
+        $before = $participant->only(['id', 'knockout_id', 'label', 'seed', 'team_id', 'player_one_id', 'player_two_id', 'updated_at']);
+        $participant->update($data);
+        $audit = $this->audit($request, 'update_knockout_participant', $participant, $before, $participant->fresh()->only(array_keys($before)));
+
+        return response()->json(['message' => 'The knockout participant was updated.', 'participant' => $participant->fresh()->only(array_keys($before)), 'audit_id' => $audit->id]);
+    }
+
+    public function updateRound(Request $request, KnockoutRound $round): JsonResponse
+    {
+        $data = $request->validate(['expected_updated_at' => ['required', 'date'], 'name' => ['sometimes', 'string', 'max:255'], 'position' => ['sometimes', 'integer', 'min:1'], 'scheduled_for' => ['sometimes', 'nullable', 'date'], 'best_of' => ['sometimes', 'nullable', 'integer', 'min:1'], 'is_visible' => ['sometimes', 'boolean']]);
+        $this->guardUpdatedAt($round, $data['expected_updated_at']);
+        unset($data['expected_updated_at']);
+        if (isset($data['position']) && $round->knockout->rounds()->whereKeyNot($round->id)->where('position', $data['position'])->exists()) {
+            throw ValidationException::withMessages(['position' => 'A round already uses this position.']);
+        }
+        $before = $round->only(['id', 'knockout_id', 'name', 'position', 'scheduled_for', 'best_of', 'is_visible', 'updated_at']);
+        $round->update($data);
+        $audit = $this->audit($request, 'update_knockout_round', $round, $before, $round->fresh()->only(array_keys($before)));
+
+        return response()->json(['message' => 'The knockout round was updated.', 'round' => $round->fresh()->only(array_keys($before)), 'audit_id' => $audit->id]);
     }
 
     public function recordResult(Request $request, KnockoutMatch $match): JsonResponse
@@ -129,6 +175,35 @@ class KnockoutAdministrationController extends Controller
     private function matchData(KnockoutMatch $match): array
     {
         return $match->only(['id', 'home_score', 'away_score', 'winner_participant_id', 'forfeit_participant_id', 'completed_at']);
+    }
+
+    private function validateParticipant(Knockout $knockout, array $data, ?KnockoutParticipant $ignore = null): void
+    {
+        match ($knockout->type) {
+            KnockoutType::Team => $data['team_id'] ?? throw ValidationException::withMessages(['team_id' => 'A team knockout participant requires a team.']),
+            KnockoutType::Singles => $data['player_one_id'] ?? throw ValidationException::withMessages(['player_one_id' => 'A singles participant requires a player.']),
+            KnockoutType::Doubles => $data['player_one_id'] ?? throw ValidationException::withMessages(['player_one_id' => 'A doubles participant requires at least one player.']),
+        };
+        if (($data['player_one_id'] ?? null) !== null && ($data['player_one_id'] ?? null) === ($data['player_two_id'] ?? null)) {
+            throw ValidationException::withMessages(['player_two_id' => 'A doubles participant cannot contain the same player twice.']);
+        }
+        $duplicate = $knockout->participants()->when($ignore, fn ($query) => $query->whereKeyNot($ignore->id))->where(function ($query) use ($data): void {
+            foreach (['team_id', 'player_one_id', 'player_two_id'] as $field) {
+                if (! empty($data[$field])) {
+                    $query->orWhere($field, $data[$field]);
+                }
+            }
+        })->exists();
+        if ($duplicate) {
+            throw ValidationException::withMessages(['participant' => 'This team or player is already entered in the knockout.']);
+        }
+    }
+
+    private function guardUpdatedAt($model, string $expected): void
+    {
+        if (! $model->updated_at?->equalTo(Carbon::parse($expected))) {
+            throw ValidationException::withMessages(['expected_updated_at' => 'The record changed after it was inspected. Inspect it again before retrying.']);
+        }
     }
 
     private function audit(Request $request, string $action, $subject, ?array $before, array $after): GptActionAudit

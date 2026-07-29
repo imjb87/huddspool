@@ -376,7 +376,7 @@ paths:
       x-openai-isConsequential: true
       parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [deducted, expected_current_deduction], properties: { deducted: { type: integer, minimum: 0 }, expected_current_deduction: { type: integer, minimum: 0 } } } } } }
-      responses: { '200': { description: Deduction updated }, '422': { description: Closed season, stale state, or invalid input } }
+      responses: { '200': { description: Deduction updated }, '422': { description: 'Closed season, stale state, or invalid input' } }
   /section-teams/{sectionTeam}/withdraw:
     post:
       operationId: withdrawTeamFromOpenSeason
@@ -479,6 +479,15 @@ paths:
       x-openai-isConsequential: true
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [season_id, name, type], properties: { season_id: { type: integer }, name: { type: string }, type: { type: string, enum: [singles, doubles, team] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, entry_fee: { type: number, minimum: 0 } } } } } }
       responses: { '201': { description: Knockout created }, '422': { description: Invalid input } }
+  /knockouts/{knockout}:
+    patch:
+      operationId: updateKnockout
+      summary: Update a knockout competition.
+      description: Inspect the knockout first and pass its updated_at value. The season and competition type are intentionally immutable. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, entry_fee: { oneOf: [{ type: number, minimum: 0 }, { type: 'null' }] }, published_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Knockout updated }, '422': { description: Stale record or invalid input } }
   /knockouts/{knockout}/participants:
     post:
       operationId: addKnockoutParticipant
@@ -497,6 +506,33 @@ paths:
       parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, position, is_visible], properties: { name: { type: string }, position: { type: integer, minimum: 1 }, scheduled_for: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, is_visible: { type: boolean } } } } } }
       responses: { '201': { description: Round created }, '422': { description: Duplicate position or invalid input } }
+  /knockout-participants/{participant}:
+    patch:
+      operationId: updateKnockoutParticipant
+      summary: Update an existing knockout participant.
+      description: Inspect the participant first and pass its updated_at value. Entrants must still match the knockout type and duplicates are rejected. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: participant, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, label: { oneOf: [{ type: string }, { type: 'null' }] }, seed: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, team_id: { oneOf: [{ type: integer }, { type: 'null' }] }, player_one_id: { oneOf: [{ type: integer }, { type: 'null' }] }, player_two_id: { oneOf: [{ type: integer }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Participant updated }, '422': { description: 'Stale record, wrong participant type or duplicate entrant' } }
+  /knockout-rounds/{round}:
+    patch:
+      operationId: updateKnockoutRound
+      summary: Update an existing knockout round.
+      description: Inspect the round first and pass its updated_at value. Positions remain unique within the knockout. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: round, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, position: { type: integer, minimum: 1 }, scheduled_for: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, is_visible: { type: boolean } } } } } }
+      responses: { '200': { description: Round updated }, '422': { description: 'Stale record, duplicate position or invalid input' } }
+  /support-tickets/{ticket}:
+    patch:
+      operationId: updateSupportTicketWorkflow
+      summary: Update a support ticket's assignment, status or priority.
+      description: Inspect the ticket first and pass its updated_at value. Uses the ticket package's normal events, activities and automations. Requires confirmation and is audited. Ticket content cannot be changed here.
+      x-openai-isConsequential: true
+      parameters: [{ name: ticket, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, assignee_id: { oneOf: [{ type: integer }, { type: 'null' }] }, ticket_status_id: { type: integer }, priority: { type: string, enum: [low, medium, high] } } } } } }
+      responses: { '200': { description: Support ticket updated }, '422': { description: Stale ticket or invalid input } }
   /expulsions:
     post:
       operationId: createExpulsion

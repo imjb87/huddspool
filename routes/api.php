@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Gpt\PlayerPasswordResetController;
 use App\Http\Controllers\Api\Gpt\PlayerTeamController;
 use App\Http\Controllers\Api\Gpt\ResourceController;
 use App\Http\Controllers\Api\Gpt\ResultCorrectionController;
+use App\Http\Controllers\Api\Gpt\SupportTicketAdministrationController;
 use App\Http\Controllers\Api\Gpt\TeamCaptainController;
 use App\Http\Controllers\Api\Gpt\TeamController;
 use App\Http\Controllers\Api\Gpt\TeamVenueController;
@@ -73,6 +74,10 @@ Route::prefix('gpt')
             Route::post('/knockouts', [KnockoutAdministrationController::class, 'storeKnockout'])->name('api.gpt.knockouts.store');
             Route::post('/knockouts/{knockout:id}/participants', [KnockoutAdministrationController::class, 'storeParticipant'])->name('api.gpt.knockouts.participants.store');
             Route::post('/knockouts/{knockout:id}/rounds', [KnockoutAdministrationController::class, 'storeRound'])->name('api.gpt.knockouts.rounds.store');
+            Route::patch('/knockouts/{knockout:id}', [KnockoutAdministrationController::class, 'updateKnockout'])->name('api.gpt.knockouts.update');
+            Route::patch('/knockout-participants/{participant}', [KnockoutAdministrationController::class, 'updateParticipant'])->name('api.gpt.knockout-participants.update');
+            Route::patch('/knockout-rounds/{round}', [KnockoutAdministrationController::class, 'updateRound'])->name('api.gpt.knockout-rounds.update');
+            Route::patch('/support-tickets/{ticket}', SupportTicketAdministrationController::class)->name('api.gpt.support-tickets.update');
             Route::post('/expulsions', [OperationalAdministrationController::class, 'storeExpulsion'])->name('api.gpt.expulsions.store');
             Route::patch('/notification-settings/{setting}', [OperationalAdministrationController::class, 'updateNotificationSetting'])->name('api.gpt.notification-settings.update');
             Route::post('/season-entries/{entry}/mark-paid', [OperationalAdministrationController::class, 'markEntryPaid'])->name('api.gpt.season-entries.mark-paid');

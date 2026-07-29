@@ -21,6 +21,9 @@ use App\Models\SectionTeam;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use daacreators\CreatorsTicketing\Models\Department;
+use daacreators\CreatorsTicketing\Models\Ticket;
+use daacreators\CreatorsTicketing\Models\TicketStatus;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -579,6 +582,46 @@ class GptActionsApiTest extends TestCase
 
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_knockout', 'subject_id' => $knockout->id]);
         $this->assertDatabaseCount('knockout_participants', 1);
+    }
+
+    public function test_administrator_can_update_knockout_structure_with_stale_guards(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $knockout = Knockout::factory()->create(['type' => 'singles', 'best_of' => 5]);
+        $player = User::factory()->create();
+        $participant = KnockoutParticipant::query()->create(['knockout_id' => $knockout->id, 'player_one_id' => $player->id]);
+        $round = KnockoutRound::query()->create(['knockout_id' => $knockout->id, 'name' => 'Round 1', 'position' => 1, 'is_visible' => true]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->patchJson(route('api.gpt.knockouts.update', $knockout->id), ['expected_updated_at' => $knockout->updated_at->toAtomString(), 'name' => 'Updated Singles', 'best_of' => 7])->assertOk();
+        $this->patchJson(route('api.gpt.knockout-participants.update', $participant), ['expected_updated_at' => $participant->updated_at->toAtomString(), 'seed' => 2, 'label' => 'Seeded player'])->assertOk();
+        $this->patchJson(route('api.gpt.knockout-rounds.update', $round), ['expected_updated_at' => $round->updated_at->toAtomString(), 'name' => 'Quarter-final', 'is_visible' => false])->assertOk();
+        $this->patchJson(route('api.gpt.knockouts.update', $knockout->id), ['expected_updated_at' => now()->subMinute()->toAtomString(), 'name' => 'Stale'])->assertUnprocessable()->assertJsonValidationErrors('expected_updated_at');
+
+        $this->assertSame('Updated Singles', $knockout->refresh()->name);
+        $this->assertSame(2, $participant->refresh()->seed);
+        $this->assertFalse($round->refresh()->is_visible);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_knockout_round', 'subject_id' => $round->id]);
+    }
+
+    public function test_administrator_can_update_support_ticket_workflow_fields(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $assignee = User::factory()->create();
+        $oldStatus = TicketStatus::query()->create(['name' => 'Open', 'slug' => 'open', 'is_default_for_new' => true]);
+        $newStatus = TicketStatus::query()->create(['name' => 'Closed', 'slug' => 'closed', 'is_closing_status' => true]);
+        $department = Department::query()->create(['name' => 'Support', 'slug' => 'support']);
+        $ticket = Ticket::query()->create(['user_id' => $admin->id, 'department_id' => $department->id, 'ticket_status_id' => $oldStatus->id, 'priority' => 'low']);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->patchJson(route('api.gpt.support-tickets.update', $ticket), ['expected_updated_at' => $ticket->updated_at->toAtomString(), 'assignee_id' => $assignee->id, 'ticket_status_id' => $newStatus->id, 'priority' => 'high'])
+            ->assertOk()
+            ->assertJsonPath('ticket.assignee_id', $assignee->id)
+            ->assertJsonPath('ticket.ticket_status_id', $newStatus->id)
+            ->assertJsonPath('ticket.priority', 'high');
+
+        $this->assertDatabaseHas($ticket->activities()->getModel()->getTable(), ['description' => 'Status was changed']);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_support_ticket', 'subject_id' => $ticket->id]);
     }
 
     public function test_administrator_can_manage_expulsions_notifications_and_entry_payment(): void
