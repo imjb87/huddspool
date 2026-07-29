@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Fixture;
 use App\Models\GptActionAudit;
 use App\Models\News;
+use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
@@ -280,6 +282,94 @@ class GptActionsApiTest extends TestCase
 
         $this->assertSame($currentVenue->id, $team->refresh()->venue_id);
         $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_team_venue', 'subject_id' => $team->id]);
+    }
+
+    public function test_administrator_can_reschedule_a_fixture_with_a_stale_state_guard(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $fixture = Fixture::factory()->create(['fixture_date' => '2026-08-04']);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.fixtures.date.update', $fixture), [
+            'fixture_date' => '2026-08-11',
+            'expected_current_fixture_date' => '2026-08-04',
+        ])->assertOk()
+            ->assertJsonPath('change.after.fixture_date', '2026-08-11');
+
+        $this->assertSame('2026-08-11', $fixture->refresh()->fixture_date->toDateString());
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_fixture_date', 'subject_id' => $fixture->id]);
+    }
+
+    public function test_administrator_can_correct_a_complete_result_and_its_frames(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+        $fixture = Fixture::factory()->create(['home_team_id' => $homeTeam->id, 'away_team_id' => $awayTeam->id]);
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'draft_version' => 3,
+        ]);
+        $homePlayers = User::factory()->count(5)->create(['team_id' => $homeTeam->id]);
+        $awayPlayers = User::factory()->count(5)->create(['team_id' => $awayTeam->id]);
+        $frames = collect(range(0, 9))->map(fn (int $index): array => [
+            'home_player_id' => $homePlayers[$index % 5]->id,
+            'away_player_id' => $awayPlayers[$index % 5]->id,
+            'home_score' => $index < 6 ? 1 : 0,
+            'away_score' => $index < 6 ? 0 : 1,
+        ])->all();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.results.correction', $result), [
+            'expected_draft_version' => 3,
+            'reason' => 'Correcting the signed scorecard.',
+            'frames' => $frames,
+        ])->assertOk()
+            ->assertJsonPath('change.after.home_score', 6)
+            ->assertJsonPath('change.after.away_score', 4)
+            ->assertJsonPath('change.after.draft_version', 4);
+
+        $result->refresh();
+        $this->assertTrue($result->is_confirmed);
+        $this->assertTrue($result->is_overridden);
+        $this->assertCount(10, $result->frames);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'correct_result', 'subject_id' => $result->id]);
+    }
+
+    public function test_result_correction_rejects_wrong_team_players_and_stale_versions(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+        $fixture = Fixture::factory()->create(['home_team_id' => $homeTeam->id, 'away_team_id' => $awayTeam->id]);
+        $result = Result::factory()->create(['fixture_id' => $fixture->id, 'draft_version' => 2]);
+        $homePlayers = User::factory()->count(5)->create(['team_id' => $homeTeam->id]);
+        $awayPlayers = User::factory()->count(5)->create(['team_id' => $awayTeam->id]);
+        $frames = collect(range(0, 9))->map(fn (int $index): array => [
+            'home_player_id' => $homePlayers[$index % 5]->id,
+            'away_player_id' => $awayPlayers[$index % 5]->id,
+            'home_score' => 1,
+            'away_score' => 0,
+        ])->all();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.results.correction', $result), [
+            'expected_draft_version' => 1,
+            'reason' => 'Correcting the signed scorecard.',
+            'frames' => $frames,
+        ])->assertUnprocessable()->assertJsonValidationErrors('expected_draft_version');
+
+        $frames[0]['home_player_id'] = $awayPlayers[0]->id;
+        $this->postJson(route('api.gpt.results.correction', $result), [
+            'expected_draft_version' => 2,
+            'reason' => 'Correcting the signed scorecard.',
+            'frames' => $frames,
+        ])->assertUnprocessable()->assertJsonValidationErrors('frames.0.home_player_id');
+
+        $this->assertSame(2, $result->refresh()->draft_version);
+        $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'correct_result', 'subject_id' => $result->id]);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void

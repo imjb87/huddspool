@@ -181,6 +181,66 @@ paths:
       responses:
         '200': { description: Venue updated and audit recorded }
         '422': { description: The inspected state is stale or input is invalid }
+  /fixtures/{fixture}/date:
+    post:
+      operationId: updateFixtureDate
+      summary: Reschedule a fixture after checking its current date.
+      description: This write is atomic and audited. Inspect the fixture first and ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: fixture
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fixture_date, expected_current_fixture_date]
+              properties:
+                fixture_date: { type: string, format: date }
+                expected_current_fixture_date: { type: string, format: date }
+      responses:
+        '200': { description: Fixture rescheduled and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
+  /results/{result}/correction:
+    post:
+      operationId: correctLeagueResult
+      summary: Correct a league result and all ten of its frames.
+      description: Replaces the complete frame-level result, recalculates the score, marks it as an administrator override, and records the reason. Inspect the result and frames first and ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: result
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expected_draft_version, reason, frames]
+              properties:
+                expected_draft_version: { type: integer, minimum: 0 }
+                reason: { type: string, minLength: 5, maxLength: 500 }
+                frames:
+                  type: array
+                  minItems: 10
+                  maxItems: 10
+                  items:
+                    type: object
+                    required: [home_player_id, away_player_id, home_score, away_score]
+                    properties:
+                      home_player_id: { type: integer }
+                      away_player_id: { type: integer }
+                      home_score: { type: integer, minimum: 0, maximum: 1 }
+                      away_score: { type: integer, minimum: 0, maximum: 1 }
+      responses:
+        '200': { description: Result corrected and audit recorded }
+        '422': { description: The inspected state is stale or the result is invalid }
 components:
   schemas: {}
   securitySchemes:
