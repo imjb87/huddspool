@@ -30,6 +30,9 @@
                 <p class="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-300">
                     Website built by John Bell.
                 </p>
+                <p class="mt-1 text-xs leading-5">
+                    <a href="{{ route('privacy') }}" class="ui-link">Privacy</a>
+                </p>
             </div>
         </div>
     </div>

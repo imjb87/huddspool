@@ -39,6 +39,7 @@ require __DIR__.'/auth.php';
 Route::pattern('season', '[^/]*[0-9][^/]*');
 
 Route::get('/', HomeController::class)->name('home');
+Route::view('/privacy', 'privacy')->name('privacy');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/download-centre', [DownloadController::class, 'index'])->name('downloads.index');
