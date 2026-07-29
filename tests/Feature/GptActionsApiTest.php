@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Fixture;
 use App\Models\GptActionAudit;
+use App\Models\Knockout;
+use App\Models\KnockoutMatch;
+use App\Models\KnockoutParticipant;
+use App\Models\KnockoutRound;
 use App\Models\News;
 use App\Models\Result;
 use App\Models\Ruleset;
@@ -534,6 +538,26 @@ class GptActionsApiTest extends TestCase
         $this->assertTrue($season->refresh()->is_open);
         $this->assertFalse($oldSeason->refresh()->is_open);
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'open_season', 'subject_id' => $season->id]);
+    }
+
+    public function test_administrator_can_record_clear_and_forfeit_a_knockout_match(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $knockout = Knockout::factory()->create(['best_of' => 5]);
+        $round = KnockoutRound::query()->create(['knockout_id' => $knockout->id, 'name' => 'Round 1', 'position' => 1, 'best_of' => 5, 'is_visible' => true]);
+        $home = KnockoutParticipant::query()->create(['knockout_id' => $knockout->id, 'label' => 'Home']);
+        $away = KnockoutParticipant::query()->create(['knockout_id' => $knockout->id, 'label' => 'Away']);
+        $match = KnockoutMatch::query()->create(['knockout_id' => $knockout->id, 'knockout_round_id' => $round->id, 'position' => 1, 'home_participant_id' => $home->id, 'away_participant_id' => $away->id, 'best_of' => 5]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.knockout-matches.result', $match), ['home_score' => 3, 'away_score' => 1, 'reason' => 'Confirmed scorecard.', 'expected_completed_at' => null])->assertOk()->assertJsonPath('match.winner_participant_id', $home->id);
+        $match->refresh();
+        $this->postJson(route('api.gpt.knockout-matches.clear-result', $match), ['reason' => 'Result entered incorrectly.', 'expected_completed_at' => $match->completed_at->toAtomString()])->assertOk()->assertJsonPath('match.winner_participant_id', null);
+        $this->postJson(route('api.gpt.knockout-matches.forfeit', $match), ['forfeit_participant_id' => $home->id, 'reason' => 'Home participant withdrew.', 'expected_completed_at' => null])->assertOk()->assertJsonPath('match.winner_participant_id', $away->id);
+
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'record_knockout_result', 'subject_id' => $match->id]);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'clear_knockout_result', 'subject_id' => $match->id]);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'record_knockout_forfeit', 'subject_id' => $match->id]);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void

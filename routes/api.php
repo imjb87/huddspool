@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
+use App\Http\Controllers\Api\Gpt\KnockoutAdministrationController;
 use App\Http\Controllers\Api\Gpt\LeagueStructureController;
 use App\Http\Controllers\Api\Gpt\PlayerAccountController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
@@ -62,5 +63,10 @@ Route::prefix('gpt')
             Route::patch('/sections/{section:id}', [LeagueStructureController::class, 'updateSection'])->name('api.gpt.sections.update');
             Route::patch('/section-teams/{sectionTeam}/deduction', [LeagueStructureController::class, 'updateDeduction'])->name('api.gpt.section-teams.deduction');
             Route::post('/section-teams/{sectionTeam}/withdraw', [LeagueStructureController::class, 'withdrawTeam'])->name('api.gpt.section-teams.withdraw');
+            Route::post('/knockout-matches/{match}/result', [KnockoutAdministrationController::class, 'recordResult'])->name('api.gpt.knockout-matches.result');
+            Route::post('/knockout-matches/{match}/forfeit', [KnockoutAdministrationController::class, 'recordForfeit'])->name('api.gpt.knockout-matches.forfeit');
+            Route::post('/knockout-matches/{match}/clear-result', [KnockoutAdministrationController::class, 'clearResult'])->name('api.gpt.knockout-matches.clear-result');
+            Route::post('/knockouts/{knockout:id}/generate-bracket', [KnockoutAdministrationController::class, 'generateBracket'])->name('api.gpt.knockouts.generate-bracket');
+            Route::post('/knockouts/{knockout:id}/randomize-next-round', [KnockoutAdministrationController::class, 'randomizeNextRound'])->name('api.gpt.knockouts.randomize-next-round');
         });
     });

@@ -427,6 +427,50 @@ paths:
       parameters: [{ name: section, in: path, required: true, schema: { type: integer } }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, ruleset_id: { type: integer } } } } } }
       responses: { '200': { description: Section updated }, '422': { description: Stale state or invalid input } }
+  /knockout-matches/{match}/result:
+    post:
+      operationId: recordKnockoutResult
+      summary: Record a validated knockout match score.
+      description: Inspect the match first. Requires a reason, stale-state check and confirmation; advances the winner using the existing bracket logic and records an audit.
+      x-openai-isConsequential: true
+      parameters: [{ name: match, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [home_score, away_score, reason, expected_completed_at], properties: { home_score: { type: integer, minimum: 0 }, away_score: { type: integer, minimum: 0 }, reason: { type: string, minLength: 5 }, expected_completed_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Result recorded }, '422': { description: Invalid score or stale match } }
+  /knockout-matches/{match}/forfeit:
+    post:
+      operationId: recordKnockoutForfeit
+      summary: Record a participant forfeit.
+      description: Inspect first. The forfeiting participant must belong to this match. Requires a reason and confirmation; advances the opponent and audits the change.
+      x-openai-isConsequential: true
+      parameters: [{ name: match, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [forfeit_participant_id, reason, expected_completed_at], properties: { forfeit_participant_id: { type: integer }, reason: { type: string, minLength: 5 }, expected_completed_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Forfeit recorded }, '422': { description: Invalid participant or stale match } }
+  /knockout-matches/{match}/clear-result:
+    post:
+      operationId: clearKnockoutResult
+      summary: Clear a knockout result or forfeit.
+      description: This can alter downstream bracket progression. Inspect the completed match and ask for explicit confirmation. Requires a reason and audits the change.
+      x-openai-isConsequential: true
+      parameters: [{ name: match, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_completed_at, reason], properties: { expected_completed_at: { type: string, format: date-time }, reason: { type: string, minLength: 5 } } } } } }
+      responses: { '200': { description: Result cleared }, '422': { description: Stale match or invalid input } }
+  /knockouts/{knockout}/generate-bracket:
+    post:
+      operationId: generateKnockoutBracket
+      summary: Generate a knockout bracket from its participants.
+      description: Uses the existing bracket builder and eligibility checks. Ask for explicit confirmation. Audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { shuffle: { type: boolean, default: false } } } } } }
+      responses: { '200': { description: Bracket generated }, '422': { description: Bracket cannot be generated } }
+  /knockouts/{knockout}/randomize-next-round:
+    post:
+      operationId: randomizeNextKnockoutRound
+      summary: Randomise the first eligible unplayed knockout round.
+      description: Uses the existing bracket eligibility checks. Ask for explicit confirmation. Audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: Eligible round randomised }, '422': { description: No round is eligible } }
 components:
   schemas: {}
   securitySchemes:
