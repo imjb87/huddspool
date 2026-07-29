@@ -29,7 +29,12 @@ paths:
       operationId: listAdministrationRecords
       summary: List records from an explicitly supported administration resource.
       parameters:
-        - $ref: '#/components/parameters/resource'
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [users, teams, venues, seasons, sections, section-teams, fixtures, results, frames, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, season-entries, season-team-entries, season-knockout-entries, expulsions, news, pages, notification-settings, support-tickets, media]
         - name: search
           in: query
           schema: { type: string, maxLength: 100 }
@@ -44,7 +49,12 @@ paths:
       operationId: getAdministrationRecord
       summary: Get one record from an explicitly supported administration resource.
       parameters:
-        - $ref: '#/components/parameters/resource'
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [users, teams, venues, seasons, sections, section-teams, fixtures, results, frames, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, season-entries, season-team-entries, season-knockout-entries, expulsions, news, pages, notification-settings, support-tickets, media]
         - name: record
           in: path
           required: true
@@ -115,14 +125,7 @@ paths:
         '200': { description: Player moved and audit recorded }
         '422': { description: The inspected state is stale or input is invalid }
 components:
-  parameters:
-    resource:
-      name: resource
-      in: path
-      required: true
-      schema:
-        type: string
-        enum: [users, teams, venues, seasons, sections, section-teams, fixtures, results, frames, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, season-entries, season-team-entries, season-knockout-entries, expulsions, news, pages, notification-settings, support-tickets, media]
+  schemas: {}
   securitySchemes:
     oauth:
       type: oauth2
