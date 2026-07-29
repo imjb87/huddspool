@@ -1,6 +1,6 @@
 # Custom GPT setup
 
-This integration uses a confidential OAuth 2.0 authorization-code client. Each administrator signs in with their existing Huddspool account, and the API rejects any account that is not currently an administrator.
+This integration uses a confidential OAuth 2.0 authorization-code client. Each administrator signs in with their existing Huddspool account, and the API rejects any account that is not currently an administrator. Use the canonical `https://www.huddspool.co.uk` host for every Action and OAuth URL so POST requests are not redirected.
 
 1. Deploy the feature and run the database migrations.
 2. Generate Passport encryption keys in the live environment if they do not already exist.

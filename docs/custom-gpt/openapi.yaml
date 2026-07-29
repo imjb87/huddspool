@@ -4,7 +4,7 @@ info:
   version: 0.1.0
   description: Read Huddspool administration data and perform audited administrator operations.
 servers:
-  - url: https://huddspool.co.uk/api/gpt
+  - url: https://www.huddspool.co.uk/api/gpt
 paths:
   /me:
     get:
@@ -128,8 +128,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://huddspool.co.uk/oauth/authorize
-          tokenUrl: https://huddspool.co.uk/oauth/token
+          authorizationUrl: https://www.huddspool.co.uk/oauth/authorize
+          tokenUrl: https://www.huddspool.co.uk/oauth/token
           scopes:
             'gpt:read': Read Huddspool administration data.
             'gpt:write': Perform audited Huddspool administration operations.
