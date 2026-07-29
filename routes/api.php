@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
+use App\Http\Controllers\Api\Gpt\ContentAdministrationController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
 use App\Http\Controllers\Api\Gpt\KnockoutAdministrationController;
@@ -75,5 +76,7 @@ Route::prefix('gpt')
             Route::post('/expulsions', [OperationalAdministrationController::class, 'storeExpulsion'])->name('api.gpt.expulsions.store');
             Route::patch('/notification-settings/{setting}', [OperationalAdministrationController::class, 'updateNotificationSetting'])->name('api.gpt.notification-settings.update');
             Route::post('/season-entries/{entry}/mark-paid', [OperationalAdministrationController::class, 'markEntryPaid'])->name('api.gpt.season-entries.mark-paid');
+            Route::post('/content/{resource}', [ContentAdministrationController::class, 'store'])->name('api.gpt.content.store');
+            Route::patch('/content/{resource}/{record}', [ContentAdministrationController::class, 'update'])->name('api.gpt.content.update');
         });
     });

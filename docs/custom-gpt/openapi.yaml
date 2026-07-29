@@ -522,6 +522,24 @@ paths:
       x-openai-isConsequential: true
       parameters: [{ name: entry, in: path, required: true, schema: { type: integer } }]
       responses: { '200': { description: Entry marked paid }, '422': { description: Entry already paid } }
+  /content/{resource}:
+    post:
+      operationId: createManagedContent
+      summary: Create a news post, page or ruleset.
+      description: Ask for confirmation. Publishing news may notify users. Content bodies are not returned or copied into audit records.
+      x-openai-isConsequential: true
+      parameters: [{ name: resource, in: path, required: true, schema: { type: string, enum: [news, pages, rulesets] } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { title: { type: string }, name: { type: string }, slug: { type: string }, content: { type: string }, published_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '201': { description: Content created }, '422': { description: Invalid resource or content } }
+  /content/{resource}/{record}:
+    patch:
+      operationId: updateManagedContent
+      summary: Update a news post, page or ruleset.
+      description: Inspect first and supply updated_at. Ask for confirmation. Publishing news may notify users. Audits store content length and SHA-256 fingerprint, not the body.
+      x-openai-isConsequential: true
+      parameters: [{ name: resource, in: path, required: true, schema: { type: string, enum: [news, pages, rulesets] } }, { name: record, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, title: { type: string }, name: { type: string }, slug: { type: string }, content: { type: string }, published_at: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Content updated }, '422': { description: Stale state or invalid content } }
 components:
   schemas: {}
   securitySchemes:

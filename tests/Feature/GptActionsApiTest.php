@@ -11,6 +11,7 @@ use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
 use App\Models\News;
 use App\Models\NotificationSetting;
+use App\Models\Page;
 use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -596,6 +597,23 @@ class GptActionsApiTest extends TestCase
 
         $this->assertFalse($setting->refresh()->enabled);
         $this->assertTrue($entry->refresh()->isPaid());
+    }
+
+    public function test_administrator_can_create_and_update_managed_content_without_auditing_bodies(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $pageResponse = $this->postJson(route('api.gpt.content.store', 'pages'), ['title' => 'About', 'slug' => 'about', 'content' => 'Original page body'])->assertCreated();
+        $page = Page::query()->findOrFail($pageResponse->json('record_id'));
+        $this->patchJson(route('api.gpt.content.update', ['resource' => 'pages', 'record' => $page->id]), ['expected_updated_at' => $page->updated_at->toAtomString(), 'content' => 'Updated page body'])->assertOk();
+        $this->postJson(route('api.gpt.content.store', 'rulesets'), ['name' => 'International Rules', 'content' => 'Rules body'])->assertCreated();
+        $this->postJson(route('api.gpt.content.store', 'news'), ['title' => 'Season update', 'content' => 'News body', 'published_at' => null])->assertCreated();
+
+        $audit = GptActionAudit::query()->where('action', 'update_pages')->firstOrFail();
+        $this->assertSame(strlen('Updated page body'), $audit->after['content_length']);
+        $this->assertArrayNotHasKey('content', $audit->after);
+        $this->assertSame('Updated page body', $page->refresh()->content);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
