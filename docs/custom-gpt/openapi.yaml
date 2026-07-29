@@ -124,6 +124,63 @@ paths:
       responses:
         '200': { description: Player moved and audit recorded }
         '422': { description: The inspected state is stale or input is invalid }
+  /teams/{team}/captain:
+    post:
+      operationId: updateTeamCaptain
+      summary: Assign or remove a team captain after checking the current captain.
+      description: This write is atomic and audited. Inspect the team roster first and ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: team
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [captain_id, expected_current_captain_id]
+              properties:
+                captain_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+                expected_current_captain_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+      responses:
+        '200': { description: Captain updated and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
+  /teams/{team}/venue:
+    post:
+      operationId: updateTeamVenue
+      summary: Change a team's venue after checking its current venue.
+      description: This write is atomic and audited. Inspect the team and venue first and ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: team
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [venue_id, expected_current_venue_id]
+              properties:
+                venue_id: { type: integer }
+                expected_current_venue_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+      responses:
+        '200': { description: Venue updated and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
 components:
   schemas: {}
   securitySchemes:

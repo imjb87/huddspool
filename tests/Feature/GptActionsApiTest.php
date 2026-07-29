@@ -9,6 +9,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
@@ -215,6 +216,70 @@ class GptActionsApiTest extends TestCase
         ]))->assertOk()
             ->assertJsonPath('record.id', $news->id)
             ->assertJsonPath('record.author.id', $admin->id);
+    }
+
+    public function test_administrator_can_change_a_team_venue_with_an_audit_record(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        $oldVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $team->update(['venue_id' => $oldVenue->id]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.teams.venue.update', $team), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+        ])->assertOk()
+            ->assertJsonPath('change.before.venue_id', $oldVenue->id)
+            ->assertJsonPath('change.after.venue_id', $newVenue->id);
+
+        $this->assertSame($newVenue->id, $team->refresh()->venue_id);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_team_venue', 'subject_id' => $team->id]);
+    }
+
+    public function test_administrator_can_assign_only_a_current_team_player_as_captain(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        $captain = User::factory()->create(['team_id' => $team->id]);
+        $outsider = User::factory()->create();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.teams.captain.update', $team), [
+            'captain_id' => $outsider->id,
+            'expected_current_captain_id' => null,
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('captain_id');
+
+        $this->postJson(route('api.gpt.teams.captain.update', $team), [
+            'captain_id' => $captain->id,
+            'expected_current_captain_id' => null,
+        ])->assertOk()
+            ->assertJsonPath('change.after.captain_id', $captain->id);
+
+        $this->assertSame($captain->id, $team->refresh()->captain_id);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_team_captain', 'subject_id' => $team->id]);
+    }
+
+    public function test_team_updates_are_rejected_when_the_inspected_state_is_stale(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        $currentVenue = Venue::factory()->create();
+        $staleVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $team->update(['venue_id' => $currentVenue->id]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.teams.venue.update', $team), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $staleVenue->id,
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('expected_current_venue_id');
+
+        $this->assertSame($currentVenue->id, $team->refresh()->venue_id);
+        $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_team_venue', 'subject_id' => $team->id]);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void

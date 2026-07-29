@@ -5,7 +5,9 @@ use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
 use App\Http\Controllers\Api\Gpt\PlayerTeamController;
 use App\Http\Controllers\Api\Gpt\ResourceController;
+use App\Http\Controllers\Api\Gpt\TeamCaptainController;
 use App\Http\Controllers\Api\Gpt\TeamController;
+use App\Http\Controllers\Api\Gpt\TeamVenueController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,5 +37,7 @@ Route::prefix('gpt')
 
         Route::middleware('scope:gpt:write')->group(function (): void {
             Route::post('/players/{player}/team', PlayerTeamController::class)->name('api.gpt.players.team.update');
+            Route::post('/teams/{team}/captain', TeamCaptainController::class)->name('api.gpt.teams.captain.update');
+            Route::post('/teams/{team}/venue', TeamVenueController::class)->name('api.gpt.teams.venue.update');
         });
     });
