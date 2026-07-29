@@ -471,6 +471,32 @@ paths:
       x-openai-isConsequential: true
       parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
       responses: { '200': { description: Eligible round randomised }, '422': { description: No round is eligible } }
+  /knockouts:
+    post:
+      operationId: createKnockout
+      summary: Create a knockout competition.
+      description: Inspect the season first. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [season_id, name, type], properties: { season_id: { type: integer }, name: { type: string }, type: { type: string, enum: [singles, doubles, team] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, entry_fee: { type: number, minimum: 0 } } } } } }
+      responses: { '201': { description: Knockout created }, '422': { description: Invalid input } }
+  /knockouts/{knockout}/participants:
+    post:
+      operationId: addKnockoutParticipant
+      summary: Add a participant to a knockout.
+      description: Participant fields must match the knockout type. Duplicate teams or players are rejected. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { label: { oneOf: [{ type: string }, { type: 'null' }] }, seed: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, team_id: { oneOf: [{ type: integer }, { type: 'null' }] }, player_one_id: { oneOf: [{ type: integer }, { type: 'null' }] }, player_two_id: { oneOf: [{ type: integer }, { type: 'null' }] } } } } } }
+      responses: { '201': { description: Participant added }, '422': { description: Wrong participant type or duplicate entrant } }
+  /knockouts/{knockout}/rounds:
+    post:
+      operationId: createKnockoutRound
+      summary: Create a knockout round.
+      description: Round positions must be unique within the knockout. Requires confirmation and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: knockout, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, position, is_visible], properties: { name: { type: string }, position: { type: integer, minimum: 1 }, scheduled_for: { oneOf: [{ type: string, format: date-time }, { type: 'null' }] }, best_of: { oneOf: [{ type: integer, minimum: 1 }, { type: 'null' }] }, is_visible: { type: boolean } } } } } }
+      responses: { '201': { description: Round created }, '422': { description: Duplicate position or invalid input } }
 components:
   schemas: {}
   securitySchemes:

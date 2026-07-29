@@ -560,6 +560,23 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'record_knockout_forfeit', 'subject_id' => $match->id]);
     }
 
+    public function test_administrator_can_create_knockout_structure_without_duplicate_participants(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create();
+        $player = User::factory()->create();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.knockouts.store'), ['season_id' => $season->id, 'name' => 'Singles Cup', 'type' => 'singles', 'best_of' => 5, 'entry_fee' => 5])->assertCreated();
+        $knockout = Knockout::query()->findOrFail($response->json('knockout_id'));
+        $this->postJson(route('api.gpt.knockouts.participants.store', $knockout->id), ['player_one_id' => $player->id, 'seed' => 1])->assertCreated();
+        $this->postJson(route('api.gpt.knockouts.participants.store', $knockout->id), ['player_one_id' => $player->id, 'seed' => 2])->assertUnprocessable()->assertJsonValidationErrors('participant');
+        $this->postJson(route('api.gpt.knockouts.rounds.store', $knockout->id), ['name' => 'Round 1', 'position' => 1, 'scheduled_for' => now()->addWeek()->toAtomString(), 'best_of' => 5, 'is_visible' => true])->assertCreated();
+
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_knockout', 'subject_id' => $knockout->id]);
+        $this->assertDatabaseCount('knockout_participants', 1);
+    }
+
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

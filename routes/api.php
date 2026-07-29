@@ -68,5 +68,8 @@ Route::prefix('gpt')
             Route::post('/knockout-matches/{match}/clear-result', [KnockoutAdministrationController::class, 'clearResult'])->name('api.gpt.knockout-matches.clear-result');
             Route::post('/knockouts/{knockout:id}/generate-bracket', [KnockoutAdministrationController::class, 'generateBracket'])->name('api.gpt.knockouts.generate-bracket');
             Route::post('/knockouts/{knockout:id}/randomize-next-round', [KnockoutAdministrationController::class, 'randomizeNextRound'])->name('api.gpt.knockouts.randomize-next-round');
+            Route::post('/knockouts', [KnockoutAdministrationController::class, 'storeKnockout'])->name('api.gpt.knockouts.store');
+            Route::post('/knockouts/{knockout:id}/participants', [KnockoutAdministrationController::class, 'storeParticipant'])->name('api.gpt.knockouts.participants.store');
+            Route::post('/knockouts/{knockout:id}/rounds', [KnockoutAdministrationController::class, 'storeRound'])->name('api.gpt.knockouts.rounds.store');
         });
     });

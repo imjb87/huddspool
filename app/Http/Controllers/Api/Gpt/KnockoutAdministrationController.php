@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Gpt;
 
 use App\Http\Controllers\Controller;
+use App\KnockoutType;
 use App\Models\GptActionAudit;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
@@ -16,6 +17,57 @@ use Illuminate\Validation\ValidationException;
 
 class KnockoutAdministrationController extends Controller
 {
+    public function storeKnockout(Request $request): JsonResponse
+    {
+        $data = $request->validate(['season_id' => ['required', 'integer', Rule::exists('seasons', 'id')], 'name' => ['required', 'string', 'max:255'], 'type' => ['required', Rule::enum(KnockoutType::class)], 'best_of' => ['nullable', 'integer', 'min:1'], 'entry_fee' => ['nullable', 'numeric', 'min:0']]);
+        if ($data['type'] !== KnockoutType::Team->value && isset($data['best_of']) && $data['best_of'] % 2 === 0) {
+            throw ValidationException::withMessages(['best_of' => 'Singles and doubles best-of values must be odd.']);
+        }
+        $knockout = Knockout::query()->create($data);
+        $audit = $this->audit($request, 'create_knockout', $knockout, null, $knockout->toArray());
+
+        return response()->json(['message' => 'The knockout was created.', 'knockout_id' => $knockout->id, 'audit_id' => $audit->id], 201);
+    }
+
+    public function storeParticipant(Request $request, Knockout $knockout): JsonResponse
+    {
+        $data = $request->validate(['label' => ['nullable', 'string', 'max:255'], 'seed' => ['nullable', 'integer', 'min:1'], 'team_id' => ['nullable', 'integer', Rule::exists('teams', 'id')], 'player_one_id' => ['nullable', 'integer', Rule::exists('users', 'id')], 'player_two_id' => ['nullable', 'integer', Rule::exists('users', 'id')]]);
+        match ($knockout->type) {
+            KnockoutType::Team => $data['team_id'] ?? throw ValidationException::withMessages(['team_id' => 'A team knockout participant requires a team.']),
+            KnockoutType::Singles => $data['player_one_id'] ?? throw ValidationException::withMessages(['player_one_id' => 'A singles participant requires a player.']),
+            KnockoutType::Doubles => $data['player_one_id'] ?? throw ValidationException::withMessages(['player_one_id' => 'A doubles participant requires at least one player.']),
+        };
+        if (($data['player_one_id'] ?? null) !== null && ($data['player_one_id'] ?? null) === ($data['player_two_id'] ?? null)) {
+            throw ValidationException::withMessages(['player_two_id' => 'A doubles participant cannot contain the same player twice.']);
+        }
+        $duplicate = $knockout->participants()->where(function ($query) use ($data): void {
+            foreach (['team_id', 'player_one_id', 'player_two_id'] as $field) {
+                if (! empty($data[$field])) {
+                    $query->orWhere($field, $data[$field]);
+                }
+            }
+        })->exists();
+        if ($duplicate) {
+            throw ValidationException::withMessages(['participant' => 'This team or player is already entered in the knockout.']);
+        }
+        $participant = $knockout->participants()->create($data);
+        $audit = $this->audit($request, 'create_knockout_participant', $participant, null, $participant->toArray());
+
+        return response()->json(['message' => 'The participant was added.', 'participant_id' => $participant->id, 'audit_id' => $audit->id], 201);
+    }
+
+    public function storeRound(Request $request, Knockout $knockout): JsonResponse
+    {
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'position' => ['required', 'integer', 'min:1'], 'scheduled_for' => ['nullable', 'date'], 'best_of' => ['nullable', 'integer', 'min:1'], 'is_visible' => ['required', 'boolean']]);
+        if ($knockout->rounds()->where('position', $data['position'])->exists()) {
+            throw ValidationException::withMessages(['position' => 'A round already uses this position.']);
+        }
+        $round = $knockout->rounds()->create($data);
+        $audit = $this->audit($request, 'create_knockout_round', $round, null, $round->toArray());
+
+        return response()->json(['message' => 'The knockout round was created.', 'round_id' => $round->id, 'audit_id' => $audit->id], 201);
+    }
+
     public function recordResult(Request $request, KnockoutMatch $match): JsonResponse
     {
         $data = $request->validate(['home_score' => ['required', 'integer', 'min:0'], 'away_score' => ['required', 'integer', 'min:0'], 'reason' => ['required', 'string', 'min:5', 'max:500'], 'expected_completed_at' => ['present', 'nullable', 'date']]);
