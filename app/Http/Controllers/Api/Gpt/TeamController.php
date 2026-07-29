@@ -34,7 +34,7 @@ class TeamController extends Controller
 
     public function roster(Team $team): JsonResponse
     {
-        $team->load(['venue', 'captain', 'openSections.ruleset', 'players' => fn (Builder $query) => $query->orderBy('name')]);
+        $team->load(['venue', 'captain', 'openSections.ruleset', 'players' => fn ($query) => $query->orderBy('name')]);
 
         return response()->json([
             'team' => $this->teamData($team),

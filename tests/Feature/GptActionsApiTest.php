@@ -176,6 +176,21 @@ class GptActionsApiTest extends TestCase
             ]);
     }
 
+    public function test_administrator_can_read_an_ordered_team_roster(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        User::factory()->create(['name' => 'Jamie Taylor', 'team_id' => $team->id]);
+        User::factory()->create(['name' => 'Ash Rees', 'team_id' => $team->id]);
+        Passport::actingAs($admin, ['gpt:read']);
+
+        $this->getJson(route('api.gpt.teams.roster', $team))
+            ->assertOk()
+            ->assertJsonPath('team.name', 'Black Horse Bandits')
+            ->assertJsonPath('players.0.name', 'Ash Rees')
+            ->assertJsonPath('players.1.name', 'Jamie Taylor');
+    }
+
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
