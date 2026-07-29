@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Laravel\Pulse\Facades\Pulse;
 use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoTransportFactory;
 use Symfony\Component\Mailer\Transport\Dsn;
@@ -66,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Passport::authorizationView('auth.oauth.authorize');
+
         Mail::extend('brevo', function (): mixed {
             return (new BrevoTransportFactory)->create(
                 new Dsn(

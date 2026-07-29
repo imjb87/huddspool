@@ -9,6 +9,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 
@@ -173,6 +174,27 @@ class GptActionsApiTest extends TestCase
                 'outstanding_fixtures',
                 'latest_results',
             ]);
+    }
+
+    public function test_administrator_can_view_the_oauth_authorization_prompt(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $client = app(ClientRepository::class)->createAuthorizationCodeGrantClient(
+            name: 'Huddspool administrator GPT',
+            redirectUris: ['https://chatgpt.com/aip/example/oauth/callback'],
+        );
+
+        $this->actingAs($admin)
+            ->get(route('passport.authorizations.authorize', [
+                'client_id' => $client->getKey(),
+                'redirect_uri' => 'https://chatgpt.com/aip/example/oauth/callback',
+                'response_type' => 'code',
+                'scope' => 'gpt:read gpt:write',
+                'state' => 'test-state',
+            ]))
+            ->assertOk()
+            ->assertSee('Connect Huddspool')
+            ->assertSee('Allow access');
     }
 
     private function createOpenSeasonTeam(string $name): Team

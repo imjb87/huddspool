@@ -20,12 +20,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Passport\Contracts\OAuthenticatable as PassportAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasMedia
+class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
 {
     use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
 
