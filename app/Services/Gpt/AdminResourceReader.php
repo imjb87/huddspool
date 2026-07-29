@@ -40,8 +40,8 @@ class AdminResourceReader
     {
         return [
             'users' => $this->definition(User::class, ['id', 'name', 'email', 'telephone', 'team_id', 'role', 'is_admin', 'email_verified_at', 'updated_at'], ['name', 'email'], ['team'], 'Player and administrator accounts.'),
-            'teams' => $this->definition(Team::class, ['id', 'name', 'shortname', 'venue_id', 'captain_id', 'folded_at'], ['name', 'shortname'], ['venue', 'captain', 'openSections.ruleset'], 'Teams, venues, captains, and current sections.'),
-            'venues' => $this->definition(Venue::class, ['id', 'name', 'telephone', 'address', 'latitude', 'longitude'], ['name', 'address'], ['teams'], 'Venues and their teams.'),
+            'teams' => $this->definition(Team::class, ['id', 'name', 'shortname', 'venue_id', 'captain_id', 'folded_at', 'updated_at'], ['name', 'shortname'], ['venue', 'captain', 'openSections.ruleset'], 'Teams, venues, captains, and current sections.'),
+            'venues' => $this->definition(Venue::class, ['id', 'name', 'telephone', 'address', 'latitude', 'longitude', 'updated_at'], ['name', 'address'], ['teams'], 'Venues and their teams.'),
             'seasons' => $this->definition(Season::class, ['id', 'name', 'dates', 'is_open', 'signup_opens_at', 'signup_closes_at', 'team_entry_fee'], ['name'], [], 'League seasons, schedules, and signup windows.'),
             'sections' => $this->definition(Section::class, ['id', 'name', 'slug', 'season_id', 'ruleset_id'], ['name', 'slug'], ['season', 'ruleset'], 'Competition sections.'),
             'section-teams' => $this->definition(SectionTeam::class, ['id', 'section_id', 'team_id', 'sort', 'deducted', 'withdrawn_at'], [], ['section', 'team'], 'Team membership, ordering, deductions, and withdrawals within sections.'),

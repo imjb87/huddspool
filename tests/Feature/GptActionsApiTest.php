@@ -9,6 +9,7 @@ use App\Models\Result;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
+use App\Models\SectionTeam;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
@@ -449,6 +450,71 @@ class GptActionsApiTest extends TestCase
 
         Notification::assertSentTo($player, ResetPassword::class);
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'send_player_password_reset', 'subject_id' => $player->id]);
+    }
+
+    public function test_administrator_can_create_and_maintain_teams_and_venues(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $venueResponse = $this->postJson(route('api.gpt.venues.store'), ['name' => 'The New Inn', 'address' => '1 High Street', 'telephone' => null])->assertCreated();
+        $venue = Venue::query()->findOrFail($venueResponse->json('venue.id'));
+        $teamResponse = $this->postJson(route('api.gpt.teams.store'), ['name' => 'New Inn A', 'shortname' => 'NIA', 'venue_id' => $venue->id])->assertCreated();
+        $team = Team::query()->findOrFail($teamResponse->json('team.id'));
+
+        $this->patchJson(route('api.gpt.teams.update', $team), ['expected_updated_at' => $team->updated_at->toAtomString(), 'shortname' => 'NEW'])->assertOk();
+        $this->postJson(route('api.gpt.teams.fold', $team))->assertOk();
+
+        $this->assertSame('NEW', $team->refresh()->shortname);
+        $this->assertNotNull($team->folded_at);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'create_venue', 'subject_id' => $venue->id]);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'fold_team', 'subject_id' => $team->id]);
+    }
+
+    public function test_administrator_can_add_and_deduct_points_for_an_open_season_team(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create(['is_open' => true]);
+        $section = Section::factory()->create(['season_id' => $season->id]);
+        $team = Team::factory()->create();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.sections.teams.store', $section->id), ['team_id' => $team->id])->assertCreated();
+        $membership = SectionTeam::query()->findOrFail($response->json('section_team_id'));
+        $this->patchJson(route('api.gpt.section-teams.deduction', $membership), ['deducted' => 2, 'expected_current_deduction' => 0])->assertOk();
+
+        $this->assertSame(2, $membership->refresh()->deducted);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_points_deduction', 'subject_id' => $membership->id]);
+    }
+
+    public function test_deductions_and_withdrawals_are_rejected_for_closed_seasons(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create(['is_open' => false]);
+        $section = Section::factory()->create(['season_id' => $season->id]);
+        $membership = SectionTeam::query()->create(['section_id' => $section->id, 'team_id' => Team::factory()->create()->id, 'sort' => 1, 'deducted' => 0]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->patchJson(route('api.gpt.section-teams.deduction', $membership), ['deducted' => 2, 'expected_current_deduction' => 0])->assertUnprocessable()->assertJsonValidationErrors('section_team');
+        $this->postJson(route('api.gpt.section-teams.withdraw', $membership))->assertUnprocessable()->assertJsonValidationErrors('section_team');
+
+        $this->assertNull($membership->refresh()->withdrawn_at);
+        $this->assertSame(0, $membership->deducted);
+    }
+
+    public function test_administrator_can_withdraw_a_team_from_the_open_season(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        Team::factory()->create(['name' => Team::BYE_NAME]);
+        $season = Season::factory()->create(['is_open' => true, 'dates' => [now()->subWeek()->toDateString(), now()->addWeek()->toDateString()]]);
+        $section = Section::factory()->create(['season_id' => $season->id]);
+        $membership = SectionTeam::query()->create(['section_id' => $section->id, 'team_id' => Team::factory()->create()->id, 'sort' => 1, 'deducted' => 0]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.section-teams.withdraw', $membership))->assertOk();
+
+        $this->assertNotNull($membership->refresh()->withdrawn_at);
+        $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'withdraw_team_from_section', 'subject_id' => $membership->id]);
     }
 
     public function test_administrator_can_view_the_oauth_authorization_prompt(): void

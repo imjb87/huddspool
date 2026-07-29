@@ -161,6 +161,13 @@ paths:
           schema: { type: string }
       responses:
         '200': { description: Matching teams }
+    post:
+      operationId: createTeam
+      summary: Create a team.
+      description: Search first to prevent duplicates. This action is audited and requires confirmation.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string }, shortname: { oneOf: [{ type: string }, { type: 'null' }] }, venue_id: { oneOf: [{ type: integer }, { type: 'null' }] } } } } } }
+      responses: { '201': { description: Team created }, '422': { description: Invalid input } }
   /teams/{team}/roster:
     get:
       operationId: getTeamRoster
@@ -318,6 +325,66 @@ paths:
       responses:
         '200': { description: Result corrected and audit recorded }
         '422': { description: The inspected state is stale or the result is invalid }
+  /teams/{team}:
+    patch:
+      operationId: updateTeam
+      summary: Update a team's name or short name.
+      description: Inspect first. This action uses updated_at as a stale-state guard, is audited, and requires confirmation.
+      x-openai-isConsequential: true
+      parameters: [{ name: team, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, shortname: { oneOf: [{ type: string }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Team updated }, '422': { description: Stale state or invalid input } }
+  /teams/{team}/fold:
+    post:
+      operationId: foldTeam
+      summary: Mark a team as folded.
+      description: This consequential action is audited and requires confirmation.
+      x-openai-isConsequential: true
+      parameters: [{ name: team, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: Team folded }, '422': { description: Team already folded } }
+  /venues:
+    post:
+      operationId: createVenue
+      summary: Create a venue.
+      description: Search first to prevent duplicates. This action is audited and requires confirmation.
+      x-openai-isConsequential: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name, address], properties: { name: { type: string }, address: { type: string }, telephone: { oneOf: [{ type: string }, { type: 'null' }] } } } } } }
+      responses: { '201': { description: Venue created }, '422': { description: Invalid input } }
+  /venues/{venue}:
+    patch:
+      operationId: updateVenue
+      summary: Update a venue.
+      description: Inspect first. This action uses updated_at as a stale-state guard, is audited, and requires confirmation.
+      x-openai-isConsequential: true
+      parameters: [{ name: venue, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [expected_updated_at], properties: { expected_updated_at: { type: string, format: date-time }, name: { type: string }, address: { type: string }, telephone: { oneOf: [{ type: string }, { type: 'null' }] } } } } } }
+      responses: { '200': { description: Venue updated }, '422': { description: Stale state or invalid input } }
+  /sections/{section}/teams:
+    post:
+      operationId: addTeamToSection
+      summary: Add an existing team to a section.
+      description: Inspect both records first. This action is audited and requires confirmation.
+      x-openai-isConsequential: true
+      parameters: [{ name: section, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [team_id], properties: { team_id: { type: integer } } } } } }
+      responses: { '201': { description: Team added to section }, '422': { description: Team already belongs to section or input invalid } }
+  /section-teams/{sectionTeam}/deduction:
+    patch:
+      operationId: updateOpenSeasonPointsDeduction
+      summary: Set a points deduction for a team in the current open season.
+      description: Historical seasons cannot be changed. Inspect the section-team record first. This action is audited and requires confirmation.
+      x-openai-isConsequential: true
+      parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [deducted, expected_current_deduction], properties: { deducted: { type: integer, minimum: 0 }, expected_current_deduction: { type: integer, minimum: 0 } } } } } }
+      responses: { '200': { description: Deduction updated }, '422': { description: Closed season, stale state, or invalid input } }
+  /section-teams/{sectionTeam}/withdraw:
+    post:
+      operationId: withdrawTeamFromOpenSeason
+      summary: Withdraw a team from its current open-season section.
+      description: Historical seasons cannot be changed. This can remove applicable results and replace future unplayed fixtures with byes. Inspect the membership and ask for explicit confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: Team withdrawn }, '422': { description: Closed season or team already withdrawn } }
 components:
   schemas: {}
   securitySchemes:

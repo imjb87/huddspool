@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Gpt\ConnectedAdminController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
+use App\Http\Controllers\Api\Gpt\LeagueStructureController;
 use App\Http\Controllers\Api\Gpt\PlayerAccountController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
 use App\Http\Controllers\Api\Gpt\PlayerPasswordResetController;
@@ -46,7 +47,15 @@ Route::prefix('gpt')
             Route::post('/players/{player}/password-reset', PlayerPasswordResetController::class)->name('api.gpt.players.password-reset');
             Route::post('/fixtures/{fixture}/date', FixtureDateController::class)->name('api.gpt.fixtures.date.update');
             Route::post('/results/{result}/correction', ResultCorrectionController::class)->name('api.gpt.results.correction');
+            Route::post('/teams', [LeagueStructureController::class, 'storeTeam'])->name('api.gpt.teams.store');
+            Route::patch('/teams/{team}', [LeagueStructureController::class, 'updateTeam'])->name('api.gpt.teams.update');
+            Route::post('/teams/{team}/fold', [LeagueStructureController::class, 'foldTeam'])->name('api.gpt.teams.fold');
             Route::post('/teams/{team}/captain', TeamCaptainController::class)->name('api.gpt.teams.captain.update');
             Route::post('/teams/{team}/venue', TeamVenueController::class)->name('api.gpt.teams.venue.update');
+            Route::post('/venues', [LeagueStructureController::class, 'storeVenue'])->name('api.gpt.venues.store');
+            Route::patch('/venues/{venue}', [LeagueStructureController::class, 'updateVenue'])->name('api.gpt.venues.update');
+            Route::post('/sections/{section:id}/teams', [LeagueStructureController::class, 'addTeamToSection'])->name('api.gpt.sections.teams.store');
+            Route::patch('/section-teams/{sectionTeam}/deduction', [LeagueStructureController::class, 'updateDeduction'])->name('api.gpt.section-teams.deduction');
+            Route::post('/section-teams/{sectionTeam}/withdraw', [LeagueStructureController::class, 'withdrawTeam'])->name('api.gpt.section-teams.withdraw');
         });
     });
