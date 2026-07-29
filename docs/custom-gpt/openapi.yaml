@@ -1,0 +1,137 @@
+openapi: 3.1.0
+info:
+  title: Huddspool administration
+  version: 0.1.0
+  description: Read Huddspool administration data and perform audited administrator operations.
+servers:
+  - url: https://huddspool.co.uk/api/gpt
+paths:
+  /me:
+    get:
+      operationId: getConnectedAdministrator
+      summary: Check the connected Huddspool administrator.
+      responses:
+        '200': { description: Connected administrator }
+  /dashboard:
+    get:
+      operationId: getAdministrationDashboard
+      summary: Get open-season statistics, outstanding fixtures, latest results, and open support ticket count.
+      responses:
+        '200': { description: Administration dashboard }
+  /capabilities:
+    get:
+      operationId: listAdministrationResources
+      summary: List the administration resources that can be inspected.
+      responses:
+        '200': { description: Supported resources }
+  /resources/{resource}:
+    get:
+      operationId: listAdministrationRecords
+      summary: List records from an explicitly supported administration resource.
+      parameters:
+        - $ref: '#/components/parameters/resource'
+        - name: search
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200': { description: Resource records }
+        '404': { description: Unsupported resource }
+  /resources/{resource}/{record}:
+    get:
+      operationId: getAdministrationRecord
+      summary: Get one record from an explicitly supported administration resource.
+      parameters:
+        - $ref: '#/components/parameters/resource'
+        - name: record
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Resource record }
+        '404': { description: Record or resource not found }
+  /players:
+    get:
+      operationId: searchPlayers
+      summary: Find players by name without exposing their contact details.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema: { type: string, minLength: 2 }
+      responses:
+        '200': { description: Matching players }
+        '422': { description: Search query is too short }
+  /teams:
+    get:
+      operationId: searchOpenSeasonTeams
+      summary: Find teams in the open season.
+      parameters:
+        - name: query
+          in: query
+          schema: { type: string }
+      responses:
+        '200': { description: Matching teams }
+  /teams/{team}/roster:
+    get:
+      operationId: getTeamRoster
+      summary: Get a team's players, captain, venue, and open-season section.
+      parameters:
+        - name: team
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Team roster }
+        '404': { description: Team not found }
+  /players/{player}/team:
+    post:
+      operationId: movePlayerToTeam
+      summary: Move a player after checking that their current team still matches the inspected state.
+      description: This write is atomic and audited. Inspect the player and both teams first. Ask for confirmation immediately before calling it.
+      x-openai-isConsequential: true
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [destination_team_id, expected_current_team_id]
+              properties:
+                destination_team_id: { type: integer }
+                expected_current_team_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+                make_destination_captain: { type: boolean, default: false }
+      responses:
+        '200': { description: Player moved and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
+components:
+  parameters:
+    resource:
+      name: resource
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [users, teams, venues, seasons, sections, section-teams, fixtures, results, frames, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, season-entries, season-team-entries, season-knockout-entries, expulsions, news, pages, notification-settings, support-tickets, media]
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://huddspool.co.uk/oauth/authorize
+          tokenUrl: https://huddspool.co.uk/oauth/token
+          scopes:
+            'gpt:read': Read Huddspool administration data.
+            'gpt:write': Perform audited Huddspool administration operations.
+security:
+  - oauth: ['gpt:read', 'gpt:write']
