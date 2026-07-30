@@ -16,6 +16,18 @@ paths:
       operationId: getAdministrationDashboard
       summary: Get current league statistics and outstanding administration work.
       responses: { '200': { description: Administration dashboard } }
+  /browse:
+    get:
+      operationId: browsePublicHuddspoolInformation
+      summary: Read any supported public Huddspool page as clean text and links.
+      description: Use this for fixtures, standings, averages, player or team history, knockouts, venues, news, rules and other information already available on the public website.
+      parameters:
+        - name: path
+          in: query
+          required: true
+          description: Public path such as /players/18, /teams/73, /rulesets/blackball-rules or /history.
+          schema: { type: string, maxLength: 500 }
+      responses: { '200': { description: Public page content and links }, '404': { description: Page not found }, '422': { description: Path is not an allowed public page } }
   /capabilities:
     get:
       operationId: listAdministrationResources
@@ -61,6 +73,19 @@ paths:
           required: true
           schema: { type: integer }
       responses: { '200': { description: Team roster and context }, '404': { description: Team not found } }
+  /players/{player}/profile:
+    get:
+      operationId: getPlayerPlayingProfile
+      summary: Get a player's current record, recent frames, knockout matches and season history.
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: frames_page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+      responses: { '200': { description: Publicly available playing profile }, '404': { description: Player not found } }
   /command:
     post:
       operationId: performAdministrationCommand

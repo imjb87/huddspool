@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Expulsion;
 use App\Models\Fixture;
+use App\Models\Frame;
 use App\Models\GptActionAudit;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
@@ -207,6 +208,40 @@ class GptActionsApiTest extends TestCase
             ->assertJsonPath('team.name', 'Black Horse Bandits')
             ->assertJsonPath('players.0.name', 'Ash Rees')
             ->assertJsonPath('players.1.name', 'Jamie Taylor');
+    }
+
+    public function test_administrator_can_read_player_history_and_browse_public_information(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create(['is_open' => false, 'name' => 'Archived Season']);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create(['season_id' => $season->id, 'ruleset_id' => $ruleset->id]);
+        $team = Team::factory()->create();
+        $opponentTeam = Team::factory()->create();
+        $player = User::factory()->create(['name' => 'History Player', 'team_id' => $team->id]);
+        $opponent = User::factory()->create(['team_id' => $opponentTeam->id]);
+        $fixture = Fixture::factory()->create(['season_id' => $season->id, 'section_id' => $section->id, 'ruleset_id' => $ruleset->id, 'home_team_id' => $team->id, 'away_team_id' => $opponentTeam->id]);
+        $result = Result::factory()->create(['fixture_id' => $fixture->id, 'section_id' => $section->id, 'ruleset_id' => $ruleset->id, 'home_team_id' => $team->id, 'home_team_name' => $team->name, 'away_team_id' => $opponentTeam->id, 'away_team_name' => $opponentTeam->name]);
+        Frame::query()->create(['result_id' => $result->id, 'home_player_id' => $player->id, 'home_score' => 1, 'away_player_id' => $opponent->id, 'away_score' => 0]);
+        Passport::actingAs($admin, ['gpt:read']);
+
+        $this->getJson(route('api.gpt.players.show', $player))
+            ->assertOk()
+            ->assertJsonPath('player.name', 'History Player')
+            ->assertJsonPath('season_history.0.season_name', 'Archived Season')
+            ->assertJsonPath('season_history.0.wins', 1);
+
+        $this->getJson(route('api.gpt.browse', ['path' => "/players/{$player->id}"]))
+            ->assertOk()
+            ->assertJsonPath('path', "/players/{$player->id}")
+            ->assertJsonPath('title', config('app.name'))
+            ->assertJsonPath('content', fn (string $content): bool => str_contains($content, 'Archived Season')
+                && ! str_contains($content, $admin->email)
+                && ! str_contains($content, $player->email));
+
+        $this->getJson(route('api.gpt.browse', ['path' => '/admin']))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('path');
     }
 
     public function test_administrator_can_list_news_with_its_author(): void

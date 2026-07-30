@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Gpt\PlayerAccountController;
 use App\Http\Controllers\Api\Gpt\PlayerController;
 use App\Http\Controllers\Api\Gpt\PlayerPasswordResetController;
 use App\Http\Controllers\Api\Gpt\PlayerTeamController;
+use App\Http\Controllers\Api\Gpt\PublicInformationController;
 use App\Http\Controllers\Api\Gpt\ResourceController;
 use App\Http\Controllers\Api\Gpt\ResultCorrectionController;
 use App\Http\Controllers\Api\Gpt\SupportTicketAdministrationController;
@@ -42,8 +43,10 @@ Route::prefix('gpt')
             Route::get('/resources/{resource}', [ResourceController::class, 'index'])->name('api.gpt.resources.index');
             Route::get('/resources/{resource}/{record}', [ResourceController::class, 'show'])->name('api.gpt.resources.show');
             Route::get('/players', [PlayerController::class, 'index'])->name('api.gpt.players.index');
+            Route::get('/players/{player}/profile', [PlayerController::class, 'show'])->name('api.gpt.players.show');
             Route::get('/teams', [TeamController::class, 'index'])->name('api.gpt.teams.index');
             Route::get('/teams/{team}/roster', [TeamController::class, 'roster'])->name('api.gpt.teams.roster');
+            Route::get('/browse', PublicInformationController::class)->name('api.gpt.browse');
         });
 
         Route::middleware('scope:gpt:write')->group(function (): void {
