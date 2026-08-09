@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Api\Gpt\AdministrationCommandController;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use Symfony\Component\Yaml\Yaml;
 use Tests\TestCase;
@@ -27,11 +28,12 @@ class CustomGptOpenApiSchemaTest extends TestCase
         );
     }
 
-    public function test_every_administration_command_has_a_specific_argument_schema(): void
+    public function test_every_administration_command_exposes_its_fields_in_one_flat_argument_object(): void
     {
         $schema = $this->schema();
         $requestSchema = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema');
-        $commandSchemas = data_get($requestSchema, 'properties.arguments.oneOf');
+        $argumentsSchema = data_get($requestSchema, 'properties.arguments');
+        $argumentProperties = data_get($argumentsSchema, 'properties');
         $documentedCommands = data_get($requestSchema, 'properties.command.enum');
         sort($documentedCommands);
         $controllerCommands = array_keys(
@@ -43,15 +45,19 @@ class CustomGptOpenApiSchemaTest extends TestCase
 
         $this->assertSame('object', data_get($requestSchema, 'type'));
         $this->assertSame(['command', 'arguments'], data_get($requestSchema, 'required'));
+        $this->assertSame('object', data_get($argumentsSchema, 'type'));
+        $this->assertArrayNotHasKey('oneOf', $argumentsSchema);
+        $this->assertFalse(data_get($argumentsSchema, 'additionalProperties'));
         $this->assertSame($controllerCommands, $documentedCommands);
 
-        foreach ($commandSchemas as $commandSchema) {
-            $reference = data_get($commandSchema, '$ref');
+        foreach ($controllerCommands as $command) {
+            $componentName = Str::studly($command).'Arguments';
+            $commandProperties = data_get($schema, "components.schemas.{$componentName}.properties");
 
-            $this->assertIsString($reference);
-            $this->assertArrayHasKey(
-                basename(str_replace('#/components/schemas/', '', $reference)),
-                data_get($schema, 'components.schemas'),
+            $this->assertIsArray($commandProperties, "{$componentName} must define properties.");
+            $this->assertEmpty(
+                array_diff(array_keys($commandProperties), array_keys($argumentProperties)),
+                "{$componentName} contains fields hidden from the flattened Action schema.",
             );
         }
     }
@@ -59,15 +65,13 @@ class CustomGptOpenApiSchemaTest extends TestCase
     public function test_move_player_command_documents_its_state_guard_and_identifiers(): void
     {
         $schema = $this->schema();
-        $arguments = data_get($schema, 'components.schemas.MovePlayerArguments');
+        $arguments = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema.properties.arguments');
 
-        $this->assertSame(
-            ['player', 'destination_team_id', 'expected_current_team_id'],
-            data_get($arguments, 'required'),
-        );
         $this->assertSame('integer', data_get($arguments, 'properties.player.type'));
         $this->assertSame('integer', data_get($arguments, 'properties.destination_team_id.type'));
         $this->assertSame('boolean', data_get($arguments, 'properties.make_destination_captain.type'));
+        $this->assertStringContainsString('move_player', data_get($arguments, 'properties.player.description'));
+        $this->assertStringContainsString('Required for: move_player', data_get($arguments, 'properties.expected_current_team_id.description'));
     }
 
     /**

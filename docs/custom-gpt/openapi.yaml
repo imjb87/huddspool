@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Huddspool administration
-  version: 0.3.0
+  version: 0.4.0
   description: Inspect Huddspool administration data and perform validated, audited
     administrator commands.
 servers:
@@ -198,87 +198,410 @@ paths:
                   - delete_record
                 arguments:
                   type: object
-                  description: Use the argument schema whose title matches the selected
-                    command.
-                  oneOf:
-                  - title: create_player
-                    "$ref": "#/components/schemas/CreatePlayerArguments"
-                  - title: update_player
-                    "$ref": "#/components/schemas/UpdatePlayerArguments"
-                  - title: send_password_reset
-                    "$ref": "#/components/schemas/SendPasswordResetArguments"
-                  - title: move_player
-                    "$ref": "#/components/schemas/MovePlayerArguments"
-                  - title: create_team
-                    "$ref": "#/components/schemas/CreateTeamArguments"
-                  - title: update_team
-                    "$ref": "#/components/schemas/UpdateTeamArguments"
-                  - title: fold_team
-                    "$ref": "#/components/schemas/FoldTeamArguments"
-                  - title: set_team_captain
-                    "$ref": "#/components/schemas/SetTeamCaptainArguments"
-                  - title: set_team_venue
-                    "$ref": "#/components/schemas/SetTeamVenueArguments"
-                  - title: create_venue
-                    "$ref": "#/components/schemas/CreateVenueArguments"
-                  - title: update_venue
-                    "$ref": "#/components/schemas/UpdateVenueArguments"
-                  - title: add_team_to_section
-                    "$ref": "#/components/schemas/AddTeamToSectionArguments"
-                  - title: set_points_deduction
-                    "$ref": "#/components/schemas/SetPointsDeductionArguments"
-                  - title: withdraw_team
-                    "$ref": "#/components/schemas/WithdrawTeamArguments"
-                  - title: create_season
-                    "$ref": "#/components/schemas/CreateSeasonArguments"
-                  - title: update_season
-                    "$ref": "#/components/schemas/UpdateSeasonArguments"
-                  - title: open_season
-                    "$ref": "#/components/schemas/OpenSeasonArguments"
-                  - title: create_section
-                    "$ref": "#/components/schemas/CreateSectionArguments"
-                  - title: update_section
-                    "$ref": "#/components/schemas/UpdateSectionArguments"
-                  - title: reschedule_fixture
-                    "$ref": "#/components/schemas/RescheduleFixtureArguments"
-                  - title: correct_result
-                    "$ref": "#/components/schemas/CorrectResultArguments"
-                  - title: create_knockout
-                    "$ref": "#/components/schemas/CreateKnockoutArguments"
-                  - title: update_knockout
-                    "$ref": "#/components/schemas/UpdateKnockoutArguments"
-                  - title: add_knockout_participant
-                    "$ref": "#/components/schemas/AddKnockoutParticipantArguments"
-                  - title: update_knockout_participant
-                    "$ref": "#/components/schemas/UpdateKnockoutParticipantArguments"
-                  - title: create_knockout_round
-                    "$ref": "#/components/schemas/CreateKnockoutRoundArguments"
-                  - title: update_knockout_round
-                    "$ref": "#/components/schemas/UpdateKnockoutRoundArguments"
-                  - title: record_knockout_result
-                    "$ref": "#/components/schemas/RecordKnockoutResultArguments"
-                  - title: record_knockout_forfeit
-                    "$ref": "#/components/schemas/RecordKnockoutForfeitArguments"
-                  - title: clear_knockout_result
-                    "$ref": "#/components/schemas/ClearKnockoutResultArguments"
-                  - title: generate_knockout_bracket
-                    "$ref": "#/components/schemas/GenerateKnockoutBracketArguments"
-                  - title: randomize_knockout_round
-                    "$ref": "#/components/schemas/RandomizeKnockoutRoundArguments"
-                  - title: create_expulsion
-                    "$ref": "#/components/schemas/CreateExpulsionArguments"
-                  - title: update_notification_setting
-                    "$ref": "#/components/schemas/UpdateNotificationSettingArguments"
-                  - title: mark_season_entry_paid
-                    "$ref": "#/components/schemas/MarkSeasonEntryPaidArguments"
-                  - title: update_support_ticket
-                    "$ref": "#/components/schemas/UpdateSupportTicketArguments"
-                  - title: create_content
-                    "$ref": "#/components/schemas/CreateContentArguments"
-                  - title: update_content
-                    "$ref": "#/components/schemas/UpdateContentArguments"
-                  - title: delete_record
-                    "$ref": "#/components/schemas/DeleteRecordArguments"
+                  description: Supply only the fields used by the selected command.
+                    Field descriptions identify which commands use and require each
+                    value. Laravel performs the command-specific validation.
+                  properties:
+                    address:
+                      type: string
+                      description: 'Used by: create_venue, update_venue. Required
+                        for: create_venue.'
+                    assignee_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: update_support_ticket.'
+                    away_score:
+                      type: integer
+                      minimum: 0
+                      description: 'Used by: record_knockout_result. Required for:
+                        record_knockout_result.'
+                    best_of:
+                      oneOf:
+                      - type: integer
+                        minimum: 1
+                      - type: 'null'
+                      description: 'Used by: create_knockout, update_knockout, create_knockout_round,
+                        update_knockout_round.'
+                    captain_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: set_team_captain. Required for: set_team_captain.'
+                    confirmation:
+                      type: string
+                      enum:
+                      - DELETE
+                      description: 'Used by: delete_record. Required for: delete_record.'
+                    content:
+                      type: string
+                      description: 'Used by: create_content, update_content.'
+                    date:
+                      type: string
+                      format: date
+                      description: 'Used by: create_expulsion. Required for: create_expulsion.'
+                    dates:
+                      type: array
+                      minItems: 18
+                      maxItems: 18
+                      items:
+                        type: string
+                        format: date
+                      description: 'Used by: create_season, update_season. Required
+                        for: create_season.'
+                    deducted:
+                      type: integer
+                      minimum: 0
+                      description: 'Used by: set_points_deduction. Required for: set_points_deduction.'
+                    destination_team_id:
+                      type: integer
+                      description: 'Used by: move_player. Required for: move_player.'
+                    email:
+                      oneOf:
+                      - type: string
+                        format: email
+                      - type: 'null'
+                      description: 'Used by: create_player, update_player.'
+                    enabled:
+                      type: boolean
+                      description: 'Used by: update_notification_setting. Required
+                        for: update_notification_setting.'
+                    entry:
+                      type: integer
+                      description: 'Used by: mark_season_entry_paid. Required for:
+                        mark_season_entry_paid.'
+                    entry_fee:
+                      oneOf:
+                      - type: number
+                        minimum: 0
+                      - type: 'null'
+                      description: 'Used by: create_knockout, update_knockout.'
+                    expected_completed_at:
+                      oneOf:
+                      - type: string
+                        format: date-time
+                      - type: 'null'
+                      description: 'Used by: record_knockout_result, record_knockout_forfeit,
+                        clear_knockout_result. Required for: record_knockout_result,
+                        record_knockout_forfeit, clear_knockout_result.'
+                    expected_current_captain_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: set_team_captain. Required for: set_team_captain.'
+                    expected_current_deduction:
+                      type: integer
+                      minimum: 0
+                      description: 'Used by: set_points_deduction. Required for: set_points_deduction.'
+                    expected_current_fixture_date:
+                      type: string
+                      format: date
+                      description: 'Used by: reschedule_fixture. Required for: reschedule_fixture.'
+                    expected_current_team_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: move_player. Required for: move_player.'
+                    expected_current_venue_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: set_team_venue. Required for: set_team_venue.'
+                    expected_draft_version:
+                      type: integer
+                      minimum: 0
+                      description: 'Used by: correct_result. Required for: correct_result.'
+                    expected_enabled:
+                      type: boolean
+                      description: 'Used by: update_notification_setting. Required
+                        for: update_notification_setting.'
+                    expected_updated_at:
+                      type: string
+                      format: date-time
+                      description: 'Used by: update_player, update_team, update_venue,
+                        update_season, update_section, update_knockout, update_knockout_participant,
+                        update_knockout_round, update_support_ticket, update_content,
+                        delete_record. Required for: update_player, update_team, update_venue,
+                        update_season, update_section, update_knockout, update_knockout_participant,
+                        update_knockout_round, update_support_ticket, update_content,
+                        delete_record.'
+                    fixture:
+                      type: integer
+                      description: 'Used by: reschedule_fixture. Required for: reschedule_fixture.'
+                    fixture_date:
+                      type: string
+                      format: date
+                      description: 'Used by: reschedule_fixture. Required for: reschedule_fixture.'
+                    forfeit_participant_id:
+                      type: integer
+                      description: 'Used by: record_knockout_forfeit. Required for:
+                        record_knockout_forfeit.'
+                    frames:
+                      type: array
+                      minItems: 10
+                      maxItems: 10
+                      items:
+                        type: object
+                        required:
+                        - home_player_id
+                        - away_player_id
+                        - home_score
+                        - away_score
+                        properties:
+                          home_player_id:
+                            type: integer
+                          away_player_id:
+                            type: integer
+                          home_score:
+                            type: integer
+                            minimum: 0
+                            maximum: 1
+                          away_score:
+                            type: integer
+                            minimum: 0
+                            maximum: 1
+                      description: 'Used by: correct_result. Required for: correct_result.'
+                    home_score:
+                      type: integer
+                      minimum: 0
+                      description: 'Used by: record_knockout_result. Required for:
+                        record_knockout_result.'
+                    is_visible:
+                      type: boolean
+                      description: 'Used by: create_knockout_round, update_knockout_round.
+                        Required for: create_knockout_round.'
+                    knockout:
+                      type: integer
+                      description: 'Used by: update_knockout, add_knockout_participant,
+                        create_knockout_round, generate_knockout_bracket, randomize_knockout_round.
+                        Required for: update_knockout, add_knockout_participant, create_knockout_round,
+                        generate_knockout_bracket, randomize_knockout_round.'
+                    label:
+                      oneOf:
+                      - type: string
+                      - type: 'null'
+                      description: 'Used by: add_knockout_participant, update_knockout_participant.'
+                    make_destination_captain:
+                      type: boolean
+                      default: false
+                      description: 'Used by: move_player.'
+                    match:
+                      type: integer
+                      description: 'Used by: record_knockout_result, record_knockout_forfeit,
+                        clear_knockout_result. Required for: record_knockout_result,
+                        record_knockout_forfeit, clear_knockout_result.'
+                    name:
+                      type: string
+                      maxLength: 255
+                      description: 'Used by: create_player, update_player, create_team,
+                        update_team, create_venue, update_venue, create_season, update_season,
+                        create_section, update_section, create_knockout, update_knockout,
+                        create_knockout_round, update_knockout_round, create_content,
+                        update_content. Required for: create_player, create_team,
+                        create_venue, create_season, create_section, create_knockout,
+                        create_knockout_round.'
+                    participant:
+                      type: integer
+                      description: 'Used by: update_knockout_participant. Required
+                        for: update_knockout_participant.'
+                    player:
+                      type: integer
+                      description: 'Used by: update_player, send_password_reset, move_player.
+                        Required for: update_player, send_password_reset, move_player.'
+                    player_one_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: add_knockout_participant, update_knockout_participant.'
+                    player_two_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: add_knockout_participant, update_knockout_participant.'
+                    position:
+                      type: integer
+                      minimum: 1
+                      description: 'Used by: create_knockout_round, update_knockout_round.
+                        Required for: create_knockout_round.'
+                    priority:
+                      type: string
+                      enum:
+                      - low
+                      - medium
+                      - high
+                      description: 'Used by: update_support_ticket.'
+                    published_at:
+                      oneOf:
+                      - type: string
+                        format: date-time
+                      - type: 'null'
+                      description: 'Used by: update_knockout, create_content, update_content.'
+                    reason:
+                      type: string
+                      minLength: 5
+                      maxLength: 500
+                      description: 'Used by: correct_result, record_knockout_result,
+                        record_knockout_forfeit, clear_knockout_result, create_expulsion,
+                        delete_record. Required for: correct_result, record_knockout_result,
+                        record_knockout_forfeit, clear_knockout_result, create_expulsion,
+                        delete_record.'
+                    record:
+                      type: integer
+                      description: 'Used by: update_content, delete_record. Required
+                        for: update_content, delete_record.'
+                    resource:
+                      type: string
+                      enum:
+                      - news
+                      - pages
+                      - rulesets
+                      - users
+                      - venues
+                      - seasons
+                      - sections
+                      - knockouts
+                      - knockout-rounds
+                      - knockout-participants
+                      - knockout-matches
+                      - expulsions
+                      - support-tickets
+                      - media
+                      description: 'Used by: create_content, update_content, delete_record.
+                        Required for: create_content, update_content, delete_record.'
+                    result:
+                      type: integer
+                      description: 'Used by: correct_result. Required for: correct_result.'
+                    round:
+                      type: integer
+                      description: 'Used by: update_knockout_round. Required for:
+                        update_knockout_round.'
+                    ruleset_id:
+                      type: integer
+                      description: 'Used by: create_section, update_section. Required
+                        for: create_section.'
+                    scheduled_for:
+                      oneOf:
+                      - type: string
+                        format: date-time
+                      - type: 'null'
+                      description: 'Used by: create_knockout_round, update_knockout_round.'
+                    season:
+                      type: integer
+                      description: 'Used by: update_season, open_season. Required
+                        for: update_season, open_season.'
+                    season_id:
+                      type: integer
+                      description: 'Used by: create_section, create_knockout, create_expulsion.
+                        Required for: create_section, create_knockout, create_expulsion.'
+                    section:
+                      type: integer
+                      description: 'Used by: add_team_to_section, update_section.
+                        Required for: add_team_to_section, update_section.'
+                    sectionTeam:
+                      type: integer
+                      description: 'Used by: set_points_deduction, withdraw_team.
+                        Required for: set_points_deduction, withdraw_team.'
+                    seed:
+                      oneOf:
+                      - type: integer
+                        minimum: 1
+                      - type: 'null'
+                      description: 'Used by: add_knockout_participant, update_knockout_participant.'
+                    setting:
+                      type: integer
+                      description: 'Used by: update_notification_setting. Required
+                        for: update_notification_setting.'
+                    shortname:
+                      oneOf:
+                      - type: string
+                      - type: 'null'
+                      description: 'Used by: create_team, update_team.'
+                    shuffle:
+                      type: boolean
+                      default: false
+                      description: 'Used by: generate_knockout_bracket.'
+                    signup_closes_at:
+                      oneOf:
+                      - type: string
+                        format: date-time
+                      - type: 'null'
+                      description: 'Used by: create_season, update_season.'
+                    signup_opens_at:
+                      oneOf:
+                      - type: string
+                        format: date-time
+                      - type: 'null'
+                      description: 'Used by: create_season, update_season.'
+                    site_role:
+                      type: string
+                      enum:
+                      - player
+                      - team-admin
+                      - admin
+                      description: 'Used by: create_player, update_player. Required
+                        for: create_player.'
+                    slug:
+                      type: string
+                      description: 'Used by: create_content, update_content.'
+                    subject_id:
+                      type: integer
+                      description: 'Used by: create_expulsion. Required for: create_expulsion.'
+                    subject_type:
+                      type: string
+                      enum:
+                      - player
+                      - team
+                      description: 'Used by: create_expulsion. Required for: create_expulsion.'
+                    team:
+                      type: integer
+                      description: 'Used by: update_team, fold_team, set_team_captain,
+                        set_team_venue. Required for: update_team, fold_team, set_team_captain,
+                        set_team_venue.'
+                    team_entry_fee:
+                      type: number
+                      minimum: 0
+                      description: 'Used by: create_season, update_season. Required
+                        for: create_season.'
+                    team_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: create_player, add_team_to_section, add_knockout_participant,
+                        update_knockout_participant. Required for: add_team_to_section.'
+                    telephone:
+                      oneOf:
+                      - type: string
+                        maxLength: 255
+                      - type: 'null'
+                      description: 'Used by: create_player, update_player, create_venue,
+                        update_venue.'
+                    ticket:
+                      type: integer
+                      description: 'Used by: update_support_ticket. Required for:
+                        update_support_ticket.'
+                    ticket_status_id:
+                      type: integer
+                      description: 'Used by: update_support_ticket.'
+                    title:
+                      type: string
+                      description: 'Used by: create_content, update_content.'
+                    type:
+                      type: string
+                      enum:
+                      - singles
+                      - doubles
+                      - team
+                      description: 'Used by: create_knockout. Required for: create_knockout.'
+                    venue:
+                      type: integer
+                      description: 'Used by: update_venue. Required for: update_venue.'
+                    venue_id:
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: create_team, set_team_venue. Required
+                        for: set_team_venue.'
+                  additionalProperties: false
       responses:
         '200':
           description: Command completed
