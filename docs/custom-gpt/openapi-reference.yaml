@@ -230,7 +230,10 @@ paths:
               type: object
               required: [destination_team_id, expected_current_team_id]
               properties:
-                destination_team_id: { type: integer }
+                destination_team_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
                 expected_current_team_id:
                   oneOf:
                     - { type: integer }

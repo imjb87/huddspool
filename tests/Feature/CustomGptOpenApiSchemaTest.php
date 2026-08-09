@@ -68,7 +68,11 @@ class CustomGptOpenApiSchemaTest extends TestCase
         $arguments = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema.properties.arguments');
 
         $this->assertSame('integer', data_get($arguments, 'properties.player.type'));
-        $this->assertSame('integer', data_get($arguments, 'properties.destination_team_id.type'));
+        $this->assertSame(
+            ['integer', 'null'],
+            array_column(data_get($arguments, 'properties.destination_team_id.oneOf'), 'type'),
+        );
+        $this->assertStringContainsString('leave them unassigned', data_get($arguments, 'properties.destination_team_id.description'));
         $this->assertSame('boolean', data_get($arguments, 'properties.make_destination_captain.type'));
         $this->assertStringContainsString('move_player', data_get($arguments, 'properties.player.description'));
         $this->assertStringContainsString('Required for: move_player', data_get($arguments, 'properties.expected_current_team_id.description'));

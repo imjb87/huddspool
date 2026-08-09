@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Huddspool administration
-  version: 0.4.0
+  version: 0.4.1
   description: Inspect Huddspool administration data and perform validated, audited
     administrator commands.
 servers:
@@ -254,8 +254,10 @@ paths:
                       minimum: 0
                       description: 'Used by: set_points_deduction. Required for: set_points_deduction.'
                     destination_team_id:
-                      type: integer
-                      description: 'Used by: move_player. Required for: move_player.'
+                      oneOf:
+                      - type: integer
+                      - type: 'null'
+                      description: 'Used by: move_player. Required for: move_player. Use null to remove the player from their current team and leave them unassigned.'
                     email:
                       oneOf:
                       - type: string
@@ -719,7 +721,9 @@ components:
         player:
           type: integer
         destination_team_id:
-          type: integer
+          oneOf:
+          - type: integer
+          - type: 'null'
         expected_current_team_id:
           oneOf:
           - type: integer
@@ -727,7 +731,7 @@ components:
         make_destination_captain:
           type: boolean
           default: false
-      description: Move a player after checking that their current team still matches
+      description: Move a player, or leave them unassigned when destination_team_id is null, after checking that their current team still matches
         the inspected state.
     CreateTeamArguments:
       type: object

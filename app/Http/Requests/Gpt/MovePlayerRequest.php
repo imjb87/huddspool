@@ -16,7 +16,8 @@ class MovePlayerRequest extends FormRequest
     {
         return [
             'destination_team_id' => [
-                'required',
+                'present',
+                'nullable',
                 'integer',
                 Rule::exists('teams', 'id')->whereNull('deleted_at'),
             ],
@@ -28,6 +29,7 @@ class MovePlayerRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'destination_team_id.present' => 'The destination team must be supplied, using null to leave the player unassigned.',
             'expected_current_team_id.present' => 'The player’s expected current team must be supplied, using null when they have no team.',
         ];
     }

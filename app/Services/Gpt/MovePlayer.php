@@ -13,7 +13,7 @@ class MovePlayer
     public function handle(
         User $administrator,
         User $player,
-        Team $destinationTeam,
+        ?Team $destinationTeam,
         ?int $expectedCurrentTeamId,
         bool $makeDestinationCaptain,
         ?string $ipAddress,
@@ -28,9 +28,17 @@ class MovePlayer
                 ]);
             }
 
-            if ($lockedPlayer->team_id === $destinationTeam->id) {
+            if ($lockedPlayer->team_id === $destinationTeam?->id) {
                 throw ValidationException::withMessages([
-                    'destination_team_id' => 'The player already belongs to the destination team.',
+                    'destination_team_id' => $destinationTeam === null
+                        ? 'The player is already unassigned.'
+                        : 'The player already belongs to the destination team.',
+                ]);
+            }
+
+            if ($destinationTeam === null && $makeDestinationCaptain) {
+                throw ValidationException::withMessages([
+                    'make_destination_captain' => 'An unassigned player cannot be made captain.',
                 ]);
             }
 
@@ -47,10 +55,10 @@ class MovePlayer
                 $currentTeam->update(['captain_id' => null]);
             }
 
-            $lockedPlayer->update(['team_id' => $destinationTeam->id]);
+            $lockedPlayer->update(['team_id' => $destinationTeam?->id]);
 
             if ($makeDestinationCaptain) {
-                $destinationTeam->update(['captain_id' => $lockedPlayer->id]);
+                $destinationTeam?->update(['captain_id' => $lockedPlayer->id]);
             }
 
             return GptActionAudit::query()->create([
@@ -61,8 +69,8 @@ class MovePlayer
                 'before' => $previous,
                 'after' => [
                     'player_id' => $lockedPlayer->id,
-                    'team_id' => $destinationTeam->id,
-                    'team_name' => $destinationTeam->name,
+                    'team_id' => $destinationTeam?->id,
+                    'team_name' => $destinationTeam?->name,
                     'is_captain' => $makeDestinationCaptain,
                 ],
                 'ip_address' => $ipAddress,

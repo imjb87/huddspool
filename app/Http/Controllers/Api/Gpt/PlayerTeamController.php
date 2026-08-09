@@ -13,7 +13,9 @@ class PlayerTeamController extends Controller
 {
     public function __invoke(MovePlayerRequest $request, User $player, MovePlayer $movePlayer): JsonResponse
     {
-        $destinationTeam = Team::query()->findOrFail($request->integer('destination_team_id'));
+        $destinationTeam = $request->input('destination_team_id') === null
+            ? null
+            : Team::query()->findOrFail($request->integer('destination_team_id'));
         $audit = $movePlayer->handle(
             administrator: $request->user(),
             player: $player,
@@ -27,7 +29,9 @@ class PlayerTeamController extends Controller
         );
 
         return response()->json([
-            'message' => sprintf('%s was moved to %s.', $player->name, $destinationTeam->name),
+            'message' => $destinationTeam === null
+                ? sprintf('%s was removed from their team and is now unassigned.', $player->name)
+                : sprintf('%s was moved to %s.', $player->name, $destinationTeam->name),
             'change' => [
                 'before' => $audit->before,
                 'after' => $audit->after,

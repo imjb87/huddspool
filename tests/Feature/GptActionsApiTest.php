@@ -122,6 +122,60 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseCount('gpt_action_audits', 0);
     }
 
+    public function test_administrator_can_remove_player_from_team_and_leave_them_unassigned(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Old Team');
+        $player = User::factory()->create([
+            'name' => 'Jamie Taylor',
+            'team_id' => $team->id,
+        ]);
+        $team->update(['captain_id' => $player->id]);
+
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.command'), [
+            'command' => 'move_player',
+            'arguments' => [
+                'player' => $player->id,
+                'destination_team_id' => null,
+                'expected_current_team_id' => $team->id,
+            ],
+        ])->assertOk()
+            ->assertJsonPath('change.before.team_id', $team->id)
+            ->assertJsonPath('change.before.was_captain', true)
+            ->assertJsonPath('change.after.team_id', null)
+            ->assertJsonPath('change.after.team_name', null)
+            ->assertJsonPath('change.after.is_captain', false);
+
+        $this->assertNull($player->refresh()->team_id);
+        $this->assertNull($team->refresh()->captain_id);
+        $this->assertDatabaseHas(GptActionAudit::class, [
+            'administrator_id' => $admin->id,
+            'action' => 'move_player',
+            'subject_id' => $player->id,
+        ]);
+    }
+
+    public function test_unassigned_player_cannot_be_made_captain(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Old Team');
+        $player = User::factory()->create(['team_id' => $team->id]);
+
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.players.team.update', $player), [
+            'destination_team_id' => null,
+            'expected_current_team_id' => $team->id,
+            'make_destination_captain' => true,
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('make_destination_captain');
+
+        $this->assertSame($team->id, $player->refresh()->team_id);
+        $this->assertDatabaseCount('gpt_action_audits', 0);
+    }
+
     public function test_read_scope_cannot_perform_write_action(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
