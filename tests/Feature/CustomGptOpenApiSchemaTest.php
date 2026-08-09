@@ -30,12 +30,10 @@ class CustomGptOpenApiSchemaTest extends TestCase
     public function test_every_administration_command_has_a_specific_argument_schema(): void
     {
         $schema = $this->schema();
-        $commandSchemas = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema.oneOf');
-        $documentedCommands = collect($commandSchemas)
-            ->pluck('properties.command.const')
-            ->sort()
-            ->values()
-            ->all();
+        $requestSchema = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema');
+        $commandSchemas = data_get($requestSchema, 'properties.arguments.oneOf');
+        $documentedCommands = data_get($requestSchema, 'properties.command.enum');
+        sort($documentedCommands);
         $controllerCommands = array_keys(
             (new ReflectionClass(AdministrationCommandController::class))
                 ->getReflectionConstant('COMMANDS')
@@ -43,10 +41,12 @@ class CustomGptOpenApiSchemaTest extends TestCase
         );
         sort($controllerCommands);
 
+        $this->assertSame('object', data_get($requestSchema, 'type'));
+        $this->assertSame(['command', 'arguments'], data_get($requestSchema, 'required'));
         $this->assertSame($controllerCommands, $documentedCommands);
 
         foreach ($commandSchemas as $commandSchema) {
-            $reference = data_get($commandSchema, 'properties.arguments.$ref');
+            $reference = data_get($commandSchema, '$ref');
 
             $this->assertIsString($reference);
             $this->assertArrayHasKey(

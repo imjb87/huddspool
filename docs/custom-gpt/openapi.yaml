@@ -149,435 +149,135 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-              - title: create_player
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_player
-                  arguments:
+              type: object
+              required:
+              - command
+              - arguments
+              properties:
+                command:
+                  type: string
+                  enum:
+                  - create_player
+                  - update_player
+                  - send_password_reset
+                  - move_player
+                  - create_team
+                  - update_team
+                  - fold_team
+                  - set_team_captain
+                  - set_team_venue
+                  - create_venue
+                  - update_venue
+                  - add_team_to_section
+                  - set_points_deduction
+                  - withdraw_team
+                  - create_season
+                  - update_season
+                  - open_season
+                  - create_section
+                  - update_section
+                  - reschedule_fixture
+                  - correct_result
+                  - create_knockout
+                  - update_knockout
+                  - add_knockout_participant
+                  - update_knockout_participant
+                  - create_knockout_round
+                  - update_knockout_round
+                  - record_knockout_result
+                  - record_knockout_forfeit
+                  - clear_knockout_result
+                  - generate_knockout_bracket
+                  - randomize_knockout_round
+                  - create_expulsion
+                  - update_notification_setting
+                  - mark_season_entry_paid
+                  - update_support_ticket
+                  - create_content
+                  - update_content
+                  - delete_record
+                arguments:
+                  type: object
+                  description: Use the argument schema whose title matches the selected
+                    command.
+                  oneOf:
+                  - title: create_player
                     "$ref": "#/components/schemas/CreatePlayerArguments"
-              - title: update_player
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_player
-                  arguments:
+                  - title: update_player
                     "$ref": "#/components/schemas/UpdatePlayerArguments"
-              - title: send_password_reset
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: send_password_reset
-                  arguments:
+                  - title: send_password_reset
                     "$ref": "#/components/schemas/SendPasswordResetArguments"
-              - title: move_player
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: move_player
-                  arguments:
+                  - title: move_player
                     "$ref": "#/components/schemas/MovePlayerArguments"
-              - title: create_team
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_team
-                  arguments:
+                  - title: create_team
                     "$ref": "#/components/schemas/CreateTeamArguments"
-              - title: update_team
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_team
-                  arguments:
+                  - title: update_team
                     "$ref": "#/components/schemas/UpdateTeamArguments"
-              - title: fold_team
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: fold_team
-                  arguments:
+                  - title: fold_team
                     "$ref": "#/components/schemas/FoldTeamArguments"
-              - title: set_team_captain
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: set_team_captain
-                  arguments:
+                  - title: set_team_captain
                     "$ref": "#/components/schemas/SetTeamCaptainArguments"
-              - title: set_team_venue
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: set_team_venue
-                  arguments:
+                  - title: set_team_venue
                     "$ref": "#/components/schemas/SetTeamVenueArguments"
-              - title: create_venue
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_venue
-                  arguments:
+                  - title: create_venue
                     "$ref": "#/components/schemas/CreateVenueArguments"
-              - title: update_venue
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_venue
-                  arguments:
+                  - title: update_venue
                     "$ref": "#/components/schemas/UpdateVenueArguments"
-              - title: add_team_to_section
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: add_team_to_section
-                  arguments:
+                  - title: add_team_to_section
                     "$ref": "#/components/schemas/AddTeamToSectionArguments"
-              - title: set_points_deduction
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: set_points_deduction
-                  arguments:
+                  - title: set_points_deduction
                     "$ref": "#/components/schemas/SetPointsDeductionArguments"
-              - title: withdraw_team
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: withdraw_team
-                  arguments:
+                  - title: withdraw_team
                     "$ref": "#/components/schemas/WithdrawTeamArguments"
-              - title: create_season
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_season
-                  arguments:
+                  - title: create_season
                     "$ref": "#/components/schemas/CreateSeasonArguments"
-              - title: update_season
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_season
-                  arguments:
+                  - title: update_season
                     "$ref": "#/components/schemas/UpdateSeasonArguments"
-              - title: open_season
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: open_season
-                  arguments:
+                  - title: open_season
                     "$ref": "#/components/schemas/OpenSeasonArguments"
-              - title: create_section
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_section
-                  arguments:
+                  - title: create_section
                     "$ref": "#/components/schemas/CreateSectionArguments"
-              - title: update_section
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_section
-                  arguments:
+                  - title: update_section
                     "$ref": "#/components/schemas/UpdateSectionArguments"
-              - title: reschedule_fixture
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: reschedule_fixture
-                  arguments:
+                  - title: reschedule_fixture
                     "$ref": "#/components/schemas/RescheduleFixtureArguments"
-              - title: correct_result
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: correct_result
-                  arguments:
+                  - title: correct_result
                     "$ref": "#/components/schemas/CorrectResultArguments"
-              - title: create_knockout
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_knockout
-                  arguments:
+                  - title: create_knockout
                     "$ref": "#/components/schemas/CreateKnockoutArguments"
-              - title: update_knockout
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_knockout
-                  arguments:
+                  - title: update_knockout
                     "$ref": "#/components/schemas/UpdateKnockoutArguments"
-              - title: add_knockout_participant
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: add_knockout_participant
-                  arguments:
+                  - title: add_knockout_participant
                     "$ref": "#/components/schemas/AddKnockoutParticipantArguments"
-              - title: update_knockout_participant
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_knockout_participant
-                  arguments:
+                  - title: update_knockout_participant
                     "$ref": "#/components/schemas/UpdateKnockoutParticipantArguments"
-              - title: create_knockout_round
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_knockout_round
-                  arguments:
+                  - title: create_knockout_round
                     "$ref": "#/components/schemas/CreateKnockoutRoundArguments"
-              - title: update_knockout_round
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_knockout_round
-                  arguments:
+                  - title: update_knockout_round
                     "$ref": "#/components/schemas/UpdateKnockoutRoundArguments"
-              - title: record_knockout_result
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: record_knockout_result
-                  arguments:
+                  - title: record_knockout_result
                     "$ref": "#/components/schemas/RecordKnockoutResultArguments"
-              - title: record_knockout_forfeit
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: record_knockout_forfeit
-                  arguments:
+                  - title: record_knockout_forfeit
                     "$ref": "#/components/schemas/RecordKnockoutForfeitArguments"
-              - title: clear_knockout_result
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: clear_knockout_result
-                  arguments:
+                  - title: clear_knockout_result
                     "$ref": "#/components/schemas/ClearKnockoutResultArguments"
-              - title: generate_knockout_bracket
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: generate_knockout_bracket
-                  arguments:
+                  - title: generate_knockout_bracket
                     "$ref": "#/components/schemas/GenerateKnockoutBracketArguments"
-              - title: randomize_knockout_round
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: randomize_knockout_round
-                  arguments:
+                  - title: randomize_knockout_round
                     "$ref": "#/components/schemas/RandomizeKnockoutRoundArguments"
-              - title: create_expulsion
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_expulsion
-                  arguments:
+                  - title: create_expulsion
                     "$ref": "#/components/schemas/CreateExpulsionArguments"
-              - title: update_notification_setting
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_notification_setting
-                  arguments:
+                  - title: update_notification_setting
                     "$ref": "#/components/schemas/UpdateNotificationSettingArguments"
-              - title: mark_season_entry_paid
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: mark_season_entry_paid
-                  arguments:
+                  - title: mark_season_entry_paid
                     "$ref": "#/components/schemas/MarkSeasonEntryPaidArguments"
-              - title: update_support_ticket
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_support_ticket
-                  arguments:
+                  - title: update_support_ticket
                     "$ref": "#/components/schemas/UpdateSupportTicketArguments"
-              - title: create_content
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: create_content
-                  arguments:
+                  - title: create_content
                     "$ref": "#/components/schemas/CreateContentArguments"
-              - title: update_content
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: update_content
-                  arguments:
+                  - title: update_content
                     "$ref": "#/components/schemas/UpdateContentArguments"
-              - title: delete_record
-                type: object
-                required:
-                - command
-                - arguments
-                properties:
-                  command:
-                    type: string
-                    const: delete_record
-                  arguments:
+                  - title: delete_record
                     "$ref": "#/components/schemas/DeleteRecordArguments"
       responses:
         '200':
