@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class GptActionAudit extends Model
 {
@@ -21,4 +23,14 @@ class GptActionAudit extends Model
         'before' => 'array',
         'after' => 'array',
     ];
+
+    public function administrator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'administrator_id');
+    }
+
+    public function subject(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }
