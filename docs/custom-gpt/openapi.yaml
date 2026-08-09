@@ -1,119 +1,1453 @@
 openapi: 3.1.0
 info:
   title: Huddspool administration
-  version: 0.2.0
-  description: Inspect Huddspool administration data and perform validated, audited administrator commands.
+  version: 0.3.0
+  description: Inspect Huddspool administration data and perform validated, audited
+    administrator commands.
 servers:
-  - url: https://www.huddspool.co.uk/api/gpt
+- url: https://www.huddspool.co.uk/api/gpt
 paths:
-  /me:
+  "/me":
     get:
       operationId: getConnectedAdministrator
       summary: Check the connected Huddspool administrator.
-      responses: { '200': { description: Connected administrator } }
-  /dashboard:
+      responses:
+        '200':
+          description: Connected administrator
+  "/dashboard":
     get:
       operationId: getAdministrationDashboard
       summary: Get current league statistics and outstanding administration work.
-      responses: { '200': { description: Administration dashboard } }
-  /browse:
+      responses:
+        '200':
+          description: Administration dashboard
+  "/browse":
     get:
       operationId: browsePublicHuddspoolInformation
       summary: Read any supported public Huddspool page as clean text and links.
-      description: Use this for fixtures, standings, averages, player or team history, knockouts, venues, news, rules and other information already available on the public website.
+      description: Use this for fixtures, standings, averages, player or team history,
+        knockouts, venues, news, rules and other information already available on
+        the public website.
       parameters:
-        - name: path
-          in: query
-          required: true
-          description: Public path such as /players/18, /teams/73, /rulesets/blackball-rules or /history.
-          schema: { type: string, maxLength: 500 }
-      responses: { '200': { description: Public page content and links }, '404': { description: Page not found }, '422': { description: Path is not an allowed public page } }
-  /capabilities:
+      - name: path
+        in: query
+        required: true
+        description: Public path such as /players/18, /teams/73, /rulesets/blackball-rules
+          or /history.
+        schema:
+          type: string
+          maxLength: 500
+      responses:
+        '200':
+          description: Public page content and links
+        '404':
+          description: Page not found
+        '422':
+          description: Path is not an allowed public page
+  "/capabilities":
     get:
       operationId: listAdministrationResources
       summary: List resources available for inspection.
-      responses: { '200': { description: Supported resources } }
-  /resources/{resource}:
+      responses:
+        '200':
+          description: Supported resources
+  "/resources/{resource}":
     get:
       operationId: listAdministrationRecords
       summary: Search or list a supported administration resource.
       parameters:
-        - name: resource
-          in: path
-          required: true
-          schema: { $ref: '#/components/schemas/ResourceName' }
-        - name: search
-          in: query
-          schema: { type: string, maxLength: 100 }
-        - name: limit
-          in: query
-          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
-      responses: { '200': { description: Resource records }, '404': { description: Unsupported resource } }
-  /resources/{resource}/{record}:
+      - name: resource
+        in: path
+        required: true
+        schema:
+          "$ref": "#/components/schemas/ResourceName"
+      - name: search
+        in: query
+        schema:
+          type: string
+          maxLength: 100
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 20
+      responses:
+        '200':
+          description: Resource records
+        '404':
+          description: Unsupported resource
+  "/resources/{resource}/{record}":
     get:
       operationId: getAdministrationRecord
       summary: Inspect one supported administration record before taking action.
       parameters:
-        - name: resource
-          in: path
-          required: true
-          schema: { $ref: '#/components/schemas/ResourceName' }
-        - name: record
-          in: path
-          required: true
-          schema: { type: integer }
-      responses: { '200': { description: Resource record }, '404': { description: Record not found } }
-  /teams/{team}/roster:
+      - name: resource
+        in: path
+        required: true
+        schema:
+          "$ref": "#/components/schemas/ResourceName"
+      - name: record
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Resource record
+        '404':
+          description: Record not found
+  "/teams/{team}/roster":
     get:
       operationId: getTeamRoster
       summary: Get a team's roster, captain, venue and current section.
       parameters:
-        - name: team
-          in: path
-          required: true
-          schema: { type: integer }
-      responses: { '200': { description: Team roster and context }, '404': { description: Team not found } }
-  /players/{player}/profile:
+      - name: team
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Team roster and context
+        '404':
+          description: Team not found
+  "/players/{player}/profile":
     get:
       operationId: getPlayerPlayingProfile
-      summary: Get a player's current record, recent frames, knockout matches and season history.
+      summary: Get a player's current record, recent frames, knockout matches and
+        season history.
       parameters:
-        - name: player
-          in: path
-          required: true
-          schema: { type: integer }
-        - name: frames_page
-          in: query
-          schema: { type: integer, minimum: 1, default: 1 }
-      responses: { '200': { description: Publicly available playing profile }, '404': { description: Player not found } }
-  /command:
+      - name: player
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: frames_page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Publicly available playing profile
+        '404':
+          description: Player not found
+  "/command":
     post:
       operationId: performAdministrationCommand
       summary: Perform one validated and audited Huddspool administration command.
-      description: Inspect affected records first. Explain consequential changes and obtain explicit confirmation immediately before calling. Put identifiers and fields in arguments. Existing validation, stale-state checks, dependency guards, events and audit logging apply.
+      description: Inspect affected records first. Explain consequential changes and
+        obtain explicit confirmation immediately before calling. Put identifiers and
+        fields in arguments. Existing validation, stale-state checks, dependency guards,
+        events and audit logging apply.
       x-openai-isConsequential: true
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [command, arguments]
-              properties:
-                command:
-                  type: string
-                  enum: [create_player, update_player, send_password_reset, move_player, create_team, update_team, fold_team, set_team_captain, set_team_venue, create_venue, update_venue, add_team_to_section, set_points_deduction, withdraw_team, create_season, update_season, open_season, create_section, update_section, reschedule_fixture, correct_result, create_knockout, update_knockout, add_knockout_participant, update_knockout_participant, create_knockout_round, update_knockout_round, record_knockout_result, record_knockout_forfeit, clear_knockout_result, generate_knockout_bracket, randomize_knockout_round, create_expulsion, update_notification_setting, mark_season_entry_paid, update_support_ticket, create_content, update_content, delete_record]
-                arguments:
-                  type: object
-                  description: Identifiers and fields required by the selected command. Use current values returned by inspection for expected-state fields.
-                  additionalProperties: true
+              oneOf:
+              - title: create_player
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_player
+                  arguments:
+                    "$ref": "#/components/schemas/CreatePlayerArguments"
+              - title: update_player
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_player
+                  arguments:
+                    "$ref": "#/components/schemas/UpdatePlayerArguments"
+              - title: send_password_reset
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: send_password_reset
+                  arguments:
+                    "$ref": "#/components/schemas/SendPasswordResetArguments"
+              - title: move_player
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: move_player
+                  arguments:
+                    "$ref": "#/components/schemas/MovePlayerArguments"
+              - title: create_team
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_team
+                  arguments:
+                    "$ref": "#/components/schemas/CreateTeamArguments"
+              - title: update_team
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_team
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateTeamArguments"
+              - title: fold_team
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: fold_team
+                  arguments:
+                    "$ref": "#/components/schemas/FoldTeamArguments"
+              - title: set_team_captain
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: set_team_captain
+                  arguments:
+                    "$ref": "#/components/schemas/SetTeamCaptainArguments"
+              - title: set_team_venue
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: set_team_venue
+                  arguments:
+                    "$ref": "#/components/schemas/SetTeamVenueArguments"
+              - title: create_venue
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_venue
+                  arguments:
+                    "$ref": "#/components/schemas/CreateVenueArguments"
+              - title: update_venue
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_venue
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateVenueArguments"
+              - title: add_team_to_section
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: add_team_to_section
+                  arguments:
+                    "$ref": "#/components/schemas/AddTeamToSectionArguments"
+              - title: set_points_deduction
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: set_points_deduction
+                  arguments:
+                    "$ref": "#/components/schemas/SetPointsDeductionArguments"
+              - title: withdraw_team
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: withdraw_team
+                  arguments:
+                    "$ref": "#/components/schemas/WithdrawTeamArguments"
+              - title: create_season
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_season
+                  arguments:
+                    "$ref": "#/components/schemas/CreateSeasonArguments"
+              - title: update_season
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_season
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateSeasonArguments"
+              - title: open_season
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: open_season
+                  arguments:
+                    "$ref": "#/components/schemas/OpenSeasonArguments"
+              - title: create_section
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_section
+                  arguments:
+                    "$ref": "#/components/schemas/CreateSectionArguments"
+              - title: update_section
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_section
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateSectionArguments"
+              - title: reschedule_fixture
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: reschedule_fixture
+                  arguments:
+                    "$ref": "#/components/schemas/RescheduleFixtureArguments"
+              - title: correct_result
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: correct_result
+                  arguments:
+                    "$ref": "#/components/schemas/CorrectResultArguments"
+              - title: create_knockout
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_knockout
+                  arguments:
+                    "$ref": "#/components/schemas/CreateKnockoutArguments"
+              - title: update_knockout
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_knockout
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateKnockoutArguments"
+              - title: add_knockout_participant
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: add_knockout_participant
+                  arguments:
+                    "$ref": "#/components/schemas/AddKnockoutParticipantArguments"
+              - title: update_knockout_participant
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_knockout_participant
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateKnockoutParticipantArguments"
+              - title: create_knockout_round
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_knockout_round
+                  arguments:
+                    "$ref": "#/components/schemas/CreateKnockoutRoundArguments"
+              - title: update_knockout_round
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_knockout_round
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateKnockoutRoundArguments"
+              - title: record_knockout_result
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: record_knockout_result
+                  arguments:
+                    "$ref": "#/components/schemas/RecordKnockoutResultArguments"
+              - title: record_knockout_forfeit
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: record_knockout_forfeit
+                  arguments:
+                    "$ref": "#/components/schemas/RecordKnockoutForfeitArguments"
+              - title: clear_knockout_result
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: clear_knockout_result
+                  arguments:
+                    "$ref": "#/components/schemas/ClearKnockoutResultArguments"
+              - title: generate_knockout_bracket
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: generate_knockout_bracket
+                  arguments:
+                    "$ref": "#/components/schemas/GenerateKnockoutBracketArguments"
+              - title: randomize_knockout_round
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: randomize_knockout_round
+                  arguments:
+                    "$ref": "#/components/schemas/RandomizeKnockoutRoundArguments"
+              - title: create_expulsion
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_expulsion
+                  arguments:
+                    "$ref": "#/components/schemas/CreateExpulsionArguments"
+              - title: update_notification_setting
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_notification_setting
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateNotificationSettingArguments"
+              - title: mark_season_entry_paid
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: mark_season_entry_paid
+                  arguments:
+                    "$ref": "#/components/schemas/MarkSeasonEntryPaidArguments"
+              - title: update_support_ticket
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_support_ticket
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateSupportTicketArguments"
+              - title: create_content
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: create_content
+                  arguments:
+                    "$ref": "#/components/schemas/CreateContentArguments"
+              - title: update_content
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: update_content
+                  arguments:
+                    "$ref": "#/components/schemas/UpdateContentArguments"
+              - title: delete_record
+                type: object
+                required:
+                - command
+                - arguments
+                properties:
+                  command:
+                    type: string
+                    const: delete_record
+                  arguments:
+                    "$ref": "#/components/schemas/DeleteRecordArguments"
       responses:
-        '200': { description: Command completed }
-        '201': { description: Record created }
-        '404': { description: Referenced record not found }
-        '422': { description: 'Missing input, stale state, dependency protection or invalid change' }
+        '200':
+          description: Command completed
+        '201':
+          description: Record created
+        '404':
+          description: Referenced record not found
+        '422':
+          description: Missing input, stale state, dependency protection or invalid
+            change
 components:
   schemas:
     ResourceName:
       type: string
-      enum: [users, teams, venues, seasons, sections, section-teams, fixtures, results, frames, rulesets, knockouts, knockout-rounds, knockout-participants, knockout-matches, season-entries, season-team-entries, season-knockout-entries, expulsions, news, pages, notification-settings, support-tickets, media]
+      enum:
+      - users
+      - teams
+      - venues
+      - seasons
+      - sections
+      - section-teams
+      - fixtures
+      - results
+      - frames
+      - rulesets
+      - knockouts
+      - knockout-rounds
+      - knockout-participants
+      - knockout-matches
+      - season-entries
+      - season-team-entries
+      - season-knockout-entries
+      - expulsions
+      - news
+      - pages
+      - notification-settings
+      - support-tickets
+      - media
+    CreatePlayerArguments:
+      type: object
+      required:
+      - name
+      - site_role
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: 'null'
+        telephone:
+          oneOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+        team_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        site_role:
+          type: string
+          enum:
+          - player
+          - team-admin
+          - admin
+      description: Create a player or administrator account.
+    UpdatePlayerArguments:
+      type: object
+      required:
+      - player
+      - expected_updated_at
+      properties:
+        player:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+          maxLength: 255
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: 'null'
+        telephone:
+          oneOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+        site_role:
+          type: string
+          enum:
+          - player
+          - team-admin
+          - admin
+      description: Update a player's name, contact details, or role.
+    SendPasswordResetArguments:
+      type: object
+      properties:
+        player:
+          type: integer
+      required:
+      - player
+      description: Send the standard password-reset email to a player.
+    MovePlayerArguments:
+      type: object
+      required:
+      - player
+      - destination_team_id
+      - expected_current_team_id
+      properties:
+        player:
+          type: integer
+        destination_team_id:
+          type: integer
+        expected_current_team_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        make_destination_captain:
+          type: boolean
+          default: false
+      description: Move a player after checking that their current team still matches
+        the inspected state.
+    CreateTeamArguments:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        shortname:
+          oneOf:
+          - type: string
+          - type: 'null'
+        venue_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+      description: Create a team.
+    UpdateTeamArguments:
+      type: object
+      required:
+      - team
+      - expected_updated_at
+      properties:
+        team:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        shortname:
+          oneOf:
+          - type: string
+          - type: 'null'
+      description: Update a team's name or short name.
+    FoldTeamArguments:
+      type: object
+      properties:
+        team:
+          type: integer
+      required:
+      - team
+      description: Mark a team as folded.
+    SetTeamCaptainArguments:
+      type: object
+      required:
+      - team
+      - captain_id
+      - expected_current_captain_id
+      properties:
+        team:
+          type: integer
+        captain_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        expected_current_captain_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+      description: Assign or remove a team captain after checking the current captain.
+    SetTeamVenueArguments:
+      type: object
+      required:
+      - team
+      - venue_id
+      - expected_current_venue_id
+      properties:
+        team:
+          type: integer
+        venue_id:
+          type: integer
+        expected_current_venue_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+      description: Change a team's venue after checking its current venue.
+    CreateVenueArguments:
+      type: object
+      required:
+      - name
+      - address
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        telephone:
+          oneOf:
+          - type: string
+          - type: 'null'
+      description: Create a venue.
+    UpdateVenueArguments:
+      type: object
+      required:
+      - venue
+      - expected_updated_at
+      properties:
+        venue:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        address:
+          type: string
+        telephone:
+          oneOf:
+          - type: string
+          - type: 'null'
+      description: Update a venue.
+    AddTeamToSectionArguments:
+      type: object
+      required:
+      - section
+      - team_id
+      properties:
+        section:
+          type: integer
+        team_id:
+          type: integer
+      description: Add an existing team to a section.
+    SetPointsDeductionArguments:
+      type: object
+      required:
+      - sectionTeam
+      - deducted
+      - expected_current_deduction
+      properties:
+        sectionTeam:
+          type: integer
+        deducted:
+          type: integer
+          minimum: 0
+        expected_current_deduction:
+          type: integer
+          minimum: 0
+      description: Set a points deduction for a team in the current open season.
+    WithdrawTeamArguments:
+      type: object
+      properties:
+        sectionTeam:
+          type: integer
+      required:
+      - sectionTeam
+      description: Withdraw a team from its current open-season section.
+    CreateSeasonArguments:
+      type: object
+      required:
+      - name
+      - dates
+      - team_entry_fee
+      properties:
+        name:
+          type: string
+        dates:
+          type: array
+          minItems: 18
+          maxItems: 18
+          items:
+            type: string
+            format: date
+        team_entry_fee:
+          type: number
+          minimum: 0
+        signup_opens_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+        signup_closes_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Create a closed season with its 18 scheduled dates.
+    UpdateSeasonArguments:
+      type: object
+      required:
+      - season
+      - expected_updated_at
+      properties:
+        season:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        dates:
+          type: array
+          minItems: 18
+          maxItems: 18
+          items:
+            type: string
+            format: date
+        team_entry_fee:
+          type: number
+          minimum: 0
+        signup_opens_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+        signup_closes_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Update season details or schedule.
+    OpenSeasonArguments:
+      type: object
+      properties:
+        season:
+          type: integer
+      required:
+      - season
+      description: Open one season and close every other season.
+    CreateSectionArguments:
+      type: object
+      required:
+      - name
+      - season_id
+      - ruleset_id
+      properties:
+        name:
+          type: string
+        season_id:
+          type: integer
+        ruleset_id:
+          type: integer
+      description: Create a section within a season.
+    UpdateSectionArguments:
+      type: object
+      required:
+      - section
+      - expected_updated_at
+      properties:
+        section:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        ruleset_id:
+          type: integer
+      description: Update a section name or ruleset.
+    RescheduleFixtureArguments:
+      type: object
+      required:
+      - fixture
+      - fixture_date
+      - expected_current_fixture_date
+      properties:
+        fixture:
+          type: integer
+        fixture_date:
+          type: string
+          format: date
+        expected_current_fixture_date:
+          type: string
+          format: date
+      description: Reschedule a fixture after checking its current date.
+    CorrectResultArguments:
+      type: object
+      required:
+      - result
+      - expected_draft_version
+      - reason
+      - frames
+      properties:
+        result:
+          type: integer
+        expected_draft_version:
+          type: integer
+          minimum: 0
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+        frames:
+          type: array
+          minItems: 10
+          maxItems: 10
+          items:
+            type: object
+            required:
+            - home_player_id
+            - away_player_id
+            - home_score
+            - away_score
+            properties:
+              home_player_id:
+                type: integer
+              away_player_id:
+                type: integer
+              home_score:
+                type: integer
+                minimum: 0
+                maximum: 1
+              away_score:
+                type: integer
+                minimum: 0
+                maximum: 1
+      description: Correct a league result and all ten of its frames.
+    CreateKnockoutArguments:
+      type: object
+      required:
+      - season_id
+      - name
+      - type
+      properties:
+        season_id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - singles
+          - doubles
+          - team
+        best_of:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        entry_fee:
+          type: number
+          minimum: 0
+      description: Create a knockout competition.
+    UpdateKnockoutArguments:
+      type: object
+      required:
+      - knockout
+      - expected_updated_at
+      properties:
+        knockout:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        best_of:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        entry_fee:
+          oneOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        published_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Update a knockout competition.
+    AddKnockoutParticipantArguments:
+      type: object
+      properties:
+        knockout:
+          type: integer
+        label:
+          oneOf:
+          - type: string
+          - type: 'null'
+        seed:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        team_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        player_one_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        player_two_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+      required:
+      - knockout
+      description: Add a participant to a knockout.
+    UpdateKnockoutParticipantArguments:
+      type: object
+      required:
+      - participant
+      - expected_updated_at
+      properties:
+        participant:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        label:
+          oneOf:
+          - type: string
+          - type: 'null'
+        seed:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        team_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        player_one_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        player_two_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+      description: Update an existing knockout participant.
+    CreateKnockoutRoundArguments:
+      type: object
+      required:
+      - knockout
+      - name
+      - position
+      - is_visible
+      properties:
+        knockout:
+          type: integer
+        name:
+          type: string
+        position:
+          type: integer
+          minimum: 1
+        scheduled_for:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+        best_of:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        is_visible:
+          type: boolean
+      description: Create a knockout round.
+    UpdateKnockoutRoundArguments:
+      type: object
+      required:
+      - round
+      - expected_updated_at
+      properties:
+        round:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        name:
+          type: string
+        position:
+          type: integer
+          minimum: 1
+        scheduled_for:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+        best_of:
+          oneOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        is_visible:
+          type: boolean
+      description: Update an existing knockout round.
+    RecordKnockoutResultArguments:
+      type: object
+      required:
+      - match
+      - home_score
+      - away_score
+      - reason
+      - expected_completed_at
+      properties:
+        match:
+          type: integer
+        home_score:
+          type: integer
+          minimum: 0
+        away_score:
+          type: integer
+          minimum: 0
+        reason:
+          type: string
+          minLength: 5
+        expected_completed_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Record a validated knockout match score.
+    RecordKnockoutForfeitArguments:
+      type: object
+      required:
+      - match
+      - forfeit_participant_id
+      - reason
+      - expected_completed_at
+      properties:
+        match:
+          type: integer
+        forfeit_participant_id:
+          type: integer
+        reason:
+          type: string
+          minLength: 5
+        expected_completed_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Record a participant forfeit.
+    ClearKnockoutResultArguments:
+      type: object
+      required:
+      - match
+      - expected_completed_at
+      - reason
+      properties:
+        match:
+          type: integer
+        expected_completed_at:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          minLength: 5
+      description: Clear a knockout result or forfeit.
+    GenerateKnockoutBracketArguments:
+      type: object
+      properties:
+        knockout:
+          type: integer
+        shuffle:
+          type: boolean
+          default: false
+      required:
+      - knockout
+      description: Generate a knockout bracket from its participants.
+    RandomizeKnockoutRoundArguments:
+      type: object
+      properties:
+        knockout:
+          type: integer
+      required:
+      - knockout
+      description: Randomise the first eligible unplayed knockout round.
+    CreateExpulsionArguments:
+      type: object
+      required:
+      - season_id
+      - subject_type
+      - subject_id
+      - reason
+      - date
+      properties:
+        season_id:
+          type: integer
+        subject_type:
+          type: string
+          enum:
+          - player
+          - team
+        subject_id:
+          type: integer
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 255
+        date:
+          type: string
+          format: date
+      description: Record a player or team expulsion.
+    UpdateNotificationSettingArguments:
+      type: object
+      required:
+      - setting
+      - enabled
+      - expected_enabled
+      properties:
+        setting:
+          type: integer
+        enabled:
+          type: boolean
+        expected_enabled:
+          type: boolean
+      description: Enable or disable a notification type.
+    MarkSeasonEntryPaidArguments:
+      type: object
+      properties:
+        entry:
+          type: integer
+      required:
+      - entry
+      description: Mark a season registration as paid.
+    UpdateSupportTicketArguments:
+      type: object
+      required:
+      - ticket
+      - expected_updated_at
+      properties:
+        ticket:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        assignee_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        ticket_status_id:
+          type: integer
+        priority:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+      description: Update a support ticket's assignment, status or priority.
+    CreateContentArguments:
+      type: object
+      properties:
+        resource:
+          type: string
+          enum:
+          - news
+          - pages
+          - rulesets
+        title:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        content:
+          type: string
+        published_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      required:
+      - resource
+      description: Create a news post, page or ruleset.
+    UpdateContentArguments:
+      type: object
+      required:
+      - resource
+      - record
+      - expected_updated_at
+      properties:
+        resource:
+          type: string
+          enum:
+          - news
+          - pages
+          - rulesets
+        record:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        content:
+          type: string
+        published_at:
+          oneOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+      description: Update a news post, page or ruleset.
+    DeleteRecordArguments:
+      type: object
+      required:
+      - resource
+      - record
+      - expected_updated_at
+      - reason
+      - confirmation
+      properties:
+        resource:
+          type: string
+          enum:
+          - users
+          - venues
+          - seasons
+          - sections
+          - rulesets
+          - knockouts
+          - knockout-rounds
+          - knockout-participants
+          - knockout-matches
+          - expulsions
+          - news
+          - pages
+          - support-tickets
+          - media
+        record:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+        confirmation:
+          type: string
+          enum:
+          - DELETE
+      description: Delete or archive a supported administration record.
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://www.huddspool.co.uk/oauth/authorize
+          tokenUrl: https://www.huddspool.co.uk/oauth/token
+          scopes:
+            gpt:read: Read Huddspool administration data.
+            gpt:write: Perform audited Huddspool administration operations.
+security:
+- oauth:
+  - gpt:read
+  - gpt:write

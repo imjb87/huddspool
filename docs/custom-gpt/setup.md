@@ -5,12 +5,17 @@ This integration uses a confidential OAuth 2.0 authorization-code client. Each a
 1. Deploy the feature and run the database migrations.
 2. Generate Passport encryption keys in the live environment if they do not already exist.
 3. In the GPT editor, create an Action and import `openapi.yaml`.
-4. Choose OAuth authentication. Use the authorization and token URLs from the schema, request `gpt:read gpt:write`, and save once to obtain ChatGPT's callback URL.
+4. Choose OAuth authentication and enter:
+   - Authorization URL: `https://www.huddspool.co.uk/oauth/authorize`
+   - Token URL: `https://www.huddspool.co.uk/oauth/token`
+   - Scope: `gpt:read gpt:write`
+   - Token exchange method: `POST`
+   Save once to obtain ChatGPT's callback URL.
 5. Create the OAuth client on the live server:
 
    `php artisan passport:client --name="Huddspool administrator GPT" --redirect_uri="CHATGPT_CALLBACK_URL"`
 
 6. Copy the one-time client ID and client secret into the GPT Action authentication settings.
-7. Paste `instructions.md` into the GPT instructions and test with a non-destructive dashboard request before testing a confirmed player move.
+7. Paste `instructions.md` into the GPT instructions and test with a non-destructive dashboard request before testing a confirmed player move. Re-import `openapi.yaml` whenever its version changes so ChatGPT receives the current command argument definitions.
 
 Do not commit Passport private keys, the OAuth client secret, or live access tokens.
