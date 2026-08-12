@@ -617,6 +617,113 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'withdraw_team_from_section', 'subject_id' => $membership->id]);
     }
 
+    public function test_administrator_can_replace_a_section_team_without_recreating_competition_records(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create(['season_id' => $season->id, 'ruleset_id' => $ruleset->id]);
+        $oldTeam = Team::factory()->create(['name' => "Marsh Lib 'A'"]);
+        $replacementTeam = Team::factory()->create(['name' => 'Marsh Lib']);
+        $opponent = Team::factory()->create();
+        $membership = SectionTeam::query()->create([
+            'section_id' => $section->id,
+            'team_id' => $oldTeam->id,
+            'sort' => 3,
+            'deducted' => 2,
+        ]);
+        $fixture = Fixture::factory()->create([
+            'section_id' => $section->id,
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $opponent->id,
+            'away_team_id' => $oldTeam->id,
+        ]);
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $opponent->id,
+            'home_team_name' => $opponent->name,
+            'away_team_id' => $oldTeam->id,
+            'away_team_name' => $oldTeam->name,
+        ]);
+        $frame = Frame::query()->create([
+            'result_id' => $result->id,
+            'home_player_id' => User::factory()->create(['team_id' => $opponent->id])->id,
+            'away_player_id' => User::factory()->create(['team_id' => $oldTeam->id])->id,
+            'home_score' => 1,
+            'away_score' => 0,
+        ]);
+        $expectedUpdatedAt = $membership->updated_at->toAtomString();
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.command'), [
+            'command' => 'replace_section_team',
+            'arguments' => [
+                'sectionTeam' => $membership->id,
+                'replacement_team_id' => $replacementTeam->id,
+                'expected_current_team_id' => $oldTeam->id,
+                'expected_updated_at' => $expectedUpdatedAt,
+                'reason' => 'Correcting the team identity entered for this section slot.',
+            ],
+        ])->assertOk();
+
+        $this->assertSame($membership->id, $membership->refresh()->id);
+        $this->assertSame($replacementTeam->id, $membership->team_id);
+        $this->assertSame(3, $membership->sort);
+        $this->assertSame(2, $membership->deducted);
+        $this->assertSame($fixture->id, $fixture->refresh()->id);
+        $this->assertSame($replacementTeam->id, $fixture->away_team_id);
+        $this->assertSame($result->id, $result->refresh()->id);
+        $this->assertSame($replacementTeam->id, $result->away_team_id);
+        $this->assertSame('Marsh Lib', $result->away_team_name);
+        $this->assertSame($frame->id, $frame->refresh()->id);
+        $this->assertDatabaseHas(GptActionAudit::class, [
+            'id' => $response->json('audit_id'),
+            'administrator_id' => $admin->id,
+            'action' => 'replace_section_team',
+            'subject_id' => $membership->id,
+        ]);
+    }
+
+    public function test_section_team_replacement_fails_for_stale_state_or_same_season_conflict(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $season = Season::factory()->create(['is_open' => true]);
+        $section = Section::factory()->create(['season_id' => $season->id]);
+        $otherSection = Section::factory()->create(['season_id' => $season->id]);
+        $oldTeam = Team::factory()->create();
+        $replacementTeam = Team::factory()->create();
+        $membership = SectionTeam::query()->create(['section_id' => $section->id, 'team_id' => $oldTeam->id, 'sort' => 1]);
+        SectionTeam::query()->create(['section_id' => $otherSection->id, 'team_id' => $replacementTeam->id, 'sort' => 1]);
+        Passport::actingAs($admin, ['gpt:write']);
+        $payload = [
+            'replacement_team_id' => $replacementTeam->id,
+            'expected_current_team_id' => $oldTeam->id,
+            'expected_updated_at' => $membership->updated_at->toAtomString(),
+            'reason' => 'Correcting an entry error.',
+        ];
+
+        $this->postJson(route('api.gpt.section-teams.replace-team', $membership), $payload)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('replacement_team_id');
+
+        $replacementTeamTwo = Team::factory()->create();
+        $this->postJson(route('api.gpt.section-teams.replace-team', $membership), array_merge($payload, [
+            'replacement_team_id' => $replacementTeamTwo->id,
+            'expected_current_team_id' => $replacementTeamTwo->id,
+        ]))->assertUnprocessable()->assertJsonValidationErrors('expected_current_team_id');
+
+        $this->postJson(route('api.gpt.section-teams.replace-team', $membership), array_merge($payload, [
+            'replacement_team_id' => $replacementTeamTwo->id,
+            'expected_updated_at' => $membership->updated_at->subMinute()->toAtomString(),
+        ]))->assertUnprocessable()->assertJsonValidationErrors('expected_updated_at');
+
+        $this->assertSame($oldTeam->id, $membership->refresh()->team_id);
+        $this->assertDatabaseCount('gpt_action_audits', 0);
+    }
+
     public function test_administrator_can_create_a_season_section_and_open_the_season(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

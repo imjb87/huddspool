@@ -72,6 +72,7 @@ Route::prefix('gpt')
             Route::patch('/sections/{section:id}', [LeagueStructureController::class, 'updateSection'])->name('api.gpt.sections.update');
             Route::patch('/section-teams/{sectionTeam}/deduction', [LeagueStructureController::class, 'updateDeduction'])->name('api.gpt.section-teams.deduction');
             Route::post('/section-teams/{sectionTeam}/withdraw', [LeagueStructureController::class, 'withdrawTeam'])->name('api.gpt.section-teams.withdraw');
+            Route::post('/section-teams/{sectionTeam}/replace-team', [LeagueStructureController::class, 'replaceSectionTeam'])->name('api.gpt.section-teams.replace-team');
             Route::post('/knockout-matches/{match}/result', [KnockoutAdministrationController::class, 'recordResult'])->name('api.gpt.knockout-matches.result');
             Route::post('/knockout-matches/{match}/forfeit', [KnockoutAdministrationController::class, 'recordForfeit'])->name('api.gpt.knockout-matches.forfeit');
             Route::post('/knockout-matches/{match}/clear-result', [KnockoutAdministrationController::class, 'clearResult'])->name('api.gpt.knockout-matches.clear-result');

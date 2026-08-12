@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\Gpt;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Gpt\ReplaceSectionTeamRequest;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\SectionTeam;
 use App\Models\Team;
 use App\Models\Venue;
 use App\Services\Gpt\ManageLeagueStructure;
+use App\Services\Gpt\ReplaceSectionTeam;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -123,6 +125,27 @@ class LeagueStructureController extends Controller
         $audit = $service->withdraw($request->user(), $sectionTeam, $request->ip(), $request->userAgent());
 
         return response()->json(['message' => 'The team was withdrawn from the open-season section.', 'section_team_id' => $sectionTeam->id, 'audit_id' => $audit->id]);
+    }
+
+    public function replaceSectionTeam(ReplaceSectionTeamRequest $request, SectionTeam $sectionTeam, ReplaceSectionTeam $service): JsonResponse
+    {
+        $audit = $service->handle(
+            administrator: $request->user(),
+            sectionTeam: $sectionTeam,
+            replacementTeam: Team::query()->findOrFail($request->integer('replacement_team_id')),
+            expectedCurrentTeamId: $request->integer('expected_current_team_id'),
+            expectedUpdatedAt: Carbon::parse($request->string('expected_updated_at')),
+            reason: $request->string('reason')->toString(),
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+        );
+
+        return response()->json([
+            'message' => 'The section team identity was replaced without recreating competition records.',
+            'section_team_id' => $sectionTeam->id,
+            'replacement_team_id' => $request->integer('replacement_team_id'),
+            'audit_id' => $audit->id,
+        ]);
     }
 
     private function teamSummary(Team $team): array

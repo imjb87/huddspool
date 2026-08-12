@@ -419,6 +419,15 @@ paths:
       x-openai-isConsequential: true
       parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
       responses: { '200': { description: Team withdrawn }, '422': { description: Closed season or team already withdrawn } }
+  /section-teams/{sectionTeam}/replace-team:
+    post:
+      operationId: replaceSectionTeam
+      summary: Correct the team identity on an existing section entry.
+      description: Preserves the section-team, fixture, result, and frame record IDs while updating direct team references. Inspect all affected records first. Uses team ID and updated_at stale-state guards, requires a reason and confirmation, and is audited.
+      x-openai-isConsequential: true
+      parameters: [{ name: sectionTeam, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [replacement_team_id, expected_current_team_id, expected_updated_at, reason], properties: { replacement_team_id: { type: integer }, expected_current_team_id: { type: integer }, expected_updated_at: { type: string, format: date-time }, reason: { type: string, minLength: 5, maxLength: 1000 } } } } } }
+      responses: { '200': { description: Section team identity replaced and audit recorded }, '422': { description: Stale state, conflicting assignment, or invalid input } }
   /seasons:
     post:
       operationId: createSeason

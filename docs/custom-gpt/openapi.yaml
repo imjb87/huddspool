@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Huddspool administration
-  version: 0.4.1
+  version: 0.5.0
   description: Inspect Huddspool administration data and perform validated, audited
     administrator commands.
 servers:
@@ -171,6 +171,7 @@ paths:
                   - add_team_to_section
                   - set_points_deduction
                   - withdraw_team
+                  - replace_section_team
                   - create_season
                   - update_season
                   - open_season
@@ -303,7 +304,7 @@ paths:
                       oneOf:
                       - type: integer
                       - type: 'null'
-                      description: 'Used by: move_player. Required for: move_player.'
+                      description: 'Used by: move_player, replace_section_team. Required for: move_player, replace_section_team.'
                     expected_current_venue_id:
                       oneOf:
                       - type: integer
@@ -323,10 +324,10 @@ paths:
                       description: 'Used by: update_player, update_team, update_venue,
                         update_season, update_section, update_knockout, update_knockout_participant,
                         update_knockout_round, update_support_ticket, update_content,
-                        delete_record. Required for: update_player, update_team, update_venue,
+                        delete_record, replace_section_team. Required for: update_player, update_team, update_venue,
                         update_season, update_section, update_knockout, update_knockout_participant,
                         update_knockout_round, update_support_ticket, update_content,
-                        delete_record.'
+                        delete_record, replace_section_team.'
                     fixture:
                       type: integer
                       description: 'Used by: reschedule_fixture. Required for: reschedule_fixture.'
@@ -444,9 +445,12 @@ paths:
                       maxLength: 500
                       description: 'Used by: correct_result, record_knockout_result,
                         record_knockout_forfeit, clear_knockout_result, create_expulsion,
-                        delete_record. Required for: correct_result, record_knockout_result,
+                        delete_record, replace_section_team. Required for: correct_result, record_knockout_result,
                         record_knockout_forfeit, clear_knockout_result, create_expulsion,
-                        delete_record.'
+                        delete_record, replace_section_team.'
+                    replacement_team_id:
+                      type: integer
+                      description: 'Used by: replace_section_team. Required for: replace_section_team.'
                     record:
                       type: integer
                       description: 'Used by: update_content, delete_record. Required
@@ -501,8 +505,8 @@ paths:
                         Required for: add_team_to_section, update_section.'
                     sectionTeam:
                       type: integer
-                      description: 'Used by: set_points_deduction, withdraw_team.
-                        Required for: set_points_deduction, withdraw_team.'
+                      description: 'Used by: set_points_deduction, withdraw_team, replace_section_team.
+                        Required for: set_points_deduction, withdraw_team, replace_section_team.'
                     seed:
                       oneOf:
                       - type: integer
@@ -879,6 +883,29 @@ components:
       required:
       - sectionTeam
       description: Withdraw a team from its current open-season section.
+    ReplaceSectionTeamArguments:
+      type: object
+      required:
+      - sectionTeam
+      - replacement_team_id
+      - expected_current_team_id
+      - expected_updated_at
+      - reason
+      properties:
+        sectionTeam:
+          type: integer
+        replacement_team_id:
+          type: integer
+        expected_current_team_id:
+          type: integer
+        expected_updated_at:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 1000
+      description: Replace the team identity on an existing section entry while preserving its fixtures, results, frames, ordering, deductions, and record IDs.
     CreateSeasonArguments:
       type: object
       required:
