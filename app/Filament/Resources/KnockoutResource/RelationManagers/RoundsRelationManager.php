@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
-use Filament\Actions;
 use App\KnockoutType;
+use App\Models\KnockoutRound;
+use App\Services\KnockoutBracketBuilder;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Validation\ValidationException;
 
 class RoundsRelationManager extends RelationManager
 {
@@ -65,10 +69,31 @@ class RoundsRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->actions([
+                Actions\Action::make('randomize')
+                    ->label('Randomise round')
+                    ->icon('heroicon-o-sparkles')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription('This will redraw this round. It is only available while the round is incomplete and has no recorded results.')
+                    ->visible(fn (KnockoutRound $record): bool => (new KnockoutBracketBuilder($this->getOwnerRecord()))->canRandomizeRound($record))
+                    ->action(function (KnockoutRound $record): void {
+                        try {
+                            $round = (new KnockoutBracketBuilder($this->getOwnerRecord()))->randomizeRound($record);
+
+                            Notification::make()
+                                ->title("{$round->name} randomised successfully.")
+                                ->success()
+                                ->send();
+                        } catch (ValidationException $exception) {
+                            Notification::make()
+                                ->title($exception->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])
             ->defaultSort('position');
     }
-
 }

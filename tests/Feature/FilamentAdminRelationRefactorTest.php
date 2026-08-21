@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Enums\RoleName;
+use App\Filament\Resources\KnockoutResource\Pages\EditKnockout;
+use App\Filament\Resources\KnockoutResource\RelationManagers\RoundsRelationManager;
 use App\Filament\Resources\SectionResource\Pages\PreviewFixtures;
 use App\Filament\Resources\TeamResource\Pages\EditTeam;
 use App\Filament\Resources\TeamResource\RelationManagers\PlayersRelationManager;
@@ -11,6 +13,7 @@ use App\Filament\Resources\VenueResource\RelationManagers\TeamsRelationManager;
 use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\Knockout;
+use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -18,6 +21,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Services\KnockoutBracketBuilder;
 use App\Support\KnockoutMatchVenueOptions;
 use App\Support\SectionFixturePreviewBuilder;
 use Filament\Facades\Filament;
@@ -29,6 +33,42 @@ use Tests\TestCase;
 class FilamentAdminRelationRefactorTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_knockout_round_relation_manager_can_randomise_an_eligible_round(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $knockout = Knockout::factory()->create([
+            'type' => KnockoutType::Singles,
+            'best_of' => 5,
+        ]);
+        $participants = collect(range(1, 8))->map(fn (int $number) => KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'label' => "Player {$number}",
+        ]));
+
+        (new KnockoutBracketBuilder($knockout))->generate();
+        $round = $knockout->rounds()->orderBy('position')->firstOrFail();
+
+        Filament::setCurrentPanel('admin');
+
+        Livewire::actingAs($admin)
+            ->test(RoundsRelationManager::class, [
+                'ownerRecord' => $knockout,
+                'pageClass' => EditKnockout::class,
+            ])
+            ->assertTableActionVisible('randomize', (string) $round->getKey())
+            ->callTableAction('randomize', (string) $round->getKey())
+            ->assertHasNoTableActionErrors();
+
+        $redrawnParticipants = $round->fresh('matches')->matches
+            ->flatMap(fn (KnockoutMatch $match) => [$match->home_participant_id, $match->away_participant_id])
+            ->filter()
+            ->values();
+
+        $this->assertEqualsCanonicalizing($participants->pluck('id')->all(), $redrawnParticipants->all());
+    }
 
     public function test_team_players_relation_manager_edit_action_uses_a_slide_over_with_avatar_support(): void
     {

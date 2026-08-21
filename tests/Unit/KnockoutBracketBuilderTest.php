@@ -10,6 +10,7 @@ use App\Models\Season;
 use App\Services\KnockoutBracketBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class KnockoutBracketBuilderTest extends TestCase
@@ -93,6 +94,78 @@ class KnockoutBracketBuilderTest extends TestCase
         $this->assertEqualsCanonicalizing($winners->all(), $redrawnParticipants->all());
         $this->assertCount($winners->count(), $secondRoundMatches->flatMap(fn (KnockoutMatch $match) => $match->previousMatches));
         $this->assertTrue($firstRoundMatches->fresh()->every(fn (KnockoutMatch $match): bool => $match->next_match_id !== null));
+    }
+
+    public function test_an_incomplete_first_round_without_results_can_be_redrawn(): void
+    {
+        $knockout = $this->createKnockout(KnockoutType::Singles);
+        $participants = collect(range(1, 8))->map(fn (int $number) => KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'label' => "Player {$number}",
+        ]));
+
+        (new KnockoutBracketBuilder($knockout))->generate();
+        $firstRound = $knockout->rounds()->orderBy('position')->first();
+
+        $redrawnRound = (new KnockoutBracketBuilder($knockout))->randomizeRound($firstRound);
+        $redrawnParticipants = $redrawnRound->matches
+            ->flatMap(fn (KnockoutMatch $match) => [$match->home_participant_id, $match->away_participant_id])
+            ->filter()
+            ->values();
+
+        $this->assertEqualsCanonicalizing($participants->pluck('id')->all(), $redrawnParticipants->all());
+        $this->assertTrue($redrawnRound->matches->every(fn (KnockoutMatch $match): bool => $match->home_score === null
+            && $match->away_score === null
+            && $match->forfeit_participant_id === null));
+    }
+
+    public function test_a_round_with_a_recorded_result_cannot_be_redrawn(): void
+    {
+        $knockout = $this->createKnockout(KnockoutType::Singles);
+        collect(range(1, 8))->each(fn (int $number) => KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'label' => "Player {$number}",
+        ]));
+
+        (new KnockoutBracketBuilder($knockout))->generate();
+        $firstRound = $knockout->rounds()->orderBy('position')->first();
+        $firstRound->matches()->first()->update([
+            'home_score' => 3,
+            'away_score' => 0,
+        ]);
+
+        $this->expectException(ValidationException::class);
+
+        (new KnockoutBracketBuilder($knockout))->randomizeRound($firstRound);
+    }
+
+    public function test_an_incomplete_later_round_can_be_redrawn_with_unresolved_feeders(): void
+    {
+        $knockout = $this->createKnockout(KnockoutType::Singles);
+        collect(range(1, 8))->each(fn (int $number) => KnockoutParticipant::create([
+            'knockout_id' => $knockout->id,
+            'label' => "Player {$number}",
+        ]));
+
+        (new KnockoutBracketBuilder($knockout))->generate();
+        $firstRound = $knockout->rounds()->orderBy('position')->first();
+        $secondRound = $knockout->rounds()->orderBy('position')->skip(1)->first();
+        $firstMatch = $firstRound->matches()->first();
+        $firstMatch->update([
+            'home_score' => 3,
+            'away_score' => 0,
+        ]);
+
+        (new KnockoutBracketBuilder($knockout))->randomizeRound($secondRound);
+
+        $knownWinnerId = $firstMatch->fresh()->winner_participant_id;
+        $redrawnParticipants = $secondRound->fresh('matches')->matches
+            ->flatMap(fn (KnockoutMatch $match) => [$match->home_participant_id, $match->away_participant_id])
+            ->filter()
+            ->values();
+
+        $this->assertContains($knownWinnerId, $redrawnParticipants->all());
+        $this->assertTrue($firstRound->matches()->get()->every(fn (KnockoutMatch $match): bool => $match->next_match_id !== null));
     }
 
     public function test_completed_round_can_be_redrawn_for_doubles_and_team_knockouts(): void

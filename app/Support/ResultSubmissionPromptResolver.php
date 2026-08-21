@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Enums\PermissionName;
+use App\KnockoutType;
 use App\Models\Fixture;
 use App\Models\KnockoutMatch;
 use App\Models\Result;
@@ -62,7 +63,7 @@ class ResultSubmissionPromptResolver
                     'round_name' => $match->round?->name ?? 'Round TBC',
                     'participants_label' => $match->title(),
                     'venue_label' => $match->venue?->name ?? 'Venue TBC',
-                    'date_label' => $match->starts_at?->format('\D\a\t\e\: j M Y \a\t 20:00') ?? 'Date: TBC',
+                    'date_label' => $this->knockoutDateLabel($match),
                     'url' => route('knockout.matches.submit', $match),
                     'action_label' => 'Submit result',
                 ])
@@ -121,6 +122,19 @@ class ResultSubmissionPromptResolver
             ->get()
             ->filter(fn (KnockoutMatch $match) => $match->isDueForSubmission() && $match->userShouldBePromptedToSubmit($user))
             ->values();
+    }
+
+    private function knockoutDateLabel(KnockoutMatch $match): string
+    {
+        if ($match->type() === KnockoutType::Singles) {
+            $date = $match->round?->scheduled_for ?? $match->startsAtForDisplay();
+
+            return $date?->format('\D\e\a\d\l\i\n\e\: j M Y') ?? 'Deadline: TBC';
+        }
+
+        $date = $match->startsAtForDisplay() ?? $match->round?->scheduled_for;
+
+        return $date?->format('\D\a\t\e\: j M Y \a\t H:i') ?? 'Date: TBC';
     }
 
     public function actionUrlFor(User $user, Fixture $fixture): ?string

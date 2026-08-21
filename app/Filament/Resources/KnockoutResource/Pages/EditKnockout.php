@@ -27,35 +27,8 @@ class EditKnockout extends EditRecord
         return [
             $this->getParticipantImportAction(),
             $this->getGenerateBracketAction(),
-            $this->getRandomizeNextRoundAction(),
             Actions\DeleteAction::make(),
         ];
-    }
-
-    protected function getRandomizeNextRoundAction(): Actions\Action
-    {
-        return Actions\Action::make('randomizeNextRound')
-            ->label('Randomise next round')
-            ->icon('heroicon-o-sparkles')
-            ->color('warning')
-            ->requiresConfirmation()
-            ->modalDescription('This will redraw the first unplayed round after the latest completed knockout round.')
-            ->action(function (): void {
-                try {
-                    $round = (new KnockoutBracketBuilder($this->record))->randomizeNextRound();
-                    $this->record->refresh();
-
-                    Notification::make()
-                        ->title("{$round->name} randomised successfully.")
-                        ->success()
-                        ->send();
-                } catch (ValidationException $exception) {
-                    Notification::make()
-                        ->title($exception->getMessage())
-                        ->danger()
-                        ->send();
-                }
-            });
     }
 
     protected function getGenerateBracketAction(): Actions\Action

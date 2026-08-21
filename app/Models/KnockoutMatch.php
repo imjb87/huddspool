@@ -307,6 +307,10 @@ class KnockoutMatch extends Model
 
     public function isDueForSubmission(): bool
     {
+        if ($this->type() === KnockoutType::Singles) {
+            return $this->round?->is_visible ?? false;
+        }
+
         return $this->starts_at?->isPast() || $this->starts_at?->isToday() || false;
     }
 

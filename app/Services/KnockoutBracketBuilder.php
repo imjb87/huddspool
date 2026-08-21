@@ -168,13 +168,11 @@ class KnockoutBracketBuilder
 
             $previousRound = $rounds->get($roundIndex - 1);
 
-            if (! $previousRound || ! $this->roundCanBeRedrawn($previousRound, $round)) {
+            if (! $previousRound || ! $this->roundIsComplete($previousRound) || ! $this->canRandomizeRound($round)) {
                 continue;
             }
 
-            $this->redrawRound($previousRound->matches, $round->matches);
-
-            return $round;
+            return $this->randomizeRound($round);
         }
 
         throw ValidationException::withMessages([
@@ -182,22 +180,146 @@ class KnockoutBracketBuilder
         ]);
     }
 
-    private function roundCanBeRedrawn(KnockoutRound $previousRound, KnockoutRound $round): bool
+    public function randomizeRound(KnockoutRound $round): KnockoutRound
     {
-        if ($previousRound->matches->isEmpty() || $round->matches->isEmpty()) {
+        $round->loadMissing('matches');
+
+        if (! $this->canRandomizeRound($round)) {
+            throw ValidationException::withMessages([
+                'draw' => 'Only incomplete rounds without recorded results can be randomised.',
+            ]);
+        }
+
+        $previousRound = $this->previousRound($round);
+
+        if ($previousRound) {
+            $this->redrawRound($previousRound->matches, $round->matches);
+        } else {
+            $this->redrawFirstRound($round);
+        }
+
+        $round->refresh();
+        $round->load('matches');
+
+        return $round;
+    }
+
+    public function canRandomizeRound(KnockoutRound $round): bool
+    {
+        $round->loadMissing('matches');
+
+        if ((int) $round->knockout_id !== (int) $this->knockout->id || $round->matches->isEmpty()) {
             return false;
         }
 
-        $previousRoundComplete = $previousRound->matches->every(fn (KnockoutMatch $match): bool => $match->completed_at !== null && $match->winner_participant_id !== null
-        );
+        if ($round->matches->contains(fn (KnockoutMatch $match): bool => $this->matchHasRecordedResult($match))) {
+            return false;
+        }
 
-        $roundNotStarted = $round->matches->every(fn (KnockoutMatch $match): bool => $match->completed_at === null
-            && $match->home_score === null
-            && $match->away_score === null
-            && $match->forfeit_participant_id === null
-        );
+        if (! $round->matches->contains(fn (KnockoutMatch $match): bool => $this->matchIsIncomplete($match))) {
+            return false;
+        }
 
-        return $previousRoundComplete && $roundNotStarted;
+        return ! $this->laterRoundsHaveResults($round);
+    }
+
+    private function previousRound(KnockoutRound $round): ?KnockoutRound
+    {
+        return $this->knockout->rounds()
+            ->where('position', '<', $round->position)
+            ->orderByDesc('position')
+            ->with('matches.winner.team')
+            ->first();
+    }
+
+    private function roundIsComplete(KnockoutRound $round): bool
+    {
+        return $round->matches->isNotEmpty()
+            && $round->matches->every(fn (KnockoutMatch $match): bool => $match->completed_at !== null && $match->winner_participant_id !== null);
+    }
+
+    private function matchHasRecordedResult(KnockoutMatch $match): bool
+    {
+        return $match->home_score !== null
+            || $match->away_score !== null
+            || $match->forfeit_participant_id !== null;
+    }
+
+    private function matchIsIncomplete(KnockoutMatch $match): bool
+    {
+        return $match->completed_at === null || $match->winner_participant_id === null;
+    }
+
+    private function laterRoundsHaveResults(KnockoutRound $round): bool
+    {
+        return $this->knockout->rounds()
+            ->where('position', '>', $round->position)
+            ->with('matches')
+            ->get()
+            ->flatMap(fn (KnockoutRound $laterRound): Collection => $laterRound->matches)
+            ->contains(fn (KnockoutMatch $match): bool => $this->matchHasRecordedResult($match));
+    }
+
+    private function redrawFirstRound(KnockoutRound $round): void
+    {
+        $participants = $this->knockout->participants()
+            ->ordered()
+            ->with('team')
+            ->get()
+            ->shuffle()
+            ->values();
+
+        if ($participants->count() > $round->matches->count() * 2) {
+            throw ValidationException::withMessages([
+                'draw' => 'There are not enough match slots for all knockout participants.',
+            ]);
+        }
+
+        DB::transaction(function () use ($participants, $round): void {
+            foreach ($round->matches as $matchIndex => $match) {
+                $homeParticipant = $participants->get($matchIndex * 2);
+                $awayParticipant = $participants->get(($matchIndex * 2) + 1);
+
+                $match->fill([
+                    'home_participant_id' => $homeParticipant?->id,
+                    'away_participant_id' => $awayParticipant?->id,
+                    'winner_participant_id' => null,
+                    'home_score' => null,
+                    'away_score' => null,
+                    'forfeit_participant_id' => null,
+                    'forfeit_reason' => null,
+                    'reported_by_id' => null,
+                    'reported_at' => null,
+                    'report_reason' => null,
+                    'venue_id' => $this->venueIdForHomeParticipant($round, $homeParticipant?->id, $match->venue_id),
+                ]);
+                $match->save();
+            }
+        });
+    }
+
+    private function venueIdForHomeParticipant(KnockoutRound $round, ?int $participantId, ?int $fallback): ?int
+    {
+        if ($this->knockout->type !== KnockoutType::Team || $this->isNeutralRound($round)) {
+            return $fallback;
+        }
+
+        if (! $participantId) {
+            return null;
+        }
+
+        $participant = KnockoutParticipant::query()
+            ->with('team')
+            ->find($participantId);
+
+        return $participant?->team?->venue_id;
+    }
+
+    private function isNeutralRound(KnockoutRound $round): bool
+    {
+        $roundName = strtolower($round->name);
+
+        return str_contains($roundName, 'semi') || str_contains($roundName, 'final');
     }
 
     /**
@@ -206,21 +328,17 @@ class KnockoutBracketBuilder
      */
     private function redrawRound(Collection $previousMatches, Collection $roundMatches): void
     {
-        $winnerIds = $previousMatches
-            ->pluck('winner_participant_id')
-            ->filter()
-            ->values();
+        $previousMatches = $previousMatches->values();
 
-        if ($winnerIds->count() > ($roundMatches->count() * 2)) {
+        if ($previousMatches->count() > ($roundMatches->count() * 2)) {
             throw ValidationException::withMessages([
-                'draw' => 'There are not enough match slots for the completed winners.',
+                'draw' => 'There are not enough match slots for the previous round entries.',
             ]);
         }
 
-        $shuffledWinnerIds = $winnerIds->shuffle()->values();
-        $previousMatchesByWinner = $previousMatches->keyBy('winner_participant_id');
+        $shuffledPreviousMatches = $previousMatches->shuffle()->values();
 
-        DB::transaction(function () use ($previousMatches, $roundMatches, $shuffledWinnerIds, $previousMatchesByWinner): void {
+        DB::transaction(function () use ($previousMatches, $roundMatches, $shuffledPreviousMatches): void {
             KnockoutMatch::query()
                 ->whereKey($previousMatches->modelKeys())
                 ->update([
@@ -229,25 +347,28 @@ class KnockoutBracketBuilder
                 ]);
 
             foreach ($roundMatches as $matchIndex => $match) {
-                $homeParticipantId = $shuffledWinnerIds->get($matchIndex * 2);
-                $awayParticipantId = $shuffledWinnerIds->get(($matchIndex * 2) + 1);
+                $homePreviousMatch = $shuffledPreviousMatches->get($matchIndex * 2);
+                $awayPreviousMatch = $shuffledPreviousMatches->get(($matchIndex * 2) + 1);
+                $homeParticipantId = $homePreviousMatch?->winner_participant_id;
+                $awayParticipantId = $awayPreviousMatch?->winner_participant_id;
 
-                KnockoutMatch::query()
-                    ->whereKey($match->id)
-                    ->update([
-                        'home_participant_id' => $homeParticipantId,
-                        'away_participant_id' => $awayParticipantId,
-                        'winner_participant_id' => null,
-                        'completed_at' => null,
-                    ]);
+                $match->fill([
+                    'home_participant_id' => $homeParticipantId,
+                    'away_participant_id' => $awayParticipantId,
+                    'winner_participant_id' => null,
+                    'home_score' => null,
+                    'away_score' => null,
+                    'forfeit_participant_id' => null,
+                    'forfeit_reason' => null,
+                    'reported_by_id' => null,
+                    'reported_at' => null,
+                    'report_reason' => null,
+                    'venue_id' => $this->venueIdForHomeParticipant($match->round, $homeParticipantId, $match->venue_id),
+                ]);
+                $match->suppressAutoBye();
+                $match->save();
 
-                foreach ([$homeParticipantId, $awayParticipantId] as $slotIndex => $winnerId) {
-                    if (! $winnerId) {
-                        continue;
-                    }
-
-                    $previousMatch = $previousMatchesByWinner->get($winnerId);
-
+                foreach ([$homePreviousMatch, $awayPreviousMatch] as $slotIndex => $previousMatch) {
                     if (! $previousMatch) {
                         continue;
                     }

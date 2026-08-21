@@ -54,6 +54,18 @@ class KnockoutResultAuthorizationTest extends TestCase
             ->assertSeeLivewire(SubmitResult::class);
     }
 
+    public function test_singles_participant_can_open_a_published_submission_before_the_round_deadline(): void
+    {
+        ['match' => $match, 'homePlayer' => $homePlayer] = $this->createSinglesMatchContext();
+
+        $match->update(['starts_at' => now()->addDay()]);
+
+        $this->actingAs($homePlayer)
+            ->get(route('knockout.matches.submit', $match))
+            ->assertOk()
+            ->assertSeeLivewire(SubmitResult::class);
+    }
+
     public function test_unrelated_player_receives_forbidden_for_singles_knockout_submission_route(): void
     {
         ['match' => $match] = $this->createSinglesMatchContext();

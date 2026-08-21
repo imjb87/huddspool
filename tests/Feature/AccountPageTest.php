@@ -526,7 +526,54 @@ class AccountPageTest extends TestCase
             ->assertSee(route('knockout.matches.submit', $doublesMatch), false);
     }
 
-    public function test_account_page_still_does_not_render_a_result_prompt_before_knockouts_are_due(): void
+    public function test_account_page_still_does_not_render_a_result_prompt_before_doubles_knockouts_are_due(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $user = User::factory()->create(['role' => UserRole::Player->value]);
+
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Doubles Cup',
+            'type' => KnockoutType::Doubles,
+        ]);
+
+        $round = KnockoutRound::query()->create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'is_visible' => true,
+        ]);
+
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $user->id,
+            'player_two_id' => User::factory()->create()->id,
+        ]);
+
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => User::factory()->create()->id,
+            'player_two_id' => User::factory()->create()->id,
+        ]);
+
+        $futureMatch = KnockoutMatch::query()->create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+            'starts_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertDontSee('data-account-action-centre', false)
+            ->assertDontSee(route('knockout.matches.submit', $futureMatch), false);
+    }
+
+    public function test_account_page_prompts_for_a_published_singles_round_before_its_deadline(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $user = User::factory()->create(['role' => UserRole::Player->value]);
@@ -537,10 +584,13 @@ class AccountPageTest extends TestCase
             'type' => KnockoutType::Singles,
         ]);
 
+        $deadline = now()->addDay();
+
         $round = KnockoutRound::query()->create([
             'knockout_id' => $knockout->id,
             'name' => 'Quarter-finals',
             'position' => 1,
+            'scheduled_for' => $deadline,
             'is_visible' => true,
         ]);
 
@@ -554,21 +604,67 @@ class AccountPageTest extends TestCase
             'player_one_id' => User::factory()->create()->id,
         ]);
 
-        $futureMatch = KnockoutMatch::query()->create([
+        $match = KnockoutMatch::query()->create([
             'knockout_id' => $knockout->id,
             'knockout_round_id' => $round->id,
             'position' => 1,
             'home_participant_id' => $homeParticipant->id,
             'away_participant_id' => $awayParticipant->id,
             'best_of' => 5,
-            'starts_at' => now()->addDay(),
+            'starts_at' => $deadline->copy()->setTime(20, 15),
         ]);
 
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-action-centre', false)
-            ->assertDontSee(route('knockout.matches.submit', $futureMatch), false);
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('1 knockout result needs submitting')
+            ->assertSeeText('Deadline: '.$deadline->format('j M Y'))
+            ->assertSee(route('knockout.matches.submit', $match), false);
+    }
+
+    public function test_account_prompt_uses_the_actual_non_singles_knockout_time(): void
+    {
+        $season = Season::factory()->create(['is_open' => true]);
+        $user = User::factory()->create(['role' => UserRole::Player->value]);
+        $knockout = Knockout::query()->create([
+            'season_id' => $season->id,
+            'name' => 'Doubles Cup',
+            'type' => KnockoutType::Doubles,
+        ]);
+        $round = KnockoutRound::query()->create([
+            'knockout_id' => $knockout->id,
+            'name' => 'Round 1',
+            'position' => 1,
+            'is_visible' => true,
+        ]);
+        $homeParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => $user->id,
+            'player_two_id' => User::factory()->create()->id,
+        ]);
+        $awayParticipant = KnockoutParticipant::query()->create([
+            'knockout_id' => $knockout->id,
+            'player_one_id' => User::factory()->create()->id,
+            'player_two_id' => User::factory()->create()->id,
+        ]);
+        $startsAt = now()->subDay()->setTime(20, 15);
+
+        $match = KnockoutMatch::query()->create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+            'starts_at' => $startsAt,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSeeText('Date: '.$startsAt->format('j M Y \a\t H:i'))
+            ->assertSee(route('knockout.matches.submit', $match), false);
     }
 
     public function test_account_page_renders_combined_league_and_knockout_result_prompt(): void
