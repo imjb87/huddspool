@@ -314,15 +314,13 @@ class MatchesRelationManager extends RelationManager
                     ->rows(2)
                     ->maxLength(1000)
                     ->visible(fn (callable $get) => filled($get('forfeit_participant_id')))
-                    ->required(fn (callable $get) => filled($get('forfeit_participant_id')))
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('report_reason')
                     ->label('Why was this result submitted or changed?')
                     ->rows(2)
                     ->maxLength(1000)
-                    ->helperText('Required in admin when entering or editing a result.')
+                    ->helperText('Optional note about why the result was entered or changed.')
                     ->visible(fn (callable $get) => filled($get('home_score')) || filled($get('away_score')) || filled($get('forfeit_participant_id')))
-                    ->required(fn (callable $get) => filled($get('home_score')) || filled($get('away_score')) || filled($get('forfeit_participant_id')))
                     ->columnSpanFull(),
             ];
         });

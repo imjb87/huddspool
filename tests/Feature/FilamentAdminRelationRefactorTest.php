@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\RoleName;
 use App\Filament\Resources\KnockoutResource\Pages\EditKnockout;
+use App\Filament\Resources\KnockoutResource\RelationManagers\MatchesRelationManager;
 use App\Filament\Resources\KnockoutResource\RelationManagers\RoundsRelationManager;
 use App\Filament\Resources\SectionResource\Pages\PreviewFixtures;
 use App\Filament\Resources\TeamResource\Pages\EditTeam;
@@ -68,6 +69,85 @@ class FilamentAdminRelationRefactorTest extends TestCase
             ->values();
 
         $this->assertEqualsCanonicalizing($participants->pluck('id')->all(), $redrawnParticipants->all());
+    }
+
+    public function test_knockout_match_admin_reasons_are_optional_for_scores_and_forfeits(): void
+    {
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+        $knockout = Knockout::factory()->create([
+            'type' => KnockoutType::Doubles,
+            'best_of' => 7,
+        ]);
+        $round = $knockout->rounds()->create([
+            'name' => 'Quarter-finals',
+            'position' => 1,
+            'is_visible' => true,
+        ]);
+        $homeParticipant = $knockout->participants()->create([
+            'label' => 'Home Pair',
+        ]);
+        $awayParticipant = $knockout->participants()->create([
+            'label' => 'Away Pair',
+        ]);
+        $scoreMatch = $knockout->matches()->create([
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+        ]);
+        $forfeitMatch = $knockout->matches()->create([
+            'knockout_round_id' => $round->id,
+            'position' => 2,
+            'home_participant_id' => $homeParticipant->id,
+            'away_participant_id' => $awayParticipant->id,
+            'best_of' => 7,
+        ]);
+
+        Filament::setCurrentPanel('admin');
+
+        Livewire::actingAs($admin)
+            ->test(MatchesRelationManager::class, [
+                'ownerRecord' => $knockout,
+                'pageClass' => EditKnockout::class,
+            ])
+            ->mountTableAction('edit', (string) $scoreMatch->getKey())
+            ->setTableActionData([
+                'home_score' => 4,
+                'away_score' => 0,
+                'report_reason' => null,
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $scoreMatch->refresh();
+
+        $this->assertSame(4, $scoreMatch->home_score);
+        $this->assertSame(0, $scoreMatch->away_score);
+        $this->assertSame('Updated in admin.', $scoreMatch->report_reason);
+
+        Livewire::actingAs($admin)
+            ->test(MatchesRelationManager::class, [
+                'ownerRecord' => $knockout,
+                'pageClass' => EditKnockout::class,
+            ])
+            ->mountTableAction('edit', (string) $forfeitMatch->getKey())
+            ->setTableActionData([
+                'forfeit_participant_id' => $homeParticipant->id,
+                'forfeit_reason' => null,
+                'report_reason' => null,
+            ])
+            ->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        $forfeitMatch->refresh();
+
+        $this->assertSame($homeParticipant->id, $forfeitMatch->forfeit_participant_id);
+        $this->assertSame($awayParticipant->id, $forfeitMatch->winner_participant_id);
+        $this->assertNull($forfeitMatch->forfeit_reason);
+        $this->assertSame('Updated in admin.', $forfeitMatch->report_reason);
     }
 
     public function test_team_players_relation_manager_edit_action_uses_a_slide_over_with_avatar_support(): void

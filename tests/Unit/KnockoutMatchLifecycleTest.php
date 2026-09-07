@@ -87,6 +87,52 @@ class KnockoutMatchLifecycleTest extends TestCase
         Carbon::setTestNow();
     }
 
+    public function test_visible_doubles_round_is_due_before_the_scheduled_match_date(): void
+    {
+        ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Doubles, 7);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'best_of' => 7,
+            'starts_at' => now()->addWeek(),
+        ]);
+
+        $this->assertTrue($match->isDueForSubmission());
+    }
+
+    public function test_hidden_doubles_round_is_not_due_before_the_scheduled_match_date(): void
+    {
+        ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Doubles, 7);
+        $round->update(['is_visible' => false]);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'best_of' => 7,
+            'starts_at' => now()->addWeek(),
+        ]);
+
+        $this->assertFalse($match->isDueForSubmission());
+    }
+
+    public function test_visible_team_round_still_waits_for_the_scheduled_match_date(): void
+    {
+        ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Team, 11);
+
+        $match = KnockoutMatch::create([
+            'knockout_id' => $knockout->id,
+            'knockout_round_id' => $round->id,
+            'position' => 1,
+            'best_of' => 11,
+            'starts_at' => now()->addWeek(),
+        ]);
+
+        $this->assertFalse($match->isDueForSubmission());
+    }
+
     public function test_team_knockout_rejects_an_away_team_venue_assignment(): void
     {
         ['knockout' => $knockout, 'round' => $round] = $this->createKnockoutContext(KnockoutType::Team, 11, 'Quarter Final');

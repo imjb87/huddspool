@@ -526,7 +526,7 @@ class AccountPageTest extends TestCase
             ->assertSee(route('knockout.matches.submit', $doublesMatch), false);
     }
 
-    public function test_account_page_still_does_not_render_a_result_prompt_before_doubles_knockouts_are_due(): void
+    public function test_account_page_prompts_for_a_visible_doubles_round_before_the_match_date(): void
     {
         $season = Season::factory()->create(['is_open' => true]);
         $user = User::factory()->create(['role' => UserRole::Player->value]);
@@ -569,8 +569,9 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertDontSee('data-account-action-centre', false)
-            ->assertDontSee(route('knockout.matches.submit', $futureMatch), false);
+            ->assertSee('data-account-action-centre', false)
+            ->assertSeeText('1 knockout result needs submitting')
+            ->assertSee(route('knockout.matches.submit', $futureMatch), false);
     }
 
     public function test_account_page_prompts_for_a_published_singles_round_before_its_deadline(): void
