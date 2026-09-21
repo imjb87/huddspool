@@ -178,6 +178,7 @@ paths:
                   - create_section
                   - update_section
                   - reschedule_fixture
+                  - set_fixture_venue
                   - correct_result
                   - create_knockout
                   - update_knockout
@@ -309,7 +310,7 @@ paths:
                       oneOf:
                       - type: integer
                       - type: 'null'
-                      description: 'Used by: set_team_venue. Required for: set_team_venue.'
+                      description: 'Used by: set_team_venue, set_fixture_venue. Required for: set_team_venue, set_fixture_venue.'
                     expected_draft_version:
                       type: integer
                       minimum: 0
@@ -322,15 +323,15 @@ paths:
                       type: string
                       format: date-time
                       description: 'Used by: update_player, update_team, update_venue,
-                        update_season, update_section, update_knockout, update_knockout_participant,
+                        update_season, update_section, set_fixture_venue, update_knockout, update_knockout_participant,
                         update_knockout_round, update_support_ticket, update_content,
                         delete_record, replace_section_team. Required for: update_player, update_team, update_venue,
-                        update_season, update_section, update_knockout, update_knockout_participant,
+                        update_season, update_section, set_fixture_venue, update_knockout, update_knockout_participant,
                         update_knockout_round, update_support_ticket, update_content,
                         delete_record, replace_section_team.'
                     fixture:
                       type: integer
-                      description: 'Used by: reschedule_fixture. Required for: reschedule_fixture.'
+                      description: 'Used by: reschedule_fixture, set_fixture_venue. Required for: reschedule_fixture, set_fixture_venue.'
                     fixture_date:
                       type: string
                       format: date
@@ -439,13 +440,16 @@ paths:
                         format: date-time
                       - type: 'null'
                       description: 'Used by: update_knockout, create_content, update_content.'
+                    update_future_home_fixtures:
+                      type: boolean
+                      description: 'Used by: set_team_venue. When true, update future unplayed home fixtures that still use the team''s previous venue.'
                     reason:
                       type: string
                       minLength: 5
                       maxLength: 500
-                      description: 'Used by: correct_result, record_knockout_result,
+                      description: 'Used by: set_fixture_venue, correct_result, record_knockout_result,
                         record_knockout_forfeit, clear_knockout_result, create_expulsion,
-                        delete_record, replace_section_team. Required for: correct_result, record_knockout_result,
+                        delete_record, replace_section_team. Required for: set_fixture_venue, correct_result, record_knockout_result,
                         record_knockout_forfeit, clear_knockout_result, create_expulsion,
                         delete_record, replace_section_team.'
                     replacement_team_id:
@@ -812,7 +816,9 @@ components:
           oneOf:
           - type: integer
           - type: 'null'
-      description: Change a team's venue after checking its current venue.
+        update_future_home_fixtures:
+          type: boolean
+      description: Change a team's venue after checking its current venue, with optional propagation to future unplayed home fixtures that still use the previous venue.
     CreateVenueArguments:
       type: object
       required:
@@ -1024,6 +1030,31 @@ components:
           type: string
           format: date
       description: Reschedule a fixture after checking its current date.
+    SetFixtureVenueArguments:
+      type: object
+      required:
+      - fixture
+      - venue_id
+      - expected_current_venue_id
+      - expected_updated_at
+      - reason
+      properties:
+        fixture:
+          type: integer
+        venue_id:
+          type: integer
+        expected_current_venue_id:
+          oneOf:
+          - type: integer
+          - type: 'null'
+        expected_updated_at:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      description: Change a fixture venue after checking its current venue and updated timestamp.
     CorrectResultArguments:
       type: object
       required:

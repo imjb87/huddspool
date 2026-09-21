@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Gpt\ContentAdministrationController;
 use App\Http\Controllers\Api\Gpt\DashboardController;
 use App\Http\Controllers\Api\Gpt\DeleteAdministrationRecordController;
 use App\Http\Controllers\Api\Gpt\FixtureDateController;
+use App\Http\Controllers\Api\Gpt\FixtureVenueController;
 use App\Http\Controllers\Api\Gpt\KnockoutAdministrationController;
 use App\Http\Controllers\Api\Gpt\LeagueStructureController;
 use App\Http\Controllers\Api\Gpt\OperationalAdministrationController;
@@ -56,6 +57,7 @@ Route::prefix('gpt')
             Route::post('/players/{player}/team', PlayerTeamController::class)->name('api.gpt.players.team.update');
             Route::post('/players/{player}/password-reset', PlayerPasswordResetController::class)->name('api.gpt.players.password-reset');
             Route::post('/fixtures/{fixture}/date', FixtureDateController::class)->name('api.gpt.fixtures.date.update');
+            Route::post('/fixtures/{fixture}/venue', FixtureVenueController::class)->name('api.gpt.fixtures.venue.update');
             Route::post('/results/{result}/correction', ResultCorrectionController::class)->name('api.gpt.results.correction');
             Route::post('/teams', [LeagueStructureController::class, 'storeTeam'])->name('api.gpt.teams.store');
             Route::patch('/teams/{team}', [LeagueStructureController::class, 'updateTeam'])->name('api.gpt.teams.update');

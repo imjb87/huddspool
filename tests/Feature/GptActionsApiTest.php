@@ -326,20 +326,103 @@ class GptActionsApiTest extends TestCase
     public function test_administrator_can_change_a_team_venue_with_an_audit_record(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
-        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        $season = Season::factory()->create(['is_open' => true]);
+        $ruleset = Ruleset::factory()->create();
+        $section = Section::factory()->create([
+            'season_id' => $season->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $team = Team::factory()->create(['name' => 'Black Horse Bandits']);
+        $opponent = Team::factory()->create();
+        $otherTeam = Team::factory()->create();
         $oldVenue = Venue::factory()->create();
         $newVenue = Venue::factory()->create();
+        $manualVenue = Venue::factory()->create();
         $team->update(['venue_id' => $oldVenue->id]);
+        $section->teams()->attach($team, ['sort' => 1, 'deducted' => 0]);
+        $section->teams()->attach($opponent, ['sort' => 2, 'deducted' => 0]);
+        $section->teams()->attach($otherTeam, ['sort' => 3, 'deducted' => 0]);
+        $qualifyingFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $awayFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $opponent->id,
+            'away_team_id' => $team->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $completedFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeeks(2)->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        Result::factory()->create([
+            'fixture_id' => $completedFixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'away_team_id' => $opponent->id,
+            'away_team_name' => $opponent->name,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+        ]);
+        $historicalFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->subWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $otherTeamFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $otherTeam->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $manualOverrideFixture = Fixture::factory()->create([
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'home_team_id' => $team->id,
+            'away_team_id' => $otherTeam->id,
+            'fixture_date' => now()->addWeeks(3)->toDateString(),
+            'venue_id' => $manualVenue->id,
+        ]);
         Passport::actingAs($admin, ['gpt:write']);
 
         $this->postJson(route('api.gpt.teams.venue.update', $team), [
             'venue_id' => $newVenue->id,
             'expected_current_venue_id' => $oldVenue->id,
+            'update_future_home_fixtures' => true,
         ])->assertOk()
             ->assertJsonPath('change.before.venue_id', $oldVenue->id)
-            ->assertJsonPath('change.after.venue_id', $newVenue->id);
+            ->assertJsonPath('change.after.venue_id', $newVenue->id)
+            ->assertJsonPath('updated_fixture_count', 1);
 
         $this->assertSame($newVenue->id, $team->refresh()->venue_id);
+        $this->assertSame($newVenue->id, $qualifyingFixture->refresh()->venue_id);
+        $this->assertSame($oldVenue->id, $awayFixture->refresh()->venue_id);
+        $this->assertSame($oldVenue->id, $completedFixture->refresh()->venue_id);
+        $this->assertSame($oldVenue->id, $historicalFixture->refresh()->venue_id);
+        $this->assertSame($oldVenue->id, $otherTeamFixture->refresh()->venue_id);
+        $this->assertSame($manualVenue->id, $manualOverrideFixture->refresh()->venue_id);
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_team_venue', 'subject_id' => $team->id]);
     }
 
@@ -387,6 +470,30 @@ class GptActionsApiTest extends TestCase
         $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_team_venue', 'subject_id' => $team->id]);
     }
 
+    public function test_team_venue_changes_do_not_propagate_to_fixtures_without_the_explicit_opt_in_flag(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $team = $this->createOpenSeasonTeam('Black Horse Bandits');
+        $opponent = Team::factory()->create();
+        $oldVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $team->update(['venue_id' => $oldVenue->id]);
+        $fixture = Fixture::factory()->create([
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.teams.venue.update', $team), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+        ])->assertOk()->assertJsonPath('updated_fixture_count', 0);
+
+        $this->assertSame($oldVenue->id, $fixture->refresh()->venue_id);
+    }
+
     public function test_administrator_can_reschedule_a_fixture_with_a_stale_state_guard(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
@@ -401,6 +508,187 @@ class GptActionsApiTest extends TestCase
 
         $this->assertSame('2026-08-11', $fixture->refresh()->fixture_date->toDateString());
         $this->assertDatabaseHas(GptActionAudit::class, ['action' => 'update_fixture_date', 'subject_id' => $fixture->id]);
+    }
+
+    public function test_administrator_can_change_an_individual_fixture_venue_with_audit_and_stale_state_guards(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $oldVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $homeTeam = Team::factory()->create(['venue_id' => $oldVenue->id]);
+        $awayTeam = Team::factory()->create();
+        $fixture = Fixture::factory()->create([
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'venue_id' => $oldVenue->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+        ]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $response = $this->postJson(route('api.gpt.command'), [
+            'command' => 'set_fixture_venue',
+            'arguments' => [
+                'fixture' => $fixture->id,
+                'venue_id' => $newVenue->id,
+                'expected_current_venue_id' => $oldVenue->id,
+                'expected_updated_at' => $fixture->updated_at->toAtomString(),
+                'reason' => 'Venue booking updated by the venue manager.',
+            ],
+        ])->assertOk()
+            ->assertJsonPath('fixture.id', $fixture->id)
+            ->assertJsonPath('fixture.venue.id', $newVenue->id)
+            ->assertJsonPath('change.before.venue_id', $oldVenue->id)
+            ->assertJsonPath('change.after.venue_id', $newVenue->id)
+            ->assertJsonPath('change.after.reason', 'Venue booking updated by the venue manager.');
+
+        $fixture->refresh();
+        $this->assertSame($newVenue->id, $fixture->venue_id);
+        $this->assertDatabaseHas(GptActionAudit::class, [
+            'action' => 'update_fixture_venue',
+            'subject_id' => $fixture->id,
+        ]);
+        $this->assertSame(
+            GptActionAudit::query()->where('action', 'update_fixture_venue')->where('subject_id', $fixture->id)->firstOrFail()->id,
+            $response->json('audit_id'),
+        );
+    }
+
+    public function test_fixture_venue_command_rejects_invalid_identifiers_and_stale_fixture_state(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $oldVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $fixture = Fixture::factory()->create([
+            'venue_id' => $oldVenue->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+        ]);
+        Passport::actingAs($admin, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', ['fixture' => 999999]), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertNotFound();
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
+            'venue_id' => 999999,
+            'expected_current_venue_id' => $oldVenue->id,
+            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertUnprocessable()->assertJsonValidationErrors('venue_id');
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => null,
+            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertUnprocessable()->assertJsonValidationErrors('expected_current_venue_id');
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+            'expected_updated_at' => $fixture->updated_at->copy()->subMinute()->toAtomString(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertUnprocessable()->assertJsonValidationErrors('expected_updated_at');
+    }
+
+    public function test_non_administrator_cannot_change_a_fixture_venue(): void
+    {
+        $user = User::factory()->create();
+        $oldVenue = Venue::factory()->create();
+        $newVenue = Venue::factory()->create();
+        $fixture = Fixture::factory()->create(['venue_id' => $oldVenue->id]);
+        Passport::actingAs($user, ['gpt:write']);
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
+            'venue_id' => $newVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertForbidden();
+
+        $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_fixture_venue', 'subject_id' => $fixture->id]);
+    }
+
+    public function test_fixture_administration_record_includes_the_current_venue_result_state_and_updated_at(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $homeTeam = Team::factory()->create();
+        $awayTeam = Team::factory()->create();
+        $venue = Venue::factory()->create();
+        $fixture = Fixture::factory()->create([
+            'home_team_id' => $homeTeam->id,
+            'away_team_id' => $awayTeam->id,
+            'venue_id' => $venue->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+        ]);
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'section_id' => $fixture->section_id,
+            'ruleset_id' => $fixture->ruleset_id,
+        ]);
+        Passport::actingAs($admin, ['gpt:read']);
+
+        $this->getJson(route('api.gpt.resources.show', [
+            'resource' => 'fixtures',
+            'record' => $fixture->id,
+        ]))->assertOk()
+            ->assertJsonPath('record.id', $fixture->id)
+            ->assertJsonPath('record.homeTeam.id', $homeTeam->id)
+            ->assertJsonPath('record.awayTeam.id', $awayTeam->id)
+            ->assertJsonPath('record.venue.id', $venue->id)
+            ->assertJsonPath('record.result.id', $result->id)
+            ->assertJsonStructure(['record' => ['updated_at']]);
+    }
+
+    public function test_migration_corrects_the_moldgreen_lib_bandits_fixture_regression_without_touching_exceptions(): void
+    {
+        $oldVenue = Venue::factory()->create([
+            'id' => 44,
+            'name' => 'The Black Horse',
+        ]);
+        $newVenue = Venue::factory()->create([
+            'id' => 36,
+            'name' => 'Moldgreen Liberal Club',
+        ]);
+        $team = Team::factory()->create([
+            'id' => 73,
+            'name' => 'Moldgreen Lib Bandits',
+            'venue_id' => $newVenue->id,
+        ]);
+        $opponent = Team::factory()->create(['name' => "The Junction (K'Burton)"]);
+        $futureFixture = Fixture::factory()->create([
+            'id' => 16240,
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $historicalFixture = Fixture::factory()->create([
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->subWeek()->toDateString(),
+            'venue_id' => $oldVenue->id,
+        ]);
+        $manualFixture = Fixture::factory()->create([
+            'home_team_id' => $team->id,
+            'away_team_id' => $opponent->id,
+            'fixture_date' => now()->addWeeks(2)->toDateString(),
+            'venue_id' => Venue::factory()->create()->id,
+        ]);
+
+        $migration = require base_path('database/migrations/2026_09_21_190000_propagate_moldgreen_lib_bandits_venue_change.php');
+        $migration->up();
+        $migration->up();
+
+        $this->assertSame($newVenue->id, $futureFixture->refresh()->venue_id);
+        $this->assertSame($oldVenue->id, $historicalFixture->refresh()->venue_id);
+        $this->assertSame($manualFixture->venue_id, $manualFixture->fresh()->venue_id);
     }
 
     public function test_administrator_can_correct_a_complete_result_and_its_frames(): void

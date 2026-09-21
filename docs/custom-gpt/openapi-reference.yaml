@@ -296,6 +296,7 @@ paths:
                   oneOf:
                     - { type: integer }
                     - { type: 'null' }
+                update_future_home_fixtures: { type: boolean }
       responses:
         '200': { description: Venue updated and audit recorded }
         '422': { description: The inspected state is stale or input is invalid }
@@ -322,6 +323,36 @@ paths:
                 expected_current_fixture_date: { type: string, format: date }
       responses:
         '200': { description: Fixture rescheduled and audit recorded }
+        '422': { description: The inspected state is stale or input is invalid }
+  /fixtures/{fixture}/venue:
+    post:
+      operationId: updateFixtureVenue
+      summary: Change a fixture venue after checking its current venue.
+      description: This write is atomic and audited. Inspect the fixture and destination venue first, confirm the change, then supply the stale-state guards and reason.
+      x-openai-isConsequential: true
+      parameters:
+        - name: fixture
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [venue_id, expected_current_venue_id, expected_updated_at, reason]
+              properties:
+                venue_id: { type: integer }
+                expected_current_venue_id:
+                  oneOf:
+                    - { type: integer }
+                    - { type: 'null' }
+                expected_updated_at: { type: string, format: date-time }
+                reason: { type: string, minLength: 5, maxLength: 500 }
+      responses:
+        '200': { description: Fixture venue updated and audit recorded }
+        '404': { description: Fixture not found }
         '422': { description: The inspected state is stale or input is invalid }
   /results/{result}/correction:
     post:

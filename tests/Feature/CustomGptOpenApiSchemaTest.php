@@ -78,6 +78,19 @@ class CustomGptOpenApiSchemaTest extends TestCase
         $this->assertStringContainsString('Required for: move_player', data_get($arguments, 'properties.expected_current_team_id.description'));
     }
 
+    public function test_fixture_venue_commands_document_their_state_guards_and_opt_in_propagation_flag(): void
+    {
+        $schema = $this->schema();
+        $arguments = data_get($schema, 'paths./command.post.requestBody.content.application/json.schema.properties.arguments');
+
+        $this->assertSame('boolean', data_get($arguments, 'properties.update_future_home_fixtures.type'));
+        $this->assertStringContainsString('set_team_venue', data_get($arguments, 'properties.update_future_home_fixtures.description'));
+        $this->assertStringContainsString('set_fixture_venue', data_get($arguments, 'properties.fixture.description'));
+        $this->assertStringContainsString('set_fixture_venue', data_get($arguments, 'properties.expected_current_venue_id.description'));
+        $this->assertStringContainsString('set_fixture_venue', data_get($arguments, 'properties.expected_updated_at.description'));
+        $this->assertStringContainsString('set_fixture_venue', data_get($arguments, 'properties.reason.description'));
+    }
+
     /**
      * @return array<string, mixed>
      */
