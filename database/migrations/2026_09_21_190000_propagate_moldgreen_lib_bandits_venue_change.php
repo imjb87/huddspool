@@ -2,8 +2,8 @@
 
 use App\Models\Team;
 use App\Models\Venue;
-use App\Services\PropagateTeamVenueToFixtures;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -21,7 +21,17 @@ return new class extends Migration
                 return;
             }
 
-            app(PropagateTeamVenueToFixtures::class)->handle($team, 44, 36);
+            DB::table('fixtures')
+                ->where('home_team_id', $team->id)
+                ->where('fixture_date', '>=', Carbon::now()->startOfDay())
+                ->where('venue_id', 44)
+                ->whereNotExists(function ($query): void {
+                    $query
+                        ->select(DB::raw(1))
+                        ->from('results')
+                        ->whereColumn('results.fixture_id', 'fixtures.id');
+                })
+                ->update(['venue_id' => 36]);
         });
     }
 

@@ -17,7 +17,7 @@ class UpdateFixtureVenueRequest extends FormRequest
         return [
             'venue_id' => ['required', 'integer', Rule::exists('venues', 'id')->whereNull('deleted_at')],
             'expected_current_venue_id' => ['present', 'nullable', 'integer'],
-            'expected_updated_at' => ['required', 'date'],
+            'expected_updated_at' => ['required', 'date', 'regex:/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$/'],
             'reason' => ['required', 'string', 'min:5', 'max:500'],
         ];
     }

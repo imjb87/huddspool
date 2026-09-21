@@ -324,6 +324,7 @@ paths:
       responses:
         '200': { description: Fixture rescheduled and audit recorded }
         '422': { description: The inspected state is stale or input is invalid }
+
   /fixtures/{fixture}/venue:
     post:
       operationId: updateFixtureVenue

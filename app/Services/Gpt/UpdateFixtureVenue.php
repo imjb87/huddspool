@@ -17,11 +17,12 @@ class UpdateFixtureVenue
         Fixture $fixture,
         Venue $venue,
         ?int $expectedVenueId,
-        Carbon $expectedUpdatedAt,
+        string $expectedUpdatedAt,
         string $reason,
         ?string $ipAddress,
         ?string $userAgent,
-    ): GptActionAudit {
+    ): GptActionAudit
+    {
         return DB::transaction(function () use ($administrator, $fixture, $venue, $expectedVenueId, $expectedUpdatedAt, $reason, $ipAddress, $userAgent): GptActionAudit {
             $lockedFixture = Fixture::query()->with('venue')->lockForUpdate()->findOrFail($fixture->id);
 
@@ -29,7 +30,7 @@ class UpdateFixtureVenue
                 throw ValidationException::withMessages(['expected_current_venue_id' => 'The fixture venue changed after it was inspected. Inspect the fixture again before retrying.']);
             }
 
-            if (! $lockedFixture->updated_at?->equalTo($expectedUpdatedAt)) {
+            if ($lockedFixture->updated_at?->toJSON() !== Carbon::parse($expectedUpdatedAt)->toJSON()) {
                 throw ValidationException::withMessages(['expected_updated_at' => 'The fixture changed after it was inspected. Inspect the fixture again before retrying.']);
             }
 
@@ -40,8 +41,7 @@ class UpdateFixtureVenue
             $before = [
                 'venue_id' => $lockedFixture->venue_id,
                 'venue_name' => $lockedFixture->venue?->name,
-                'updated_at' => $lockedFixture->updated_at?->toAtomString(),
-                'reason' => $reason,
+                'updated_at' => $lockedFixture->attributesToArray()['updated_at'] ?? null,
             ];
 
             $lockedFixture->update(['venue_id' => $venue->id]);
@@ -56,7 +56,7 @@ class UpdateFixtureVenue
                 'after' => [
                     'venue_id' => $lockedFixture->venue_id,
                     'venue_name' => $lockedFixture->venue?->name,
-                    'updated_at' => $lockedFixture->updated_at?->toAtomString(),
+                    'updated_at' => $lockedFixture->attributesToArray()['updated_at'] ?? null,
                     'reason' => $reason,
                 ],
                 'ip_address' => $ipAddress,

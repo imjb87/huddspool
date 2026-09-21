@@ -38,9 +38,9 @@ class UpdateTeamVenue
             $before = ['venue_id' => $lockedTeam->venue_id, 'venue_name' => $lockedTeam->venue?->name];
             $previousVenueId = $lockedTeam->venue_id;
             $lockedTeam->update(['venue_id' => $venue->id]);
-            $updatedFixtures = $updateFutureHomeFixtures
+            $updatedFixtureCount = $updateFutureHomeFixtures
                 ? $this->propagateTeamVenueToFixtures->handle($lockedTeam, $previousVenueId, $venue->id)
-                : collect();
+                : 0;
 
             return GptActionAudit::query()->create([
                 'administrator_id' => $administrator->id,
@@ -51,7 +51,7 @@ class UpdateTeamVenue
                 'after' => [
                     'venue_id' => $venue->id,
                     'venue_name' => $venue->name,
-                    'updated_fixture_count' => $updatedFixtures->count(),
+                    'updated_fixture_count' => $updatedFixtureCount,
                 ],
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,

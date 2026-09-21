@@ -531,7 +531,7 @@ class GptActionsApiTest extends TestCase
                 'fixture' => $fixture->id,
                 'venue_id' => $newVenue->id,
                 'expected_current_venue_id' => $oldVenue->id,
-                'expected_updated_at' => $fixture->updated_at->toAtomString(),
+                'expected_updated_at' => $fixture->updated_at->toJSON(),
                 'reason' => 'Venue booking updated by the venue manager.',
             ],
         ])->assertOk()
@@ -567,30 +567,39 @@ class GptActionsApiTest extends TestCase
         $this->postJson(route('api.gpt.fixtures.venue.update', ['fixture' => 999999]), [
             'venue_id' => $newVenue->id,
             'expected_current_venue_id' => $oldVenue->id,
-            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'expected_updated_at' => $fixture->updated_at->toJSON(),
             'reason' => 'Venue booking updated by the venue manager.',
         ])->assertNotFound();
 
         $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
             'venue_id' => 999999,
             'expected_current_venue_id' => $oldVenue->id,
-            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'expected_updated_at' => $fixture->updated_at->toJSON(),
             'reason' => 'Venue booking updated by the venue manager.',
         ])->assertUnprocessable()->assertJsonValidationErrors('venue_id');
 
         $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
             'venue_id' => $newVenue->id,
             'expected_current_venue_id' => null,
-            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'expected_updated_at' => $fixture->updated_at->toJSON(),
             'reason' => 'Venue booking updated by the venue manager.',
         ])->assertUnprocessable()->assertJsonValidationErrors('expected_current_venue_id');
 
         $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
             'venue_id' => $newVenue->id,
             'expected_current_venue_id' => $oldVenue->id,
-            'expected_updated_at' => $fixture->updated_at->copy()->subMinute()->toAtomString(),
+            'expected_updated_at' => $fixture->updated_at->copy()->subMinute()->toJSON(),
             'reason' => 'Venue booking updated by the venue manager.',
         ])->assertUnprocessable()->assertJsonValidationErrors('expected_updated_at');
+
+        $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
+            'venue_id' => $oldVenue->id,
+            'expected_current_venue_id' => $oldVenue->id,
+            'expected_updated_at' => $fixture->updated_at->toJSON(),
+            'reason' => 'Venue booking updated by the venue manager.',
+        ])->assertUnprocessable()->assertJsonValidationErrors('venue_id');
+
+        $this->assertDatabaseMissing(GptActionAudit::class, ['action' => 'update_fixture_venue', 'subject_id' => $fixture->id]);
     }
 
     public function test_non_administrator_cannot_change_a_fixture_venue(): void
@@ -604,7 +613,7 @@ class GptActionsApiTest extends TestCase
         $this->postJson(route('api.gpt.fixtures.venue.update', $fixture), [
             'venue_id' => $newVenue->id,
             'expected_current_venue_id' => $oldVenue->id,
-            'expected_updated_at' => $fixture->updated_at->toAtomString(),
+            'expected_updated_at' => $fixture->updated_at->toJSON(),
             'reason' => 'Venue booking updated by the venue manager.',
         ])->assertForbidden();
 
