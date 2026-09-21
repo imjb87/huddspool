@@ -6,15 +6,26 @@ use App\Models\GptActionAudit;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use App\Services\PropagateTeamVenueToFixtures;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class UpdateTeamVenue
 {
-    public function handle(User $administrator, Team $team, Venue $venue, ?int $expectedVenueId, ?string $ipAddress, ?string $userAgent): GptActionAudit
+    public function __construct(private PropagateTeamVenueToFixtures $propagateTeamVenueToFixtures) {}
+
+    public function handle(
+        User $administrator,
+        Team $team,
+        Venue $venue,
+        ?int $expectedVenueId,
+        bool $updateFutureHomeFixtures,
+        ?string $ipAddress,
+        ?string $userAgent,
+    ): GptActionAudit
     {
-        return DB::transaction(function () use ($administrator, $team, $venue, $expectedVenueId, $ipAddress, $userAgent): GptActionAudit {
-            $lockedTeam = Team::query()->lockForUpdate()->findOrFail($team->id);
+        return DB::transaction(function () use ($administrator, $team, $venue, $expectedVenueId, $updateFutureHomeFixtures, $ipAddress, $userAgent): GptActionAudit {
+            $lockedTeam = Team::query()->with('venue')->lockForUpdate()->findOrFail($team->id);
 
             if ($lockedTeam->venue_id !== $expectedVenueId) {
                 throw ValidationException::withMessages(['expected_current_venue_id' => 'The team’s venue changed after it was inspected. Inspect the team again before retrying.']);
@@ -25,7 +36,11 @@ class UpdateTeamVenue
             }
 
             $before = ['venue_id' => $lockedTeam->venue_id, 'venue_name' => $lockedTeam->venue?->name];
+            $previousVenueId = $lockedTeam->venue_id;
             $lockedTeam->update(['venue_id' => $venue->id]);
+            $updatedFixtureCount = $updateFutureHomeFixtures
+                ? $this->propagateTeamVenueToFixtures->handle($lockedTeam, $previousVenueId, $venue->id)
+                : 0;
 
             return GptActionAudit::query()->create([
                 'administrator_id' => $administrator->id,
@@ -33,7 +48,11 @@ class UpdateTeamVenue
                 'subject_type' => Team::class,
                 'subject_id' => $lockedTeam->id,
                 'before' => $before,
-                'after' => ['venue_id' => $venue->id, 'venue_name' => $venue->name],
+                'after' => [
+                    'venue_id' => $venue->id,
+                    'venue_name' => $venue->name,
+                    'updated_fixture_count' => $updatedFixtureCount,
+                ],
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
             ]);

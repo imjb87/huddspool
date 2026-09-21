@@ -19,6 +19,7 @@ class TeamVenueController extends Controller
             team: $team,
             venue: $venue,
             expectedVenueId: $request->input('expected_current_venue_id') === null ? null : $request->integer('expected_current_venue_id'),
+            updateFutureHomeFixtures: $request->boolean('update_future_home_fixtures'),
             ipAddress: $request->ip(),
             userAgent: $request->userAgent(),
         );
@@ -26,6 +27,7 @@ class TeamVenueController extends Controller
         return response()->json([
             'message' => sprintf('%s now uses %s.', $team->name, $venue->name),
             'change' => ['before' => $audit->before, 'after' => $audit->after],
+            'updated_fixture_count' => $audit->after['updated_fixture_count'] ?? 0,
             'audit_id' => $audit->id,
         ]);
     }
