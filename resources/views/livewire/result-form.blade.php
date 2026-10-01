@@ -156,6 +156,84 @@
         </div>
     @endif
 
+    @if (! $isLocked && $canEdit)
+        <section class="ui-section" data-result-scorecard-import-section>
+            <div class="ui-shell-grid">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Scan scorecard</h3>
+                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        Upload a photo of your paper scorecard to pre-fill the result form. Review all values before submitting.
+                    </p>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="ui-card">
+                        <div class="ui-card-body space-y-4">
+                            @if ($scorecardImportStatus === 'success')
+                                <div class="rounded-xl border border-green-200/80 bg-green-50/80 px-4 py-3 text-sm text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200">
+                                    <p class="font-semibold">
+                                        {{ $scorecardImportCount === 1 ? '1 frame imported' : "{$scorecardImportCount} frames imported" }} — please review and submit when ready.
+                                    </p>
+                                    @if (! empty($scorecardWarnings))
+                                        <ul class="mt-2 list-inside list-disc space-y-1">
+                                            @foreach ($scorecardWarnings as $warning)
+                                                <li>{{ $warning }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                            @elseif ($scorecardImportStatus === 'error')
+                                <div class="rounded-xl border border-red-200/80 bg-red-50/80 px-4 py-3 text-sm text-red-800 dark:border-red-950/60 dark:bg-red-950/20 dark:text-red-200">
+                                    <p class="font-semibold">Scorecard import failed.</p>
+                                    @if (! empty($scorecardWarnings))
+                                        <ul class="mt-2 list-inside list-disc space-y-1">
+                                            @foreach ($scorecardWarnings as $warning)
+                                                <li>{{ $warning }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="flex flex-wrap items-end gap-3">
+                                <div class="min-w-0 flex-1">
+                                    <label for="scorecard-photo-input" class="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        Scorecard photo
+                                    </label>
+                                    <input
+                                        id="scorecard-photo-input"
+                                        type="file"
+                                        wire:model="scorecardPhoto"
+                                        accept="image/*"
+                                        capture="environment"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-gray-700 hover:file:bg-gray-200 dark:text-gray-400 dark:file:bg-neutral-800 dark:file:text-gray-300 dark:hover:file:bg-neutral-700"
+                                        data-scorecard-photo-input
+                                    >
+                                    @error('scorecardPhoto')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <button
+                                    type="button"
+                                    wire:click="importScorecard"
+                                    wire:loading.attr="disabled"
+                                    wire:loading.class="opacity-60 cursor-not-allowed"
+                                    wire:target="importScorecard,scorecardPhoto"
+                                    class="shrink-0 ui-button-secondary"
+                                    data-scorecard-import-button
+                                >
+                                    <span wire:loading.remove wire:target="importScorecard,scorecardPhoto">Import scorecard</span>
+                                    <span wire:loading wire:target="importScorecard,scorecardPhoto">Scanning…</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
     <section class="ui-section" data-result-create-form-section>
         <div class="ui-shell-grid">
             <div>

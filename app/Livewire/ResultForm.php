@@ -13,14 +13,20 @@ use App\Support\ResultDraftPayloadFactory;
 use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormPersister;
+use App\Support\Scorecard\ScorecardExtractionMapper;
+use App\Support\Scorecard\ScorecardInterpretationService;
+use App\Support\Scorecard\ScorecardPlayerResolver;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\Features\SupportRedirects\Redirector;
+use Livewire\WithFileUploads;
 
 class ResultForm extends Component
 {
+    use WithFileUploads;
+
     public Fixture $fixture;
 
     public FixtureResultForm $form;
@@ -50,11 +56,29 @@ class ResultForm extends Component
     #[Locked]
     public ?string $lastEditedAt = null;
 
+    /**
+     * Livewire temporary file upload for scorecard image.
+     *
+     * @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null
+     */
+    public $scorecardPhoto = null;
+
+    /** @var list<string> */
+    public array $scorecardWarnings = [];
+
+    public ?string $scorecardImportStatus = null;
+
+    public int $scorecardImportCount = 0;
+
     protected ?ResultFormPersister $persister = null;
 
     protected ?ResultFormFixtureAccess $fixtureAccess = null;
 
     protected ?ResultDraftPayloadFactory $draftPayloadFactory = null;
+
+    protected ?ScorecardInterpretationService $interpretationService = null;
+
+    protected ?ScorecardExtractionMapper $extractionMapper = null;
 
     public function mount(Fixture $fixture): void
     {
@@ -320,6 +344,78 @@ class ResultForm extends Component
         $this->persistCurrentDraft();
     }
 
+    public function importScorecard(): void
+    {
+        $this->scorecardImportStatus = null;
+        $this->scorecardWarnings = [];
+        $this->scorecardImportCount = 0;
+
+        $this->refreshActionState();
+
+        if ($this->isLocked || ! $this->canEdit) {
+            $this->scorecardPhoto = null;
+
+            return;
+        }
+
+        if ($this->result && $this->draftVersion !== (int) $this->result->draft_version) {
+            $this->syncComponentState($this->result);
+            $this->scorecardImportStatus = 'error';
+            $this->scorecardWarnings = ['The draft was updated by another editor. Please review and re-import if needed.'];
+            $this->scorecardPhoto = null;
+
+            return;
+        }
+
+        $this->validate([
+            'scorecardPhoto' => ['required', 'file', 'image', 'max:10240'],
+        ]);
+
+        $photo = $this->scorecardPhoto;
+        $this->scorecardPhoto = null;
+
+        try {
+            $extraction = $this->interpretationService()->interpret($photo);
+            $mapped = $this->extractionMapper()->map($extraction, $this->fixture);
+
+            if (empty($mapped['frames'])) {
+                $this->scorecardImportStatus = 'error';
+                $this->scorecardWarnings = ! empty($mapped['warnings'])
+                    ? $mapped['warnings']
+                    : ['No frames could be extracted from the image. Please enter results manually.'];
+
+                return;
+            }
+
+            $currentDraft = $this->form->draftFrames();
+
+            foreach ($mapped['frames'] as $frameNumber => $frame) {
+                $currentDraft[$frameNumber] = array_merge(
+                    $currentDraft[$frameNumber] ?? [
+                        'home_player_id' => null,
+                        'away_player_id' => null,
+                        'home_score' => 0,
+                        'away_score' => 0,
+                    ],
+                    $frame,
+                );
+            }
+
+            $this->form->syncFromResultAndDraft($this->result, $currentDraft);
+
+            $this->scorecardImportStatus = 'success';
+            $this->scorecardImportCount = count($mapped['frames']);
+            $this->scorecardWarnings = $mapped['warnings'];
+
+            if (! $this->form->matchesDraftState($this->result?->draft_state)) {
+                $this->persistCurrentDraft();
+            }
+        } catch (\Throwable $exception) {
+            $this->scorecardImportStatus = 'error';
+            $this->scorecardWarnings = ['Scorecard scanning failed unexpectedly. Please enter results manually.'];
+        }
+    }
+
     private function redirectToFixtureOrResult(): Redirector
     {
         $result = $this->result ?? $this->fixture->result;
@@ -344,6 +440,16 @@ class ResultForm extends Component
     private function draftPayloadFactory(): ResultDraftPayloadFactory
     {
         return $this->draftPayloadFactory ??= new ResultDraftPayloadFactory;
+    }
+
+    private function interpretationService(): ScorecardInterpretationService
+    {
+        return $this->interpretationService ??= app(ScorecardInterpretationService::class);
+    }
+
+    private function extractionMapper(): ScorecardExtractionMapper
+    {
+        return $this->extractionMapper ??= new ScorecardExtractionMapper(new ScorecardPlayerResolver);
     }
 
     private function frameRows(): array
