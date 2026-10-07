@@ -10,6 +10,7 @@ use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\User;
 use App\Support\ResultDraftPayloadFactory;
+use App\Support\ResultFormCollaboratorColor;
 use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormPersister;
@@ -43,7 +44,7 @@ class ResultForm extends Component
     public ?string $lastUpdatedByName = null;
 
     /**
-     * @var array<int, array{id: int, name: string, avatar_url: string}>
+     * @var array<int, array{id: int, name: string, avatar_url: string, color: string}>
      */
     public array $collaborators = [];
 
@@ -159,7 +160,7 @@ class ResultForm extends Component
     }
 
     /**
-     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null}  $member
+     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}  $member
      */
     public function collaboratorJoined(array $member): void
     {
@@ -184,7 +185,7 @@ class ResultForm extends Component
     }
 
     /**
-     * @param  array<int, array{id: int|string, name?: string|null, avatar_url?: string|null}>  $members
+     * @param  array<int, array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}>  $members
      */
     public function syncCollaborators(array $members): void
     {
@@ -429,8 +430,8 @@ class ResultForm extends Component
     }
 
     /**
-     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null}  $member
-     * @return array{id: int, name: string, avatar_url: string}
+     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}  $member
+     * @return array{id: int, name: string, avatar_url: string, color: string}
      */
     private function mapCollaborator(array $member): array
     {
@@ -440,11 +441,12 @@ class ResultForm extends Component
             'id' => (int) $member['id'],
             'name' => (string) ($member['name'] ?? $user?->name ?? 'Team admin'),
             'avatar_url' => (string) ($member['avatar_url'] ?? $user?->avatar_url ?? asset('/images/user.jpg')),
+            'color' => (string) ($member['color'] ?? ResultFormCollaboratorColor::forUser((int) $member['id'])),
         ];
     }
 
     /**
-     * @return array{id: int, name: string, avatar_url: string}
+     * @return array{id: int, name: string, avatar_url: string, color: string}
      */
     private function collaboratorDetails(User $user): array
     {
@@ -452,6 +454,7 @@ class ResultForm extends Component
             'id' => (int) $user->getKey(),
             'name' => $user->name,
             'avatar_url' => $user->avatar_url,
+            'color' => ResultFormCollaboratorColor::forUser((int) $user->getKey()),
         ];
     }
 

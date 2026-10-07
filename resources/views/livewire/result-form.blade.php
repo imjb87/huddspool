@@ -6,8 +6,14 @@
             componentId: @js($this->getId()),
             channelName: @js($this->broadcastChannelName()),
             clientId: @js($clientId),
+            collaboratorId: @js(auth()->id()),
+            collaboratorName: @js(auth()->user()->name),
+            collaboratorColor: @js(\App\Support\ResultFormCollaboratorColor::forUser((int) auth()->id())),
         }),
-        ...resultFormEditors(@js($collaborators)),
+        ...resultFormEditors(
+            @js($collaborators),
+            @js(\App\Support\ResultFormCollaboratorColor::palette()),
+        ),
         ...resultFormRecovery({
             componentId: @js($this->getId()),
             fixtureId: @js($fixture->getKey()),
@@ -68,6 +74,7 @@
                                                     type="button"
                                                     class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
                                                     :aria-label="collaborator.name"
+                                                    :style="collaboratorActivityStyle(collaborator)"
                                                     x-ref="trigger"
                                                 >
                                                     <img
@@ -82,8 +89,8 @@
                                                         x-cloak
                                                         x-show="open"
                                                         x-ref="tooltip"
-                                                        class="fixed z-[100] max-w-[min(18rem,calc(100vw-1rem))] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium text-white break-words shadow-sm transition-opacity duration-150 dark:bg-neutral-100 dark:text-neutral-900"
-                                                        :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
+                                                        class="fixed z-[100] max-w-[min(18rem,calc(100vw-1rem))] rounded-xl px-2.5 py-1 text-center text-xs font-medium break-words shadow-md transition-opacity duration-150"
+                                                        :style="`${tooltipStyle}; ${tooltipColorStyle(collaborator.color)} opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
                                                         x-text="collaborator.name"
                                                     ></div>
                                                 </template>
@@ -126,7 +133,7 @@
                                                 x-cloak
                                                 x-show="open"
                                                 x-ref="tooltip"
-                                                class="fixed z-[100] max-w-[calc(100vw-1rem)] -translate-x-1/2 -translate-y-full rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium whitespace-nowrap text-white shadow-sm transition-opacity duration-150 dark:bg-neutral-100 dark:text-neutral-900"
+                                                class="fixed z-[100] max-w-[calc(100vw-1rem)] rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium whitespace-nowrap text-white shadow-sm transition-opacity duration-150 dark:bg-neutral-100 dark:text-neutral-900"
                                                 :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
                                                 x-text="connectionBadgeText"
                                             ></div>

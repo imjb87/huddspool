@@ -92,7 +92,14 @@ window.ensureEcho = async () => {
     return echoLoader;
 };
 
-window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
+window.resultFormCollaboration = ({
+    componentId,
+    channelName,
+    clientId,
+    collaboratorId,
+    collaboratorName,
+    collaboratorColor,
+}) => ({
     connectionHealth: 'healthy',
     connectionBadgeText: 'Live updates connected',
     connectionHeading: 'Live syncing is healthy',
@@ -101,6 +108,16 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
     foregroundSyncTimeoutId: null,
     hasBoundForegroundSync: false,
     hasConnectedOnce: false,
+    collaboratorId: Number(collaboratorId ?? 0),
+    collaboratorName: collaboratorName ?? 'Team admin',
+    collaboratorColor: collaboratorColor ?? '#2563eb',
+    fieldLockChannel: null,
+    fieldLocks: {},
+    activeFieldKey: null,
+    fieldLockRenewalId: null,
+    fieldLockExpiryTimers: {},
+    fieldLockTtlMs: 12000,
+    fieldLockRenewalMs: 4000,
     statusClassName(status, classes) {
         return classes[status] ?? classes.healthy;
     },
@@ -211,6 +228,263 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
             this.queueForegroundSync();
         });
     },
+    fieldLockPayload(action, lock) {
+        return {
+            action,
+            field_key: lock.field_key,
+            user_id: this.collaboratorId,
+            user_name: this.collaboratorName,
+            color: this.collaboratorColor,
+            client_id: clientId,
+            claimed_at: lock.claimed_at,
+            expires_at: Date.now() + this.fieldLockTtlMs,
+        };
+    },
+    whisperFieldLock(action, lock) {
+        if (!this.fieldLockChannel || !lock) {
+            return;
+        }
+
+        this.fieldLockChannel.whisper('result-field-lock', this.fieldLockPayload(action, lock));
+    },
+    requestResultFieldLockSync() {
+        this.fieldLockChannel?.whisper('result-field-lock-sync-request', {
+            requester_client_id: clientId,
+        });
+    },
+    broadcastActiveResultFieldLock() {
+        if (!this.activeFieldKey) {
+            return;
+        }
+
+        const lock = this.fieldLocks[this.activeFieldKey];
+
+        if (!lock || lock.client_id !== clientId) {
+            return;
+        }
+
+        lock.expires_at = Date.now() + this.fieldLockTtlMs;
+        this.fieldLocks[this.activeFieldKey] = lock;
+        this.whisperFieldLock('renewed', lock);
+        this.scheduleResultFieldLockExpiry(lock);
+    },
+    scheduleResultFieldLockExpiry(lock) {
+        if (!lock?.field_key) {
+            return;
+        }
+
+        if (this.fieldLockExpiryTimers[lock.field_key]) {
+            window.clearTimeout(this.fieldLockExpiryTimers[lock.field_key]);
+        }
+
+        const delay = Math.max(Number(lock.expires_at ?? 0) - Date.now() + 1000, this.fieldLockTtlMs);
+
+        this.fieldLockExpiryTimers[lock.field_key] = window.setTimeout(() => {
+            const currentLock = this.fieldLocks[lock.field_key];
+
+            if (!currentLock || currentLock.client_id !== lock.client_id || currentLock.claimed_at !== lock.claimed_at) {
+                return;
+            }
+
+            delete this.fieldLocks[lock.field_key];
+
+            if (this.activeFieldKey === lock.field_key) {
+                this.activeFieldKey = null;
+                this.stopResultFieldLockRenewal();
+            }
+        }, delay);
+    },
+    stopResultFieldLockRenewal() {
+        if (this.fieldLockRenewalId) {
+            window.clearInterval(this.fieldLockRenewalId);
+            this.fieldLockRenewalId = null;
+        }
+    },
+    startResultFieldLockRenewal() {
+        this.stopResultFieldLockRenewal();
+
+        this.fieldLockRenewalId = window.setInterval(() => {
+            this.broadcastActiveResultFieldLock();
+        }, this.fieldLockRenewalMs);
+    },
+    releaseResultFieldLock(fieldKey) {
+        const lock = this.fieldLocks[fieldKey];
+
+        if (!lock || lock.client_id !== clientId) {
+            return;
+        }
+
+        this.whisperFieldLock('released', lock);
+        delete this.fieldLocks[fieldKey];
+
+        if (this.fieldLockExpiryTimers[fieldKey]) {
+            window.clearTimeout(this.fieldLockExpiryTimers[fieldKey]);
+            delete this.fieldLockExpiryTimers[fieldKey];
+        }
+
+        if (this.activeFieldKey === fieldKey) {
+            this.activeFieldKey = null;
+            this.stopResultFieldLockRenewal();
+        }
+    },
+    beginResultFieldEditing(event) {
+        const fieldKey = event.currentTarget?.dataset?.resultFieldKey;
+
+        if (!fieldKey) {
+            return;
+        }
+
+        const existingLock = this.fieldLocks[fieldKey];
+
+        if (existingLock && existingLock.client_id !== clientId) {
+            event.preventDefault();
+            event.currentTarget.blur();
+
+            return;
+        }
+
+        if (this.activeFieldKey && this.activeFieldKey !== fieldKey) {
+            this.releaseResultFieldLock(this.activeFieldKey);
+        }
+
+        const lock = {
+            field_key: fieldKey,
+            client_id: clientId,
+            claimed_at: existingLock?.claimed_at ?? Date.now(),
+            color: this.collaboratorColor,
+            user_id: this.collaboratorId,
+            user_name: this.collaboratorName,
+            expires_at: Date.now() + this.fieldLockTtlMs,
+        };
+
+        this.activeFieldKey = fieldKey;
+        this.fieldLocks[fieldKey] = lock;
+        this.whisperFieldLock(existingLock ? 'renewed' : 'acquired', lock);
+        this.scheduleResultFieldLockExpiry(lock);
+        this.startResultFieldLockRenewal();
+    },
+    endResultFieldEditing(event) {
+        const fieldKey = event.currentTarget?.dataset?.resultFieldKey;
+
+        if (!fieldKey) {
+            return;
+        }
+
+        window.setTimeout(() => {
+            if (document.activeElement?.dataset?.resultFieldKey === fieldKey) {
+                return;
+            }
+
+            this.releaseResultFieldLock(fieldKey);
+        }, 75);
+    },
+    cancelLocalResultFieldLock(fieldKey) {
+        const activeElement = this.$el.querySelector(`[data-result-field-key="${fieldKey}"]`);
+
+        if (activeElement instanceof HTMLElement) {
+            activeElement.blur();
+        }
+
+        if (this.activeFieldKey === fieldKey) {
+            this.activeFieldKey = null;
+            this.stopResultFieldLockRenewal();
+        }
+    },
+    incomingLockWins(currentLock, incomingLock) {
+        if (!currentLock) {
+            return true;
+        }
+
+        if (Number(incomingLock.claimed_at) !== Number(currentLock.claimed_at)) {
+            return Number(incomingLock.claimed_at) < Number(currentLock.claimed_at);
+        }
+
+        return String(incomingLock.client_id) < String(currentLock.client_id);
+    },
+    receiveResultFieldLock(event = {}) {
+        const fieldKey = event.field_key;
+
+        if (!fieldKey || event.client_id === clientId) {
+            return;
+        }
+
+        const currentLock = this.fieldLocks[fieldKey];
+
+        if (event.action === 'released') {
+            if (currentLock?.client_id !== event.client_id) {
+                return;
+            }
+
+            delete this.fieldLocks[fieldKey];
+
+            if (this.fieldLockExpiryTimers[fieldKey]) {
+                window.clearTimeout(this.fieldLockExpiryTimers[fieldKey]);
+                delete this.fieldLockExpiryTimers[fieldKey];
+            }
+
+            return;
+        }
+
+        const incomingLock = {
+            field_key: fieldKey,
+            client_id: String(event.client_id),
+            claimed_at: Number(event.claimed_at ?? Date.now()),
+            color: /^#[0-9a-f]{6}$/i.test(String(event.color ?? '')) ? event.color : '#64748b',
+            user_id: Number(event.user_id ?? 0),
+            user_name: event.user_name ?? 'Another editor',
+            expires_at: Number(event.expires_at ?? Date.now() + this.fieldLockTtlMs),
+        };
+
+        if (currentLock && currentLock.client_id !== incomingLock.client_id && !this.incomingLockWins(currentLock, incomingLock)) {
+            return;
+        }
+
+        if (currentLock?.client_id === clientId && incomingLock.client_id !== clientId) {
+            this.cancelLocalResultFieldLock(fieldKey);
+        }
+
+        this.fieldLocks[fieldKey] = incomingLock;
+        this.scheduleResultFieldLockExpiry(incomingLock);
+    },
+    releaseResultFieldLocksForCollaborator(userId) {
+        const collaboratorId = Number(userId);
+
+        Object.values(this.fieldLocks).forEach((lock) => {
+            if (lock.user_id === collaboratorId && lock.client_id !== clientId) {
+                delete this.fieldLocks[lock.field_key];
+
+                if (this.fieldLockExpiryTimers[lock.field_key]) {
+                    window.clearTimeout(this.fieldLockExpiryTimers[lock.field_key]);
+                    delete this.fieldLockExpiryTimers[lock.field_key];
+                }
+            }
+        });
+    },
+    resultFieldActivityStyle(fieldKey) {
+        const lock = this.fieldLocks[fieldKey];
+
+        if (!lock) {
+            return '';
+        }
+
+        return `outline: 2px solid ${lock.color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${lock.color}55; border-radius: 9999px;`;
+    },
+    collaboratorActivityStyle(collaborator) {
+        const lock = Object.values(this.fieldLocks).find((fieldLock) => Number(fieldLock.user_id) === Number(collaborator.id));
+        const color = lock?.color ?? collaborator.color ?? '#64748b';
+
+        return `position: relative; z-index: 2; outline: 2px solid ${color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${color}55;`;
+    },
+    isResultFieldDisabled(fieldKey) {
+        const lock = this.fieldLocks[fieldKey];
+
+        return Boolean(lock && lock.client_id !== clientId);
+    },
+    resultFieldLockLabel(fieldKey) {
+        const lock = this.fieldLocks[fieldKey];
+
+        return lock && lock.client_id !== clientId ? `${lock.user_name} is editing this field` : '';
+    },
     async init() {
         let echo = window.Echo ?? null;
 
@@ -239,11 +513,17 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
 
         const syncUi = (members) => this.syncCollaboratorsUi?.(members);
         const joinUi = (member) => this.collaboratorJoinedUi?.(member);
-        const leaveUi = (member) => this.collaboratorLeftUi?.(member);
+        const leaveUi = (member) => {
+            this.collaboratorLeftUi?.(member);
+            this.releaseResultFieldLocksForCollaborator(member.id);
+        };
 
         echo.leave(channelName);
 
-        echo.join(channelName)
+        const channel = echo.join(channelName);
+        this.fieldLockChannel = channel;
+
+        channel
             .here((members) => {
                 console.info('[result-collaboration] Connected to broadcast channel.', {
                     channelName,
@@ -251,6 +531,7 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
                 });
 
                 syncUi(members);
+                window.setTimeout(() => this.requestResultFieldLockSync(), 200);
             })
             .joining((member) => {
                 joinUi(member);
@@ -272,6 +553,9 @@ window.resultFormCollaboration = ({ componentId, channelName, clientId }) => ({
 
                 window.location.assign(event.result_url);
             });
+
+        channel.listenForWhisper('result-field-lock', (event) => this.receiveResultFieldLock(event));
+        channel.listenForWhisper('result-field-lock-sync-request', () => this.broadcastActiveResultFieldLock());
     },
 });
 
@@ -634,14 +918,17 @@ window.registerHeaderNotificationsStore = (Alpine) => {
     });
 };
 
-window.resultFormEditors = (initialCollaborators = []) => ({
+window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
+    collaboratorColorPalette: Array.isArray(colorPalette) ? colorPalette : [],
+    collaboratorColorAssignments: {},
     collaboratorsUi: [],
     initEditors() {
         this.collaboratorsUi = [];
         this.syncCollaboratorsUi(initialCollaborators);
     },
     syncCollaboratorsUi(members = []) {
-        const incomingIds = members.map((member) => Number(member.id));
+        const normalizedMembers = this.normalizedCollaborators(members);
+        const incomingIds = normalizedMembers.map((member) => member.id);
 
         this.collaboratorsUi.forEach((collaborator) => {
             if (!incomingIds.includes(collaborator.id)) {
@@ -649,9 +936,90 @@ window.resultFormEditors = (initialCollaborators = []) => ({
             }
         });
 
-        members.forEach((member) => this.collaboratorJoinedUi(member));
+        normalizedMembers.forEach((member) => this.collaboratorJoinedUi(member, false));
+        this.rebalanceCollaboratorColors(normalizedMembers);
     },
-    collaboratorJoinedUi(member) {
+    normalizedCollaborators(members = []) {
+        if (!Array.isArray(members)) {
+            return [];
+        }
+
+        return [...new Map(
+            members
+                .map((member) => [Number(member.id), member])
+                .filter(([collaboratorId]) => collaboratorId > 0),
+        ).entries()]
+            .map(([collaboratorId, member]) => ({ ...member, id: collaboratorId }))
+            .sort((first, second) => first.id - second.id);
+    },
+    hslToHex(hue, saturation, lightness) {
+        const normalizedHue = ((hue % 360) + 360) % 360;
+        const saturationRatio = saturation / 100;
+        const lightnessRatio = lightness / 100;
+        const chroma = (1 - Math.abs(2 * lightnessRatio - 1)) * saturationRatio;
+        const x = chroma * (1 - Math.abs((normalizedHue / 60) % 2 - 1));
+        const match = lightnessRatio - chroma / 2;
+        let rgb = [0, 0, 0];
+
+        if (normalizedHue < 60) {
+            rgb = [chroma, x, 0];
+        } else if (normalizedHue < 120) {
+            rgb = [x, chroma, 0];
+        } else if (normalizedHue < 180) {
+            rgb = [0, chroma, x];
+        } else if (normalizedHue < 240) {
+            rgb = [0, x, chroma];
+        } else if (normalizedHue < 300) {
+            rgb = [x, 0, chroma];
+        } else {
+            rgb = [chroma, 0, x];
+        }
+
+        return `#${rgb.map((channel) => Math.round((channel + match) * 255).toString(16).padStart(2, '0')).join('')}`;
+    },
+    generatedCollaboratorColor(index) {
+        const hue = index * 137.508;
+        const lightness = [48, 56, 64][index % 3];
+
+        return this.hslToHex(hue, 72, lightness);
+    },
+    rebalanceCollaboratorColors(members = this.collaboratorsUi) {
+        const normalizedMembers = this.normalizedCollaborators(members);
+        const assignments = {};
+        const usedColors = new Set();
+        let generatedColorIndex = this.collaboratorColorPalette.length;
+
+        normalizedMembers.forEach((member, rosterIndex) => {
+            let color = this.collaboratorColorPalette[rosterIndex] ?? this.generatedCollaboratorColor(generatedColorIndex);
+
+            while (usedColors.has(color)) {
+                generatedColorIndex += 1;
+                color = this.generatedCollaboratorColor(generatedColorIndex);
+            }
+
+            usedColors.add(color);
+            assignments[member.id] = color;
+        });
+
+        this.collaboratorColorAssignments = assignments;
+
+        this.collaboratorsUi.forEach((collaborator) => {
+            if (assignments[collaborator.id]) {
+                collaborator.color = assignments[collaborator.id];
+            }
+        });
+
+        Object.values(this.fieldLocks ?? {}).forEach((lock) => {
+            if (assignments[Number(lock.user_id)]) {
+                lock.color = assignments[Number(lock.user_id)];
+            }
+        });
+
+        if (assignments[this.collaboratorId]) {
+            this.collaboratorColor = assignments[this.collaboratorId];
+        }
+    },
+    collaboratorJoinedUi(member, rebalance = true) {
         const collaboratorId = Number(member.id);
 
         if (!collaboratorId) {
@@ -663,7 +1031,12 @@ window.resultFormEditors = (initialCollaborators = []) => ({
         if (existingCollaborator) {
             existingCollaborator.name = member.name ?? existingCollaborator.name;
             existingCollaborator.avatar_url = member.avatar_url ?? existingCollaborator.avatar_url;
+            existingCollaborator.color = member.color ?? existingCollaborator.color;
             existingCollaborator.isVisible = true;
+
+            if (rebalance) {
+                this.rebalanceCollaboratorColors();
+            }
 
             return;
         }
@@ -672,6 +1045,7 @@ window.resultFormEditors = (initialCollaborators = []) => ({
             id: collaboratorId,
             name: member.name ?? 'Team admin',
             avatar_url: member.avatar_url ?? '/images/user.jpg',
+            color: member.color ?? '#64748b',
             isVisible: false,
         });
 
@@ -682,6 +1056,10 @@ window.resultFormEditors = (initialCollaborators = []) => ({
                 collaborator.isVisible = true;
             }
         });
+
+        if (rebalance) {
+            this.rebalanceCollaboratorColors();
+        }
     },
     collaboratorLeftUi(member) {
         const collaboratorId = Number(member.id);
@@ -692,9 +1070,11 @@ window.resultFormEditors = (initialCollaborators = []) => ({
         }
 
         collaborator.isVisible = false;
+        this.rebalanceCollaboratorColors(this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId));
 
         window.setTimeout(() => {
             this.collaboratorsUi = this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId);
+            this.rebalanceCollaboratorColors();
         }, 220);
     },
 });
@@ -884,12 +1264,73 @@ window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked })
     },
 });
 
-window.resultFormPresenceTooltip = () => ({
+window.resultFormPresenceTooltip = (fieldKey = null) => ({
+    fieldKey,
     open: false,
     isPositioned: false,
     tooltipStyle: '',
     tooltipFrameId: null,
+    tooltipViewportHandler: null,
+    init() {
+        this.tooltipViewportHandler = () => {
+            if (this.open) {
+                this.scheduleTooltipPosition();
+            }
+        };
+
+        window.addEventListener('resize', this.tooltipViewportHandler);
+        window.addEventListener('scroll', this.tooltipViewportHandler, true);
+    },
+    destroy() {
+        this.cancelTooltipFrame();
+
+        if (this.tooltipViewportHandler) {
+            window.removeEventListener('resize', this.tooltipViewportHandler);
+            window.removeEventListener('scroll', this.tooltipViewportHandler, true);
+        }
+    },
+    isLockedField() {
+        return Boolean(
+            this.fieldKey
+            && this.isResultFieldDisabled
+            && this.isResultFieldDisabled(this.fieldKey),
+        );
+    },
+    tooltipLock() {
+        return this.isLockedField() ? this.fieldLocks?.[this.fieldKey] : null;
+    },
+    tooltipLabel() {
+        return this.tooltipLock()?.user_name ?? '';
+    },
+    tooltipColor() {
+        return this.tooltipLock()?.color ?? '';
+    },
+    tooltipTextColor(color) {
+        const hex = String(color ?? '').replace('#', '');
+
+        if (!/^[0-9a-f]{6}$/i.test(hex)) {
+            return '#ffffff';
+        }
+
+        const red = Number.parseInt(hex.slice(0, 2), 16);
+        const green = Number.parseInt(hex.slice(2, 4), 16);
+        const blue = Number.parseInt(hex.slice(4, 6), 16);
+        const luminance = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+
+        return luminance > 165 ? '#111827' : '#ffffff';
+    },
+    tooltipColorStyle(color) {
+        if (!color) {
+            return '';
+        }
+
+        return `background-color:${color};color:${this.tooltipTextColor(color)};`;
+    },
     showTooltip() {
+        if (this.fieldKey && !this.isLockedField()) {
+            return;
+        }
+
         this.open = true;
         this.isPositioned = false;
 
@@ -901,6 +1342,7 @@ window.resultFormPresenceTooltip = () => ({
         this.cancelTooltipFrame();
         this.open = false;
         this.isPositioned = false;
+        this.tooltipStyle = '';
     },
     cancelTooltipFrame() {
         if (this.tooltipFrameId) {
@@ -914,17 +1356,27 @@ window.resultFormPresenceTooltip = () => ({
         }
 
         const viewportPadding = 8;
+        const tooltipGap = 8;
         const triggerBounds = this.$refs.trigger.getBoundingClientRect();
         const tooltipWidth = this.$refs.tooltip.offsetWidth;
-        const centeredLeft = triggerBounds.left + (triggerBounds.width / 2);
+        const tooltipHeight = this.$refs.tooltip.offsetHeight;
+        const centeredLeft = triggerBounds.left + (triggerBounds.width / 2) - (tooltipWidth / 2);
         const clampedLeft = Math.max(
-            viewportPadding + (tooltipWidth / 2),
-            Math.min(window.innerWidth - viewportPadding - (tooltipWidth / 2), centeredLeft),
+            viewportPadding,
+            Math.min(window.innerWidth - viewportPadding - tooltipWidth, centeredLeft),
         );
+        const aboveTop = triggerBounds.top - tooltipHeight - tooltipGap;
+        const belowTop = triggerBounds.bottom + tooltipGap;
+        const maxTop = Math.max(viewportPadding, window.innerHeight - viewportPadding - tooltipHeight);
+        const top = aboveTop >= viewportPadding
+            ? aboveTop
+            : belowTop + tooltipHeight <= window.innerHeight - viewportPadding
+                ? belowTop
+                : Math.min(Math.max(belowTop, viewportPadding), maxTop);
 
         return {
             left: clampedLeft,
-            top: triggerBounds.top - 8,
+            top,
         };
     },
     scheduleTooltipPosition() {

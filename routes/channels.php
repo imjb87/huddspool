@@ -2,6 +2,7 @@
 
 use App\Models\Fixture;
 use App\Models\User;
+use App\Support\ResultFormCollaboratorColor;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Gate;
 
@@ -33,5 +34,6 @@ Broadcast::channel('fixture-results.{fixtureId}', function (User $user, int $fix
         'id' => (int) $user->getKey(),
         'name' => $user->name,
         'avatar_url' => $user->avatar_url,
+        'color' => ResultFormCollaboratorColor::forUser((int) $user->getKey()),
     ];
 });

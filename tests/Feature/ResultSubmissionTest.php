@@ -16,6 +16,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\LeagueResultSubmissionMailer;
+use App\Support\ResultFormCollaboratorColor;
 use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -73,7 +74,21 @@ class ResultSubmissionTest extends TestCase
             ->assertSeeText('Enter result')
             ->assertSeeText('Live updates connected')
             ->assertSee($teamAdmin->avatar_url, false)
-            ->assertSeeText($teamAdmin->name);
+            ->assertSeeText($teamAdmin->name)
+            ->assertSee('data-result-field-key="1.home_player_id"', false)
+            ->assertSee('data-result-field-key="1.away_player_id"', false)
+            ->assertSee('data-result-field-key="1.home_score"', false)
+            ->assertSee('data-result-field-key="1.away_score"', false)
+            ->assertSee('data-result-field-group', false)
+            ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.home_player_id')\"", false)
+            ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.home_score')\"", false)
+            ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.away_score')\"", false)
+            ->assertSee("x-bind:disabled=\"isResultFieldDisabled('1.home_score')\"", false)
+            ->assertSee("x-bind:title=\"resultFieldLockLabel('1.home_score')\"", false)
+            ->assertSee("x-bind:disabled=\"isResultFieldDisabled('1.away_score')\"", false)
+            ->assertSee("x-bind:title=\"resultFieldLockLabel('1.away_score')\"", false)
+            ->assertSee('collaboratorActivityStyle(collaborator)', false)
+            ->assertDontSee('resultFrameActivityStyle', false);
     }
 
     public function test_team_admin_can_save_partial_frames(): void
@@ -607,9 +622,10 @@ class ResultSubmissionTest extends TestCase
                     'avatar_url' => $secondaryAdmin->avatar_url,
                 ],
             ])
+            ->assertSet('collaborators.1.color', ResultFormCollaboratorColor::forUser((int) $secondaryAdmin->id))
             ->assertSee($primaryAdmin->avatar_url, false)
             ->assertSee($secondaryAdmin->avatar_url, false)
-            ->assertSee('isolate flex -space-x-3', false)
+            ->assertSee('isolate flex items-center -space-x-3', false)
             ->assertSee('aria-label="'.$primaryAdmin->name.'"', false)
             ->assertSee('aria-label="'.$secondaryAdmin->name.'"', false)
             ->assertSeeText($primaryAdmin->name)
@@ -674,8 +690,8 @@ class ResultSubmissionTest extends TestCase
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->set('form.frames.1.home_score', 1)
             ->set('form.frames.1.away_score', 0)
-            ->assertSee('from-green-900 via-green-800 to-green-700', false)
-            ->assertSee('from-red-900 via-red-800 to-red-700', false);
+            ->assertSee('ui-score-pill-success', false)
+            ->assertSee('ui-score-pill-danger', false);
     }
 
     public function test_setting_one_frame_score_to_one_resets_the_opposing_score_to_zero(): void

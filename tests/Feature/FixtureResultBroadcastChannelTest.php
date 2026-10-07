@@ -8,6 +8,7 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\ResultFormCollaboratorColor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -50,6 +51,7 @@ class FixtureResultBroadcastChannelTest extends TestCase
         $this->assertIsArray($channelData);
         $this->assertSame($teamAdmin->name, $channelData['user_info']['name']);
         $this->assertSame($teamAdmin->avatar_url, $channelData['user_info']['avatar_url']);
+        $this->assertSame(ResultFormCollaboratorColor::forUser((int) $teamAdmin->id), $channelData['user_info']['color']);
     }
 
     public function test_unauthorized_user_cannot_join_fixture_result_presence_channel(): void
