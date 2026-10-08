@@ -29,6 +29,10 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('data-login-page', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('class="text-3xl font-semibold tracking-tight text-foreground"', false);
+        $response->assertSee('ui-result-button ui-result-button-primary', false);
+        $response->assertSee('h-9 w-full rounded-md border border-border bg-background', false);
+        $response->assertSee('Huddersfield &amp; District Tuesday Night Pool League', false);
         $response->assertSeeText('Log in');
         $response->assertSeeText('Access your account to manage your profile');
         $response->assertSee('type="email"', false);
@@ -39,6 +43,7 @@ class AuthenticationTest extends TestCase
         $response->assertDontSeeText('Continue with Facebook');
         $response->assertSee('site-theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
+        $response->assertSee('<title>Log in |', false);
     }
 
     public function test_users_can_start_google_authentication(): void

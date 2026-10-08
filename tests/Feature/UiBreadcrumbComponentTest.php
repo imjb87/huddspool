@@ -13,8 +13,8 @@ class UiBreadcrumbComponentTest extends TestCase
             '<x-ui-breadcrumb :items="$items" />',
             [
                 'items' => [
-                    ['label' => 'History', 'url' => '/history'],
-                    ['label' => 'Summer 2026', 'url' => '/history/summer-2026'],
+                    ['label' => 'History'],
+                    ['label' => 'Summer 2026', 'url' => '/history/summer-2026/international-rules/summer-section'],
                     ['label' => 'International Rules', 'current' => true],
                 ],
             ],
@@ -23,12 +23,13 @@ class UiBreadcrumbComponentTest extends TestCase
         $html = preg_replace('/\s+/', ' ', $html) ?? $html;
 
         $this->assertStringContainsString('aria-label="Breadcrumb"', $html);
-        $this->assertStringContainsString('> History </a>', $html);
-        $this->assertStringContainsString('href="/history"', $html);
+        $this->assertStringContainsString('break-words text-sm', $html);
+        $this->assertStringContainsString('> History </span>', $html);
+        $this->assertStringNotContainsString('href="/history"', $html);
         $this->assertStringContainsString('> Summer 2026 </a>', $html);
-        $this->assertStringContainsString('href="/history/summer-2026"', $html);
+        $this->assertStringContainsString('href="/history/summer-2026/international-rules/summer-section"', $html);
         $this->assertStringContainsString('> International Rules </span>', $html);
         $this->assertStringContainsString('aria-current="page"', $html);
-        $this->assertSame(2, substr_count($html, 'aria-hidden="true"'));
+        $this->assertSame(2, substr_count($html, 'role="presentation"'));
     }
 }

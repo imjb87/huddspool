@@ -50,23 +50,33 @@ class VenuePageTest extends TestCase
         $response->assertSee('data-venue-teams-section', false);
         $response->assertSee('data-venue-teams-list', false);
         $response->assertSee('data-venue-map-section', false);
+        $response->assertSee('icon-tabler-building-store', false);
+        $response->assertSee('icon-tabler-users-group', false);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
-        $response->assertSee('ui-card-rows', false);
-        $response->assertSee('ui-card-row-link', false);
+        $response->assertSee('ui-section-see-also-list', false);
+        $response->assertSee('ui-section-see-also-item', false);
+        $response->assertSee('aspect-video', false);
         $response->assertSee('dark:bg-neutral-950', false);
-        $response->assertSee('dark:border-neutral-800/80', false);
+        $response->assertSee('dark:text-neutral-50', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($venue->name);
         $response->assertSeeText('Venue');
         $response->assertSeeText('Venue information');
         $response->assertSeeText('Teams');
-        $response->assertSeeText('Map');
         $response->assertSeeText($venue->address);
         $response->assertSeeText($venue->telephone);
         $response->assertSeeText($team->name);
         $response->assertSeeText($section->name);
         $response->assertSeeText($captain->name);
         $response->assertSee(route('team.show', $team), false);
+
+        $content = $response->getContent();
+        $mapPosition = strpos($content, 'data-venue-map-section');
+        $teamsPosition = strpos($content, 'data-venue-teams-section');
+
+        $this->assertNotFalse($mapPosition);
+        $this->assertNotFalse($teamsPosition);
+        $this->assertLessThan($teamsPosition, $mapPosition);
     }
 }

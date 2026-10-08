@@ -2,15 +2,15 @@
     $homeScore = (int) data_get($form->frames, $row['number'].'.home_score', 0);
     $awayScore = (int) data_get($form->frames, $row['number'].'.away_score', 0);
 
-    $homeScorePillClasses = 'ui-score-pill-neutral';
-    $awayScorePillClasses = 'ui-score-pill-neutral';
+    $homeScoreBadgeClasses = 'ui-fixture-badge-neutral';
+    $awayScoreBadgeClasses = 'ui-fixture-badge-neutral';
 
     if ($homeScore === 1 && $awayScore === 0) {
-        $homeScorePillClasses = 'ui-score-pill-success';
-        $awayScorePillClasses = 'ui-score-pill-danger';
+        $homeScoreBadgeClasses = 'ui-live-score-badge-win';
+        $awayScoreBadgeClasses = 'ui-live-score-badge-loss';
     } elseif ($homeScore === 0 && $awayScore === 1) {
-        $homeScorePillClasses = 'ui-score-pill-danger';
-        $awayScorePillClasses = 'ui-score-pill-success';
+        $homeScoreBadgeClasses = 'ui-live-score-badge-loss';
+        $awayScoreBadgeClasses = 'ui-live-score-badge-win';
     }
 @endphp
 
@@ -29,18 +29,18 @@
 @endonce
 
 <div
-    class="ui-card-row items-start transition-colors duration-1000"
+    class="ui-result-form-frame-item transition-colors duration-1000"
     wire:key="result-frame-{{ $row['number'] }}"
     x-data="resultFormFlashRow({{ $row['number'] }})"
     x-on:result-frames-synced.window="flashIfIncluded($event.detail.frameNumbers ?? [])"
     :class="isFlashing ? 'bg-gray-100 dark:bg-neutral-900/80' : ''"
 >
-    <div class="min-w-0 w-full flex-1 space-y-3">
-        <p class="text-xs text-gray-500 dark:text-gray-400">Frame {{ $row['number'] }}</p>
+    <div class="ui-result-form-frame-content">
+        <p class="ui-result-form-frame-label">Frame {{ $row['number'] }}</p>
 
-        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <div class="ui-result-form-player-row">
             <div
-                class="min-w-0 flex items-center gap-3 rounded-full transition-shadow duration-150"
+                class="ui-result-form-player-field transition-shadow duration-150"
                 data-result-field-group
                 data-result-field-key="{{ $row['number'] }}.home_player_id"
                 x-bind:style="resultFieldActivityStyle('{{ $row['number'] }}.home_player_id')"
@@ -53,11 +53,11 @@
             >
             @if ($row['home_selected_player'])
                 <div
-                    class="h-6 w-6 shrink-0"
+                    class="size-7 shrink-0"
                     wire:key="result-frame-{{ $row['number'] }}-home-avatar-{{ $row['home_selected_player']->id }}"
                 >
                     <img
-                        class="h-6 w-6 rounded-full object-cover"
+                        class="size-7 rounded-full object-cover"
                         src="{{ $row['home_selected_player']->avatar_url }}"
                         alt="{{ $row['home_selected_player']->name }} avatar"
                         style="animation: result-avatar-fade-in 300ms ease-out;"
@@ -65,18 +65,18 @@
                 </div>
             @elseif ($row['home_is_awarded'])
                 <div
-                    class="h-6 w-6 shrink-0"
+                    class="size-7 shrink-0"
                     wire:key="result-frame-{{ $row['number'] }}-home-avatar-awarded"
                 >
                     <img
-                        class="h-6 w-6 rounded-full object-cover"
+                        class="size-7 rounded-full object-cover"
                         src="{{ asset('/images/user.jpg') }}"
                         alt="Awarded"
                         style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @else
-                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-neutral-800 dark:ring-neutral-800"></div>
+                <div class="size-7 shrink-0 rounded-full bg-muted ring-1 ring-border"></div>
             @endif
 
                 <select
@@ -90,7 +90,7 @@
                     x-on:blur="endResultFieldEditing($event)"
                     x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.home_player_id')"
                     x-bind:title="resultFieldLockLabel('{{ $row['number'] }}.home_player_id')"
-                    class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
+                    class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-5 text-neutral-950 focus:outline-0 focus:ring-0 dark:text-neutral-50 dark:[color-scheme:dark]"
                     @disabled($isLocked || ! $canEdit)
                 >
                 <option value="">Select player...</option>
@@ -112,9 +112,9 @@
                 </template>
             </div>
 
-            <div class="shrink-0 justify-self-end">
+            <div class="shrink-0">
                 <div
-                    class="ui-score-pill ui-score-pill-single {{ $homeScorePillClasses }} transition-shadow duration-150"
+                    class="ui-result-form-score-field ui-fixture-badge {{ $homeScoreBadgeClasses }} transition-shadow duration-150"
                     data-result-field-group
                     data-result-field-key="{{ $row['number'] }}.home_score"
                     x-bind:style="resultFieldActivityStyle('{{ $row['number'] }}.home_score')"
@@ -137,7 +137,7 @@
                         x-on:blur="endResultFieldEditing($event)"
                         x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.home_score')"
                         x-bind:title="resultFieldLockLabel('{{ $row['number'] }}.home_score')"
-                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
+                        class="block h-8 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-semibold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
                         <option value="0">0</option>
@@ -158,9 +158,9 @@
             </div>
         </div>
 
-        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <div class="ui-result-form-player-row">
             <div
-                class="min-w-0 flex items-center gap-3 rounded-full transition-shadow duration-150"
+                class="ui-result-form-player-field transition-shadow duration-150"
                 data-result-field-group
                 data-result-field-key="{{ $row['number'] }}.away_player_id"
                 x-bind:style="resultFieldActivityStyle('{{ $row['number'] }}.away_player_id')"
@@ -173,11 +173,11 @@
             >
             @if ($row['away_selected_player'])
                 <div
-                    class="h-6 w-6 shrink-0"
+                    class="size-7 shrink-0"
                     wire:key="result-frame-{{ $row['number'] }}-away-avatar-{{ $row['away_selected_player']->id }}"
                 >
                     <img
-                        class="h-6 w-6 rounded-full object-cover"
+                        class="size-7 rounded-full object-cover"
                         src="{{ $row['away_selected_player']->avatar_url }}"
                         alt="{{ $row['away_selected_player']->name }} avatar"
                         style="animation: result-avatar-fade-in 300ms ease-out;"
@@ -185,18 +185,18 @@
                 </div>
             @elseif ($row['away_is_awarded'])
                 <div
-                    class="h-6 w-6 shrink-0"
+                    class="size-7 shrink-0"
                     wire:key="result-frame-{{ $row['number'] }}-away-avatar-awarded"
                 >
                     <img
-                        class="h-6 w-6 rounded-full object-cover"
+                        class="size-7 rounded-full object-cover"
                         src="{{ asset('/images/user.jpg') }}"
                         alt="Awarded"
                         style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @else
-                <div class="h-6 w-6 shrink-0 rounded-full bg-gray-100 ring-1 ring-gray-200 dark:bg-neutral-800 dark:ring-neutral-800"></div>
+                <div class="size-7 shrink-0 rounded-full bg-muted ring-1 ring-border"></div>
             @endif
 
                 <select
@@ -210,7 +210,7 @@
                     x-on:blur="endResultFieldEditing($event)"
                     x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.away_player_id')"
                     x-bind:title="resultFieldLockLabel('{{ $row['number'] }}.away_player_id')"
-                    class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-6 text-gray-900 focus:outline-0 focus:ring-0 dark:text-gray-100 dark:[color-scheme:dark]"
+                    class="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm leading-5 text-neutral-950 focus:outline-0 focus:ring-0 dark:text-neutral-50 dark:[color-scheme:dark]"
                     @disabled($isLocked || ! $canEdit)
                 >
                 <option value="">Select player...</option>
@@ -232,9 +232,9 @@
                 </template>
             </div>
 
-            <div class="shrink-0 justify-self-end">
+            <div class="shrink-0">
                 <div
-                    class="ui-score-pill ui-score-pill-single {{ $awayScorePillClasses }} transition-shadow duration-150"
+                    class="ui-result-form-score-field ui-fixture-badge {{ $awayScoreBadgeClasses }} transition-shadow duration-150"
                     data-result-field-group
                     data-result-field-key="{{ $row['number'] }}.away_score"
                     x-bind:style="resultFieldActivityStyle('{{ $row['number'] }}.away_score')"
@@ -257,7 +257,7 @@
                         x-on:blur="endResultFieldEditing($event)"
                         x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.away_score')"
                         x-bind:title="resultFieldLockLabel('{{ $row['number'] }}.away_score')"
-                        class="block h-7 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-extrabold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
+                        class="block h-8 w-full appearance-none border-0 bg-transparent bg-none px-0 py-0 text-center text-xs font-semibold text-inherit [background-image:none] [text-align-last:center] focus:outline-0 focus:ring-0 dark:[color-scheme:dark]"
                         @disabled($isLocked || ! $canEdit)
                     >
                         <option value="0">0</option>

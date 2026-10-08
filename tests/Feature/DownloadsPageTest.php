@@ -16,6 +16,7 @@ class DownloadsPageTest extends TestCase
             ->assertSeeText('Downloads')
             ->assertSeeText('Score card')
             ->assertSeeText('Download scorecard.pdf')
+            ->assertSee('class="ui-button-primary mt-4 shrink-0 sm:mt-0"', false)
             ->assertSee('href="'.asset('downloads/scorecard.pdf').'"', false)
             ->assertDontSeeText('Registration sheets')
             ->assertDontSee('data-download-link="registration-sheets"', false);

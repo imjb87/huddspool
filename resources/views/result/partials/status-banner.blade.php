@@ -1,9 +1,9 @@
 @if ($result->is_overridden)
-    <div class="ui-card">
-        <div class="ui-card-body py-10 text-center">
-            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-neutral-800 dark:bg-neutral-900/75">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Result overridden</h3>
-                <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
+    <div class="ui-card" data-result-overridden-card>
+        <div class="ui-card-body">
+            <div class="rounded-lg border border-red-200/70 bg-red-50/50 px-4 py-4 dark:border-red-900/70 dark:bg-red-950/30">
+                <h3 class="text-sm font-semibold text-red-900 dark:text-red-100">Result overridden</h3>
+                <p class="mt-1 max-w-prose text-sm leading-5 text-red-800/80 dark:text-red-200/80">
                     This match result was overridden by an admin.
                 </p>
             </div>

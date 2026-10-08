@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-neutral-50 text-gray-900 dark:bg-neutral-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-background text-foreground">
 
 <head>
     <meta charset="utf-8">
@@ -7,7 +7,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ config('app.description') }}">
 
-    <title>Login | {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
+    @php
+        $guestTitle = match (true) {
+            request()->routeIs('password.request') => 'Forgot password',
+            request()->routeIs('password.reset') => 'Reset password',
+            request()->routeIs('invite.register') => 'Set password',
+            request()->routeIs('passport.authorizations.authorize') => 'Connect Huddspool',
+            default => 'Log in',
+        };
+    @endphp
+
+    <title>{{ $guestTitle }} | {{ config('app.name', 'Huddersfield & District Tuesday Night Pool League') }}</title>
 
     @include('layouts.partials.theme-head')
 
@@ -17,15 +27,24 @@
 </head>
 
 <body
-    class="bg-neutral-50 font-sans text-gray-900 antialiased dark:bg-neutral-950 dark:text-gray-100"
+    class="bg-background font-sans text-foreground antialiased"
     @if (filled(config('services.google_analytics.measurement_id')))
         data-google-analytics-measurement-id="{{ config('services.google_analytics.measurement_id') }}"
     @endif
 >
-    <div class="min-h-screen">
-        <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-6 lg:py-14">
+    <div class="min-h-svh bg-background">
+        <header class="mx-auto flex h-16 w-full max-w-4xl items-center px-4 sm:px-6 lg:px-6">
+            <a href="{{ route('home') }}"
+                class="inline-flex h-8 w-10 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+                <span class="sr-only">Huddersfield &amp; District Tuesday Night Pool League</span>
+                <x-application-logo />
+            </a>
+        </header>
+
+        <main class="mx-auto w-full max-w-4xl px-4 pt-10 pb-12 sm:px-6 sm:pt-12 lg:px-6 lg:pt-14">
             {{ $slot }}
-        </div>
+        </main>
     </div>
 </body>
 

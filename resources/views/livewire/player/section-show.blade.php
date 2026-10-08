@@ -19,12 +19,11 @@
                 </div>
                 <div class="bg-white dark:bg-transparent">
                     @if ($players->isEmpty())
-                        <div class="text-center m-4 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-neutral-800">
-                            <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">No frames</h3>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-prose mx-auto">
-                                There have been no frames played in this section yet. Please check back here again soon.
-                            </p>
-                        </div>
+                        <x-ui-empty-state
+                            title="No frames"
+                            description="There have been no frames played in this section yet. Please check back here again soon."
+                            data-player-section-empty
+                        />
                     @else
                         <div class="divide-y divide-gray-300 dark:divide-neutral-800/80">
                         @foreach ($players as $player)

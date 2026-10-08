@@ -51,14 +51,11 @@
                         @endif
                     </div>
                 @empty
-                    <div class="ui-card-body text-center">
-                        <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-neutral-800 dark:bg-neutral-900/75">
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available.</h3>
-                            <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                Team fixtures will appear here once the current season schedule has been generated.
-                            </p>
-                        </div>
-                    </div>
+                    <x-ui-empty-state
+                        title="No fixtures available."
+                        description="Team fixtures will appear here once the current season schedule has been generated."
+                        data-account-team-fixtures-empty
+                    />
                 @endforelse
                 </div>
             </div>

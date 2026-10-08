@@ -2,16 +2,22 @@
     <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
             <div>
-                <div class="ui-section-intro">
-                    <div class="ui-section-intro-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V8.25A2.25 2.25 0 0 1 5.25 6h13.5A2.25 2.25 0 0 1 21 8.25v10.5A2.25 2.25 0 0 1 18.75 21H5.25A2.25 2.25 0 0 1 3 18.75ZM3 10.5h18" />
+                <div class="ui-section-intro gap-2">
+                    <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-calendar size-5 text-neutral-700 dark:text-neutral-200">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" />
+                            <path d="M16 3v4" />
+                            <path d="M8 3v4" />
+                            <path d="M4 11h16" />
+                            <path d="M11 15h1" />
+                            <path d="M12 15v3" />
                         </svg>
-                    </div>
+                    </span>
 
-                    <div class="ui-section-intro-copy">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures & Results</h2>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                        <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixtures & Results</h2>
+                        <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                             {{ ($history ?? false)
                                 ? 'Archived fixtures and submitted results for this section by week.'
                                 : 'Current fixtures and submitted results for this section by week.' }}
@@ -21,113 +27,132 @@
             </div>
 
             <div class="lg:col-span-2">
-                <div class="ui-card" data-section-fixtures-shell>
-                    <div class="ui-card-column-headings justify-start px-4 sm:px-5" data-section-fixtures-headings>
-                        <p class="ui-card-column-header">Home vs Away</p>
-                    </div>
+                <div class="ui-card ui-fixtures-card" data-section-fixtures-shell>
+                    <div wire:loading.remove wire:target="previousWeek, nextWeek" data-section-fixtures-content>
+                        @if ($fixtureRows->isEmpty())
+                            <x-ui-empty-state
+                                title="No fixtures available for this week."
+                                description="Try another week to see upcoming fixtures or submitted results for this section."
+                                data-section-fixtures-empty
+                            />
+                        @else
+                            @php
+                                $fixtureDateLabel = $fixtureRows->first()?->row_meta;
+                            @endphp
 
-                    <div class="ui-card-rows" wire:loading.remove wire:target="previousWeek, nextWeek">
-                        @forelse ($fixtureRows as $row)
-                            <div wire:key="section-fixture-{{ $section->id }}-{{ $row->fixture->id }}">
-                                @if ($row->link === null || $row->is_bye)
-                                    <div>
-                                @else
-                                    <a class="ui-card-row-link"
-                                        href="{{ $row->link }}">
-                                @endif
-                                        <div class="ui-card-row items-start px-4 sm:px-5" data-section-fixtures-band>
-                                            <div class="min-w-0 flex-1">
-                                                <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                                    {{ $row->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $row->away_team_name }}
-                                                </p>
-                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $row->row_meta }}
-                                                </p>
-                                            </div>
+                            @if ($fixtureDateLabel)
+                                <p class="ui-fixtures-date-heading" data-section-fixtures-date>{{ $fixtureDateLabel }}</p>
+                            @endif
 
-                                            <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                                                @if ($row->fixture->result)
-                                                    @php
-                                                        $homeScore = (int) ($row->fixture->result->home_score ?? 0);
-                                                        $awayScore = (int) ($row->fixture->result->away_score ?? 0);
-                                                        $homeSegmentClasses = $homeScore === $awayScore
-                                                            ? 'ui-score-pill-segment-draw'
-                                                            : ($homeScore > $awayScore ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
-                                                        $awaySegmentClasses = $homeScore === $awayScore
-                                                            ? 'ui-score-pill-segment-draw'
-                                                            : ($awayScore > $homeScore ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
-                                                    @endphp
-
-                                                    <div class="ui-score-pill ui-score-pill-neutral ui-score-pill-split"
-                                                        data-section-fixtures-score-pill>
-                                                        <div class="ui-score-pill-segment {{ $homeSegmentClasses }} pl-1">
-                                                            {{ $row->fixture->result->home_score ?? '' }}
+                            <div class="ui-fixtures-item-group" data-section-fixtures-list>
+                                @foreach ($fixtureRows as $row)
+                                    <div wire:key="section-fixture-{{ $section->id }}-{{ $row->fixture->id }}">
+                                        @if ($row->link === null || $row->is_bye)
+                                            <div class="ui-fixture-item" data-section-fixtures-band data-slot="item" data-variant="muted" data-size="default">
+                                        @else
+                                            <a class="ui-fixture-item" data-section-fixtures-band data-slot="item" data-variant="muted" data-size="default"
+                                                href="{{ $row->link }}">
+                                        @endif
+                                                <div class="ui-fixture-item-content" data-slot="item-content">
+                                                    <div class="ui-fixture-team-matchup">
+                                                        <div class="ui-fixture-team-names">
+                                                            <p class="ui-fixture-team-name">{{ $row->home_team_name }}</p>
+                                                            <p class="ui-fixture-team-name">{{ $row->away_team_name }}</p>
                                                         </div>
-                                                        <div class="ui-score-pill-divider-neutral"></div>
-                                                        <div class="ui-score-pill-segment {{ $awaySegmentClasses }} pr-1">
-                                                            {{ $row->fixture->result->away_score ?? '' }}
-                                                        </div>
+
+                                                        @if ($row->fixture->result)
+                                                            @php
+                                                                $homeScore = (int) ($row->fixture->result->home_score ?? 0);
+                                                                $awayScore = (int) ($row->fixture->result->away_score ?? 0);
+                                                                $homeBadgeClasses = $homeScore === $awayScore
+                                                                    ? 'ui-live-score-badge-draw'
+                                                                    : ($homeScore > $awayScore ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
+                                                                $awayBadgeClasses = $homeScore === $awayScore
+                                                                    ? 'ui-live-score-badge-draw'
+                                                                    : ($awayScore > $homeScore ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
+                                                            @endphp
+
+                                                            <div class="ui-fixture-item-actions" data-slot="item-actions">
+                                                                <div class="ui-fixture-badge-stack" role="group" aria-label="{{ $row->home_team_name }} {{ $row->fixture->result->home_score }} to {{ $row->fixture->result->away_score }} {{ $row->away_team_name }}" data-section-fixtures-score-stack>
+                                                                    <span class="ui-fixture-badge {{ $homeBadgeClasses }}" data-slot="badge">{{ $row->fixture->result->home_score }}</span>
+                                                                    <span class="ui-fixture-badge {{ $awayBadgeClasses }}" data-slot="badge">{{ $row->fixture->result->away_score }}</span>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <div class="ui-fixture-item-actions self-center">
+                                                                <span class="ui-fixture-badge ui-fixture-badge-neutral" data-slot="badge" aria-label="Fixture date {{ $row->fixture->fixture_date->format('j M') }}">{{ $row->fixture->fixture_date->format('j M') }}</span>
+                                                            </div>
+                                                        @endif
                                                     </div>
-                                                @else
-                                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $row->fixture->fixture_date->format('j M') }}</p>
-                                                @endif
+                                                </div>
+
+                                        @if ($row->link === null || $row->is_bye)
                                             </div>
-                                        </div>
-                                @if ($row->link === null || $row->is_bye)
+                                        @else
+                                            </a>
+                                        @endif
                                     </div>
-                                @else
-                                    </a>
-                                @endif
+                                @endforeach
                             </div>
-                        @empty
-                            <div class="ui-card-body py-10 text-center">
-                                <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-neutral-800 dark:bg-neutral-900/75">
-                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No fixtures available for this week.</h3>
-                                    <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                        Try another week to see upcoming fixtures or submitted results for this section.
-                                    </p>
-                                </div>
-                            </div>
-                        @endforelse
+                        @endif
                     </div>
 
                     <div class="animate-pulse" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
-                        <div class="ui-card-rows">
-                            @foreach (range(1, 5) as $row)
-                                <div data-section-fixtures-row-skeleton-row>
-                                    <div class="ui-card-row items-start px-4 sm:px-5" data-section-fixtures-band>
-                                        <div class="min-w-0 flex-1">
-                                            <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                            <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                        </div>
+                        <div class="ui-fixtures-date-heading">
+                            <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                        </div>
 
-                                        <div class="h-7 w-[60px] rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                        <div class="ui-fixtures-item-group">
+                            @foreach (range(1, 5) as $row)
+                                <div class="ui-fixture-item" data-section-fixtures-row-skeleton-row data-section-fixtures-band>
+                                    <div class="ui-fixture-item-content">
+                                        <div class="ui-fixture-team-matchup">
+                                            <div class="ui-fixture-team-names">
+                                                <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                                <div class="h-4 w-36 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            </div>
+
+                                            <div class="ui-fixture-badge-stack">
+                                                <div class="h-5 min-w-7 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                                <div class="h-5 min-w-7 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
-                </div>
 
-                <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" data-section-fixtures-controls>
-                    <div class="flex items-center justify-between gap-4" data-section-fixtures-band>
-                        <button wire:click="previousWeek" wire:loading.attr="disabled"
-                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                            aria-label="Previous"
-                            @disabled($week === 1)>
-                            Previous
-                        </button>
+                    <div class="border-t border-border px-5 py-4" data-section-fixtures-controls>
+                        <nav class="ui-fixtures-pagination" aria-label="Fixtures pagination" data-section-fixtures-pagination data-section-fixtures-band>
+                            <button wire:click="previousWeek" wire:loading.attr="disabled"
+                                class="ui-pagination-link rounded-full"
+                                aria-label="Go to previous week"
+                                type="button"
+                                @disabled($week === 1)>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left size-4" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M15 6l-6 6l6 6" />
+                                </svg>
+                                <span class="hidden sm:inline">Previous</span>
+                            </button>
 
-                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                            Week {{ $week }}
-                        </span>
+                            <span class="ui-pagination-current" aria-live="polite">
+                                Week {{ $week }}
+                            </span>
 
-                        <button wire:click="nextWeek" wire:loading.attr="disabled"
-                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                            aria-label="Next"
-                            @disabled(! $canAdvanceWeek)>
-                            Next
-                        </button>
+                            <button wire:click="nextWeek" wire:loading.attr="disabled"
+                                class="ui-pagination-link rounded-full"
+                                aria-label="Go to next week"
+                                type="button"
+                                @disabled(! $canAdvanceWeek)>
+                                <span class="hidden sm:inline">Next</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 6l6 6l-6 6" />
+                                </svg>
+                            </button>
+                        </nav>
                     </div>
                 </div>
             </div>

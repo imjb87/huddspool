@@ -5,9 +5,41 @@
 @source '../../app/View/**/*.php';
 @source '../js/**/*.js';
 
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/geist/files/geist-latin-wght-italic.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading: var(--font-sans);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
 }
 
 @plugin '@tailwindcss/forms';
@@ -22,6 +54,32 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --border: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+  }
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --ring: oklch(0.556 0 0);
+  }
+
   html {
     color-scheme: light;
   }
@@ -69,7 +127,7 @@
 
 @layer components {
   .ui-page-shell {
-    @apply mt-[4.5rem] grid grid-cols-1 content-start gap-6 bg-neutral-50 py-6 text-gray-900 dark:bg-neutral-950 dark:text-gray-100;
+    @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
   }
 
   .ui-page-body {
@@ -78,6 +136,75 @@
 
   .ui-page-header {
     @apply mx-auto flex w-full max-w-6xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-5;
+  }
+
+  .ui-document-page {
+    @apply gap-8 py-8 sm:gap-10 sm:py-10;
+  }
+
+  .ui-document-header,
+  .ui-document-body {
+    @apply mx-auto w-full max-w-4xl px-4 sm:px-6;
+  }
+
+  .ui-document-header-inner {
+    @apply max-w-2xl;
+  }
+
+  .ui-document-heading {
+    @apply min-w-0;
+  }
+
+  .ui-document-title {
+    @apply text-3xl leading-tight font-semibold tracking-tight text-foreground sm:text-4xl;
+  }
+
+  .ui-document-description {
+    @apply mt-3 max-w-2xl text-base leading-7 text-muted-foreground;
+  }
+
+  .ui-document-body {
+    @apply pb-12 lg:pb-16;
+  }
+
+  .ui-document-card {
+    @apply overflow-hidden rounded-xl bg-card text-card-foreground ring-1 ring-foreground/10;
+  }
+
+  .ui-document-card-body {
+    @apply px-5 py-6 sm:px-8 sm:py-8;
+  }
+
+  .ui-document-prose {
+    @apply prose prose-gray max-w-none text-sm leading-7 text-muted-foreground dark:prose-invert;
+  }
+
+  .ui-document-prose :where(h2) {
+    @apply mt-10 mb-3 text-lg leading-7 font-semibold tracking-tight text-foreground;
+  }
+
+  .ui-document-prose :where(h2:first-child) {
+    @apply mt-0;
+  }
+
+  .ui-document-prose :where(p) {
+    @apply my-0 leading-7;
+  }
+
+  .ui-document-prose :where(p + p) {
+    @apply mt-4;
+  }
+
+  .ui-document-prose :where(a) {
+    @apply font-medium text-foreground underline decoration-border underline-offset-4 transition hover:decoration-foreground;
+  }
+
+  .ui-document-list {
+    @apply flex flex-col gap-4;
+  }
+
+  .ui-document-empty {
+    @apply border border-dashed border-border bg-transparent shadow-none;
   }
 
   .ui-kicker {
@@ -112,7 +239,107 @@
   }
 
   .ui-card {
-    @apply overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-neutral-950/5 dark:bg-neutral-900 dark:ring-neutral-100/10;
+    @apply overflow-hidden rounded-xl bg-card text-card-foreground shadow-none ring-1 ring-foreground/10;
+  }
+
+  .ui-standings-card {
+    @apply rounded-xl;
+  }
+
+  .ui-averages-card {
+    @apply rounded-xl;
+  }
+
+  .ui-live-scores-card,
+  .ui-home-news-card,
+  .ui-sponsors-card,
+  .ui-section-see-also-card,
+  .ui-fixtures-card,
+  .ui-knockout-round-card {
+    @apply rounded-xl;
+  }
+
+  .ui-sponsor-carousel {
+    @apply flex flex-col gap-4;
+  }
+
+  .ui-sponsor-carousel-toolbar {
+    @apply flex items-center justify-end gap-2;
+  }
+
+  .ui-sponsor-carousel-button {
+    @apply inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-transparent text-gray-700 shadow-sm outline-none transition-colors hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-gray-400/30 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .dark .ui-sponsor-carousel-button {
+    @apply border-neutral-800 text-neutral-200 hover:bg-neutral-800 focus-visible:ring-neutral-500/30;
+  }
+
+  .ui-sponsor-carousel-viewport {
+    @apply overflow-visible;
+    clip-path: inset(-0.5rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-sponsor-carousel-track {
+      @apply transition-none;
+    }
+  }
+
+  .ui-sponsor-item {
+    @apply flex min-w-0 flex-col gap-0 overflow-hidden rounded-lg border border-transparent bg-gray-50/80 text-left shadow-sm outline-none transition-colors duration-100;
+  }
+
+  .ui-sponsor-item:hover {
+    @apply border-gray-200 bg-gray-100;
+  }
+
+  .ui-sponsor-item:focus-visible {
+    @apply border-gray-400 ring-2 ring-gray-400/20;
+  }
+
+  .dark .ui-sponsor-item {
+    @apply bg-neutral-800/50;
+  }
+
+  .dark .ui-sponsor-item:hover {
+    @apply border-neutral-700 bg-neutral-800;
+  }
+
+  .dark .ui-sponsor-item:focus-visible {
+    @apply border-neutral-500 ring-neutral-500/20;
+  }
+
+  .ui-sponsor-card-media {
+    @apply flex aspect-square w-full items-center justify-center overflow-hidden border-b border-gray-200 bg-white px-4;
+  }
+
+  .ui-sponsor-item:hover .ui-sponsor-card-media {
+    @apply border-b-gray-300;
+  }
+
+  .ui-sponsor-logo {
+    @apply h-auto max-h-12 w-auto max-w-full object-contain sm:max-h-14;
+  }
+
+  .ui-sponsor-content {
+    @apply flex min-h-16 items-start px-4 py-3.5;
+  }
+
+  .ui-sponsor-name {
+    @apply m-0 text-sm leading-5 font-medium text-neutral-700 transition-colors;
+  }
+
+  .ui-sponsor-item:hover .ui-sponsor-name {
+    @apply text-neutral-950;
+  }
+
+  .dark .ui-sponsor-name {
+    @apply text-neutral-200;
+  }
+
+  .dark .ui-sponsor-item:hover .ui-sponsor-name {
+    @apply text-white;
   }
 
   .ui-card-branded {
@@ -124,11 +351,11 @@
   }
 
   .ui-card-footer {
-    @apply border-t border-gray-200 px-5 py-4 dark:border-neutral-800;
+    @apply border-t border-border px-5 py-4;
   }
 
   .ui-card-rows {
-    @apply divide-y divide-gray-200 dark:divide-neutral-800;
+    @apply divide-y divide-border;
   }
 
   .ui-card-row {
@@ -136,11 +363,470 @@
   }
 
   .ui-card-row-link {
-    @apply block transition sm:hover:bg-gray-100 dark:sm:hover:bg-neutral-800;
+    @apply block transition sm:hover:bg-muted;
+  }
+
+  .ui-live-scores-item-group,
+  .ui-fixtures-item-group,
+  .ui-averages-item-group,
+  .ui-standings-item-group,
+  .ui-knockout-match-group {
+    @apply flex w-full flex-col gap-4 px-5 py-5;
+  }
+
+  .ui-live-scores-item-group {
+    @apply gap-3 px-4 py-4 sm:px-5 sm:py-4;
+  }
+
+  .ui-averages-item-group,
+  .ui-standings-item-group {
+    @apply gap-2 px-3 py-4 sm:px-5;
+  }
+
+  .ui-knockout-match-group {
+    @apply gap-2 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5;
+  }
+
+  .ui-fixtures-date-heading {
+    @apply m-0 px-5 pt-5 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-section-see-also-list {
+    @apply flex w-full flex-col gap-4 px-5 py-5;
+  }
+
+  [data-section-see-also-links] .ui-section-see-also-list {
+    @apply gap-2 px-3 py-3 sm:px-4 sm:py-4;
+  }
+
+  .ui-section-see-also-item {
+    @apply flex w-full items-center gap-3.5 rounded-lg border border-transparent px-4 py-3.5 text-sm outline-none transition-colors duration-100;
+    background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
+  }
+
+  [data-section-see-also-links] .ui-section-see-also-item[data-size='sm'] {
+    @apply gap-3 px-3 py-2.5;
+  }
+
+  .dark .ui-section-see-also-item {
+    background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  @media (hover: hover) {
+    .ui-section-see-also-item:hover {
+      background-color: lab(96.52% -0.0000298023 0.0000119209);
+    }
+
+    .dark .ui-section-see-also-item:hover {
+      background-color: lab(15.204% 0 -0.00000596046);
+    }
+  }
+
+  .ui-section-see-also-item:focus-visible {
+    @apply ring-2 ring-gray-900/20 dark:ring-gray-100/20;
+  }
+
+  .ui-section-see-also-item-content {
+    @apply min-w-0 flex-1;
+  }
+
+  .ui-section-see-also-item-title {
+    @apply m-0 truncate text-sm leading-5 font-medium text-neutral-950 dark:text-neutral-50;
+  }
+
+  .ui-section-see-also-item-action {
+    @apply flex shrink-0 items-center justify-center text-neutral-500 transition-[color,transform] duration-100 dark:text-neutral-400;
+  }
+
+  @media (hover: hover) {
+    .ui-section-see-also-item:hover .ui-section-see-also-item-action {
+      @apply translate-x-0.5 text-neutral-950 dark:text-neutral-50;
+    }
+  }
+
+  .ui-account-action-card {
+    @apply overflow-hidden rounded-xl border border-gray-200/80 bg-white text-gray-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100;
+  }
+
+  .ui-account-action-item {
+    @apply flex w-full items-center gap-4 rounded-lg border border-amber-200/70 bg-amber-50/50 px-4 py-4 text-left outline-none transition-colors duration-100 hover:bg-amber-100/60 focus-visible:ring-2 focus-visible:ring-amber-700/20 dark:border-amber-900/70 dark:bg-amber-950/30 dark:hover:bg-amber-950/50 dark:focus-visible:ring-amber-200/20;
+  }
+
+  .ui-live-score-item,
+  .ui-fixture-item,
+  .ui-average-item,
+  .ui-standings-item,
+  .ui-knockout-match-item,
+  .ui-knockout-score-item {
+    @apply flex w-full flex-wrap items-start gap-3.5 rounded-lg border border-transparent px-4 py-3.5 text-sm outline-none transition-colors duration-100;
+    background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
+  }
+
+  .dark .ui-live-score-item,
+  .dark .ui-fixture-item,
+  .dark .ui-average-item,
+  .dark .ui-standings-item,
+  .dark .ui-knockout-match-item,
+  .dark .ui-knockout-score-item {
+    background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  @media (hover: hover) {
+    .ui-live-score-item:hover,
+    .ui-fixture-item:hover,
+    .ui-average-item:hover,
+    .ui-standings-item:hover,
+    .ui-knockout-match-item:hover,
+    .ui-knockout-score-item:hover {
+      background-color: lab(96.52% -0.0000298023 0.0000119209);
+    }
+
+    .dark .ui-live-score-item:hover,
+    .dark .ui-fixture-item:hover,
+    .dark .ui-average-item:hover,
+    .dark .ui-standings-item:hover,
+    .dark .ui-knockout-match-item:hover,
+    .dark .ui-knockout-score-item:hover {
+      background-color: lab(15.204% 0 -0.00000596046);
+    }
+  }
+
+  .ui-team-player-stats {
+    @apply ml-auto flex shrink-0 items-center gap-2 text-center sm:gap-5;
+  }
+
+  .ui-team-player-link {
+    @apply block outline-none;
+  }
+
+  @media (hover: hover) {
+    .ui-team-player-link:hover .ui-average-item {
+      background-color: lab(96.52% -0.0000298023 0.0000119209);
+    }
+
+    .dark .ui-team-player-link:hover .ui-average-item {
+      background-color: lab(15.204% 0 -0.00000596046);
+    }
+  }
+
+  .ui-team-player-link:focus-visible .ui-average-item {
+    @apply ring-2 ring-gray-900/20 dark:ring-gray-100/20;
+  }
+
+  .ui-average-item {
+    @apply items-center px-3 py-2.5 sm:px-4;
+  }
+
+  .ui-result-form-frame-list {
+    @apply flex flex-col gap-2 p-3 sm:p-4;
+  }
+
+  .ui-result-form-frame-item {
+    @apply flex w-full flex-col gap-3 rounded-lg border border-transparent px-4 py-4 text-sm outline-none transition-colors duration-100;
+    background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
+  }
+
+  .dark .ui-result-form-frame-item {
+    background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  @media (hover: hover) {
+    .ui-result-form-frame-item:hover {
+      background-color: lab(96.52% -0.0000298023 0.0000119209);
+    }
+
+    .dark .ui-result-form-frame-item:hover {
+      background-color: lab(15.204% 0 -0.00000596046);
+    }
+  }
+
+  .ui-result-form-frame-content {
+    @apply flex w-full min-w-0 flex-col gap-3;
+  }
+
+  .ui-result-form-frame-label {
+    @apply m-0 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-result-form-player-row {
+    @apply flex w-full items-center justify-between gap-3;
+  }
+
+  .ui-result-form-player-field {
+    @apply flex min-w-0 flex-1 items-center gap-3 rounded-lg border border-border/70 bg-background/60 px-3 py-2 outline-none transition-colors;
+  }
+
+  .ui-result-form-player-field:focus-within {
+    @apply border-foreground/30 ring-2 ring-foreground/10;
+  }
+
+  .ui-result-form-score-field {
+    @apply h-8 min-w-9 px-1.5;
+  }
+
+  .ui-result-frame-item {
+    @apply flex w-full flex-col gap-3 rounded-lg border border-transparent px-4 py-3.5 text-sm outline-none transition-colors duration-100;
+    background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
+  }
+
+  .dark .ui-result-frame-item {
+    background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  @media (hover: hover) {
+    .ui-result-frame-item:hover {
+      background-color: lab(96.52% -0.0000298023 0.0000119209);
+    }
+
+    .dark .ui-result-frame-item:hover {
+      background-color: lab(15.204% 0 -0.00000596046);
+    }
+  }
+
+  .ui-result-frame-content {
+    @apply flex w-full min-w-0 flex-col gap-3;
+  }
+
+  .ui-result-frame-label {
+    @apply m-0 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-result-player-row {
+    @apply flex w-full items-center justify-between gap-3;
+  }
+
+  .ui-result-player-link {
+    @apply flex min-w-0 items-center gap-3 text-neutral-950 outline-none transition-colors dark:text-neutral-50;
+  }
+
+  .ui-result-player-link:hover {
+    @apply text-neutral-500 dark:text-neutral-300;
+  }
+
+  .ui-result-player-link:focus-visible {
+    @apply rounded-md ring-2 ring-gray-900/20 dark:ring-neutral-100/20;
+  }
+
+  .ui-result-total-item {
+    @apply flex w-full flex-col gap-2 border-t border-border px-3 py-4 sm:px-5;
+  }
+
+  .ui-average-item-header {
+    @apply cursor-default bg-transparent py-2.5;
+  }
+
+  .ui-average-item-header .ui-card-column-header {
+    @apply flex items-center justify-center;
+  }
+
+  .dark .ui-average-item-header {
+    @apply bg-transparent;
+  }
+
+  @media (hover: hover) {
+    .ui-average-item-header:hover,
+    .dark .ui-average-item-header:hover {
+      @apply bg-transparent;
+    }
+  }
+
+  .ui-average-item-content {
+    @apply flex min-w-0 flex-1 items-center gap-3.5;
+  }
+
+  .ui-average-item-stats {
+    @apply ml-auto flex shrink-0 items-center gap-2 text-center sm:gap-5;
+  }
+
+  .ui-standings-item {
+    @apply items-center px-3 py-2.5 sm:px-4;
+  }
+
+  .ui-standings-item-header {
+    @apply cursor-default bg-transparent py-2.5;
+  }
+
+  .dark .ui-standings-item-header {
+    @apply bg-transparent;
+  }
+
+  @media (hover: hover) {
+    .ui-standings-item-header:hover,
+    .dark .ui-standings-item-header:hover {
+      @apply bg-transparent;
+    }
+  }
+
+  .ui-standings-item-content {
+    @apply flex min-w-0 flex-1 items-center gap-2 sm:gap-3;
+  }
+
+  .ui-standings-item-stats {
+    @apply ml-auto grid shrink-0 grid-cols-4 gap-2 text-center sm:grid-cols-5 sm:gap-3;
+  }
+
+  .ui-live-score-item-content,
+  .ui-fixture-item-content,
+  .ui-knockout-match-content {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+
+  .ui-live-score-team-names,
+  .ui-fixture-team-names {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+
+  .ui-live-score-team-matchup {
+    @apply flex min-w-0 items-start gap-2.5;
+  }
+
+  .ui-fixture-team-matchup {
+    @apply flex min-w-0 items-start gap-3.5;
+  }
+
+  .ui-knockout-match-content {
+    @apply w-full items-stretch;
+  }
+
+  .ui-knockout-match-details {
+    @apply min-w-0 flex-1;
+  }
+
+  .ui-knockout-match-label {
+    @apply m-0 mb-1 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-knockout-match-meta {
+    @apply m-0 text-xs leading-5 text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-knockout-team-matchup {
+    @apply flex min-w-0 items-start gap-3.5;
+  }
+
+  .ui-knockout-team-names {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+
+  .ui-knockout-team-name {
+    @apply m-0 [overflow-wrap:anywhere] text-sm leading-5 font-medium text-neutral-950 dark:text-neutral-50;
+  }
+
+  .ui-knockout-match-actions {
+    @apply flex shrink-0 items-start gap-2;
+  }
+
+  .ui-knockout-score-item {
+    @apply items-center;
+  }
+
+  .ui-live-score-team-name,
+  .ui-fixture-team-name {
+    @apply m-0 text-sm leading-5 font-medium text-neutral-950 dark:text-neutral-50;
+  }
+
+  .ui-live-score-section-name {
+    @apply m-0 text-xs leading-4 font-normal text-neutral-500 dark:text-neutral-400;
+  }
+
+  .ui-live-score-item {
+    @apply gap-3 px-3 py-3 sm:px-4;
+  }
+
+  .ui-live-score-item-actions,
+  .ui-fixture-item-actions {
+    @apply flex shrink-0 self-center items-start gap-2;
+  }
+
+  .ui-live-score-badge-stack,
+  .ui-fixture-badge-stack {
+    @apply flex flex-col items-end gap-1;
+  }
+
+  .ui-live-score-badge,
+  .ui-fixture-badge {
+    @apply inline-flex h-5 min-w-7 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap tabular-nums;
+  }
+
+  .ui-live-score-badge-win {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .dark .ui-live-score-badge-win {
+    @apply bg-green-700 text-white;
+  }
+
+  .ui-live-score-badge-loss {
+    background-color: color-mix(in oklab, lab(48.4493% 77.4328 61.5452) 10%, transparent);
+    color: lab(48.4493% 77.4328 61.5452);
+  }
+
+  .dark .ui-live-score-badge-loss {
+    @apply bg-red-700 text-white;
+  }
+
+  .ui-live-score-badge-draw {
+    @apply border-gray-300 bg-transparent text-gray-700;
+  }
+
+  .ui-fixture-badge-neutral {
+    @apply border-gray-300 bg-transparent text-gray-700;
+  }
+
+  .ui-team-fixture-ready {
+    @apply border-amber-200/70 bg-amber-50/50 ring-1 ring-inset ring-amber-200/40;
+  }
+
+  .dark .ui-team-fixture-ready {
+    @apply border-amber-900/70 bg-amber-950/25 ring-amber-900/50;
+  }
+
+  .ui-team-fixture-ready .ui-fixture-team-name {
+    @apply text-neutral-950 dark:text-neutral-50;
+  }
+
+  .ui-team-fixture-ready .ui-fixture-badge-neutral {
+    @apply border-amber-300 bg-amber-100/60 text-amber-800;
+  }
+
+  .dark .ui-live-score-badge-draw {
+    @apply border-neutral-700 bg-transparent text-neutral-200;
+  }
+
+  .dark .ui-fixture-badge-neutral {
+    @apply border-neutral-700 bg-transparent text-neutral-200;
+  }
+
+  .dark .ui-team-fixture-ready .ui-fixture-badge-neutral {
+    @apply border-amber-800 bg-amber-900/30 text-amber-200;
+  }
+
+  .navigation-mobile-menu .ui-card {
+    @apply overflow-hidden rounded-md border border-border bg-card p-2 pr-2.5 text-card-foreground shadow-lg shadow-black/5 dark:shadow-black/20;
+  }
+
+  .navigation-mobile-menu .ui-card-rows {
+    @apply flex flex-col gap-1 divide-y-0;
+  }
+
+  .navigation-mobile-menu .ui-card-row-link {
+    @apply block rounded-sm transition-colors hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:hover:bg-neutral-800 dark:focus:bg-neutral-800;
+  }
+
+  .navigation-mobile-menu .ui-card-row {
+    @apply min-h-0 rounded-sm px-2 py-2 text-sm leading-5 font-medium;
+  }
+
+  .navigation-mobile-menu .ui-card-row .text-base {
+    @apply text-sm leading-5 font-medium;
+  }
+
+  .navigation-mobile-menu .ui-card-row > .inline-flex.size-8 {
+    @apply hidden;
   }
 
   .ui-card-column-header {
-    @apply text-xs text-gray-500 dark:text-gray-400;
+    @apply text-xs text-muted-foreground;
   }
 
   .ui-card-column-headings {
@@ -183,6 +869,37 @@
     @apply flex w-max min-w-max gap-2 whitespace-nowrap;
   }
 
+  .ui-tab-trigger {
+    @apply inline-flex h-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 shadow-xs transition-[color,background-color,border-color,box-shadow] outline-none hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 data-loading:opacity-60 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus-visible:ring-neutral-100/20;
+  }
+
+  .ui-tab-trigger[data-state='active'] {
+    @apply border-gray-900 bg-gray-900 text-white shadow-sm hover:bg-gray-800 hover:text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white dark:hover:text-neutral-900;
+  }
+
+  .ui-pagination,
+  .ui-fixtures-pagination {
+    @apply grid grid-cols-[1fr_auto_1fr] items-center gap-4;
+  }
+
+  .ui-pagination > :first-child,
+  .ui-fixtures-pagination > :first-child {
+    @apply justify-self-start;
+  }
+
+  .ui-pagination > :last-child,
+  .ui-fixtures-pagination > :last-child {
+    @apply justify-self-end;
+  }
+
+  .ui-pagination-link {
+    @apply inline-flex h-9 items-center justify-center gap-1 rounded-full border border-gray-200 bg-transparent px-3 text-sm font-medium whitespace-nowrap text-gray-700 shadow-xs transition-colors outline-none hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus-visible:ring-neutral-100/20;
+  }
+
+  .ui-pagination-current {
+    @apply text-sm font-medium text-gray-700 dark:text-neutral-300;
+  }
+
   .ui-panel-hero {
     @apply overflow-hidden rounded-3xl border border-green-900/10 bg-linear-to-br from-green-950 via-green-800 to-green-600 text-white shadow-xl shadow-green-950/15 dark:border-green-300/10;
   }
@@ -197,6 +914,18 @@
 
   .ui-button-secondary {
     @apply inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition duration-150 hover:-translate-y-0.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:hover:bg-neutral-800 dark:focus:ring-offset-neutral-950;
+  }
+
+  .ui-result-button {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap shadow-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .ui-result-button-primary {
+    @apply bg-foreground text-background hover:bg-foreground/90;
+  }
+
+  .ui-result-button-secondary {
+    @apply border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground;
   }
 
   .ui-pill {

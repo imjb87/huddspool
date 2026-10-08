@@ -10,7 +10,7 @@ class NavigationViewState
      * @return array{
      *     knockoutNavIsActive: bool,
      *     historyNavIsActive: bool,
-     *     handbookNavIsActive: bool
+     *     officialNavIsActive: bool
      * }
      */
     public static function fromRequest(Request $request): array
@@ -21,7 +21,8 @@ class NavigationViewState
             'knockoutNavIsActive' => $request->routeIs('knockout.*')
                 || ($request->routeIs('page.show') && $currentPage === 'knockout-dates'),
             'historyNavIsActive' => $request->routeIs('history.*'),
-            'handbookNavIsActive' => $request->routeIs('page.show') && $currentPage === 'handbook',
+            'officialNavIsActive' => $request->routeIs('downloads.index')
+                || ($request->routeIs('page.show') && $currentPage === 'handbook'),
         ];
     }
 }

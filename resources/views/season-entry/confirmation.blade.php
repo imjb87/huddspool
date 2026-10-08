@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="bg-gray-50 pt-[72px] pb-10 dark:bg-neutral-950">
+    <div class="bg-gray-50 pt-16 pb-10 dark:bg-neutral-950">
         <div class="mx-auto max-w-4xl px-4 pt-6 sm:px-6 lg:px-6">
             <div class="space-y-8">
                 <section class="grid gap-8 lg:grid-cols-3 lg:gap-10">

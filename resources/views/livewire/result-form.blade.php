@@ -28,11 +28,24 @@
     @if (! $isLocked)
         <section class="ui-section" data-result-form-presence-section>
             <div class="ui-shell-grid">
-                <div>
-                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Presence</p>
-                    <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
-                        Keep an eye on who is currently viewing or editing this result.
-                    </p>
+                <div class="ui-section-intro gap-2">
+                    <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-users-group size-5 text-neutral-700 dark:text-neutral-200">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                            <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                            <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                            <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                            <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                            <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
+                        </svg>
+                    </span>
+                    <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                        <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Presence</h2>
+                        <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
+                            Keep an eye on who is currently viewing or editing this result.
+                        </p>
+                    </div>
                 </div>
 
                 <div class="lg:col-span-2">
@@ -46,7 +59,7 @@
                             </div>
 
                             <div class="min-w-0" wire:ignore>
-                                <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                                <p class="mb-3 text-xs text-neutral-500 dark:text-neutral-400">
                                     <span x-text="collaboratorsUi.length === 1 ? '1 person here' : `${collaboratorsUi.length} people here`"></span>
                                 </p>
 
@@ -72,7 +85,7 @@
                                             >
                                                 <button
                                                     type="button"
-                                                    class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-gray-50 dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
+                                                    class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-white dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
                                                     :aria-label="collaborator.name"
                                                     :style="collaboratorActivityStyle(collaborator)"
                                                     x-ref="trigger"
@@ -133,7 +146,7 @@
                                                 x-cloak
                                                 x-show="open"
                                                 x-ref="tooltip"
-                                                class="fixed z-[100] max-w-[calc(100vw-1rem)] rounded-xl bg-gray-900 px-2.5 py-1 text-center text-xs font-medium whitespace-nowrap text-white shadow-sm transition-opacity duration-150 dark:bg-neutral-100 dark:text-neutral-900"
+                                                class="fixed z-[100] max-w-[calc(100vw-1rem)] rounded-md bg-gray-900 px-2.5 py-1 text-center text-xs font-medium whitespace-nowrap text-white shadow-sm transition-opacity duration-150 dark:bg-neutral-100 dark:text-neutral-900"
                                                 :style="`${tooltipStyle}; opacity:${isPositioned ? '1' : '0'}; pointer-events:${isPositioned ? 'auto' : 'none'};`"
                                                 x-text="connectionBadgeText"
                                             ></div>
@@ -150,12 +163,12 @@
         <div
             x-cloak
             x-show="connectionHealth !== 'healthy'"
-            class="mx-auto w-full max-w-4xl rounded-xl border px-4 py-3 sm:px-6 lg:px-6"
+            class="mx-auto w-full max-w-4xl rounded-lg border px-4 py-3 sm:px-6 lg:px-6"
             data-result-form-connection-alert
             :class="statusClassName(connectionHealth, {
-                healthy: 'border-green-200 bg-green-50/80 text-green-800 dark:border-green-800/80 dark:bg-green-900/20 dark:text-green-200',
-                weak: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/80 dark:bg-amber-900/20 dark:text-amber-200',
-                lost: 'border-red-200 bg-red-50 text-red-800 dark:border-red-800/80 dark:bg-red-900/20 dark:text-red-200',
+                healthy: 'border-green-500/50 bg-green-50/50 text-green-900 dark:border-green-500/50 dark:bg-green-950/20 dark:text-green-200',
+                weak: 'border-amber-500/50 bg-amber-50/50 text-amber-900 dark:border-amber-500/50 dark:bg-amber-950/20 dark:text-amber-200',
+                lost: 'border-red-500/50 bg-red-50/50 text-red-900 dark:border-red-500/50 dark:bg-red-950/20 dark:text-red-200',
             })"
         >
             <p class="text-sm font-semibold" x-text="connectionHeading">Weak connection detected</p>
@@ -165,81 +178,97 @@
 
     <section class="ui-section" data-result-create-form-section>
         <div class="ui-shell-grid">
-            <div>
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Enter result</h3>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    Complete each frame accurately, then submit the result when you're ready.
-                </p>
+            <div class="ui-section-intro gap-2">
+                <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-numbers size-5 text-neutral-700 dark:text-neutral-200">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M11 6h9" />
+                        <path d="M11 12h9" />
+                        <path d="M12 18h8" />
+                        <path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4" />
+                        <path d="M6 10v-6l-2 2" />
+                    </svg>
+                </span>
+                <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                    <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Enter result</h2>
+                    <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
+                        Complete each frame accurately, then submit the result when you're ready.
+                    </p>
+                </div>
             </div>
 
             <div class="lg:col-span-2">
                 <div class="ui-card" data-result-form-shell>
-                    <div class="ui-card-rows" data-result-form-frames>
+                    <div class="ui-result-form-frame-list" data-result-form-frames>
                         @foreach ($frameRows as $row)
                             @include('livewire.result-form-partials.frame-row', ['row' => $row])
                         @endforeach
                     </div>
 
-                    <div class="ui-card-row items-start justify-between gap-4" data-result-form-band>
-                        <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Match total</p>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                {{ $fixture->homeTeam->name }}
-                                <span class="text-gray-300 dark:text-neutral-600">/</span>
-                                {{ $fixture->awayTeam->name }}
-                            </p>
-                        </div>
+                    @php
+                        $isMatchDraw = $form->homeScore === $form->awayScore;
+                        $homeMatchBadgeClasses = $isMatchDraw
+                            ? 'ui-live-score-badge-draw'
+                            : ($form->homeScore > $form->awayScore ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
+                        $awayMatchBadgeClasses = $isMatchDraw
+                            ? 'ui-live-score-badge-draw'
+                            : ($form->awayScore > $form->homeScore ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
+                    @endphp
+                    <div class="ui-result-total-item" data-result-form-band>
+                        <p class="ui-result-frame-label">Match total</p>
 
-                        <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                            @php
-                                $matchTotalClasses = $form->homeScore === $form->awayScore
-                                    ? 'ui-score-pill-draw'
-                                    : ($form->homeScore > $form->awayScore ? 'ui-score-pill-success' : 'ui-score-pill-danger');
-                            @endphp
-                            <div class="ui-score-pill ui-score-pill-split {{ $matchTotalClasses }}">
-                                <div class="ui-score-pill-segment pl-1">{{ $form->homeScore }}</div>
-                                <div class="ui-score-pill-divider"></div>
-                                <div class="ui-score-pill-segment pr-1">{{ $form->awayScore }}</div>
+                        <div class="ui-fixture-team-matchup">
+                            <div class="ui-fixture-team-names">
+                                <p class="ui-fixture-team-name">{{ $fixture->homeTeam->name }}</p>
+                                <p class="ui-fixture-team-name">{{ $fixture->awayTeam->name }}</p>
+                            </div>
+
+                            <div class="ui-fixture-item-actions self-center" data-slot="item-actions">
+                                <div class="ui-fixture-badge-stack" data-result-score-pill role="group" aria-label="{{ $fixture->homeTeam->name }} {{ $form->homeScore }} to {{ $form->awayScore }} {{ $fixture->awayTeam->name }}">
+                                    <span class="ui-fixture-badge {{ $homeMatchBadgeClasses }}">{{ $form->homeScore }}</span>
+                                    <span class="ui-fixture-badge {{ $awayMatchBadgeClasses }}">{{ $form->awayScore }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="ui-card-footer">
-                        @if ($lastEditedAt)
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
-                            </p>
-                        @endif
-                        <div class="flex justify-end gap-x-3 mt-3">
-                            <a
-                                href="{{ route('fixture.show', $fixture->id) }}"
-                                class="ui-button-secondary"
-                            >
+                    <div class="ui-card-footer" data-result-form-actions>
+                        <div class="flex justify-end gap-3">
+                            <a href="{{ route('fixture.show', $fixture) }}" class="ui-result-button ui-result-button-secondary">
                                 Cancel
                             </a>
 
                             @if (! $isLocked && $canEdit)
                                 <button
                                     type="submit"
-                                    class="ui-button-primary"
+                                    class="ui-result-button ui-result-button-primary"
                                     wire:loading.attr="disabled"
                                     wire:target="submit"
                                 >
                                     Submit result
                                 </button>
                             @elseif ($isLocked)
-                                <div class="flex items-center text-sm font-semibold text-green-700 dark:text-green-400">
+                                <div class="flex items-center text-sm font-medium text-green-700 dark:text-green-400">
                                     Result submitted
                                 </div>
                             @endif
                         </div>
-
                     </div>
+
+                    @if ($lastEditedAt)
+                        <div class="border-t border-border px-5 py-3" data-result-form-subfooter>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                                Last edited{{ $lastUpdatedByName ? ' by '.$lastUpdatedByName : '' }} {{ $lastEditedAt }}
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </section>
 
     @if ($errors->any())
-        <x-errors />
+        <div class="mx-auto w-full max-w-4xl" data-result-form-errors>
+            <x-errors />
+        </div>
     @endif
 </form>

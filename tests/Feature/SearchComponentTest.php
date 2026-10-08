@@ -22,7 +22,9 @@ class SearchComponentTest extends TestCase
         Livewire::test(Search::class)
             ->set('searchTerm', ['unexpected'])
             ->assertSeeText('Search for players, teams and venues')
-            ->assertSeeText('Search for players, teams and venues');
+            ->assertSee('data-search-empty-prompt', false)
+            ->assertSee('text-foreground', false)
+            ->assertSee('text-muted-foreground', false);
     }
 
     public function test_component_opens_when_search_event_is_dispatched(): void
@@ -48,13 +50,18 @@ class SearchComponentTest extends TestCase
         Livewire::test(Search::class)
             ->set('searchTerm', '  Imperial Club  ')
             ->assertSee('data-search-modal-shell', false)
-            ->assertSee('max-w-xl transform overflow-hidden rounded-xl', false)
+            ->assertSee('fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center', false)
+            ->assertSee('max-w-none transform overflow-hidden rounded-xl', false)
             ->assertSee('data-search-loading-state', false)
             ->assertSee('data-search-loading-skeleton', false)
+            ->assertSee('aria-hidden="true"', false)
+            ->assertSee('animate-pulse rounded-md bg-gray-200/80', false)
+            ->assertSee('size-6 shrink-0 animate-pulse rounded-full bg-gray-200/80', false)
             ->assertSee('data-search-results-shell', false)
-            ->assertSee('ui-card-column-headings', false)
-            ->assertSee('ui-card-rows', false)
-            ->assertSee('ui-card-row', false)
+            ->assertSee('min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5', false)
+            ->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent', false)
+            ->assertDontSee('ui-card-rows', false)
+            ->assertDontSee('ui-card-row', false)
             ->assertSeeText('Imperial Club')
             ->assertSeeText('12 West Street')
             ->assertSee('data-search-result-link', false);
@@ -82,7 +89,7 @@ class SearchComponentTest extends TestCase
             ->assertSee('data-search-result-link', false);
     }
 
-    public function test_component_shows_player_avatars_in_player_results(): void
+    public function test_component_renders_player_results_with_shadcn_style_avatars(): void
     {
         Model::withoutEvents(function (): void {
             $season = Season::factory()->create(['is_open' => true]);
@@ -100,6 +107,8 @@ class SearchComponentTest extends TestCase
         Livewire::test(Search::class)
             ->set('searchTerm', 'Alex')
             ->assertSee('data-search-player-avatar', false)
+            ->assertSee('relative flex size-6 shrink-0 overflow-hidden rounded-full', false)
+            ->assertSee('aspect-square size-full object-cover', false)
             ->assertSeeText('Alex Carter')
             ->assertSeeText('Imperials');
     }

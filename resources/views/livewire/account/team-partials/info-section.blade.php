@@ -1,14 +1,20 @@
 <section class="ui-section" data-account-team-info-section>
     <div class="ui-shell-grid">
-        <div class="ui-section-intro">
-            <div class="ui-section-intro-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 20.25h16.5M4.5 3.75h15a.75.75 0 0 1 .75.75v15.75H3.75V4.5a.75.75 0 0 1 .75-.75ZM8.25 8.25h7.5m-7.5 3h7.5m-7.5 3h4.5" />
+        <div class="ui-section-intro gap-2">
+            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building size-5 text-neutral-700 dark:text-neutral-200">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M3 21l18 0" />
+                    <path d="M5 21v-14a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14" />
+                    <path d="M9 9l1 0" />
+                    <path d="M9 13l1 0" />
+                    <path d="M14 9l1 0" />
+                    <path d="M14 13l1 0" />
                 </svg>
-            </div>
-            <div class="ui-section-intro-copy">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Team information</h3>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            </span>
+            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Team information</h2>
+                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                     Current team details for the open season, including your section and standing.
                 </p>
             </div>
@@ -33,7 +39,7 @@
                                     {{ $this->currentSection->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-gray-900 dark:text-gray-100">No open section</p>
+                                <p class="text-sm text-muted-foreground">No open section</p>
                             @endif
                         </div>
 
@@ -45,7 +51,7 @@
                                     {{ $this->team->venue->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-gray-900 dark:text-gray-100">Venue TBC</p>
+                                <p class="text-sm text-muted-foreground">Venue TBC</p>
                             @endif
                         </div>
 
@@ -57,7 +63,7 @@
                                     {{ $this->team->captain->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-gray-900 dark:text-gray-100">Captain TBC</p>
+                                <p class="text-sm text-muted-foreground">Captain TBC</p>
                             @endif
                         </div>
 
@@ -69,7 +75,7 @@
                                     <span class="text-gray-500 dark:text-gray-400">· {{ $this->currentStanding->points }} pts from {{ $this->currentStanding->played }} played</span>
                                 </p>
                             @else
-                                <p class="text-sm text-gray-900 dark:text-gray-100">No standing available yet</p>
+                                <p class="text-sm text-muted-foreground">No standing available yet</p>
                             @endif
                         </div>
                     </div>

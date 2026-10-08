@@ -467,7 +467,9 @@ window.resultFormCollaboration = ({
             return '';
         }
 
-        return `outline: 2px solid ${lock.color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${lock.color}55; border-radius: 9999px;`;
+        const borderRadius = fieldKey.endsWith('_player_id') ? '0.5rem' : '9999px';
+
+        return `outline: 2px solid ${lock.color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${lock.color}55; border-radius: ${borderRadius};`;
     },
     collaboratorActivityStyle(collaborator) {
         const lock = Object.values(this.fieldLocks).find((fieldLock) => Number(fieldLock.user_id) === Number(collaborator.id));
@@ -842,81 +844,6 @@ window.nativePushPermissionPrompt = ({ publicKey, subscribeUrl, acknowledgeUrl }
         }
     },
 });
-
-window.registerHeaderNotificationsStore = (Alpine) => {
-    Alpine.store('headerNotifications', {
-        initialized: false,
-        loading: false,
-        unreadCount: 0,
-        notifications: [],
-        summaryUrl: null,
-        readAllUrl: null,
-        readUrlTemplate: null,
-        configure({ summaryUrl, readAllUrl, readUrlTemplate }) {
-            this.summaryUrl = summaryUrl;
-            this.readAllUrl = readAllUrl;
-            this.readUrlTemplate = readUrlTemplate;
-
-            if (! this.initialized) {
-                this.refresh();
-            }
-        },
-        async refresh() {
-            if (this.loading || ! this.summaryUrl) {
-                return;
-            }
-
-            this.loading = true;
-
-            try {
-                const response = await request(this.summaryUrl);
-                const payload = await response.json();
-                this.applyPayload(payload);
-                this.initialized = true;
-            } catch (error) {
-                console.error('[header-notifications] Failed to refresh notification summary.', error);
-            } finally {
-                this.loading = false;
-            }
-        },
-        async markAllAsRead() {
-            if (! this.readAllUrl) {
-                return;
-            }
-
-            try {
-                const response = await request(this.readAllUrl, {
-                    method: 'POST',
-                });
-                this.applyPayload(await response.json());
-            } catch (error) {
-                console.error('[header-notifications] Failed to mark all notifications as read.', error);
-            }
-        },
-        async markAsRead(notificationId) {
-            if (! this.readUrlTemplate || ! notificationId) {
-                return;
-            }
-
-            try {
-                const response = await request(
-                    this.readUrlTemplate.replace('__NOTIFICATION__', notificationId),
-                    {
-                        method: 'POST',
-                    },
-                );
-
-                this.applyPayload(await response.json());
-            } catch (error) {
-                console.error('[header-notifications] Failed to mark notification as read.', error);
-            }
-        },
-        applyPayload(payload) {
-            this.unreadCount = Number(payload?.unread_count ?? 0);
-            this.notifications = Array.isArray(payload?.notifications) ? payload.notifications : [];
-        },
-    });
-};
 
 window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
     collaboratorColorPalette: Array.isArray(colorPalette) ? colorPalette : [],

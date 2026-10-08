@@ -1,37 +1,35 @@
 @php
-    $scorePillClasses = 'ui-score-pill-neutral';
+    $scoreBadgeClasses = 'ui-fixture-badge-neutral';
 
     if ((int) $score === 1 && (int) $opponentScore === 0) {
-        $scorePillClasses = 'ui-score-pill-success';
+        $scoreBadgeClasses = 'ui-live-score-badge-win';
     } elseif ((int) $score === 0 && (int) $opponentScore === 1) {
-        $scorePillClasses = 'ui-score-pill-danger';
+        $scoreBadgeClasses = 'ui-live-score-badge-loss';
     }
 @endphp
 
-<div class="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+<div class="ui-result-player-row">
     <div class="min-w-0">
         @if ($playerId)
-            <a href="{{ route('player.show', $player) }}"
-                class="flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 transition hover:text-gray-500 dark:text-gray-100 dark:hover:text-gray-300">
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+            <a href="{{ route('player.show', $player) }}" class="ui-result-player-link">
+                <img class="size-8 shrink-0 rounded-full object-cover"
                     src="{{ $player->avatar_url }}"
                     alt="{{ $player->name }} avatar">
-                <span class="truncate">{{ $player->name }}</span>
+                <span class="truncate text-sm font-medium">{{ $player->name }}</span>
             </a>
         @else
-            <span class="flex min-w-0 items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                <img class="h-6 w-6 shrink-0 rounded-full object-cover"
+            <span class="ui-result-player-link">
+                <img class="size-8 shrink-0 rounded-full object-cover"
                     src="{{ asset('/images/user.jpg') }}"
                     alt="Awarded">
-                <span class="truncate">Awarded</span>
+                <span class="truncate text-sm font-medium">Awarded</span>
             </span>
         @endif
     </div>
 
-    <div class="shrink-0 justify-self-end">
-        <div class="ui-score-pill ui-score-pill-single {{ $scorePillClasses }}"
-            data-result-frame-score-pill>
+    <div class="shrink-0">
+        <span class="ui-fixture-badge {{ $scoreBadgeClasses }}" data-result-frame-score-pill>
             {{ $score }}
-        </div>
+        </span>
     </div>
 </div>

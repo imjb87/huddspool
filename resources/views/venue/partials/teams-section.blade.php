@@ -1,47 +1,59 @@
 <section class="ui-section" data-venue-teams-section>
     <div class="ui-shell-grid">
-        <div class="ui-section-intro">
-            <div class="ui-section-intro-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.742-.478 3 3 0 0 0-4.682-2.72m.94 3.198v-.75A2.25 2.25 0 0 0 15.75 15.72h-7.5A2.25 2.25 0 0 0 6 17.97v.75m12 0a9.094 9.094 0 0 1-12 0m12 0a9.094 9.094 0 0 0-12 0m8.25-10.47a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        <div class="ui-section-intro gap-2">
+            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-users-group size-5 text-neutral-700 dark:text-neutral-200">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                    <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                    <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
                 </svg>
-            </div>
-            <div class="ui-section-intro-copy">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Teams</h3>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            </span>
+            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Teams</h2>
+                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                     Active teams currently playing out of this venue in the open season.
                 </p>
             </div>
         </div>
 
         <div class="lg:col-span-2">
-            <div class="ui-card">
-                <div class="ui-card-rows" data-venue-teams-list>
+            <div class="ui-card ui-section-see-also-card">
+                <div class="ui-section-see-also-list" data-venue-teams-list data-slot="item-group">
                     @forelse ($venueTeams as $teamRow)
-                        <div wire:key="venue-team-{{ $teamRow['team']->id }}">
-                            <a href="{{ route('team.show', $teamRow['team']) }}"
-                                class="ui-card-row-link">
-                                <div class="ui-card-row items-start px-4 sm:px-5">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $teamRow['team']->name }}</p>
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $teamRow['section_name'] }}
-                                        </p>
-                                    </div>
-
+                        <a href="{{ route('team.show', $teamRow['team']) }}"
+                            class="ui-section-see-also-item"
+                            wire:key="venue-team-{{ $teamRow['team']->id }}"
+                            data-slot="item"
+                            data-variant="muted"
+                            data-size="default">
+                            <div class="ui-section-see-also-item-content" data-slot="item-content">
+                                <p class="ui-section-see-also-item-title" data-slot="item-title">
+                                    {{ $teamRow['team']->name }}
+                                </p>
+                                <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
+                                    <span>{{ $teamRow['section_name'] }}</span>
                                     @if ($teamRow['captain_name'])
-                                        <div class="shrink-0 text-right">
-                                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Captain</p>
-                                            <p class="mt-1 text-sm font-semibold text-gray-700 dark:text-gray-200">{{ $teamRow['captain_name'] }}</p>
-                                        </div>
+                                        <span aria-hidden="true">·</span>
+                                        <span>Captain {{ $teamRow['captain_name'] }}</span>
                                     @endif
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                            <span class="ui-section-see-also-item-action" data-slot="item-actions" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 6l6 6l-6 6" />
+                                </svg>
+                            </span>
+                        </a>
                     @empty
-                        <div class="ui-card-body">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">No active teams for the current season.</p>
-                        </div>
+                        <x-ui-empty-state
+                            title="No active teams for the current season."
+                            data-venue-teams-empty
+                        />
                     @endforelse
                 </div>
             </div>

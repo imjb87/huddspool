@@ -7,67 +7,84 @@
         @if ($this->currentRound)
             <section class="ui-section" data-knockout-round-shell>
                 <div class="ui-shell-grid">
-                    <div class="ui-section-intro">
-                        <div class="ui-section-intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5v15m0-15a2.25 2.25 0 0 1 2.25 2.25v1.5A2.25 2.25 0 0 1 6.75 10.5m0-6a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 6.75 10.5m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5A2.25 2.25 0 0 0 6.75 13.5m0 6a2.25 2.25 0 0 1-2.25-2.25v-1.5A2.25 2.25 0 0 1 6.75 13.5m10.5-9v15m0-15A2.25 2.25 0 0 1 19.5 6.75v1.5a2.25 2.25 0 0 1-2.25 2.25m0-6A2.25 2.25 0 0 0 15 6.75v1.5a2.25 2.25 0 0 0 2.25 2.25m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5a2.25 2.25 0 0 0-2.25-2.25m0 6A2.25 2.25 0 0 1 15 17.25v-1.5a2.25 2.25 0 0 1 2.25-2.25" />
-                            </svg>
-                        </div>
-                        <div class="ui-section-intro-copy">
-                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $this->currentRound->name }}</h2>
-                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                @if ($this->knockout->type === \App\KnockoutType::Singles)
-                                    To be played by {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'date TBC' }}
-                                @else
-                                    {{ $this->currentRound->scheduled_for?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
-                                @endif
-                                <span class="text-gray-300 dark:text-neutral-600">/</span>
-                                Best of {{ $this->currentRound->bestOfValue() }} frames
-                            </p>
+                    <div>
+                        <div class="ui-section-intro gap-2">
+                            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tournament size-5 text-neutral-700 dark:text-neutral-200">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M2 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M2 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M2 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M6 12h3a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-3" />
+                                    <path d="M6 4h7a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-2" />
+                                    <path d="M14 10h4" />
+                                </svg>
+                            </span>
+
+                            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">{{ $this->currentRound->name }}</h2>
+                                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
+                                    @if ($this->knockout->type === \App\KnockoutType::Singles)
+                                        To be played by {{ $this->currentRound->scheduled_for?->format('j F Y') ?? 'date TBC' }}
+                                    @else
+                                        {{ $this->currentRound->scheduled_for?->format('j F Y \\a\\t H:i') ?? 'Date TBC' }}
+                                    @endif
+                                    <span class="text-neutral-300 dark:text-neutral-600">&middot;</span>
+                                    Best of {{ $this->currentRound->bestOfValue() }} frames
+                                </p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="lg:col-span-2">
-                        @if ($this->currentRoundRows->isNotEmpty())
-                            <div class="ui-card">
-                                <div class="ui-card-rows" data-knockout-round-body>
+                        <div class="ui-card ui-knockout-round-card">
+                            @if ($this->currentRoundRows->isNotEmpty())
+                                <div class="ui-knockout-match-group" data-knockout-round-body data-slot="item-group">
                                     @foreach ($this->currentRoundRows as $matchRow)
                                         @include('knockouts.partials.match-row', ['matchRow' => $matchRow])
                                     @endforeach
                                 </div>
-                            </div>
-                        @else
-                            <div class="ui-card" data-knockout-empty-state>
-                                <div class="ui-card-body py-10 text-center">
-                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No matches scheduled for this round yet.</h3>
-                                    <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                        Match pairings and dates will appear here once the bracket is ready.
-                                    </p>
-                                </div>
-                            </div>
-                        @endif
+                            @else
+                                <x-ui-empty-state
+                                    title="No matches scheduled for this round yet."
+                                    description="Match pairings and dates will appear here once the bracket is ready."
+                                    data-knockout-empty-state
+                                />
+                            @endif
 
-                        <div class="pt-4" data-knockout-round-controls>
-                            <div class="flex items-center justify-between gap-4">
-                                <button wire:click="previousRound"
-                                    wire:loading.attr="disabled"
-                                    class="ui-button-primary min-w-24 disabled:translate-y-0 disabled:opacity-50"
-                                    aria-label="Previous round"
-                                    @disabled(! $this->hasPreviousRound)>
-                                    Previous
-                                </button>
+                            <div class="border-t border-border px-3 py-4 sm:px-5" data-knockout-round-controls>
+                                <nav class="ui-pagination" aria-label="Knockout round pagination">
+                                    <button wire:click="previousRound"
+                                        wire:loading.attr="disabled"
+                                        class="ui-pagination-link"
+                                        aria-label="Previous round"
+                                        type="button"
+                                        @disabled(! $this->hasPreviousRound)>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left size-4" aria-hidden="true">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M15 6l-6 6l6 6" />
+                                        </svg>
+                                        <span class="hidden sm:inline">Previous</span>
+                                    </button>
 
-                                <span class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-knockout-current-round-label>
-                                    {{ $this->currentRound->name }}
-                                </span>
+                                    <span class="ui-pagination-current" aria-live="polite" data-knockout-current-round-label>
+                                        {{ $this->currentRound->name }}
+                                    </span>
 
-                                <button wire:click="nextRound"
-                                    wire:loading.attr="disabled"
-                                    class="ui-button-primary min-w-24 disabled:translate-y-0 disabled:opacity-50"
-                                    aria-label="Next round"
-                                    @disabled(! $this->hasNextRound)>
-                                    Next
-                                </button>
+                                    <button wire:click="nextRound"
+                                        wire:loading.attr="disabled"
+                                        class="ui-pagination-link"
+                                        aria-label="Next round"
+                                        type="button"
+                                        @disabled(! $this->hasNextRound)>
+                                        <span class="hidden sm:inline">Next</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4" aria-hidden="true">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M9 6l6 6l-6 6" />
+                                        </svg>
+                                    </button>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -76,28 +93,37 @@
         @else
             <div class="ui-section" data-knockout-empty-state>
                 <div class="ui-shell-grid">
-                    <div class="ui-section-intro">
-                        <div class="ui-section-intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5v15m0-15a2.25 2.25 0 0 1 2.25 2.25v1.5A2.25 2.25 0 0 1 6.75 10.5m0-6a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 6.75 10.5m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5A2.25 2.25 0 0 0 6.75 13.5m0 6a2.25 2.25 0 0 1-2.25-2.25v-1.5A2.25 2.25 0 0 1 6.75 13.5m10.5-9v15m0-15A2.25 2.25 0 0 1 19.5 6.75v1.5a2.25 2.25 0 0 1-2.25 2.25m0-6A2.25 2.25 0 0 0 15 6.75v1.5a2.25 2.25 0 0 0 2.25 2.25m0 0v3m0 6a2.25 2.25 0 0 0 2.25-2.25v-1.5a2.25 2.25 0 0 0-2.25-2.25m0 6A2.25 2.25 0 0 1 15 17.25v-1.5a2.25 2.25 0 0 1 2.25-2.25" />
-                            </svg>
-                        </div>
-                        <div class="ui-section-intro-copy">
-                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rounds</h2>
-                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                Published rounds and ties will appear here once the bracket is ready.
-                            </p>
+                    <div>
+                        <div class="ui-section-intro gap-2">
+                            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tournament size-5 text-neutral-700 dark:text-neutral-200">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M2 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M2 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M2 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                    <path d="M6 12h3a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-3" />
+                                    <path d="M6 4h7a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-2" />
+                                    <path d="M14 10h4" />
+                                </svg>
+                            </span>
+
+                            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Rounds</h2>
+                                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
+                                    Published rounds and ties will appear here once the bracket is ready.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="lg:col-span-2">
                         <div class="ui-card">
-                            <div class="ui-card-body py-10 text-center">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No rounds have been published yet.</h3>
-                                <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                    The bracket will appear here as soon as round information is published.
-                                </p>
-                            </div>
+                            <x-ui-empty-state
+                                title="No rounds have been published yet."
+                                description="The bracket will appear here as soon as round information is published."
+                                data-knockout-empty-state
+                            />
                         </div>
                     </div>
                 </div>

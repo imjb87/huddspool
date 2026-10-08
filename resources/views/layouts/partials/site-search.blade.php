@@ -25,7 +25,7 @@
     ></div>
 
     <div
-        class="fixed inset-0 z-10 overflow-y-auto px-4 py-[12px] sm:p-6 md:p-20"
+        class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
         x-show="open"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 translate-y-1"
@@ -36,30 +36,31 @@
     >
         <div
             @click.outside="close()"
-            class="ui-card mx-auto max-w-xl transform transition-all dark:bg-neutral-900"
+            class="relative mx-auto w-full max-w-none transform overflow-hidden rounded-xl border border-gray-200/80 bg-white p-2 pb-11 text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 transition-all sm:max-w-lg dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>
-            <div class="relative border-b border-gray-200 dark:border-neutral-800/80">
+            <div class="relative flex h-9 items-center rounded-md border border-gray-200 bg-gray-50/70 px-3 dark:border-neutral-800 dark:bg-neutral-800/50">
                 <svg
-                    class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400 dark:text-gray-500"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+                    class="pointer-events-none mr-2 size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                     aria-hidden="true"
                 >
-                    <path
-                        fill-rule="evenodd"
-                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                        clip-rule="evenodd"
-                    />
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-4-4" />
                 </svg>
                 <input
-                    type="search"
+                    type="text"
                     id="searchInput"
                     x-ref="searchInput"
                     x-model="searchTerm"
                     autocomplete="off"
-                    class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 dark:text-gray-100 dark:placeholder:text-gray-500 sm:pr-24 sm:text-sm"
+                    class="h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm text-gray-900 placeholder:text-gray-600 focus:ring-0 dark:text-gray-100 dark:placeholder:text-gray-400"
                     placeholder="Search players, teams, venues..."
                     role="combobox"
                     :aria-expanded="resultGroups.length > 0 ? 'true' : 'false'"
@@ -69,30 +70,25 @@
                     @keydown.arrow-up.prevent="moveActiveResult(-1)"
                     @keydown.enter.prevent="openActiveResult()"
                 >
-                <div class="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
-                    <span class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] font-semibold tracking-wide text-gray-400 dark:border-neutral-800 dark:bg-neutral-800 dark:text-gray-500">
-                        Ctrl K
-                    </span>
-                </div>
             </div>
 
-            <div class="w-full" x-show="isLoading" data-search-loading-state>
-                <div class="w-full space-y-3" data-search-loading-skeleton>
-                    @foreach (range(1, 2) as $groupIndex)
-                        <div class="w-full border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75">
-                            <div class="ui-card-column-headings justify-start px-4 sm:px-5">
-                                <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+            <div class="min-h-80 w-full" x-show="isLoading" data-search-loading-state>
+                <div class="w-full space-y-1" data-search-loading-skeleton aria-hidden="true">
+                    @foreach (['players', 'teams'] as $groupName)
+                        <div class="w-full">
+                            <div class="px-3 pt-3 pb-1">
+                                <div class="h-3 w-20 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80"></div>
                             </div>
-                            <div class="ui-card-rows">
+                            <div class="space-y-0.5">
                                 @foreach (range(1, 3) as $rowIndex)
-                                    <div class="ui-card-row items-start">
-                                        <div class="min-w-0 flex flex-1 items-start gap-3">
-                                            <div class="h-9 w-9 shrink-0 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                            <div class="min-w-0 flex-1 space-y-2">
-                                                <div class="h-3.5 w-32 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-40"></div>
-                                                <div class="h-3 w-24 rounded-full bg-gray-100 dark:bg-neutral-900/70 sm:w-28"></div>
-                                            </div>
+                                    <div class="flex h-9 items-center justify-between gap-4 rounded-md border border-transparent px-3">
+                                        <div class="flex min-w-0 flex-1 items-center gap-2">
+                                            @if ($groupName === 'players')
+                                                <div class="size-6 shrink-0 animate-pulse rounded-full bg-gray-200/80 dark:bg-neutral-800/80"></div>
+                                            @endif
+                                            <div class="h-3.5 w-32 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80 sm:w-40"></div>
                                         </div>
+                                        <div class="h-3 w-24 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80 sm:w-28"></div>
                                     </div>
                                 @endforeach
                             </div>
@@ -102,72 +98,74 @@
             </div>
 
             <div x-show="!isLoading && searchTerm.trim().length < 3" data-search-empty-prompt>
-                <div class="px-6 py-14 text-center text-sm sm:px-14">
-                    <svg class="mx-auto h-6 w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M6.115 5.19l.319 1.913A6 6 0 008.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 002.288-4.042 1.087 1.087 0 00-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 01-.98-.314l-.295-.295a1.125 1.125 0 010-1.591l.13-.132a1.125 1.125 0 011.3-.21l.603.302a.809.809 0 001.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 001.528-1.732l.146-.292M6.115 5.19A9 9 0 1017.18 4.64M6.115 5.19A8.965 8.965 0 0112 3c1.929 0 3.716.607 5.18 1.64" />
-                    </svg>
-                    <p class="mt-4 font-semibold text-gray-900 dark:text-gray-100">Search for players, teams and venues</p>
-                    <p class="mt-2 text-gray-500 dark:text-gray-400">Quickly find what you’re looking for by running a global search.</p>
-                </div>
+                <x-ui-empty-state
+                    layout="search"
+                    title="Search for players, teams and venues"
+                    description="Quickly find what you’re looking for by running a global search."
+                />
             </div>
 
             <div x-show="!isLoading && searchTerm.trim().length >= 3 && resultGroups.length === 0" data-search-no-results>
-                <div class="px-6 py-14 text-center text-sm sm:px-14">
-                    <svg class="mx-auto h-6 w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
-                    </svg>
-                    <p class="mt-4 font-semibold text-gray-900 dark:text-gray-100">No results found</p>
-                    <p class="mt-2 text-gray-500 dark:text-gray-400">We couldn’t find anything with that term. Please try again.</p>
-                </div>
+                <x-ui-empty-state
+                    layout="search"
+                    title="No results found"
+                    description="We couldn’t find anything with that term. Please try again."
+                />
             </div>
 
             <ul
                 x-show="!isLoading && resultGroups.length > 0"
-                class="max-h-[28rem] overflow-y-auto"
+                class="min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5"
                 id="search-results"
                 role="listbox"
                 data-search-results-shell
             >
                 <template x-for="group in resultGroups" :key="group.key">
-                    <li class="border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75">
-                        <div class="ui-card-column-headings justify-start px-4 sm:px-5">
+                    <li>
+                        <div class="px-3 pt-3 pb-1">
                             <h2 class="text-xs font-medium text-gray-500 dark:text-gray-400" x-text="group.heading"></h2>
                         </div>
-                        <div class="ui-card-rows" data-search-result-group>
+                        <div class="space-y-0.5 pb-1.5" data-search-result-group>
                             <template x-for="item in group.results" :key="`${group.key}-${item.id}`">
                                 <a
-                                    class="ui-card-row-link focus:outline-none"
+                                    class="flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent px-3 text-sm font-medium outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 dark:hover:bg-neutral-800 dark:hover:text-gray-100 dark:focus:bg-neutral-800 dark:focus:text-gray-100"
                                     :id="`site-search-result-${group.key}-${item.id}`"
                                     :href="item.href"
-                                    :class="{ 'bg-gray-50 dark:bg-neutral-900/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
+                                    :class="{ 'border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
                                     data-search-result-link
                                     @mouseenter="setActiveResultById(`site-search-result-${group.key}-${item.id}`)"
                                     @click="close()"
                                 >
-                                    <div class="ui-card-row items-start">
+                                    <div class="flex min-w-0 flex-1 items-center gap-2">
                                         <template x-if="group.key === 'players'">
-                                            <img
-                                                :src="item.avatarUrl"
-                                                :alt="item.name"
-                                                class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800"
-                                                data-search-player-avatar
-                                            >
+                                            <span class="relative flex size-6 shrink-0 overflow-hidden rounded-full bg-gray-100 select-none dark:bg-neutral-800" data-search-player-avatar aria-hidden="true">
+                                                <img :src="item.avatarUrl" alt="" class="aspect-square size-full object-cover">
+                                            </span>
                                         </template>
-                                        <div class="min-w-0 flex-1">
-                                            <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100" x-text="item.name"></p>
-                                            <p class="mt-1 truncate text-xs text-gray-500 dark:text-gray-400" x-text="item.secondaryText"></p>
-                                        </div>
+                                        <p class="min-w-0 truncate text-sm font-medium text-gray-900 dark:text-gray-100" x-text="item.name"></p>
                                     </div>
+                                    <p class="max-w-[45%] shrink-0 truncate text-xs font-normal text-gray-500 dark:text-gray-400" x-text="item.secondaryText"></p>
                                 </a>
                             </template>
                         </div>
                     </li>
                 </template>
             </ul>
+
+            <div class="absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-3 rounded-b-xl border-t border-gray-200 bg-gray-50 px-4 text-xs font-medium text-gray-500 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-400">
+                <div class="flex items-center gap-1.5">
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center gap-1 rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↑↓</kbd>
+                    <span>Navigate</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↵</kbd>
+                    <span>Open</span>
+                </div>
+                <div class="ml-auto flex items-center gap-1.5">
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">Esc</kbd>
+                    <span>Close</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -921,6 +921,8 @@ class GptActionsApiTest extends TestCase
                 'state' => 'test-state',
             ]))
             ->assertOk()
+            ->assertSee('data-oauth-authorize-page', false)
+            ->assertSee('ui-result-button ui-result-button-primary', false)
             ->assertSee('Connect Huddspool')
             ->assertSee('Allow access');
     }

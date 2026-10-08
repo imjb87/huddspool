@@ -68,7 +68,6 @@ Route::prefix('knockouts')->group(function () {
     Route::get('/{knockout}', [KnockoutController::class, 'show'])->name('knockout.show');
 });
 Route::prefix('history')->group(function () {
-    Route::get('/', [HistoryController::class, 'index'])->name('history.index');
     Route::get('/{season}/knockouts/{knockout}', [KnockoutController::class, 'history'])->name('history.knockout.show');
     Route::get('/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
 });

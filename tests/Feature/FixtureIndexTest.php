@@ -150,7 +150,7 @@ class FixtureIndexTest extends TestCase
         );
     }
 
-    public function test_fixtures_results_page_renders_fixed_width_gradient_score_pills(): void
+    public function test_fixtures_results_page_renders_item_score_badges(): void
     {
         $season = Season::factory()->create([
             'is_open' => true,
@@ -175,6 +175,14 @@ class FixtureIndexTest extends TestCase
             'fixture_date' => now(),
         ]);
 
+        $upcomingFixture = Fixture::factory()->create([
+            'week' => 1,
+            'season_id' => $season->id,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'fixture_date' => now()->addWeek(),
+        ]);
+
         Result::factory()->create([
             'fixture_id' => $fixture->id,
             'home_team_id' => $homeTeam->id,
@@ -188,18 +196,31 @@ class FixtureIndexTest extends TestCase
             'is_confirmed' => true,
         ]);
 
-        $this->get(route('ruleset.section.show', [
+        $response = $this->get(route('ruleset.section.show', [
             'ruleset' => $ruleset,
             'section' => $section,
             'tab' => 'fixtures-results',
         ]))
             ->assertOk()
-            ->assertSee('data-section-fixtures-score-pill', false)
-            ->assertSee('ui-score-pill ui-score-pill-neutral ui-score-pill-split', false)
-            ->assertSee('ui-score-pill-segment', false)
-            ->assertSee('truncate text-sm font-semibold', false)
-            ->assertSee('ui-score-pill-divider-neutral', false)
+            ->assertSee('ui-card ui-fixtures-card', false)
+            ->assertSee('ui-fixtures-item-group', false)
+            ->assertSee('ui-fixture-item', false)
+            ->assertSee('ui-fixture-team-names', false)
+            ->assertSee('ui-fixture-team-matchup', false)
+            ->assertSee('ui-fixtures-date-heading', false)
+            ->assertSee('data-section-fixtures-date', false)
+            ->assertSee('data-section-fixtures-score-stack', false)
+            ->assertSee('ui-fixture-badge ui-live-score-badge-win', false)
+            ->assertSee('ui-fixture-badge ui-live-score-badge-loss', false)
+            ->assertSee('ui-fixture-badge ui-fixture-badge-neutral', false)
+            ->assertDontSee('ui-score-pill ui-score-pill-neutral ui-score-pill-split', false)
+            ->assertDontSee('ui-fixture-date', false)
+            ->assertDontSee('ui-fixture-meta', false)
             ->assertSeeText('10')
-            ->assertSeeText('8');
+            ->assertSeeText('8')
+            ->assertSeeText($fixture->fixture_date->format('j M Y'))
+            ->assertSeeText($upcomingFixture->fixture_date->format('j M'));
+
+        $this->assertSame(1, substr_count($response->getContent(), 'data-section-fixtures-date'));
     }
 }

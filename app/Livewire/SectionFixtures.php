@@ -57,6 +57,16 @@ class SectionFixtures extends Component
         $this->week++;
     }
 
+    public function canAdvanceWeek(): bool
+    {
+        $seasonWeekCount = collect($this->section->season->dates ?? [])->flatten()->filter()->count();
+        $fixtureWeekCount = Fixture::query()
+            ->where('section_id', $this->section->id)
+            ->max('week');
+
+        return $this->week < max(1, $seasonWeekCount, (int) ($fixtureWeekCount ?? 1));
+    }
+
     public function render(): View
     {
         return view(
@@ -65,6 +75,7 @@ class SectionFixtures extends Component
                 'history' => false,
                 'fixtures' => $this->fixtures,
                 'fixtureRows' => $this->fixtureRows(),
+                'canAdvanceWeek' => $this->canAdvanceWeek(),
             ]
         );
     }

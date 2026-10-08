@@ -65,84 +65,150 @@
             'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
         ],
     ];
+
+    $sponsorCarouselCloneCount = min(3, count($sponsors));
+    $carouselSponsors = array_merge(
+        array_slice($sponsors, -$sponsorCarouselCloneCount),
+        $sponsors,
+        array_slice($sponsors, 0, $sponsorCarouselCloneCount),
+    );
 @endphp
 
 <section {{ $attributes->class(['ui-section']) }} data-section-sponsors>
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
-            <div class="ui-section-intro">
-                <div class="ui-section-intro-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+            <div class="ui-section-intro gap-2">
+                <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-rocket size-5 text-neutral-700 dark:text-neutral-200">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M4 13a8 8 0 0 1 7 7a6 6 0 0 0 3 -5a9 9 0 0 0 6 -8a3 3 0 0 0 -3 -3a9 9 0 0 0 -8 6a6 6 0 0 0 -5 3" />
+                        <path d="M7 14a6 6 0 0 0 -3 6a6 6 0 0 0 6 -3" />
+                        <path d="M14 9a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                     </svg>
-                </div>
-                <div class="ui-section-intro-copy">
-                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                </span>
+                <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                    <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">
                         Backing the league every week
                     </h2>
-                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                         Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.
                     </p>
                 </div>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="ui-card">
+                <div class="ui-card ui-sponsors-card">
                     <div class="ui-card-body">
-                        <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3" data-section-sponsors-grid>
-                            @foreach ($sponsors as $sponsor)
-                                <a href="{{ $sponsor['url'] }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="group flex flex-col"
-                                    data-section-sponsors-card>
-                                    <div class="flex h-24 w-full items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 transition hover:border-gray-300 dark:border-gray-200 dark:bg-white dark:hover:border-gray-300">
-                                        @if (isset($sponsor['webp_160']))
-                                            <picture>
-                                                <source
-                                                    type="image/webp"
-                                                    srcset="
-                                                        @if (isset($sponsor['webp_96'])){{ $sponsor['webp_96'] }} 96w, @endif
-                                                        {{ $sponsor['webp_160'] }} 160w,
-                                                        @if (isset($sponsor['webp_192'])){{ $sponsor['webp_192'] }} 192w, @endif
-                                                        {{ $sponsor['webp_320'] }} 320w
-                                                    "
-                                                    sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
-                                                >
-                                                <img class="h-auto max-h-12 w-auto max-w-full object-contain sm:max-h-14"
-                                                    src="{{ $sponsor['image'] }}"
-                                                    srcset="
-                                                        @if (isset($sponsor['image_96'])){{ $sponsor['image_96'] }} 96w, @endif
-                                                        {{ $sponsor['image_160'] }} 160w,
-                                                        @if (isset($sponsor['image_192'])){{ $sponsor['image_192'] }} 192w, @endif
-                                                        {{ $sponsor['image'] }} 320w
-                                                    "
-                                                    sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
-                                                    width="{{ $sponsor['width'] }}"
-                                                    height="{{ $sponsor['height'] }}"
-                                                    style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};"
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                    alt="{{ $sponsor['alt'] }}"
-                                                    aria-hidden="true">
-                                            </picture>
-                                        @else
-                                            <img class="h-auto max-h-12 w-auto max-w-full object-contain sm:max-h-14"
-                                                src="{{ $sponsor['image'] }}"
-                                                @if (isset($sponsor['width'])) width="{{ $sponsor['width'] }}" @endif
-                                                @if (isset($sponsor['height'])) height="{{ $sponsor['height'] }}" @endif
-                                                @if (isset($sponsor['width'], $sponsor['height'])) style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};" @endif
-                                                loading="lazy"
-                                                decoding="async"
-                                                alt="{{ $sponsor['alt'] }}"
-                                                aria-hidden="true">
-                                        @endif
-                                    </div>
-                                    <p class="mt-2 text-center text-sm font-medium text-gray-500 transition group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">
-                                        {{ $sponsor['name'] }}
-                                    </p>
-                                </a>
-                            @endforeach
+                        <div class="ui-sponsor-carousel"
+                            x-data="window.sponsorCarousel({{ count($sponsors) }}, {{ $sponsorCarouselCloneCount }})"
+                            x-init="start()"
+                            x-on:mouseenter="handleMouseEnter()"
+                            x-on:mouseleave="handleMouseLeave()"
+                            x-on:focusin="handleFocusIn()"
+                            x-on:focusout="handleFocusOut($event)"
+                            x-on:visibilitychange.window="handleVisibilityChange()"
+                            x-on:keydown.arrow-left.prevent="previous()"
+                            x-on:keydown.arrow-right.prevent="next()"
+                            tabindex="0"
+                            data-section-sponsors-carousel>
+                            <div class="ui-sponsor-carousel-viewport"
+                                role="region"
+                                aria-roledescription="carousel"
+                                aria-label="League sponsors">
+                                <div id="sponsor-carousel-track"
+                                    class="ui-sponsor-carousel-track flex -ml-3 transition-transform duration-500 ease-out"
+                                    x-cloak
+                                    x-ref="track"
+                                    x-on:transitionend="handleTransitionEnd($event)"
+                                    x-bind:class="{ 'transition-none': isJumping }"
+                                    x-bind:style="`transform: translate3d(-${slideOffset()}%, 0, 0)`">
+                                    @foreach ($carouselSponsors as $slideIndex => $sponsor)
+                                        @php
+                                            $isClone = $slideIndex < $sponsorCarouselCloneCount || $slideIndex >= $sponsorCarouselCloneCount + count($sponsors);
+                                        @endphp
+                                        <div class="ui-sponsor-carousel-slide min-w-0 shrink-0 grow-0 basis-1/2 pl-3 lg:basis-1/3" @if ($isClone) aria-hidden="true" @endif>
+                                            <a href="{{ $sponsor['url'] }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="ui-sponsor-item group"
+                                                @if (! $isClone) data-section-sponsors-card @endif
+                                                @if ($isClone) tabindex="-1" @endif>
+                                                <div class="ui-sponsor-card-media">
+                                                    @if (isset($sponsor['webp_160']))
+                                                        <picture>
+                                                            <source
+                                                                type="image/webp"
+                                                                srcset="
+                                                                    @if (isset($sponsor['webp_96'])){{ $sponsor['webp_96'] }} 96w, @endif
+                                                                    {{ $sponsor['webp_160'] }} 160w,
+                                                                    @if (isset($sponsor['webp_192'])){{ $sponsor['webp_192'] }} 192w, @endif
+                                                                    {{ $sponsor['webp_320'] }} 320w
+                                                                "
+                                                                sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
+                                                            >
+                                                            <img class="ui-sponsor-logo"
+                                                                src="{{ $sponsor['image'] }}"
+                                                                srcset="
+                                                                    @if (isset($sponsor['image_96'])){{ $sponsor['image_96'] }} 96w, @endif
+                                                                    {{ $sponsor['image_160'] }} 160w,
+                                                                    @if (isset($sponsor['image_192'])){{ $sponsor['image_192'] }} 192w, @endif
+                                                                    {{ $sponsor['image'] }} 320w
+                                                                "
+                                                                sizes="{{ $sponsor['sizes'] ?? '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px' }}"
+                                                                width="{{ $sponsor['width'] }}"
+                                                                height="{{ $sponsor['height'] }}"
+                                                                style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};"
+                                                                loading="lazy"
+                                                                decoding="async"
+                                                                alt="{{ $sponsor['alt'] }}"
+                                                                aria-hidden="true">
+                                                        </picture>
+                                                    @else
+                                                        <img class="ui-sponsor-logo"
+                                                            src="{{ $sponsor['image'] }}"
+                                                            @if (isset($sponsor['width'])) width="{{ $sponsor['width'] }}" @endif
+                                                            @if (isset($sponsor['height'])) height="{{ $sponsor['height'] }}" @endif
+                                                            @if (isset($sponsor['width'], $sponsor['height'])) style="aspect-ratio: {{ $sponsor['width'] }} / {{ $sponsor['height'] }};" @endif
+                                                            loading="lazy"
+                                                            decoding="async"
+                                                            alt="{{ $sponsor['alt'] }}"
+                                                            aria-hidden="true">
+                                                    @endif
+                                                </div>
+                                                <div class="ui-sponsor-content">
+                                                    <p class="ui-sponsor-name">
+                                                        {{ $sponsor['name'] }}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="ui-sponsor-carousel-toolbar">
+                                <span class="sr-only">Browse league sponsors</span>
+                                <button type="button"
+                                    class="ui-sponsor-carousel-button"
+                                    x-on:click="previous()"
+                                    x-bind:disabled="isTransitioning"
+                                    aria-label="Previous sponsors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left size-4" aria-hidden="true">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M15 6l-6 6l6 6" />
+                                    </svg>
+                                </button>
+                                <button type="button"
+                                    class="ui-sponsor-carousel-button"
+                                    x-on:click="next()"
+                                    x-bind:disabled="isTransitioning"
+                                    aria-label="Next sponsors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4" aria-hidden="true">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M9 6l6 6l-6 6" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

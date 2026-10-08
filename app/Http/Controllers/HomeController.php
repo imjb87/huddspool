@@ -61,10 +61,7 @@ class HomeController extends Controller
             ->map(function (Result $result) use ($user) {
                 $result->home_team_shortname = $result->fixture?->homeTeam?->shortname;
                 $result->away_team_shortname = $result->fixture?->awayTeam?->shortname;
-                $result->row_meta = collect([
-                    $result->fixture?->fixture_date?->format('j M Y'),
-                    $result->section?->name,
-                ])->filter()->implode(' / ');
+                $result->row_meta = $result->section?->name ?? '';
                 $result->live_score_url = $this->liveScoreUrlFor($result, $user);
 
                 return $result;

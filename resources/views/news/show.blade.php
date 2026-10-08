@@ -18,21 +18,21 @@
 @endif
 
 @section('content')
-    <div class="ui-page-shell bg-neutral-100 dark:bg-neutral-950" data-news-show>
-        <div class="ui-section" data-section-shared-header>
-            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
-                <x-ui-breadcrumb :items="[
-                    ['label' => 'News', 'url' => route('news.index')],
-                    ['label' => $newsArticle->title, 'current' => true],
-                ]" />
-            </div>
-        </div>
+    <div class="ui-page-shell ui-document-page" data-news-show>
+        <x-ui-document-header
+            :breadcrumbs="[
+                ['label' => 'News', 'url' => route('news.index')],
+                ['label' => $newsArticle->title, 'current' => true],
+            ]"
+            :title="$newsArticle->title"
+            :description="$newsArticle->excerpt(180)"
+        />
 
-        <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+        <div class="ui-document-body">
             <section class="ui-section">
-                <div class="ui-card">
+                <article class="ui-card ui-document-card">
                     @if ($newsArticle->featured_image_url)
-                        <div class="border-b border-gray-200 dark:border-gray-800" data-news-featured-image>
+                        <div class="border-b border-border" data-news-featured-image>
                             <img
                                 src="{{ $newsArticle->featured_image_url }}"
                                 alt="{{ $newsArticle->title }} featured image"
@@ -40,18 +40,18 @@
                             >
                         </div>
                     @endif
-                    <div class="ui-card-body">
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                    <div class="ui-document-card-body">
+                        <div class="text-xs text-muted-foreground">
                             <time datetime="{{ $newsArticle->created_at?->toDateString() }}">
                                 {{ $newsArticle->created_at?->format('j F Y') }}
                             </time>
+                            @if ($newsArticle->author)
+                                <span aria-hidden="true">&middot;</span>
+                                <span>{{ $newsArticle->author->name }}</span>
+                            @endif
                         </div>
 
-                        <h1 class="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            {{ $newsArticle->title }}
-                        </h1>
-
-                        <div class="mt-4 space-y-4 text-sm leading-7 text-gray-700 dark:text-gray-300" data-news-content>
+                        <div class="ui-document-prose mt-6" data-news-content>
                             @foreach (preg_split('/\r\n|\r|\n/', trim((string) $newsArticle->content)) as $paragraph)
                                 @if (filled(trim((string) $paragraph)))
                                     <p>{{ $paragraph }}</p>
@@ -60,7 +60,7 @@
                         </div>
 
                     </div>
-                </div>
+                </article>
 
                 <div class="mt-4 flex justify-end"
                     x-data="{

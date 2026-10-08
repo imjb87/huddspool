@@ -3,25 +3,45 @@
 @section('uses-livewire', 'true')
 
 @section('content')
+    @php
+        $section = $fixture->section;
+        $ruleset = $section?->ruleset;
+        $sectionLink = $section && $ruleset
+            ? route('ruleset.section.show', [
+                'ruleset' => $ruleset,
+                'section' => $section,
+                'tab' => 'fixtures-results',
+            ])
+            : null;
+    @endphp
+
     <div class="ui-page-shell" data-result-create-page>
         <div class="ui-section" data-section-shared-header>
-            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
-                <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
-                    <div class="min-w-0 lg:col-span-2">
-                        <div class="ui-page-title-with-icon">
-                            <div class="ui-page-title-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M9 5.25H7.5A2.25 2.25 0 0 0 5.25 7.5v9A2.25 2.25 0 0 0 7.5 18.75h9A2.25 2.25 0 0 0 18.75 16.5v-9A2.25 2.25 0 0 0 16.5 5.25H15m-6 0V3.75A.75.75 0 0 1 9.75 3h4.5a.75.75 0 0 1 .75.75v1.5m-6 0h6" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Submit a result</p>
-                                <h1 class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">{{ $fixture->section->name }}</h1>
-                            </div>
-                        </div>
+            <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
+                <x-ui-breadcrumb class="mb-3" :items="[
+                    ['label' => 'Rulesets'],
+                    ['label' => $ruleset?->name ?? 'Ruleset', 'url' => $ruleset ? route('ruleset.show', $ruleset) : null],
+                    ['label' => $section?->name ?? 'Section', 'url' => $sectionLink],
+                    ['label' => 'Submit result', 'current' => true],
+                ]" />
+
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div class="min-w-0">
+                        <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">Submit a result</h1>
+                        <p class="mt-2 max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400">
+                            Enter the frame-by-frame result for {{ $section?->name ?? 'this fixture' }}.
+                        </p>
                     </div>
 
-                    <div aria-hidden="true"></div>
+                    <a href="{{ route('fixture.show', $fixture) }}" class="ui-result-button ui-result-button-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-left size-4" aria-hidden="true">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M5 12l14 0" />
+                            <path d="M5 12l6 6" />
+                            <path d="M5 12l6 -6" />
+                        </svg>
+                        <span>Back to fixture</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -30,11 +50,24 @@
             <div class="space-y-6">
                 <section class="ui-section" data-result-create-info-section>
                     <div class="ui-shell-grid">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixture details</h3>
-                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        <div class="ui-section-intro gap-2">
+                            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-calendar size-5 text-neutral-700 dark:text-neutral-200">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" />
+                                    <path d="M16 3v4" />
+                                    <path d="M8 3v4" />
+                                    <path d="M4 11h16" />
+                                    <path d="M11 15h1" />
+                                    <path d="M12 15v3" />
+                                </svg>
+                            </span>
+                            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixture details</h2>
+                                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                                     Review the fixture details before entering the result.
-                            </p>
+                                </p>
+                            </div>
                         </div>
 
                         <div class="lg:col-span-2">
@@ -42,27 +75,31 @@
                                 <div class="ui-card-body">
                                     <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                                         <div class="sm:col-span-2">
-                                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Match</p>
-                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                            {{ $fixture->homeTeam->name }} <span class="font-normal text-gray-400 dark:text-neutral-500">vs</span>
-                                            {{ $fixture->awayTeam->name }}
+                                            <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">Match</p>
+                                            <p class="flex flex-wrap items-center gap-x-1 text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+                                                <a href="{{ route('team.show', $fixture->homeTeam) }}" class="ui-link inline-flex text-sm font-semibold">
+                                                    {{ $fixture->homeTeam->name }}
+                                                </a>
+                                                <span class="font-normal text-neutral-400 dark:text-neutral-500">vs</span>
+                                                <a href="{{ route('team.show', $fixture->awayTeam) }}" class="ui-link inline-flex text-sm font-semibold">
+                                                    {{ $fixture->awayTeam->name }}
+                                                </a>
                                             </p>
                                         </div>
 
                                         <div>
-                                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Date</p>
-                                            <p class="text-sm text-gray-900 dark:text-gray-100">{{ $fixture->fixture_date->format('l jS F Y') }}</p>
+                                            <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">Date</p>
+                                            <p class="text-sm text-neutral-950 dark:text-neutral-50">{{ $fixture->fixture_date->format('l jS F Y') }}</p>
                                         </div>
 
                                         <div>
-                                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Venue</p>
+                                            <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">Venue</p>
                                             @if ($fixture->venue)
-                                                <a class="ui-link inline-flex text-sm font-semibold"
-                                                    href="{{ route('venue.show', $fixture->venue->id) }}">
+                                                <a href="{{ route('venue.show', $fixture->venue) }}" class="ui-link inline-flex text-sm font-semibold">
                                                     {{ $fixture->venue->name }}
                                                 </a>
                                             @else
-                                                <p class="text-sm text-gray-900 dark:text-gray-100">Venue TBC</p>
+                                                <p class="text-sm text-muted-foreground">Venue TBC</p>
                                             @endif
                                         </div>
                                     </div>

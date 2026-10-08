@@ -29,7 +29,7 @@ class HomePageTest extends TestCase
         ResponseCache::clear();
     }
 
-    public function test_home_page_renders_a_single_full_bleed_hero(): void
+    public function test_home_page_renders_a_shadcn_style_hero_with_the_centered_league_logo(): void
     {
         $response = $this->get(route('home'));
 
@@ -39,48 +39,70 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-hero', false);
         $response->assertDontSee('/livewire/livewire.min.js', false);
         $response->assertDontSee('window.livewireScriptConfig', false);
-        $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
-        $response->assertSee('ui-card-branded', false);
-        $response->assertSee('ui-section ui-card-body', false);
-        $response->assertSee('ui-shell-grid items-center', false);
-        $response->assertSee('flex justify-start lg:justify-center', false);
-        $response->assertSee('text-left lg:col-span-2', false);
-        $response->assertSee('relative w-32 drop-shadow-2xl sm:w-36 lg:w-40', false);
+        $response->assertSee('mx-auto flex max-w-6xl flex-col items-center gap-1.5 px-6 py-4 text-center sm:gap-2 md:py-6 lg:py-8 xl:gap-3', false);
+        $response->assertDontSeeText('Huddersfield & District Pool League');
+        $response->assertSee('text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900', false);
+        $response->assertSee('max-w-2xl text-base leading-6 text-gray-900 sm:text-lg sm:leading-7 dark:text-gray-100', false);
+        $response->assertSee('flex w-full items-center justify-center gap-2 pt-1', false);
+        $response->assertSee('data-home-hero-actions', false);
+        $response->assertSee('data-home-hero-account-action', false);
+        $response->assertSee('href="'.route('login').'"', false);
+        $response->assertSeeText('Log in to view your account');
+        $response->assertSee('data-home-hero-logo', false);
+        $response->assertSee('class="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"', false);
+        $response->assertSee('alt="Huddersfield Pool League logo"', false);
         $response->assertSee(asset('images/logo-160.webp').'?v=', false);
         $response->assertSee(asset('images/logo-320.webp').'?v=', false);
-        $response->assertSee('rel="preload"', false);
-        $response->assertSee('as="image"', false);
-        $response->assertSee('imagesizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"', false);
-        $response->assertSee('sizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"', false);
-        $response->assertSee('width="160"', false);
-        $response->assertSee('height="160"', false);
-        $response->assertSee('loading="eager"', false);
-        $response->assertSee('fetchpriority="high"', false);
+        $response->assertSee('id="live-scores"', false);
+        $response->assertSee('group/button inline-flex h-[35px] shrink-0 items-center justify-center gap-1.5 rounded-full', false);
+        $response->assertSee('bg-black px-4 text-sm leading-5 font-medium whitespace-nowrap text-white', false);
+        $response->assertDontSee('ui-card-branded', false);
+        $response->assertDontSee('ui-section ui-card-body', false);
         $response->assertSee('@keydown.arrow-down.prevent="moveActiveResult(1)"', false);
         $response->assertSee('@keydown.arrow-up.prevent="moveActiveResult(-1)"', false);
         $response->assertSee('@keydown.enter.prevent="openActiveResult()"', false);
         $response->assertSee(':aria-activedescendant="activeResultId()"', false);
         $response->assertSeeText('Everything for league night, in one place.');
         $response->assertSeeText('Tables, fixtures, results and averages for every section');
-        $response->assertSee('data-home-hero-account-link', false);
-        $response->assertSee('href="'.route('login').'"', false);
-        $response->assertSeeText('Log in');
-        $response->assertSee('src="'.asset('images/logo-320.png').'?v=', false);
+        $response->assertDontSee('data-home-hero-account-link', false);
         $response->assertSee('data-home-live-scores', false);
         $response->assertSeeText('Live scores');
+        $response->assertSee('flex size-6 shrink-0 items-center justify-center', false);
+        $response->assertSee('icon icon-tabler icons-tabler-outline icon-tabler-bolt size-5 text-neutral-700 dark:text-neutral-200', false);
+        $response->assertSee('<path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" />', false);
+        $response->assertSee('ui-section-intro-copy grid auto-rows-min items-start gap-1.5', false);
+        $response->assertSee('font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50', false);
+        $response->assertSee('m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400', false);
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('ui-live-scores-card', false);
         $response->assertSeeText('No current matches in progress right now.');
         $response->assertSee('data-home-news', false);
         $response->assertSeeText('Latest news');
+        $response->assertSee('icon icon-tabler icons-tabler-outline icon-tabler-news size-5 text-neutral-700 dark:text-neutral-200', false);
+        $response->assertSee('<path d="M8 8l4 0" />', false);
+        $response->assertSee('ui-section-intro-copy grid auto-rows-min items-start gap-1.5', false);
         $response->assertSee('data-home-news-empty', false);
         $response->assertSeeText('No league news has been published yet.');
         $response->assertSee('data-section-sponsors', false);
-        $response->assertSee('data-section-sponsors-grid', false);
+        $response->assertSee('data-section-sponsors-carousel', false);
+        $response->assertSee('x-data="window.sponsorCarousel(6, 3)"', false);
+        $response->assertSee('aria-roledescription="carousel"', false);
+        $response->assertSee('basis-1/2 pl-3 lg:basis-1/3', false);
+        $response->assertSee('ui-sponsor-carousel-button', false);
+        $response->assertSee('icon icon-tabler icons-tabler-outline icon-tabler-rocket size-5 text-neutral-700 dark:text-neutral-200', false);
+        $response->assertSee('<path d="M4 13a8 8 0 0 1 7 7', false);
+        $response->assertSee('font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50', false);
+        $response->assertSee('m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400', false);
         $response->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('ui-sponsors-card', false);
+        $response->assertSee('ui-sponsor-item', false);
+        $response->assertSee('ui-sponsor-card-media', false);
+        $response->assertSee('ui-sponsor-content', false);
+        $response->assertSee('ui-sponsor-logo', false);
         $response->assertSeeText('Backing the league every week');
         $response->assertSeeText('Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.');
         $response->assertSee(asset('images/sponsors/nrkfabrication-logo-160.webp').'?v=', false);
@@ -88,6 +110,14 @@ class HomePageTest extends TestCase
         $response->assertSee(asset('images/sponsors/thepooltableguru-160.webp').'?v=', false);
         $response->assertSee('loading="lazy"', false);
         $response->assertSee('decoding="async"', false);
+        $response->assertSee('<footer class="bg-neutral-100 dark:bg-neutral-950">', false);
+        $response->assertSee('href="mailto:john@thebiggerboat.co.uk"', false);
+        $response->assertSee('href="https://www.thebiggerboat.co.uk/"', false);
+        $response->assertSeeText('Built by');
+        $response->assertSeeText('John Bell');
+        $response->assertSeeText('The Bigger Boat');
+        $response->assertDontSeeText('Website built by John Bell.');
+        $response->assertDontSeeText('Privacy');
         $response->assertDontSee('tracking-[0.28em] text-green-100', false);
         $response->assertDontSee('min-h-[calc(100dvh-72px)]', false);
         $response->assertDontSeeText('Upcoming fixtures');
@@ -105,9 +135,10 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-page', false);
         $response->assertSee('data-home-hero', false);
         $response->assertSeeText('Everything for league night, in one place.');
-        $response->assertSee('data-home-hero-account-link', false);
+        $response->assertSee('data-home-hero-account-action', false);
         $response->assertSee('href="'.route('account.show').'"', false);
-        $response->assertSeeText('account');
+        $response->assertSeeText('View your account');
+        $response->assertDontSee('data-home-hero-account-link', false);
         $response->assertDontSee('href="'.route('login').'"', false);
         $response->assertDontSeeText('My Team');
         $response->assertDontSeeText('Pending actions');
@@ -131,6 +162,8 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Registration covers your teams, knockout entries and the key details needed for the upcoming season.');
         $response->assertSeeText('Register now');
         $response->assertSee(route('season.entry.show', ['season' => $season]), false);
+        $response->assertSee('data-home-hero-registration', false);
+        $response->assertDontSee('data-home-hero-live-scores', false);
         $response->assertDontSee('data-home-hero-account-link', false);
     }
 
@@ -148,7 +181,7 @@ class HomePageTest extends TestCase
         $response->assertDontSee('data-home-hero-entry-countdown', false);
         $response->assertDontSeeText('Registration for the next season is now open');
         $response->assertDontSeeText('Autumn 2026');
-        $response->assertSee('data-home-hero-account-link', false);
+        $response->assertSee('data-home-hero-account-action', false);
     }
 
     public function test_home_page_does_not_show_registration_hero_for_a_season_without_signup_dates(): void
@@ -165,7 +198,7 @@ class HomePageTest extends TestCase
         $response->assertDontSee('data-home-hero-entry-countdown', false);
         $response->assertDontSeeText('Registration for the next season is now open');
         $response->assertDontSeeText('Winter 2026');
-        $response->assertSee('data-home-hero-account-link', false);
+        $response->assertSee('data-home-hero-account-action', false);
     }
 
     public function test_home_page_shows_live_scores_for_results_in_progress(): void
@@ -191,19 +224,33 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-live-scores-shell', false);
         $response->assertSee('data-home-live-scores-list', false);
         $response->assertSee('ui-card', false);
-        $response->assertSee('ui-card-rows max-h-80 overflow-y-auto overscroll-contain', false);
+        $response->assertSee('ui-live-scores-card', false);
+        $response->assertSee('ui-live-scores-item-group max-h-80 overflow-y-auto overscroll-contain', false);
         $response->assertSee('ui-card-row-link', false);
-        $response->assertSee('ui-card-row items-start', false);
+        $response->assertSee('ui-live-score-item', false);
+        $response->assertSee('ui-live-score-item-content', false);
+        $response->assertSee('ui-live-score-team-matchup', false);
+        $response->assertSee('ui-live-score-item-actions', false);
+        $response->assertSee('ui-live-score-badge-stack', false);
+        $response->assertSee('ui-live-score-badge', false);
+        $response->assertSee('ui-live-score-badge-win', false);
+        $response->assertSee('data-slot="item"', false);
+        $response->assertSee('data-slot="item-content"', false);
+        $response->assertSee('data-slot="item-actions"', false);
+        $response->assertSee('data-slot="badge"', false);
+        $response->assertSee('data-variant="muted"', false);
+        $response->assertSee('rounded-full', false);
+        $response->assertSee('role="group"', false);
+        $response->assertDontSee('ui-live-score-button-group', false);
         $response->assertSee('data-home-live-score-row', false);
         $response->assertSee('data-home-live-score-pill', false);
         $response->assertSee('sm:hidden', false);
         $response->assertSee('sm:block', false);
+        $response->assertSee('ui-live-score-section-name line-clamp-2 text-left', false);
         $response->assertSeeText('Break Masters');
         $response->assertSeeText('Cue Kings');
         $response->assertSeeText('Premier Division');
-        $response->assertSeeText($data['fixture']->fixture_date->format('j M Y').' / Premier Division');
-        $response->assertDontSeeText($data['fixture']->fixture_date->format('j M Y').' / Premier Division / International Rules');
-        $response->assertSeeText($data['fixture']->fixture_date->format('j M Y'));
+        $response->assertDontSeeText($data['fixture']->fixture_date->format('j M Y'));
         $response->assertSee('href="'.route('result.show', $result).'"', false);
         $response->assertDontSeeText('No current matches in progress right now.');
     }
@@ -370,7 +417,7 @@ class HomePageTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('ui-card-rows max-h-80 overflow-y-auto overscroll-contain', false);
+        $response->assertSee('ui-live-scores-item-group max-h-80 overflow-y-auto overscroll-contain', false);
         $this->assertSame(7, substr_count($response->getContent(), 'data-home-live-score-row'));
         $response->assertSeeText('Home Team 1');
         $response->assertSeeText('Away Team 7');
@@ -421,15 +468,15 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-news-rows', false);
         $response->assertSee('data-home-news-list', false);
         $response->assertSee('data-home-news-item', false);
+        $response->assertSee('data-home-news-card', false);
         $response->assertSeeText('Fixture dates updated');
         $response->assertSeeText('Captains meeting');
         $response->assertDontSeeText('Draft article');
         $response->assertSeeText($expectedDate);
-        $response->assertSee(route('news.show', News::query()->published()->latest('published_at')->firstOrFail()), false);
-        $response->assertSee('data-home-news-featured-image', false);
-        $response->assertSee(News::query()->where('slug', 'fixture-dates-updated')->firstOrFail()->featured_image_url, false);
+        $response->assertDontSee('href="'.route('news.show', News::query()->published()->latest('published_at')->firstOrFail()).'"', false);
+        $response->assertDontSee('data-home-news-featured-image', false);
         $response->assertDontSee('See more');
-        $response->assertSee(route('news.index'), false);
+        $response->assertDontSee('href="'.route('news.index').'"', false);
         $response->assertDontSee('data-home-news-empty', false);
     }
 

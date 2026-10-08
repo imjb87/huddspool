@@ -73,7 +73,7 @@ class ResultController extends Controller
     public function create(Fixture $fixture): RedirectResponse|View
     {
         $fixture->load([
-            'section',
+            'section.ruleset',
             'venue',
             'homeTeam.players',
             'awayTeam.players',

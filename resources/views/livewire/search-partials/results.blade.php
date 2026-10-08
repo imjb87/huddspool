@@ -1,46 +1,39 @@
-<ul class="max-h-[28rem] overflow-y-auto" id="options"
+<ul class="min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5" id="options"
     x-on:keydown.up.prevent="$focus.wrap().previous()"
     x-on:keydown.down.prevent="$focus.wrap().next()"
     role="listbox"
     data-search-results-shell>
     @foreach ($resultGroups as $name => $group)
-        <li class="border-t border-gray-200/80 first:border-t-0 dark:border-neutral-800/75" wire:key="search-group-{{ $name }}">
-            <div class="ui-card-column-headings justify-start px-4 sm:px-5">
+        <li wire:key="search-group-{{ $name }}">
+            <div class="px-3 pt-3 pb-1">
                 <h2 class="text-xs font-medium text-gray-500 dark:text-gray-400">
                     {{ $group['heading'] }}
                 </h2>
             </div>
-            <div class="ui-card-rows" data-search-result-group>
+            <div class="space-y-0.5 pb-1.5" data-search-result-group>
                 @foreach ($group['results'] as $item)
                     @if (is_object($item))
-                        <a class="ui-card-row-link focus:outline-none"
+                        <a class="flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent px-3 text-sm font-medium outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 dark:hover:bg-neutral-800 dark:hover:text-gray-100 dark:focus:bg-neutral-800 dark:focus:text-gray-100"
                             href="{{ route($group['route'] . '.show', $item->id) }}"
                             data-search-result-link
                             wire:key="search-result-{{ $name }}-{{ $item->id }}"
                             x-on:click="close()">
-                            <div class="ui-card-row items-start">
+                            <div class="flex min-w-0 flex-1 items-center gap-2">
                                 @if ($name === 'players')
-                                    <img src="{{ $item->avatar_url }}"
-                                        alt="{{ $item->name }}"
-                                        class="mt-0.5 h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-gray-200 dark:ring-neutral-800"
-                                        data-search-player-avatar>
+                                    <span class="relative flex size-6 shrink-0 overflow-hidden rounded-full bg-gray-100 select-none dark:bg-neutral-800" data-search-player-avatar aria-hidden="true">
+                                        <img src="{{ $item->avatar_url }}" alt="" class="aspect-square size-full object-cover">
+                                    </span>
                                 @endif
-                                <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $item->name }}</p>
-                                    @if ($name === 'players')
-                                        <p class="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $item->team?->name ?? 'No team assigned' }}
-                                        </p>
-                                    @elseif ($name === 'teams')
-                                        <p class="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $item->openSection()?->name ?? 'Open section unavailable' }}
-                                        </p>
-                                    @elseif ($name === 'venues')
-                                        <p class="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $item->address }}
-                                        </p>
-                                    @endif
-                                </div>
+                                <p class="min-w-0 truncate text-sm font-medium text-gray-900 dark:text-gray-100">{{ $item->name }}</p>
+                            </div>
+                            <div class="max-w-[45%] shrink-0 truncate text-xs font-normal text-gray-500 dark:text-gray-400">
+                                @if ($name === 'players')
+                                    {{ $item->team?->name ?? 'No team assigned' }}
+                                @elseif ($name === 'teams')
+                                    {{ $item->openSection()?->name ?? 'Open section unavailable' }}
+                                @elseif ($name === 'venues')
+                                    {{ $item->address }}
+                                @endif
                             </div>
                         </a>
                     @endif

@@ -1,58 +1,81 @@
 @if ($teamKnockoutMatches->isNotEmpty())
     <section class="ui-section" data-team-knockout-section>
         <div class="ui-shell-grid">
-            <div class="ui-section-intro">
-                <div class="ui-section-intro-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+            <div class="ui-section-intro gap-2">
+                <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tournament size-5 text-neutral-700 dark:text-neutral-200">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M2 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M2 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M2 20a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M6 12h3a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-3" />
+                        <path d="M6 4h7a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-2" />
+                        <path d="M14 10h4" />
                     </svg>
-                </div>
-                <div class="ui-section-intro-copy">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Team knockouts</h3>
-                    <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                </span>
+                <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                    <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Team knockouts</h2>
+                    <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                         Recent team knockout ties and completed results.
                     </p>
                 </div>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="ui-card">
-                    <div class="divide-y divide-gray-200 dark:divide-neutral-800/75">
+                <div class="ui-card ui-knockout-round-card">
+                    <div class="ui-knockout-match-group">
                         @foreach ($teamKnockoutRows as $knockoutRow)
-                            <div wire:key="team-knockout-{{ $knockoutRow->id }}">
-                                @if ($knockoutRow->row_url)
-                                    <a href="{{ $knockoutRow->row_url }}" class="block transition hover:bg-gray-200/70 dark:hover:bg-neutral-900/70 sm:-mx-3 sm:-my-px sm:rounded-xl sm:px-3 sm:py-4">
-                                @endif
-                                <div class="flex items-start gap-3 {{ $knockoutRow->row_url ? '' : 'sm:rounded-xl sm:px-3 sm:py-4' }} sm:items-center sm:gap-4">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="[overflow-wrap:anywhere] text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100">
-                                            <span>{{ $knockoutRow->home_label }}</span>
-                                            <span class="px-1 font-normal text-gray-400 dark:text-gray-500">vs</span>
-                                            <span>{{ $knockoutRow->away_label }}</span>
-                                        </p>
-                                        <p class="mt-1 [overflow-wrap:anywhere] text-xs leading-5 text-gray-500 dark:text-gray-400">
-                                            {{ $knockoutRow->meta_label }}
-                                        </p>
-                                    </div>
+                            @php
+                                $hasScore = $knockoutRow->has_result
+                                    && $knockoutRow->home_score !== null
+                                    && $knockoutRow->away_score !== null;
+                                $isDraw = $hasScore && (int) $knockoutRow->home_score === (int) $knockoutRow->away_score;
+                                $homeBadgeClasses = $isDraw
+                                    ? 'ui-live-score-badge-draw'
+                                    : ((int) $knockoutRow->home_score > (int) $knockoutRow->away_score
+                                        ? 'ui-live-score-badge-win'
+                                        : 'ui-live-score-badge-loss');
+                                $awayBadgeClasses = $isDraw
+                                    ? 'ui-live-score-badge-draw'
+                                    : ((int) $knockoutRow->away_score > (int) $knockoutRow->home_score
+                                        ? 'ui-live-score-badge-win'
+                                        : 'ui-live-score-badge-loss');
+                            @endphp
 
-                                    <div class="shrink-0 text-right">
-                                        @if ($knockoutRow->has_result)
-                                            <div class="ui-score-pill ui-score-pill-split {{ $knockoutRow->result_pill_classes }}">
-                                                <div class="ui-score-pill-segment pl-1">{{ $knockoutRow->home_score }}</div>
-                                                <div class="ui-score-pill-divider"></div>
-                                                <div class="ui-score-pill-segment pr-1">{{ $knockoutRow->away_score }}</div>
+                            @if ($knockoutRow->row_url)
+                                <a href="{{ $knockoutRow->row_url }}" class="ui-knockout-match-item" wire:key="team-knockout-{{ $knockoutRow->id }}" data-slot="item" data-variant="muted" data-size="default">
+                            @else
+                                <div class="ui-knockout-match-item" wire:key="team-knockout-{{ $knockoutRow->id }}" data-slot="item" data-variant="muted" data-size="default">
+                            @endif
+                                    <div class="ui-knockout-match-content" data-slot="item-content">
+                                        <div class="ui-knockout-match-details">
+                                            <p class="ui-knockout-match-label">{{ $knockoutRow->meta_label }}</p>
+
+                                            <div class="ui-knockout-team-matchup">
+                                                <div class="ui-knockout-team-names">
+                                                    <p class="ui-knockout-team-name">{{ $knockoutRow->home_label }}</p>
+                                                    <p class="ui-knockout-team-name">{{ $knockoutRow->away_label }}</p>
+                                                </div>
+
+                                                <div class="ui-knockout-match-actions" data-slot="item-actions">
+                                                    @if ($hasScore)
+                                                        <div class="ui-fixture-badge-stack" role="group" aria-label="{{ $knockoutRow->home_label }} {{ $knockoutRow->home_score }} to {{ $knockoutRow->away_score }} {{ $knockoutRow->away_label }}">
+                                                            <span class="ui-fixture-badge {{ $homeBadgeClasses }}" data-slot="badge">{{ $knockoutRow->home_score }}</span>
+                                                            <span class="ui-fixture-badge {{ $awayBadgeClasses }}" data-slot="badge">{{ $knockoutRow->away_score }}</span>
+                                                        </div>
+                                                    @else
+                                                        <span class="ui-fixture-badge ui-fixture-badge-neutral" data-slot="badge">{{ $knockoutRow->date_label }}</span>
+                                                    @endif
+                                                </div>
                                             </div>
-                                        @else
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $knockoutRow->date_label }}
-                                            </p>
-                                        @endif
+                                        </div>
                                     </div>
+                            @if ($knockoutRow->row_url)
+                                </a>
+                            @else
                                 </div>
-                                @if ($knockoutRow->row_url)
-                                    </a>
-                                @endif
-                            </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>

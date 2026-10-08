@@ -82,13 +82,17 @@ class TeamProfileTest extends TestCase
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-section-shared-header', false);
         $response->assertSee('dark:bg-neutral-950', false);
-        $response->assertSee('dark:border-neutral-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSee('data-team-info-section', false);
         $response->assertSee('data-team-players-section', false);
         $response->assertSee('data-team-fixtures-section', false);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('icon-tabler-building', false);
+        $response->assertSee('icon-tabler-users', false);
+        $response->assertSee('icon-tabler-calendar', false);
+        $response->assertSee('ui-fixture-item', false);
+        $response->assertSee('ui-fixture-badge', false);
         $response->assertSeeLivewire(FixturesSection::class);
         $response->assertSeeLivewire(HistorySection::class);
         $response->assertSeeLivewire(PlayersSection::class);
@@ -103,8 +107,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeTextInOrder([$team->name, $opponent->name]);
         $response->assertSeeText('TEAM');
         $response->assertSeeText('OPP');
-        $response->assertSee('sm:hidden', false);
-        $response->assertSee('sm:block', false);
+        $response->assertSee('ui-fixture-team-names', false);
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
@@ -334,7 +337,7 @@ class TeamProfileTest extends TestCase
             'is_open' => true,
             'dates' => [now()->toDateString()],
         ]);
-        $historySeasons = collect(range(1, 6))->map(function (int $index) {
+        $historySeasons = collect(range(1, 7))->map(function (int $index) {
             return Season::factory()->create([
                 'is_open' => false,
                 'name' => '20'.(20 + $index).'/'.(21 + $index).' Season',

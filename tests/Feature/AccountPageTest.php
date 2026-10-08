@@ -38,7 +38,7 @@ class AccountPageTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
-    public function test_account_page_displays_an_unread_notification_badge_in_the_navigation(): void
+    public function test_account_page_displays_header_notification_drawer_controls(): void
     {
         $user = User::factory()->create();
         $result = Result::factory()->create();
@@ -48,10 +48,21 @@ class AccountPageTest extends TestCase
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
-            ->assertSee('data-mobile-notifications-toggle', false)
-            ->assertSee('Open notifications menu', false)
-            ->assertSee('data-mobile-notifications-drawer', false)
-            ->assertSee('data-mobile-notifications-links', false);
+            ->assertSee('data-header-notifications-trigger', false)
+            ->assertSee('aria-label="Open notifications"', false)
+            ->assertSee('data-notifications-drawer', false)
+            ->assertSee('class="fixed inset-y-2 right-2 left-2 z-[70] flex h-[calc(100%-1rem)] w-auto max-w-none flex-col overflow-hidden rounded-xl', false)
+            ->assertSee('sm:inset-y-4 sm:right-4 sm:left-auto sm:h-[calc(100%-2rem)] sm:w-[calc(100%-2rem)] sm:max-w-sm', false)
+            ->assertSee('rounded-xl border border-gray-200/80 bg-white text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80', false)
+            ->assertSee('<header class="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-800">', false)
+            ->assertSee('<footer class="mt-auto flex shrink-0 flex-col gap-2 border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-800 dark:bg-neutral-800">', false)
+            ->assertSee('class="group flex flex-col gap-2 rounded-xl border border-border bg-card', false)
+            ->assertSee('data-notifications-links', false)
+            ->assertSee('data-notifications-mark-all', false)
+            ->assertSee('notificationsDrawer', false)
+            ->assertSeeText('Notifications')
+            ->assertSeeText('Mark all as read')
+            ->assertDontSeeText('Showing your latest notifications.');
     }
 
     public function test_opening_a_notification_marks_it_as_read_and_redirects_to_its_target(): void
@@ -170,15 +181,17 @@ class AccountPageTest extends TestCase
             ->assertSee('col-span-full min-w-0 sm:col-span-1', false)
             ->assertSee('ui-link flex w-full max-w-full text-sm font-semibold', false)
             ->assertSee('ui-page-shell', false)
-            ->assertSee('ui-button-primary', false)
+            ->assertSee('ui-result-button-primary', false)
+            ->assertSee('class="ui-result-button ui-result-button-primary cursor-pointer"', false)
             ->assertSee('ui-tab-strip-shell', false)
             ->assertSee('ui-tab-strip', false)
+            ->assertSee('aria-label="Account navigation"', false)
+            ->assertSee('data-state="active"', false)
             ->assertSee('ui-card', false)
             ->assertSee('dark:bg-neutral-950', false)
             ->assertSee('dark:border-neutral-800', false)
-            ->assertSee('dark:bg-neutral-900/75', false)
-            ->assertSee('dark:ring-neutral-800/80', false)
             ->assertSee('dark:text-gray-100', false)
+            ->assertSee('icon-tabler-user size-5 text-neutral-700 dark:text-neutral-200', false)
             ->assertSee('href="'.route('player.show', $user).'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertDontSee('href="/account/notifications"', false)
@@ -437,11 +450,16 @@ class AccountPageTest extends TestCase
             ->get(route('account.show'))
             ->assertOk()
             ->assertSee('data-account-action-centre', false)
-            ->assertSeeText('League matches')
+            ->assertSeeText('2 league matches need submitting')
             ->assertSeeText('Home vs First Opponent')
             ->assertSeeText('Second Opponent vs Home')
             ->assertSee(route('result.create', $firstFixture), false)
-            ->assertSee(route('result.create', $secondFixture), false);
+            ->assertSee(route('result.create', $secondFixture), false)
+            ->assertSee('border-b border-gray-200/80 px-4 py-3 sm:px-5 dark:border-neutral-800', false)
+            ->assertSee('text-amber-800 dark:text-amber-200', false)
+            ->assertSee('text-gray-900 dark:text-gray-100', false)
+            ->assertDontSee('border-b border-red-500/30', false)
+            ->assertDontSee('border-b border-amber-500/30', false);
     }
 
     public function test_account_page_shows_due_knockout_result_prompt_for_players(): void
@@ -942,15 +960,18 @@ class AccountPageTest extends TestCase
             ->assertSeeText('Team members')
             ->assertSeeText('Fixtures')
             ->assertSeeText('Team knockouts')
-            ->assertSeeText('Outstanding results')
+            ->assertSeeText('Action centre')
+            ->assertSee('icon-tabler-list-check', false)
+            ->assertSee('icon-tabler-building', false)
+            ->assertSee('icon-tabler-users', false)
+            ->assertSee('icon-tabler-calendar', false)
             ->assertSeeText(UserRole::labelFor($teamAdmin->role))
             ->assertSeeText($team->name)
             ->assertSeeText('Premier Division')
             ->assertSeeText('Team Admin')
             ->assertSeeText($team->name)
             ->assertSeeText($opponentTeam->name)
-            ->assertSee('sm:hidden', false)
-            ->assertSee('sm:block', false)
+            ->assertSee('ui-fixture-team-names', false)
             ->assertSeeText($teamKnockout->name)
             ->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]).'"', false)
             ->assertSee('href="'.route('venue.show', $team->venue).'"', false)
@@ -964,7 +985,8 @@ class AccountPageTest extends TestCase
             ->assertDontSeeText('Submit result')
             ->assertDontSee('href="'.route('fixture.show', $dueFixture).'"', false)
             ->assertDontSee('href="'.route('result.show', $continueFixture->result).'"', false)
-            ->assertSee('from-gray-600 via-gray-500 to-gray-400', false)
+            ->assertSee('ui-fixture-badge-neutral', false)
+            ->assertSee('icon-tabler-tournament', false)
             ->assertSee(route('knockout.show', $teamKnockout), false)
             ->assertSee(route('knockout.matches.submit', $pendingTeamMatch), false)
             ->assertDontSee(route('knockout.matches.submit', $completedTeamMatch), false);
@@ -1270,8 +1292,7 @@ class AccountPageTest extends TestCase
             ->assertSeeText('AOL')
             ->assertSeeText('Account Team Long Name')
             ->assertSeeText('Account Opponent Long Name')
-            ->assertSee('sm:hidden', false)
-            ->assertSee('sm:block', false);
+            ->assertSee('ui-fixture-team-names', false);
     }
 
     public function test_account_page_shows_player_history_sections(): void

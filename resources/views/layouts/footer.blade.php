@@ -12,28 +12,14 @@
         </div>
     @endif
 
-    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
-        <div class="ui-shell-grid items-start py-6">
-            <div>
-                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    Huddersfield & District Tuesday Night Pool League
-                </p>
-                <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                    Fixtures, results, standings, averages, and team history in one place.
-                </p>
-            </div>
-
-            <div class="lg:col-span-2 lg:text-right">
-                <p class="text-xs leading-5 text-gray-600 dark:text-gray-300">
-                    &copy; 2023 Huddersfield & District Tuesday Night Pool League.
-                </p>
-                <p class="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-300">
-                    Website built by John Bell.
-                </p>
-                <p class="mt-1 text-xs leading-5">
-                    <a href="{{ route('privacy') }}" class="ui-link">Privacy</a>
-                </p>
-            </div>
-        </div>
+    <div class="mx-auto flex max-w-6xl items-center justify-center px-6 py-8 text-center">
+        <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
+            Built by
+            <a href="mailto:john@thebiggerboat.co.uk" class="underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900 dark:decoration-neutral-700 dark:hover:text-neutral-100">
+                John Bell
+            </a>
+            at
+            <a href="https://www.thebiggerboat.co.uk/" target="_blank" rel="noopener noreferrer" class="underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900 dark:decoration-neutral-700 dark:hover:text-neutral-100">The Bigger Boat</a>.
+        </p>
     </div>
 </footer>

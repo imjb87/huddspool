@@ -21,12 +21,11 @@
                 </div>
                 <div class="bg-white dark:bg-transparent">
                     @if ($standings->isEmpty())
-                        <div class="m-4 rounded-lg border-2 border-dashed border-gray-300 p-4 text-center dark:border-neutral-800">
-                            <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">No standings available for this section yet.</h3>
-                            <p class="mx-auto mt-1 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                Standings will appear once results are entered for this section.
-                            </p>
-                        </div>
+                        <x-ui-empty-state
+                            title="No standings available for this section yet."
+                            description="Standings will appear once results are entered for this section."
+                            data-history-standings-empty
+                        />
                     @else
                         <div class="divide-y divide-gray-300 dark:divide-neutral-800/80">
                         @foreach ($standingRows as $row)

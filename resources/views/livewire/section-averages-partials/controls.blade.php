@@ -1,21 +1,31 @@
-<div class="pt-5 pb-4 lg:pt-5 lg:pb-6" data-section-averages-controls>
-    <div class="flex items-center justify-between gap-4" data-section-averages-band>
+<div class="border-t border-border px-5 py-4" data-section-averages-controls>
+    <nav class="ui-pagination" aria-label="Averages pagination" data-section-averages-pagination data-section-averages-band>
         <button wire:click="previousPage" wire:loading.attr="disabled"
-            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-            aria-label="Previous"
-            {{ $page == 1 ? 'disabled' : '' }}>
-            Previous
+            class="ui-pagination-link"
+            aria-label="Go to previous page"
+            type="button"
+            @disabled($page === 1)>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left size-4" aria-hidden="true">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M15 6l-6 6l6 6" />
+            </svg>
+            <span class="hidden sm:inline">Previous</span>
         </button>
 
-        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <span class="ui-pagination-current" aria-live="polite">
             Page {{ $page }}
         </span>
 
         <button wire:click="nextPage" wire:loading.attr="disabled"
-            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-            aria-label="Next"
-            {{ $page >= $lastPage ? 'disabled' : '' }}>
-            Next
+            class="ui-pagination-link"
+            aria-label="Go to next page"
+            type="button"
+            @disabled($page >= $lastPage)>
+            <span class="hidden sm:inline">Next</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4" aria-hidden="true">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M9 6l6 6l-6 6" />
+            </svg>
         </button>
-    </div>
+    </nav>
 </div>

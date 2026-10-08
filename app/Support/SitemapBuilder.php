@@ -50,7 +50,6 @@ class SitemapBuilder
     private function addStaticUrls(Sitemap $sitemap): void
     {
         $sitemap->add($this->makeUrl(route('home', absolute: false)));
-        $sitemap->add($this->makeUrl(route('history.index', absolute: false)));
     }
 
     private function addRulesetUrls(Sitemap $sitemap): void

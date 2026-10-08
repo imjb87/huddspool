@@ -2,8 +2,8 @@
     <section class="ui-section" data-invite-register-page>
         <div class="ui-shell-grid">
             <div>
-                <h1 class="text-base font-semibold text-gray-900 dark:text-gray-100">Set password</h1>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                <h1 class="text-3xl font-semibold tracking-tight text-foreground">Set password</h1>
+                <p class="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
                     Finish setting up your invited account by choosing a password for {{ $user->email }}.
                 </p>
             </div>
@@ -15,16 +15,14 @@
                             @csrf
 
                             @if ($errors->any())
-                                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/80 dark:bg-red-950/60 dark:text-red-200">
-                                    <x-errors />
-                                </div>
+                                <x-errors />
                             @endif
 
                             <div class="grid gap-5">
                                 <div>
-                                    <label for="password" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Password') }}</label>
+                                    <label for="password" class="block text-sm font-medium text-foreground">{{ __('Password') }}</label>
                                     <x-text-input id="password"
-                                        class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20"
+                                        class="mt-2 block h-9 w-full rounded-md border border-border bg-background px-3 py-1 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                                         type="password"
                                         name="password"
                                         required
@@ -34,9 +32,9 @@
                                 </div>
 
                                 <div>
-                                    <label for="password_confirmation" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Confirm Password') }}</label>
+                                    <label for="password_confirmation" class="block text-sm font-medium text-foreground">{{ __('Confirm Password') }}</label>
                                     <x-text-input id="password_confirmation"
-                                        class="mt-1 block w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-700/20 dark:border-neutral-800 dark:bg-neutral-950 dark:text-gray-100 dark:focus:border-green-500 dark:focus:ring-green-500/20"
+                                        class="mt-2 block h-9 w-full rounded-md border border-border bg-background px-3 py-1 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                                         type="password"
                                         name="password_confirmation"
                                         required
@@ -46,7 +44,7 @@
                             </div>
 
                             <div class="flex justify-end">
-                                <button type="submit" class="ui-button-primary min-w-24">
+                                <button type="submit" class="ui-result-button ui-result-button-primary min-w-24">
                                     {{ __('Set password') }}
                                 </button>
                             </div>

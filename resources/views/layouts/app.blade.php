@@ -45,23 +45,6 @@
 
     <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
-    @if (Route::currentRouteNamed('home'))
-        @php
-            $logo160PngUrl = asset('images/logo-160.png') . '?v=' . filemtime(public_path('images/logo-160.png'));
-            $logo160WebpUrl = asset('images/logo-160.webp') . '?v=' . filemtime(public_path('images/logo-160.webp'));
-            $logo320WebpUrl = asset('images/logo-320.webp') . '?v=' . filemtime(public_path('images/logo-320.webp'));
-        @endphp
-
-        <link
-            rel="preload"
-            as="image"
-            href="{{ $logo320WebpUrl }}"
-            imagesrcset="{{ $logo160WebpUrl }} 160w, {{ $logo320WebpUrl }} 320w"
-            imagesizes="(min-width: 1024px) 160px, (min-width: 640px) 144px, 128px"
-            fetchpriority="high"
-        >
-    @endif
-
     <title>
         @hasSection('title')
             {{ trim($__env->yieldContent('title')) }} |

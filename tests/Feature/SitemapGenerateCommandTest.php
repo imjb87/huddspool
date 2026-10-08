@@ -140,7 +140,6 @@ class SitemapGenerateCommandTest extends TestCase
 
             $this->assertIsString($xml);
             $this->assertStringContainsString($this->absoluteUrl('/'), $xml);
-            $this->assertStringContainsString($this->absoluteRoute('history.index'), $xml);
             $this->assertStringContainsString($this->absoluteRoute('ruleset.show', $ruleset), $xml);
             $this->assertStringContainsString($this->absoluteRoute('ruleset.section.show', [
                 'ruleset' => $ruleset,

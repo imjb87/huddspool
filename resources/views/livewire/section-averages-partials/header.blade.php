@@ -1,9 +1,11 @@
-<div class="ui-card-column-headings px-4 sm:px-5" data-section-averages-band>
-    <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
+<div class="ui-average-item ui-average-item-header" data-section-averages-band data-slot="item" data-variant="muted" data-size="default">
+    <div class="ui-average-item-content" data-slot="item-content">
+        <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3"></div>
 
-    <div class="ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5">
-        <div class="w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-16">Played</div>
-        <div class="w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-16">Won</div>
-        <div class="hidden w-12 text-xs font-medium text-gray-500 dark:text-gray-400 sm:block sm:w-16">Lost</div>
+        <div class="ui-average-item-stats" data-slot="item-actions">
+            <div class="ui-card-column-header w-12 sm:w-16">Played</div>
+            <div class="ui-card-column-header w-12 sm:w-16">Won</div>
+            <div class="ui-card-column-header hidden w-12 sm:block sm:w-16">Lost</div>
+        </div>
     </div>
 </div>

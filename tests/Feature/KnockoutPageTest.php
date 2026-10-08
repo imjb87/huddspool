@@ -369,16 +369,17 @@ class KnockoutPageTest extends TestCase
             ->assertSee('ui-section', false)
             ->assertSee('ui-shell-grid', false)
             ->assertSee('ui-card', false)
-            ->assertSee('ui-card-rows', false)
-            ->assertSee('ui-card-row', false)
-            ->assertSee('ui-button-primary', false)
+            ->assertSee('ui-knockout-round-card', false)
+            ->assertSee('ui-knockout-match-group', false)
+            ->assertSee('ui-knockout-match-item', false)
+            ->assertSee('ui-pagination', false)
+            ->assertSee('ui-pagination-link', false)
             ->assertSee('data-knockout-round-controls', false)
             ->assertSee('data-knockout-round-skeleton', false)
             ->assertSeeText('Summer Singles Cup')
             ->assertSeeText('Semi Final')
             ->assertSeeText('To be played by')
             ->assertSeeText('3 Apr')
-            ->assertSeeText('Deadline: 3 April 2026')
             ->assertDontSeeText('3 April 2026 at 20:00')
             ->assertSee('href="'.route('player.show', $currentHomePlayer).'"', false)
             ->assertDontSeeText('Quarter Final')
@@ -436,7 +437,6 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('To be played by')
             ->assertSeeText('Singles Venue')
             ->assertSeeText('3 Jul')
-            ->assertSeeText('Deadline: 3 July 2026')
             ->assertDontSeeText('3 July 2026 at 20:15')
             ->assertDontSeeText('3 July 2026 at 21:15');
     }
@@ -664,6 +664,6 @@ class KnockoutPageTest extends TestCase
             ->assertSeeText('Cara C')
             ->assertSeeText('Dana D')
             ->assertSee('&amp;', false)
-            ->assertDontSee(' / ', false);
+            ->assertDontSeeText(' / ');
     }
 }

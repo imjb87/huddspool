@@ -11,16 +11,7 @@
                 <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-center lg:grid-cols-3">
                     <div class="min-w-0 lg:col-span-2">
                         <div class="min-w-0">
-                            <div class="ui-page-title-with-icon">
-                                <div class="ui-page-title-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-page-title-glyph" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5h16.5M3.75 9.75h16.5m-16.5 5.25h16.5m-16.5 5.25h16.5" />
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <h1 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $ruleset->name }}</h1>
-                                </div>
-                            </div>
+                            <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">{{ $ruleset->name }}</h1>
                         </div>
                     </div>
 
@@ -32,15 +23,21 @@
         <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
             <section class="ui-section" data-ruleset-sections>
                 <div class="ui-shell-grid">
-                    <div class="ui-section-intro">
-                        <div class="ui-section-intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V8.25A2.25 2.25 0 0 1 5.25 6h13.5A2.25 2.25 0 0 1 21 8.25v10.5M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75h18M8.25 10.5h7.5" />
+                    <div class="ui-section-intro gap-2">
+                        <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list size-5 text-neutral-700 dark:text-neutral-200">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M9 6l11 0" />
+                                <path d="M9 12l11 0" />
+                                <path d="M9 18l11 0" />
+                                <path d="M5 6l0 .01" />
+                                <path d="M5 12l0 .01" />
+                                <path d="M5 18l0 .01" />
                             </svg>
-                        </div>
-                        <div class="ui-section-intro-copy">
-                            <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Current sections</h2>
-                            <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        </span>
+                        <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                            <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Current sections</h2>
+                            <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                                 Choose a section to view current standings, fixtures, results, and averages for {{ $ruleset->name }}.
                             </p>
                         </div>
@@ -49,25 +46,29 @@
                     <div class="lg:col-span-2">
                         @if ($sections->isEmpty())
                             <div class="ui-card" data-ruleset-sections-empty>
-                                <div class="ui-card-body py-10 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    No open sections are available for this ruleset yet.
-                                </div>
+                                <x-ui-empty-state
+                                    title="No open sections are available for this ruleset yet."
+                                />
                             </div>
                         @else
-                            <div class="ui-card" data-ruleset-sections-list>
-                                <div class="ui-card-rows">
+                            <div class="ui-card ui-section-see-also-card" data-ruleset-sections-list>
+                                <div class="ui-section-see-also-list" data-slot="item-group">
                                     @foreach ($sections as $section)
                                         <a href="{{ route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => $section]) }}"
-                                            class="ui-card-row-link">
-                                            <div class="ui-card-row items-center justify-between gap-4 px-4 sm:px-5">
+                                            class="ui-section-see-also-item"
+                                            data-slot="item"
+                                            data-variant="muted">
+                                            <div class="ui-section-see-also-item-content" data-slot="item-content">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $section->name }}</p>
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $section->season->name }}</p>
+                                                    <p class="ui-section-see-also-item-title">{{ $section->name }}</p>
+                                                    <p class="mt-1 text-xs text-muted-foreground">{{ $section->season->name }}</p>
                                                 </div>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500" aria-hidden="true">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6" />
-                                                </svg>
                                             </div>
+                                            <span class="ui-section-see-also-item-action" data-slot="item-actions" aria-hidden="true">
+                                                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="m9 18 6-6-6-6" />
+                                                </svg>
+                                            </span>
                                         </a>
                                     @endforeach
                                 </div>

@@ -1,71 +1,64 @@
-<section class="ui-section" data-home-live-scores>
+<section id="live-scores" class="ui-section" data-home-live-scores>
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
-            <div class="ui-section-intro">
-                <div class="ui-section-intro-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m13.5 10.5 2.25-6.75-9 10.5h4.5L9 20.25l9-10.5h-4.5Z" />
+            <div class="ui-section-intro gap-2">
+                <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bolt size-5 text-neutral-700 dark:text-neutral-200">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" />
                     </svg>
-                </div>
-                <div class="ui-section-intro-copy">
-                    <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Live scores</h2>
-                    <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                </span>
+                <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                    <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Live scores</h2>
+                    <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                         Results currently being added across the league.
                     </p>
                 </div>
             </div>
             <div class="lg:col-span-2">
                 @if ($liveScores->isEmpty())
-                    <div class="ui-card">
-                        <div class="ui-card-body px-6 py-10 text-center">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">No current matches in progress right now.</p>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                Check back during league night to follow the latest scores as they come in.
-                            </p>
-                        </div>
+                    <div class="ui-card ui-live-scores-card">
+                        <x-ui-empty-state
+                            title="No current matches in progress right now."
+                            description="Check back during league night to follow the latest scores as they come in."
+                            data-home-live-scores-empty
+                        />
                     </div>
                 @else
-                    <div class="ui-card" data-home-live-scores-shell>
-                        <div class="ui-card-rows max-h-80 overflow-y-auto overscroll-contain" data-home-live-scores-list>
+                    <div class="ui-card ui-live-scores-card" data-home-live-scores-shell>
+                        <div class="ui-live-scores-item-group max-h-80 overflow-y-auto overscroll-contain" data-home-live-scores-list>
                             @foreach ($liveScores as $result)
                                 @php
-                                    $homeSegmentClasses = $result->home_score === $result->away_score
-                                        ? 'ui-score-pill-segment-draw'
-                                        : ($result->home_score > $result->away_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
-                                    $awaySegmentClasses = $result->home_score === $result->away_score
-                                        ? 'ui-score-pill-segment-draw'
-                                        : ($result->away_score > $result->home_score ? 'ui-score-pill-segment-win' : 'ui-score-pill-segment-loss');
+                                    $homeBadgeClasses = $result->home_score === $result->away_score
+                                        ? 'ui-live-score-badge-draw'
+                                        : ($result->home_score > $result->away_score ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
+                                    $awayBadgeClasses = $result->home_score === $result->away_score
+                                        ? 'ui-live-score-badge-draw'
+                                        : ($result->away_score > $result->home_score ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
                                 @endphp
-                                <div data-home-live-score-row>
-                                    <a href="{{ $result->live_score_url }}" class="ui-card-row-link">
-                                        <div class="ui-card-row items-start">
-                                        <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 sm:hidden">
-                                                {{ $result->home_team_shortname ?: $result->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $result->away_team_shortname ?: $result->away_team_name }}
-                                            </p>
-                                            <p class="hidden text-sm font-semibold text-gray-900 dark:text-gray-100 sm:block">
-                                                {{ $result->home_team_name }} <span class="font-normal text-gray-400 dark:text-gray-500">vs</span> {{ $result->away_team_name }}
-                                            </p>
-                                            @if ($result->row_meta !== '')
-                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $result->row_meta }}</p>
-                                            @endif
-                                        </div>
+                                <a href="{{ $result->live_score_url }}" class="ui-card-row-link ui-live-score-item" data-home-live-score-row data-slot="item" data-variant="muted" data-size="default">
+                                    <div class="ui-live-score-item-content" data-slot="item-content">
+                                        @if ($result->row_meta !== '')
+                                            <p class="ui-live-score-section-name line-clamp-2 text-left" data-slot="item-description">{{ $result->row_meta }}</p>
+                                        @endif
 
-                                            <div class="ml-auto flex shrink-0 self-center items-center text-right">
-                                                <div class="ui-score-pill ui-score-pill-neutral ui-score-pill-split"
-                                                    data-home-live-score-pill>
-                                                    <div class="ui-score-pill-segment {{ $homeSegmentClasses }} pl-1">
-                                                        {{ $result->home_score }}
-                                                    </div>
-                                                    <div class="ui-score-pill-divider-neutral"></div>
-                                                    <div class="ui-score-pill-segment {{ $awaySegmentClasses }} pr-1">
-                                                        {{ $result->away_score }}
-                                                    </div>
+                                        <div class="ui-live-score-team-matchup">
+                                            <div class="ui-live-score-team-names">
+                                                <p class="ui-live-score-team-name sm:hidden">{{ $result->home_team_shortname ?: $result->home_team_name }}</p>
+                                                <p class="ui-live-score-team-name hidden sm:block">{{ $result->home_team_name }}</p>
+                                                <p class="ui-live-score-team-name sm:hidden">{{ $result->away_team_shortname ?: $result->away_team_name }}</p>
+                                                <p class="ui-live-score-team-name hidden sm:block">{{ $result->away_team_name }}</p>
+                                            </div>
+
+                                            <div class="ui-live-score-item-actions" data-slot="item-actions">
+                                                <div class="ui-live-score-badge-stack" role="group" aria-label="{{ $result->home_team_name }} {{ $result->home_score }} to {{ $result->away_score }} {{ $result->away_team_name }}" data-home-live-score-pill>
+                                                    <span class="ui-live-score-badge {{ $homeBadgeClasses }}" data-slot="badge">{{ $result->home_score }}</span>
+                                                    <span class="ui-live-score-badge {{ $awayBadgeClasses }}" data-slot="badge">{{ $result->away_score }}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
-                                </div>
+                                    </div>
+                                </a>
                             @endforeach
                         </div>
                     </div>

@@ -79,9 +79,14 @@ class FixtureShowTest extends TestCase
         $response->assertSeeLivewire(FixtureTeamSection::class);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
-        $response->assertSee('ui-card-rows', false);
+        $response->assertSee('ui-standings-item-group', false);
+        $response->assertSee('ui-averages-item-group', false);
+        $response->assertSee('ui-standings-item', false);
+        $response->assertSee('ui-average-item', false);
+        $response->assertSee('icon-tabler-calendar', false);
+        $response->assertSee('icon-tabler-arrows-exchange', false);
+        $response->assertSee('icon-tabler-users-group', false);
         $response->assertSee('dark:bg-neutral-950', false);
-        $response->assertSee('dark:border-neutral-800/80', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText('Fixture');
         $response->assertSeeText('Fixture information');
@@ -209,6 +214,8 @@ class FixtureShowTest extends TestCase
             ->get(route('fixture.show', $fixture))
             ->assertOk()
             ->assertSeeText('Result submission')
+            ->assertSee('icon-tabler-clipboard-plus', false)
+            ->assertSee('data-fixture-submission-card', false)
             ->assertSee('href="'.route('result.create', $fixture).'"', false);
     }
 
@@ -271,8 +278,8 @@ class FixtureShowTest extends TestCase
 
         $response->assertOk();
         $this->assertIsString($content);
-        $this->assertMatchesRegularExpression('/<div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">\s*2\s*<\/div>[\s\S]*?Home Team/', $content);
-        $this->assertMatchesRegularExpression('/<div class="w-8 shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400">\s*3\s*<\/div>[\s\S]*?Away Team/', $content);
+        $this->assertMatchesRegularExpression('/<div class="w-5 shrink-0 text-center text-sm font-semibold tabular-nums text-muted-foreground sm:w-7">\s*2\s*<\/div>[\s\S]*?Home Team/', $content);
+        $this->assertMatchesRegularExpression('/<div class="w-5 shrink-0 text-center text-sm font-semibold tabular-nums text-muted-foreground sm:w-7">\s*3\s*<\/div>[\s\S]*?Away Team/', $content);
     }
 
     public function test_fixture_show_returns_not_found_when_a_team_relation_is_missing(): void

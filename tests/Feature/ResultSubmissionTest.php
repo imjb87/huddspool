@@ -64,12 +64,21 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('ui-section', false)
             ->assertSee('ui-shell-grid', false)
             ->assertSee('ui-card', false)
-            ->assertSee('ui-card-rows', false)
-            ->assertSee('ui-card-row', false)
+            ->assertSee('ui-section-intro', false)
+            ->assertSee('ui-result-form-frame-list', false)
+            ->assertSee('ui-result-form-frame-item', false)
+            ->assertSee('ui-result-form-player-field', false)
+            ->assertSee('ui-result-form-score-field', false)
+            ->assertSee('ui-result-total-item', false)
+            ->assertSee('ui-fixture-team-matchup', false)
+            ->assertSee('ui-fixture-badge-stack', false)
             ->assertSee('ui-card-footer', false)
-            ->assertSee('ui-button-primary', false)
-            ->assertSee('ui-button-secondary', false)
+            ->assertSee('ui-result-button-primary', false)
+            ->assertSee('ui-result-button-secondary', false)
             ->assertSeeText('Submit a result')
+            ->assertSeeText('Back to fixture')
+            ->assertDontSeeText('Frame results')
+            ->assertSee(route('fixture.show', $fixture), false)
             ->assertSeeText('Fixture details')
             ->assertSeeText('Enter result')
             ->assertSeeText('Live updates connected')
@@ -679,7 +688,7 @@ class ResultSubmissionTest extends TestCase
             ->assertSet('form.frames.1.away_score', 0);
     }
 
-    public function test_winning_and_losing_frame_score_pills_use_gradient_backgrounds_in_the_form(): void
+    public function test_winning_and_losing_frame_score_badges_use_the_shared_result_treatment_in_the_form(): void
     {
         [
             'fixture' => $fixture,
@@ -690,8 +699,8 @@ class ResultSubmissionTest extends TestCase
             ->test(ResultForm::class, ['fixture' => $fixture])
             ->set('form.frames.1.home_score', 1)
             ->set('form.frames.1.away_score', 0)
-            ->assertSee('ui-score-pill-success', false)
-            ->assertSee('ui-score-pill-danger', false);
+            ->assertSee('ui-live-score-badge-win', false)
+            ->assertSee('ui-live-score-badge-loss', false);
     }
 
     public function test_setting_one_frame_score_to_one_resets_the_opposing_score_to_zero(): void
@@ -726,8 +735,8 @@ class ResultSubmissionTest extends TestCase
             ->set('form.frames.1.away_player_id', (string) $awayPlayers[0]->id)
             ->call('submit')
             ->assertHasErrors(['form.frames.1'])
-            ->assertSee('rounded-2xl border border-red-200/80 bg-red-50/80', false)
-            ->assertSee('dark:border-red-950/60 dark:bg-red-950/20', false)
+            ->assertSee('rounded-lg border border-red-500/50 bg-red-50/50', false)
+            ->assertSee('dark:border-red-500/50 dark:bg-red-950/20', false)
             ->assertSeeText('There is 1 problem with your submission');
     }
 

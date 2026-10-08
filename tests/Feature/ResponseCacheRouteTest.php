@@ -28,7 +28,6 @@ class ResponseCacheRouteTest extends TestCase
             'result.og-image' => ['result.og-image'],
             'player.show' => ['player.show'],
             'team.show' => ['team.show'],
-            'history.index' => ['history.index'],
             'history.section.show' => ['history.section.show'],
             'history.knockout.show' => ['history.knockout.show'],
             'venue.show' => ['venue.show'],

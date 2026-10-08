@@ -1,42 +1,49 @@
 <section class="ui-section animate-pulse" data-section-tab-skeleton="fixtures-results">
     <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
-            <div class="ui-section-intro">
-                <div class="h-7 w-7 shrink-0 rounded-full bg-gray-200 ring-1 ring-gray-200/80 dark:bg-neutral-800 dark:ring-neutral-800"></div>
-                <div class="min-w-0">
+            <div class="ui-section-intro gap-2">
+                <div class="flex size-6 shrink-0 items-center justify-center">
+                    <div class="size-5 rounded-sm bg-gray-200 dark:bg-neutral-800"></div>
+                </div>
+                <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                    <div class="mt-1 h-4 w-52 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                    <div class="mt-2 h-4 w-44 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                    <div class="h-4 w-52 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                    <div class="h-4 w-44 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                 </div>
             </div>
 
             <div class="lg:col-span-2">
-                <div class="ui-card">
-                    <div class="ui-card-column-headings justify-start px-4 sm:px-5" data-section-fixtures-headings>
-                        <div class="h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                <div class="ui-card ui-fixtures-card">
+                    <div class="ui-fixtures-date-heading">
+                        <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                     </div>
 
-                    <div class="ui-card-rows">
+                    <div class="ui-fixtures-item-group" data-section-fixtures-list>
                         @foreach (range(1, 5) as $row)
-                            <div data-section-tab-skeleton-row="fixtures-results">
-                                <div class="ui-card-row items-start px-4 sm:px-5" data-section-fixtures-band>
-                                    <div class="min-w-0 flex-1">
-                                        <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                        <div class="mt-2 h-3 w-20 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                    </div>
+                            <div class="ui-fixture-item" data-section-tab-skeleton-row="fixtures-results" data-section-fixtures-band>
+                                <div class="ui-fixture-item-content">
+                                    <div class="ui-fixture-team-matchup">
+                                        <div class="ui-fixture-team-names">
+                                            <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            <div class="h-4 w-36 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                        </div>
 
-                                    <div class="h-7 w-[60px] rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                        <div class="ui-fixture-badge-stack">
+                                            <div class="h-5 min-w-7 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            <div class="h-5 min-w-7 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                </div>
 
-                <div class="pt-5 pb-4 lg:pt-5 lg:pb-6">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="h-10 min-w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                    <div class="border-t border-border px-5 py-4" data-section-fixtures-controls>
+                        <div class="ui-fixtures-pagination" data-section-fixtures-pagination>
+                            <div class="h-9 min-w-24 justify-self-start rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                             <div class="h-4 w-14 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                        <div class="h-10 min-w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                            <div class="h-9 min-w-24 justify-self-end rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                        </div>
                     </div>
                 </div>
             </div>

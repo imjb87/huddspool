@@ -2,115 +2,125 @@
     data-team-players-section
     @if ($forAccount) data-account-team-section @endif>
     <div class="ui-shell-grid">
-        <div class="ui-section-intro">
-            <div class="ui-section-intro-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.742-.478 3 3 0 0 0-4.682-2.72m.94 3.198v-.75A2.25 2.25 0 0 0 15.75 15.72h-7.5A2.25 2.25 0 0 0 6 17.97v.75m12 0a9.094 9.094 0 0 1-12 0m12 0a9.094 9.094 0 0 0-12 0m8.25-10.47a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        <div class="ui-section-intro gap-2">
+            <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-users-group size-5 text-neutral-700 dark:text-neutral-200">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                    <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                    <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
                 </svg>
-            </div>
-            <div class="ui-section-intro-copy">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $forAccount ? 'Team members' : 'Players' }}</h3>
-                <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            </span>
+            <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">{{ $forAccount ? 'Team members' : 'Players' }}</h2>
+                <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                     {{ $forAccount ? 'Current squad members, their role on the team, and this season\'s P/W/L record.' : 'Current squad members and their playing record in this section.' }}
                 </p>
             </div>
         </div>
 
         <div class="lg:col-span-2">
-                <div class="ui-card" @if ($forAccount) data-account-team-management @endif>
-                <div class="ui-card-column-headings px-4 sm:px-5">
-                    <div class="flex min-w-0 items-center gap-3 sm:gap-4"></div>
+            <div class="ui-card" @if ($forAccount) data-account-team-management @endif>
+                <div class="ui-averages-item-group" data-slot="item-group">
+                    <div class="ui-average-item ui-average-item-header" data-slot="item" data-variant="muted" data-size="default">
+                        <div class="ui-average-item-content" data-slot="item-content">
+                            <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3"></div>
 
-                    <div class="ml-auto flex shrink-0 items-start gap-2 text-center sm:gap-5">
-                        <div class="w-12 sm:w-16">
-                            <p class="ui-card-column-header">Played</p>
-                        </div>
-                        <div class="w-12 sm:w-16">
-                            <p class="ui-card-column-header">Won</p>
-                        </div>
-                        <div class="w-12 sm:w-16">
-                            <p class="ui-card-column-header">Lost</p>
+                            <div class="ui-average-item-stats" data-slot="item-actions">
+                                <div class="ui-card-column-header w-12 sm:w-16">Played</div>
+                                <div class="ui-card-column-header w-12 sm:w-16">Won</div>
+                                <div class="ui-card-column-header hidden w-12 sm:block sm:w-16">Lost</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="ui-card-rows"
-                    wire:loading.remove
-                    wire:target="previousPage, nextPage">
-                    @foreach ($this->players as $player)
-                        <x-player-stats-line
-                            :href="route('player.show', $player)"
-                            :avatar-url="$player->avatar_url"
-                            :name="$player->name"
-                            :role-label="\App\Enums\UserRole::labelFor($player->role)"
-                            :frames-played="$player->frames_played"
-                            :frames-won="$player->frames_won"
-                            :frames-lost="$player->frames_lost"
-                            :show-inline-stat-labels="false"
-                            wrapper-class="ui-card-row-link"
-                            row-class="ui-card-row items-center px-4 sm:px-5"
-                            stats-marker="{{ $forAccount ? 'account-team-member-stats' : null }}"
-                            wire:key="team-player-{{ $player->id }}" />
-                    @endforeach
-                </div>
+                    <div class="flex flex-col gap-2" wire:loading.remove wire:target="previousPage, nextPage">
+                        @foreach ($this->players as $player)
+                            <x-player-stats-line
+                                :href="route('player.show', $player)"
+                                :avatar-url="$player->avatar_url"
+                                :name="$player->name"
+                                :role-label="\App\Enums\UserRole::labelFor($player->role)"
+                                :frames-played="$player->frames_played"
+                                :frames-won="$player->frames_won"
+                                :frames-lost="$player->frames_lost"
+                                :show-inline-stat-labels="false"
+                                wrapper-class="ui-team-player-link"
+                                row-class="ui-average-item"
+                                content-class="ui-average-item-content"
+                                stats-class="ui-average-item-stats"
+                                :hide-lost-on-mobile="true"
+                                stats-marker="{{ $forAccount ? 'account-team-member-stats' : null }}"
+                                wire:key="team-player-{{ $player->id }}" />
+                        @endforeach
+                    </div>
 
-                <div class="animate-pulse"
-                    wire:loading.block
-                    wire:target="previousPage, nextPage"
-                    data-team-players-loading>
-                    <div class="ui-card-rows">
+                    <div class="flex flex-col gap-2 animate-pulse" wire:loading.block wire:target="previousPage, nextPage" data-team-players-loading>
                         @foreach (range(1, 5) as $row)
-                            <div class="ui-card-row items-center px-4 sm:px-5">
-                                <div class="shrink-0">
-                                    <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                </div>
+                            <div class="ui-average-item">
+                                <div class="ui-average-item-content" data-slot="item-content">
+                                    <div class="shrink-0">
+                                        <div class="size-8 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                    </div>
 
-                                <div class="min-w-0 flex-1">
-                                    <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-36"></div>
-                                    <div class="mt-2 h-3 w-16 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-20"></div>
-                                </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="h-4 w-28 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-36"></div>
+                                        <div class="mt-2 h-3 w-16 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-20"></div>
+                                    </div>
 
-                                <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-5">
-                                    @foreach (range(1, 3) as $column)
-                                        <div class="w-12 sm:w-16">
-                                            <div class="flex flex-col items-center gap-1">
-                                                <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-10"></div>
-                                                <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-neutral-800' }}"></div>
+                                    <div class="ui-average-item-stats" data-slot="item-actions">
+                                        @foreach (range(1, 3) as $column)
+                                            <div class="{{ $column === 3 ? 'hidden sm:block ' : '' }}w-12 sm:w-16">
+                                                <div class="flex flex-col items-center gap-1">
+                                                    <div class="h-4 w-8 rounded-full bg-gray-200 dark:bg-neutral-800 sm:w-10"></div>
+                                                    <div class="h-5 w-12 rounded-md {{ $column === 1 ? 'opacity-0' : 'bg-gray-200 dark:bg-neutral-800' }}"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
-            </div>
 
-            @if ($forAccount && $this->players->hasPages())
-                <div class="pt-5 pb-4 lg:pt-5 lg:pb-6" @if ($forAccount) data-account-team-players-controls @else data-team-players-controls @endif>
-                    <div class="flex items-center justify-between gap-4">
-                        <button wire:click="previousPage"
-                            wire:loading.attr="disabled"
-                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                            aria-label="Previous"
-                            @disabled($this->players->onFirstPage())>
-                            Previous
-                        </button>
+                @if ($forAccount && $this->players->hasPages())
+                    <div class="border-t border-border px-5 py-4" @if ($forAccount) data-account-team-players-controls @else data-team-players-controls @endif>
+                        <nav class="ui-pagination" aria-label="Team members pagination">
+                            <button wire:click="previousPage"
+                                wire:loading.attr="disabled"
+                                class="ui-pagination-link rounded-full"
+                                aria-label="Previous page"
+                                type="button"
+                                @disabled($this->players->onFirstPage())>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left size-4" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M15 6l-6 6l6 6" />
+                                </svg>
+                                <span class="hidden sm:inline">Previous</span>
+                            </button>
 
-                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                            Page {{ $this->players->currentPage() }}
-                        </span>
+                            <span class="ui-pagination-current" aria-live="polite">Page {{ $this->players->currentPage() }}</span>
 
-                        <button wire:click="nextPage"
-                            wire:loading.attr="disabled"
-                            class="ui-button-primary min-w-24 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                            aria-label="Next"
-                            @disabled(! $this->players->hasMorePages())>
-                            Next
-                        </button>
+                            <button wire:click="nextPage"
+                                wire:loading.attr="disabled"
+                                class="ui-pagination-link rounded-full"
+                                aria-label="Next page"
+                                type="button"
+                                @disabled(! $this->players->hasMorePages())>
+                                <span class="hidden sm:inline">Next</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 6l6 6l-6 6" />
+                                </svg>
+                            </button>
+                        </nav>
                     </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
 </section>

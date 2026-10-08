@@ -135,15 +135,19 @@ class PlayerProfileTest extends TestCase
         $response->assertSee('data-section-shared-header', false);
         $response->assertSee('data-player-profile-section', false);
         $response->assertSee('data-player-frames-section', false);
-        $response->assertSee('data-player-history-section', false);
+        $response->assertDontSee('data-player-history-section', false);
         $response->assertSee('flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-8', false);
         $response->assertSee('grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2', false);
         $response->assertSee('col-span-full min-w-0 sm:col-span-1', false);
         $response->assertSeeLivewire(HistorySection::class);
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('icon-tabler-user', false);
+        $response->assertSee('icon-tabler-list-details', false);
+        $response->assertSee('ui-averages-item-group', false);
+        $response->assertSee('ui-average-item', false);
         $response->assertSee('dark:bg-neutral-950', false);
-        $response->assertSee('dark:border-neutral-800/80', false);
+        $response->assertSee('ring-foreground/10', false);
         $response->assertSee('dark:text-gray-100', false);
         $response->assertSeeText($player->name);
         $response->assertSeeText('Player');
@@ -154,7 +158,6 @@ class PlayerProfileTest extends TestCase
         $response->assertSeeTextInOrder(['Frames', $opponentTeam->name]);
         $response->assertDontSeeText('-2 pts deducted');
         $response->assertDontSeeText('Player expelled');
-        $response->assertDontSeeText($archivedSeason->name);
         $response->assertSee(
             route('history.section.show', [
                 'season' => $archivedSeason->slug,
@@ -245,6 +248,8 @@ class PlayerProfileTest extends TestCase
         $response = $this->get(route('player.show', $player))
             ->assertOk()
             ->assertSee('data-player-knockout-section', false)
+            ->assertSee('icon-tabler-tournament', false)
+            ->assertSee('ui-knockout-match-item', false)
             ->assertSeeText('Knockouts')
             ->assertSeeText($knockout->name)
             ->assertSee(route('knockout.show', $knockout), false)
@@ -326,8 +331,8 @@ class PlayerProfileTest extends TestCase
             ->assertDontSeeText('Phone number')
             ->assertDontSeeText('conrad@example.com')
             ->assertDontSeeText('07123 456789')
-            ->assertDontSee('mailto:', false)
-            ->assertDontSee('tel:', false);
+            ->assertDontSee('mailto:conrad@example.com', false)
+            ->assertDontSee('tel:07123%20456789', false);
     }
 
     public function test_player_profile_limits_recent_frames_to_twenty_entries(): void
@@ -386,7 +391,7 @@ class PlayerProfileTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-player-frames-controls', false);
-        $response->assertSee('ui-button-primary', false);
+        $response->assertSee('ui-pagination-link', false);
         $response->assertSeeText('Page 1');
         $response->assertDontSeeText('Opponent 01');
         $response->assertDontSeeText('Opponent 16');

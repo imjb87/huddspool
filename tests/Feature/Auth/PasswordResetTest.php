@@ -19,6 +19,8 @@ class PasswordResetTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('data-forgot-password-page', false);
         $response->assertSee('ui-card', false);
+        $response->assertSee('ui-result-button ui-result-button-primary', false);
+        $response->assertSee('h-9 w-full rounded-md border border-border bg-background', false);
         $response->assertSeeText('Forgot password');
         $response->assertSeeText('Enter your email address and we will send you a reset link');
         $response->assertSee(route('login'), false);
@@ -49,6 +51,8 @@ class PasswordResetTest extends TestCase
             $response->assertStatus(200);
             $response->assertSee('data-reset-password-page', false);
             $response->assertSee('ui-card', false);
+            $response->assertSee('ui-result-button ui-result-button-primary', false);
+            $response->assertSee('h-9 w-full rounded-md border border-border bg-background', false);
             $response->assertSeeText('Reset password');
             $response->assertSeeText('Choose a new password for your account');
             $response->assertSee(route('login'), false);

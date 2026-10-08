@@ -32,6 +32,13 @@ class SupportTicketSubmissionTest extends TestCase
         $response
             ->assertOk()
             ->assertSee('data-support-ticket-page', false)
+            ->assertSee('data-account-header', false)
+            ->assertSee('data-account-nav', false)
+            ->assertSee('aria-label="Account navigation"', false)
+            ->assertSee('data-state="active"', false)
+            ->assertSee('icon-tabler-lifebuoy size-5 text-neutral-700 dark:text-neutral-200', false)
+            ->assertSee('ui-result-button-primary', false)
+            ->assertSee('rounded-md border border-border bg-background', false)
             ->assertSee('href="'.route('account.show').'"', false)
             ->assertSee('href="'.route('support.tickets').'"', false)
             ->assertSeeText('Support tickets |')

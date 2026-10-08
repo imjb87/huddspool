@@ -25,6 +25,8 @@ class InviteRegistrationTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-invite-register-page', false);
+        $response->assertSee('ui-result-button ui-result-button-primary', false);
+        $response->assertSee('h-9 w-full rounded-md border border-border bg-background', false);
         $response->assertSeeText('Set password');
         $response->assertSeeText($user->email);
     }

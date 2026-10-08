@@ -2,16 +2,21 @@
     <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
             <div>
-                <div class="ui-section-intro">
-                    <div class="ui-section-intro-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ui-section-intro-glyph" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                <div class="ui-section-intro gap-2">
+                    <span class="flex size-6 shrink-0 items-center justify-center" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-numbers size-5 text-neutral-700 dark:text-neutral-200">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M11 6h9" />
+                            <path d="M11 12h9" />
+                            <path d="M12 18h8" />
+                            <path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4" />
+                            <path d="M6 10v-6l-2 2" />
                         </svg>
-                    </div>
+                    </span>
 
-                    <div class="ui-section-intro-copy">
-                        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Standings</h2>
-                        <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+                    <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
+                        <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Standings</h2>
+                        <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                             {{ $summaryCopy }}
                         </p>
                     </div>
@@ -19,34 +24,33 @@
             </div>
 
             <div class="lg:col-span-2">
-                <div class="ui-card" data-section-table-shell>
+                <div class="ui-card ui-standings-card" data-section-table-shell>
                     @if ($standings->isEmpty())
-                        <div class="ui-card-body py-10 text-center">
-                            <div class="mx-auto max-w-md rounded-xl border border-dashed border-gray-300 px-6 py-8 dark:border-neutral-800 dark:bg-neutral-900/75">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">No standings available for this section yet.</h3>
-                                <p class="mx-auto mt-2 max-w-prose text-sm text-gray-500 dark:text-gray-400">
-                                    Standings will appear once results are entered for this section.
-                                </p>
-                            </div>
-                        </div>
+                        <x-ui-empty-state
+                            title="No standings available for this section yet."
+                            description="Standings will appear once results are entered for this section."
+                            data-section-table-empty
+                        />
                     @else
-                        <div class="ui-card-column-headings px-4 sm:px-5" data-section-table-band>
-                            <div class="flex min-w-0 items-center gap-2 sm:gap-3"></div>
-
-                            <div class="ml-auto grid shrink-0 grid-cols-4 gap-2 text-center sm:grid-cols-5 sm:gap-3">
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pl</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">W</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">D</div>
-                                <div class="hidden w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:block sm:w-10">L</div>
-                                <div class="w-8 text-xs font-medium text-gray-500 dark:text-gray-400 sm:w-10">Pts</div>
-                            </div>
-                        </div>
-
                         @php
                             $standingCount = $standingRows->count();
                         @endphp
 
-                        <div class="ui-card-rows">
+                        <div class="ui-standings-item-group" data-slot="item-group">
+                            <div class="ui-standings-item ui-standings-item-header" data-section-table-band data-slot="item" data-variant="muted" data-size="default">
+                                <div class="ui-standings-item-content" data-slot="item-content">
+                                    <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3"></div>
+
+                                    <div class="ui-standings-item-stats" data-slot="item-actions">
+                                        <div class="ui-card-column-header w-8 sm:w-10">Pl</div>
+                                        <div class="ui-card-column-header w-8 sm:w-10">W</div>
+                                        <div class="ui-card-column-header w-8 sm:w-10">D</div>
+                                        <div class="ui-card-column-header hidden w-8 sm:block sm:w-10">L</div>
+                                        <div class="ui-card-column-header w-8 sm:w-10">Pts</div>
+                                    </div>
+                                </div>
+                            </div>
+
                             @foreach ($standingRows as $row)
                                 @php
                                     $rowAccentClass = match (true) {
@@ -56,25 +60,33 @@
                                     };
                                 @endphp
                                 @if ($row->can_link)
-                                    <a class="ui-card-row-link group {{ $row->withdrawn ? 'line-through' : '' }}"
+                                    <a class="ui-standings-item relative group {{ $row->withdrawn ? 'line-through' : '' }}"
                                         wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
                                         data-section-table-row-type="link"
+                                        data-section-table-band
+                                        data-slot="item"
+                                        data-variant="muted"
+                                        data-size="default"
                                         href="{{ route('team.show', $row->id) }}">
                                 @else
-                                    <div class="{{ $row->withdrawn ? 'line-through' : '' }}"
+                                    <div class="ui-standings-item relative {{ $row->withdrawn ? 'line-through' : '' }}"
                                         wire:key="section-standing-{{ $section->id }}-{{ $row->id }}"
-                                        data-section-table-row-type="static">
+                                        data-section-table-row-type="static"
+                                        data-section-table-band
+                                        data-slot="item"
+                                        data-variant="muted"
+                                        data-size="default">
                                 @endif
-                                    <div class="ui-card-row relative gap-2 px-4 sm:gap-3 sm:px-5" data-section-table-band>
-                                        @if ($rowAccentClass)
-                                            <span
-                                                aria-hidden="true"
-                                                class="absolute inset-y-2 left-0 w-1 rounded-r-full {{ $rowAccentClass }}"
-                                            ></span>
-                                        @endif
+                                    @if ($rowAccentClass)
+                                        <span
+                                            aria-hidden="true"
+                                            class="absolute inset-y-2 left-0 w-1 rounded-r-full {{ $rowAccentClass }}"
+                                        ></span>
+                                    @endif
 
+                                    <div class="ui-standings-item-content" data-slot="item-content">
                                         <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
-                                            <div class="w-5 shrink-0 text-center text-sm font-semibold tabular-nums text-gray-500 dark:text-gray-400 sm:w-7">
+                                            <div class="w-5 shrink-0 text-center text-sm font-semibold tabular-nums text-muted-foreground sm:w-7">
                                                 {{ $row->position }}
                                             </div>
                                             <div class="min-w-0">
@@ -91,7 +103,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="ml-auto grid shrink-0 grid-cols-4 gap-2 text-center sm:grid-cols-5 sm:gap-3">
+                                        <div class="ui-standings-item-stats" data-slot="item-actions">
                                             <div class="w-8 sm:w-10">
                                                 <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
                                             </div>
