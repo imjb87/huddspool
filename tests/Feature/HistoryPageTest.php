@@ -251,6 +251,7 @@ class HistoryPageTest extends TestCase
         $fixturesResponse->assertSee('icon-tabler-calendar size-5 text-neutral-700 dark:text-neutral-200', false);
         $fixturesResponse->assertSee('<h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixtures & Results</h2>', false);
         $fixturesResponse->assertSee('m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400', false);
+        $fixturesResponse->assertDontSee('data-section-fixtures-print', false);
         $fixturesResponse->assertSee('href="'.route('result.show', $result).'"', false);
 
         $averagesResponse = $this->get(route('history.section.show', [

@@ -22,8 +22,8 @@
         ->values();
 @endphp
 
-<nav {{ $attributes->class('flex flex-wrap items-center') }} aria-label="Breadcrumb">
-    <ol class="flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5">
+<nav {{ $attributes->class('ui-breadcrumb-scroll min-w-0 max-w-full overflow-x-auto') }} aria-label="Breadcrumb">
+    <ol class="flex min-w-max flex-nowrap items-center gap-1.5 text-sm text-muted-foreground sm:gap-2.5">
         @foreach ($items as $item)
             @if (! $loop->first)
                 <li role="presentation" aria-hidden="true" class="inline-flex items-center [&>svg]:size-3.5">
@@ -37,11 +37,11 @@
             <li class="inline-flex items-center gap-1.5">
                 @if (filled($item['url']) && ! $item['current'])
                     <a href="{{ $item['url'] }}"
-                        class="transition-colors hover:text-foreground">
+                        class="block max-w-40 truncate transition-colors hover:text-foreground sm:max-w-none">
                         {{ $item['label'] }}
                     </a>
                 @else
-                    <span @if ($item['current']) aria-current="page" class="font-normal text-foreground" @endif>
+                    <span @if ($item['current']) aria-current="page" class="block max-w-56 truncate font-normal text-foreground sm:max-w-none" @else class="block max-w-40 truncate" @endif>
                         {{ $item['label'] }}
                     </span>
                 @endif

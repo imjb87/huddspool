@@ -23,7 +23,8 @@ class UiBreadcrumbComponentTest extends TestCase
         $html = preg_replace('/\s+/', ' ', $html) ?? $html;
 
         $this->assertStringContainsString('aria-label="Breadcrumb"', $html);
-        $this->assertStringContainsString('break-words text-sm', $html);
+        $this->assertStringContainsString('ui-breadcrumb-scroll min-w-0 max-w-full overflow-x-auto', $html);
+        $this->assertStringContainsString('min-w-max flex-nowrap', $html);
         $this->assertStringContainsString('> History </span>', $html);
         $this->assertStringNotContainsString('href="/history"', $html);
         $this->assertStringContainsString('> Summer 2026 </a>', $html);

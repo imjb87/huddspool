@@ -6,31 +6,12 @@
                 ['label' => $ruleset->name, 'url' => route('ruleset.show', $ruleset)],
                 ['label' => $section->name, 'current' => true],
             ]" />
-            <div class="ui-shell-grid grid-cols-[minmax(0,1fr)_auto] items-end lg:grid-cols-3">
+            <div class="ui-shell-grid">
                 <div class="min-w-0 lg:col-span-2">
                     <div class="min-w-0">
                         <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">{{ $section->name }}</h1>
                     </div>
                 </div>
-
-                @if ($activeTab === 'fixtures-results')
-                    <div class="flex justify-end">
-                        <a href="{{ route('fixture.download', ['ruleset' => $ruleset, 'section' => $section]) }}"
-                            target="_blank"
-                            class="ui-tab-trigger min-w-24 gap-2"
-                            aria-label="Print fixtures">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-printer size-4" aria-hidden="true">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
-                                <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
-                                <path d="M7 15a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2l0 -4" />
-                            </svg>
-                            <span>Print</span>
-                        </a>
-                    </div>
-                @else
-                    <div aria-hidden="true"></div>
-                @endif
             </div>
         </div>
     </div>
@@ -97,6 +78,7 @@
                     'fixtures' => $this->fixtures,
                     'fixtureRows' => $fixtureRows,
                     'week' => $week,
+                    'showPrint' => true,
                 ])
             @else
                 @include('livewire.section-averages', [

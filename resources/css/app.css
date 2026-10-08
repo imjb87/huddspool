@@ -849,6 +849,15 @@
     @apply min-w-0;
   }
 
+  .ui-breadcrumb-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .ui-breadcrumb-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
   .ui-page-title-with-icon {
     @apply flex items-center gap-4;
   }

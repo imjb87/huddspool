@@ -27,7 +27,37 @@
             </div>
 
             <div class="lg:col-span-2">
+                @php
+                    $fixtureDateLabel = $fixtureRows->first()?->row_meta;
+                @endphp
+
                 <div class="ui-card ui-fixtures-card" data-section-fixtures-shell>
+                    @if ($fixtureDateLabel || ($showPrint ?? false))
+                        <div class="flex items-center justify-between gap-4 border-b border-border px-5 py-4" data-section-fixtures-header>
+                            @if ($fixtureDateLabel)
+                                <p class="m-0 text-sm leading-5 font-medium text-neutral-700 dark:text-neutral-200" data-section-fixtures-date>{{ $fixtureDateLabel }}</p>
+                            @else
+                                <span aria-hidden="true"></span>
+                            @endif
+
+                            @if ($showPrint ?? false)
+                                <a href="{{ route('fixture.download', ['ruleset' => $ruleset, 'section' => $section]) }}"
+                                    target="_blank"
+                                    class="ui-tab-trigger min-w-24 gap-2"
+                                    aria-label="Print fixtures"
+                                    data-section-fixtures-print>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-printer size-4" aria-hidden="true">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
+                                        <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+                                        <path d="M7 15a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2l0 -4" />
+                                    </svg>
+                                    <span>Print</span>
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
                     <div wire:loading.remove wire:target="previousWeek, nextWeek" data-section-fixtures-content>
                         @if ($fixtureRows->isEmpty())
                             <x-ui-empty-state
@@ -36,14 +66,6 @@
                                 data-section-fixtures-empty
                             />
                         @else
-                            @php
-                                $fixtureDateLabel = $fixtureRows->first()?->row_meta;
-                            @endphp
-
-                            @if ($fixtureDateLabel)
-                                <p class="ui-fixtures-date-heading" data-section-fixtures-date>{{ $fixtureDateLabel }}</p>
-                            @endif
-
                             <div class="ui-fixtures-item-group" data-section-fixtures-list>
                                 @foreach ($fixtureRows as $row)
                                     <div wire:key="section-fixture-{{ $section->id }}-{{ $row->fixture->id }}">

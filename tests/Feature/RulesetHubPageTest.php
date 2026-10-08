@@ -478,6 +478,9 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertSee('<h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixtures & Results</h2>', false);
         $fixturesResponse->assertSee('m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400', false);
         $fixturesResponse->assertSee('Print fixtures', false);
+        $fixturesResponse->assertSee('data-section-fixtures-header', false);
+        $fixturesResponse->assertSee('border-b border-border px-5 py-4', false);
+        $fixturesResponse->assertSee('data-section-fixtures-print', false);
         $fixturesResponse->assertSeeText('Print');
         $fixturesResponse->assertSee('Week 1', false);
         $fixturesResponse->assertDontSeeText('Home vs Away');
