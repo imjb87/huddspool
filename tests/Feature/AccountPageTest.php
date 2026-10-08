@@ -55,6 +55,7 @@ class AccountPageTest extends TestCase
             ->assertSee('sm:inset-y-4 sm:right-4 sm:left-auto sm:h-[calc(100%-2rem)] sm:w-[calc(100%-2rem)] sm:max-w-sm', false)
             ->assertSee('rounded-xl border border-gray-200/80 bg-white text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80', false)
             ->assertSee('<header class="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-800">', false)
+            ->assertSee('rounded-full border border-border/70 bg-muted text-muted-foreground', false)
             ->assertSee('<footer class="mt-auto flex shrink-0 flex-col gap-2 border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-800 dark:bg-neutral-800">', false)
             ->assertSee('class="group flex flex-col gap-2 rounded-xl border border-border bg-card', false)
             ->assertSee('data-notifications-links', false)

@@ -38,5 +38,23 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('.ui-motion-panel-enter-start', $css);
         $this->assertStringContainsString('.ui-live-score-item--updated', $css);
         $this->assertStringContainsString('.ui-result-form-frame-item--updated', $css);
+        $this->assertStringContainsString('transition-property: transform, opacity;', $css);
+        $this->assertStringContainsString('@keyframes ui-search-shell-enter', $css);
+        $this->assertStringContainsString('@keyframes ui-search-shell-leave', $css);
+    }
+
+    public function test_search_and_notification_surfaces_keep_their_transform_transitions(): void
+    {
+        $search = file_get_contents(resource_path('views/layouts/partials/site-search.blade.php'));
+        $notifications = file_get_contents(resource_path('views/components/account/notifications-drawer.blade.php'));
+
+        $this->assertIsString($search);
+        $this->assertIsString($notifications);
+        $this->assertStringContainsString('x-transition:enter="ui-motion-search-shell-in"', $search);
+        $this->assertStringContainsString('x-transition:leave="ui-motion-search-shell-out"', $search);
+        $this->assertStringContainsString('x-transition:enter="ui-motion-drawer-in"', $notifications);
+        $this->assertStringContainsString('ui-motion-drawer-enter-start', $notifications);
+        $this->assertStringContainsString('ui-motion-drawer-leave-end', $notifications);
+        $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
 }

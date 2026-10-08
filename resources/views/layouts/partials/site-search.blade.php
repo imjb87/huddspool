@@ -25,18 +25,15 @@
     ></div>
 
     <div
-        class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
-        x-show="open"
-        x-transition:enter="ui-motion-popover-in"
-        x-transition:enter-start="opacity-0 translate-y-1"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="ui-motion-popover-out"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-1"
+        class="pointer-events-none fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
+        :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
     >
         <div
             @click.outside="close()"
-            class="relative mx-auto w-full max-w-none transform overflow-hidden rounded-xl border border-gray-200/80 bg-white p-2 pb-11 text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 transition-[background-color,border-color,box-shadow,color] duration-150 sm:max-w-lg dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800"
+            x-show="open"
+            x-transition:enter="ui-motion-search-shell-in"
+            x-transition:leave="ui-motion-search-shell-out"
+            class="relative mx-auto w-full max-w-none overflow-hidden rounded-xl border border-gray-200/80 bg-white p-2 pb-11 text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 sm:max-w-lg dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>

@@ -44,12 +44,12 @@
             x-show="open"
             x-cloak
             x-transition:enter="ui-motion-drawer-in"
-            x-transition:enter-start="translate-x-full"
-            x-transition:enter-end="translate-x-0"
+            x-transition:enter-start="ui-motion-drawer-enter-start"
+            x-transition:enter-end="ui-motion-drawer-enter-end"
             x-transition:leave="ui-motion-drawer-out"
-            x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="translate-x-full"
-            class="fixed inset-y-2 right-2 left-2 z-[70] flex h-[calc(100%-1rem)] w-auto max-w-none flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 transition-[background-color,border-color,box-shadow,color] duration-150 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800 sm:inset-y-4 sm:right-4 sm:left-auto sm:h-[calc(100%-2rem)] sm:w-[calc(100%-2rem)] sm:max-w-sm"
+            x-transition:leave-start="ui-motion-drawer-leave-start"
+            x-transition:leave-end="ui-motion-drawer-leave-end"
+            class="fixed inset-y-2 right-2 left-2 z-[70] flex h-[calc(100%-1rem)] w-auto max-w-none flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800 sm:inset-y-4 sm:right-4 sm:left-auto sm:h-[calc(100%-2rem)] sm:w-[calc(100%-2rem)] sm:max-w-sm"
             role="dialog"
             aria-modal="true"
             aria-labelledby="notifications-drawer-title"
@@ -62,7 +62,7 @@
                     <p id="notifications-drawer-description" class="text-sm text-muted-foreground">Updates about your account and league activity.</p>
                 </div>
                 <button type="button"
-                    class="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                    class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border/70 bg-muted text-muted-foreground shadow-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
                     @click="close()"
                     aria-label="Close notifications"
                     data-notifications-close>

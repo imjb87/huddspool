@@ -153,7 +153,7 @@
 
   .ui-motion-fade-out {
     transition-property: opacity;
-    transition-duration: var(--motion-duration-fast);
+    transition-duration: var(--motion-duration-normal);
     transition-timing-function: var(--motion-ease-in);
   }
 
@@ -165,7 +165,7 @@
 
   .ui-motion-popover-out {
     transition-property: transform, opacity;
-    transition-duration: var(--motion-duration-fast);
+    transition-duration: var(--motion-duration-normal);
     transition-timing-function: var(--motion-ease-in);
   }
 
@@ -173,12 +173,68 @@
     transition-property: transform;
     transition-duration: var(--motion-duration-panel);
     transition-timing-function: var(--motion-ease-out);
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .ui-motion-drawer-out {
     transition-property: transform;
     transition-duration: var(--motion-duration-normal);
     transition-timing-function: var(--motion-ease-in);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .ui-motion-drawer-enter-start {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  .ui-motion-drawer-enter-end {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .ui-motion-drawer-leave-start {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .ui-motion-drawer-leave-end {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  @keyframes ui-search-shell-enter {
+    from {
+      transform: translate3d(0, 0, 0) scale(0.95);
+      opacity: 0;
+    }
+
+    to {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes ui-search-shell-leave {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+
+    to {
+      transform: translate3d(0, 0, 0) scale(0.95);
+      opacity: 0;
+    }
+  }
+
+  .ui-motion-search-shell-in {
+    animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .ui-motion-search-shell-out {
+    animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-out) both;
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .ui-motion-icon {
