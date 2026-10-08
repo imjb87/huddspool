@@ -168,6 +168,7 @@ class ResultShowTest extends TestCase
             ->assertSee('data-result-info-section', false)
             ->assertSee('data-result-card-section', false)
             ->assertSee('data-result-card-shell', false)
+            ->assertSee('data-result-card-share', false)
             ->assertSee('data-result-card-frames', false)
             ->assertSee('data-result-score-pill', false)
             ->assertSee('data-result-frame-score-pill', false)
