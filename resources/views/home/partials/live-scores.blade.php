@@ -11,7 +11,7 @@
                 <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Live scores</h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Results currently being added across the league.
+                        See results as teams submit them during league night.
                     </p>
                 </div>
             </div>
@@ -19,8 +19,8 @@
                 @if ($liveScores->isEmpty())
                     <div class="ui-card ui-live-scores-card">
                         <x-ui-empty-state
-                            title="No current matches in progress right now."
-                            description="Check back during league night to follow the latest scores as they come in."
+                            title="No live scores to show right now."
+                            description="No scores have been submitted yet. Check back during league night to follow results as they come in."
                             data-home-live-scores-empty
                         />
                     </div>

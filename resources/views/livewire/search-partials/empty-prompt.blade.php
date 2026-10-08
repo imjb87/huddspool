@@ -1,6 +1,6 @@
 <x-ui-empty-state
     layout="search"
     title="Search for players, teams and venues"
-    description="Quickly find what you’re looking for by running a global search."
+    description="Search players, teams, and venues by name."
     data-search-empty-prompt
 />

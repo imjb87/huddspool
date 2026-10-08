@@ -28,8 +28,8 @@ class SectionAveragesViewData
 
         return [
             'summaryCopy' => $isHistoryView
-                ? 'Archived frame records and win rates for this section.'
-                : 'Current frame records and win rates for this section.',
+                ? 'Compare archived player frame totals and win rates for this section.'
+                : 'Compare player frame totals and win rates for this section.',
             'lastPage' => max(1, (int) ceil($resolvedTotalPlayers / $perPage)),
             'averageRows' => $players->values()->map(fn ($player, $index) => [
                 'player' => $player,

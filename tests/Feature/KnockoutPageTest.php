@@ -383,7 +383,7 @@ class KnockoutPageTest extends TestCase
             ->assertDontSeeText('3 April 2026 at 20:00')
             ->assertSee('href="'.route('player.show', $currentHomePlayer).'"', false)
             ->assertDontSeeText('Quarter Final')
-            ->assertDontSeeText('Venue TBC')
+            ->assertDontSeeText('Venue not set')
             ->assertDontSeeText('Riverside Club')
             ->assertDontSeeText('Championship Match');
     }

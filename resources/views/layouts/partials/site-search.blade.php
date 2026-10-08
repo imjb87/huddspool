@@ -101,7 +101,7 @@
                 <x-ui-empty-state
                     layout="search"
                     title="Search for players, teams and venues"
-                    description="Quickly find what you’re looking for by running a global search."
+                    description="Search players, teams, and venues by name."
                 />
             </div>
 
@@ -109,7 +109,7 @@
                 <x-ui-empty-state
                     layout="search"
                     title="No results found"
-                    description="We couldn’t find anything with that term. Please try again."
+                    description="No players, teams, or venues matched that search. Try a different name."
                 />
             </div>
 

@@ -105,7 +105,7 @@
                     </span>
                     <div class="space-y-1">
                         <p class="text-sm font-medium">You're all caught up.</p>
-                        <p class="text-sm text-muted-foreground">Match reminders, result updates, and knockout activity will appear here.</p>
+                        <p class="text-sm text-muted-foreground">New match reminders, result updates, and knockout activity will appear here.</p>
                     </div>
                 </div>
 

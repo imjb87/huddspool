@@ -7,7 +7,7 @@
         <x-ui-document-header
             :breadcrumbs="[['label' => 'News', 'current' => true]]"
             title="League updates"
-            description="News and notices from around the league."
+            description="Read league announcements, fixture changes, and key dates."
         />
 
         <div class="ui-document-body">

@@ -16,7 +16,7 @@
                 <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Action centre</h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Keep track of the things that currently need your attention.
+                        Start with the fixtures and knockout results that still need submitting.
                     </p>
                 </div>
             </div>

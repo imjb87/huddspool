@@ -91,7 +91,7 @@
                         Backing the league every week
                     </h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.
+                        Meet the local businesses helping keep league nights running.
                     </p>
                 </div>
             </div>

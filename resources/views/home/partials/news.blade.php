@@ -14,7 +14,7 @@
                 <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Latest news</h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Important updates, date changes and notices from across the league in one place.
+                        Read league announcements, fixture changes, and key dates.
                     </p>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     <div class="ui-card" data-home-news-empty>
                         <x-ui-empty-state
                             title="No league news has been published yet."
-                            description="Updates from the league committee will appear here when they are posted."
+                            description="League announcements will appear here when they are published."
                         />
                     </div>
                 @else

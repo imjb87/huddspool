@@ -29,7 +29,7 @@
                     <div class="min-w-0">
                         <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">Submit a result</h1>
                         <p class="mt-2 max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400">
-                            Enter the frame-by-frame result for {{ $section?->name ?? 'this fixture' }}.
+                            Enter and verify the frame-by-frame score for {{ $section?->name ?? 'this fixture' }}.
                         </p>
                     </div>
 
@@ -65,7 +65,7 @@
                             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixture details</h2>
                                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                    Review the fixture details before entering the result.
+                                    Confirm the teams, date, and venue before entering the scorecard.
                                 </p>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                                                     {{ $fixture->venue->name }}
                                                 </a>
                                             @else
-                                                <p class="text-sm text-muted-foreground">Venue TBC</p>
+                                                <p class="text-sm text-muted-foreground">Venue not set</p>
                                             @endif
                                         </div>
                                     </div>

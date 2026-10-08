@@ -15,7 +15,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">{{ $title }}</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    Current player records for the {{ $side }} side in this section.
+                    Review the {{ $side }} team's players and their current record in this section.
                 </p>
             </div>
         </div>

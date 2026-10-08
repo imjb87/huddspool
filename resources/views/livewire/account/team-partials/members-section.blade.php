@@ -9,7 +9,7 @@
             <div class="ui-section-intro-copy">
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Team members</h3>
                 <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    Current squad members, their role on the team, and this season's P/W/L record.
+                    Manage the squad and review each player's record in this section.
                 </p>
             </div>
         </div>

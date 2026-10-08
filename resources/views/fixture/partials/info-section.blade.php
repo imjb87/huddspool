@@ -15,7 +15,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixture information</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    Match details, venue, and links back to the wider section schedule.
+                    Confirm the teams, date, venue, and section before match night.
                 </p>
             </div>
         </div>
@@ -58,7 +58,7 @@
                                     {{ $fixture->venue->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-muted-foreground">Venue TBC</p>
+                                <p class="text-sm text-muted-foreground">Venue not set</p>
                             @endif
                         </div>
                     </div>

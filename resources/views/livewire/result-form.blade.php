@@ -43,7 +43,7 @@
                     <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                         <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Presence</h2>
                         <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                            Keep an eye on who is currently viewing or editing this result.
+                            See who else is viewing this scorecard before you start editing.
                         </p>
                     </div>
                 </div>
@@ -192,7 +192,7 @@
                 <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Enter result</h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Complete each frame accurately, then submit the result when you're ready.
+                        Enter each frame, check the totals, and submit the scorecard when it is correct.
                     </p>
                 </div>
             </div>

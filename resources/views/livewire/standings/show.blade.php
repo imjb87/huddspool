@@ -28,7 +28,7 @@
                     @if ($standings->isEmpty())
                         <x-ui-empty-state
                             title="No standings available for this section yet."
-                            description="Standings will appear once results are entered for this section."
+                            description="The table will populate after the first confirmed result is entered."
                             data-section-table-empty
                         />
                     @else

@@ -316,7 +316,7 @@ class RulesetHubPageTest extends TestCase
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-ruleset-sections-empty', false);
         $response->assertSee('ui-section', false);
-        $response->assertSeeText('No open sections are available for this ruleset yet.');
+        $response->assertSeeText('This ruleset has no open sections yet.');
     }
 
     public function test_ruleset_rules_route_renders_empty_state_without_content(): void

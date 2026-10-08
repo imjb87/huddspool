@@ -17,7 +17,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixtures</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    {{ $forAccount ? 'Current season fixtures and results for your team. Submission actions appear once a fixture date is due.' : 'Current season fixtures and results for this team.' }}
+                    {{ $forAccount ? 'Follow your fixtures and submit results once match nights are complete.' : 'Follow this team\'s fixtures and submitted results through the season.' }}
                 </p>
             </div>
         </div>

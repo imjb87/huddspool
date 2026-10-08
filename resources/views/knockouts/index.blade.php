@@ -7,7 +7,7 @@
                 <div class="border-b border-gray-200 pb-2 mb-8">
                     <div class="-ml-2 -mt-2 flex flex-wrap items-baseline">
                         <h1 class="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">Knockouts</h1>
-                        <p class="ml-2 mt-2 text-sm text-gray-500">Browse every active knockout competition.</p>
+                        <p class="ml-2 mt-2 text-sm text-gray-500">Open a competition to view its rounds, fixtures, and results.</p>
                     </div>
                 </div>
 
@@ -26,7 +26,7 @@
                     </div>
                 @empty
                     <div class="ui-card ui-document-card ui-document-empty max-w-2xl">
-                        <x-ui-empty-state title="No knockouts have been published yet." />
+                        <x-ui-empty-state title="No knockout competitions are available yet." />
                     </div>
                 @endforelse
             </div>

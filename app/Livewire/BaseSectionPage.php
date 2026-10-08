@@ -322,8 +322,8 @@ abstract class BaseSectionPage extends Component
     {
         return [
             'summaryCopy' => $isHistoryView
-                ? 'Archived positions, results and points for this section.'
-                : 'Current positions, results and points for this section.',
+                ? 'Compare archived teams by matches played, wins, losses, and points.'
+                : 'Compare teams by matches played, wins, losses, and points.',
             'standingRows' => $this->standings
                 ->values()
                 ->map(fn ($team, $index) => StandingSummaryRow::fromStanding($team, $index + 1, $isHistoryView)),

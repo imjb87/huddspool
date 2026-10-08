@@ -9,7 +9,7 @@
             <div class="ui-section-intro-copy">
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures</h3>
                 <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    Current season fixtures and results for this team.
+                    Follow this team's fixtures and submitted results through the season.
                 </p>
             </div>
         </div>

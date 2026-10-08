@@ -7,7 +7,7 @@
     @else
         <div class="flex h-full items-center justify-center px-6 text-center">
             <p class="max-w-sm text-sm leading-6 text-neutral-500 dark:text-neutral-400">
-                Map embedding is not configured right now.
+                The venue map is unavailable, but the address is listed above.
             </p>
         </div>
     @endif

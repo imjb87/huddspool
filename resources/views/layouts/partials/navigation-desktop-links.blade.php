@@ -426,7 +426,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="rounded-md p-3 text-sm text-muted-foreground sm:col-span-2">No historical seasons yet.</div>
+                    <div class="rounded-md p-3 text-sm text-muted-foreground sm:col-span-2">Archived seasons will appear here once a season closes.</div>
                 @endforelse
             </div>
         </div>

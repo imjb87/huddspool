@@ -19,8 +19,8 @@
                         <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Fixtures & Results</h2>
                         <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
                             {{ ($history ?? false)
-                                ? 'Archived fixtures and submitted results for this section by week.'
-                                : 'Current fixtures and submitted results for this section by week.' }}
+                                ? 'Review this section\'s archived fixtures and submitted results by week.'
+                                : 'Follow each week\'s fixtures and open submitted results for this section.' }}
                         </p>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                         @if ($fixtureRows->isEmpty())
                             <x-ui-empty-state
                                 title="No fixtures available for this week."
-                                description="Try another week to see upcoming fixtures or submitted results for this section."
+                                description="Try another week to find fixtures or results for this section."
                                 data-section-fixtures-empty
                             />
                         @else

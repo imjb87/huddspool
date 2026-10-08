@@ -11,7 +11,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Personal information</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    Manage the profile details shown for your account and keep your avatar up to date.
+                    Update the name, role, team, and avatar shown on your profile.
                 </p>
             </div>
         </div>
@@ -166,7 +166,7 @@
                                         This browser does not support push notifications.
                                     </p>
                                     <p class="mt-1 text-sm leading-5 text-muted-foreground" x-show="!configured">
-                                        Push notifications are not configured on the server yet.
+                                        Push notifications aren't available for this account yet.
                                     </p>
                                     <p class="mt-2 text-xs text-red-600 dark:text-red-400" x-show="error" x-text="error"></p>
 

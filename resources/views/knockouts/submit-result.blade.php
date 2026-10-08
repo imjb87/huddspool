@@ -52,7 +52,7 @@
                             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Match details</h2>
                                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                    Review the matchup before entering the result.
+                                    Confirm the participants, round, and format before entering the result.
                                 </p>
                             </div>
                         </div>
@@ -64,9 +64,9 @@
                                         <div class="sm:col-span-2">
                                             <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">Match</p>
                                             <p class="flex flex-wrap items-center gap-x-1 text-sm font-semibold text-neutral-950 dark:text-neutral-50">
-                                                {{ $match->homeParticipant?->display_name ?? 'TBC' }}
+                                                {{ $match->homeParticipant?->display_name ?? 'Home participant TBC' }}
                                                 <span class="font-normal text-neutral-400 dark:text-neutral-500">vs</span>
-                                                {{ $match->awayParticipant?->display_name ?? 'TBC' }}
+                                                {{ $match->awayParticipant?->display_name ?? 'Away participant TBC' }}
                                             </p>
                                         </div>
 
@@ -107,7 +107,7 @@
                             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Match score</h2>
                                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                    Enter the final score. First to {{ $match->targetScoreToWin() }} wins.
+                                    Enter the final score; the first participant to {{ $match->targetScoreToWin() }} wins.
                                 </p>
                             </div>
                         </div>

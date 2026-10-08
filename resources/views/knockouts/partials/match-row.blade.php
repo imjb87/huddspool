@@ -80,7 +80,7 @@
                                 {{ $matchRow->match->venue->name }}
                             </a>
                         @else
-                            <span>Venue TBC</span>
+                            <span>Venue not set</span>
                         @endif
                     </p>
                 @endif

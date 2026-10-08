@@ -25,8 +25,8 @@ class Show extends Component
     public function summaryCopy(): string
     {
         return $this->history
-            ? 'Archived positions, results and points for this section.'
-            : 'Current positions, results and points for this section.';
+            ? 'Compare archived teams by matches played, wins, losses, and points.'
+            : 'Compare teams by matches played, wins, losses, and points.';
     }
 
     #[Computed]

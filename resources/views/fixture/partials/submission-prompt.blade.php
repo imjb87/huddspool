@@ -14,7 +14,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Result submission</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    This fixture is ready for a result to be submitted.
+                    Enter the scorecard once all frames have been played.
                 </p>
                 </div>
             </div>

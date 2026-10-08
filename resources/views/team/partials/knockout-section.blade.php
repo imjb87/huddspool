@@ -17,7 +17,7 @@
                 <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                     <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Team knockouts</h2>
                     <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                        Recent team knockout ties and completed results.
+                        Review this team's knockout ties and their submitted results.
                     </p>
                 </div>
             </div>

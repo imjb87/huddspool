@@ -48,7 +48,7 @@
                             @else
                                 <x-ui-empty-state
                                     title="No matches scheduled for this round yet."
-                                    description="Match pairings and dates will appear here once the bracket is ready."
+                                    description="Match pairings will appear here once this round is scheduled."
                                     data-knockout-empty-state
                                 />
                             @endif
@@ -111,7 +111,7 @@
                             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Rounds</h2>
                                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                    Published rounds and ties will appear here once the bracket is ready.
+                                    Open a published round to see its match pairings and results.
                                 </p>
                             </div>
                         </div>
@@ -121,7 +121,7 @@
                         <div class="ui-card">
                             <x-ui-empty-state
                                 title="No rounds have been published yet."
-                                description="The bracket will appear here as soon as round information is published."
+                                description="Rounds will appear here when the competition bracket is published."
                                 data-knockout-empty-state
                             />
                         </div>

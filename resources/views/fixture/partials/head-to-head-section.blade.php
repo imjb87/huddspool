@@ -11,7 +11,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Head to head</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    Current section standings for the two teams in this fixture.
+                    Compare the two teams' current standings before the fixture.
                 </p>
             </div>
         </div>

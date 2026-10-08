@@ -15,7 +15,7 @@
             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Team information</h2>
                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                    Current team details for the open season, including your section and standing.
+                    Check your team's section, standing, venue, and captain.
                 </p>
             </div>
         </div>
@@ -39,7 +39,7 @@
                                     {{ $this->currentSection->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-muted-foreground">No open section</p>
+                                <p class="text-sm text-muted-foreground">No section assigned</p>
                             @endif
                         </div>
 
@@ -51,7 +51,7 @@
                                     {{ $this->team->venue->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-muted-foreground">Venue TBC</p>
+                                <p class="text-sm text-muted-foreground">Venue not set</p>
                             @endif
                         </div>
 
@@ -63,7 +63,7 @@
                                     {{ $this->team->captain->name }}
                                 </a>
                             @else
-                                <p class="text-sm text-muted-foreground">Captain TBC</p>
+                                <p class="text-sm text-muted-foreground">Captain not assigned</p>
                             @endif
                         </div>
 
@@ -75,7 +75,7 @@
                                     <span class="text-gray-500 dark:text-gray-400">· {{ $this->currentStanding->points }} pts from {{ $this->currentStanding->played }} played</span>
                                 </p>
                             @else
-                                <p class="text-sm text-muted-foreground">No standing available yet</p>
+                                <p class="text-sm text-muted-foreground">Standing not available</p>
                             @endif
                         </div>
                     </div>

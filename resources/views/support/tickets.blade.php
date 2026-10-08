@@ -48,7 +48,7 @@
                             <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                                 <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Support request</h2>
                                 <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                    Send a message to the admin team and we will get back to you as soon as we can.
+                                    Tell the admin team what has happened and include enough detail for them to act.
                                 </p>
                             </div>
                         </div>

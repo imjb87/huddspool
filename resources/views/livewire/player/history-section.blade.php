@@ -13,7 +13,7 @@
                     <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                         <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">History</h2>
                         <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                            Season-by-season playing history with archived team and section details.
+                            Compare this player's record across previous seasons, teams, and sections.
                         </p>
                     </div>
                 </div>
@@ -54,8 +54,8 @@
                                         <div class="ui-average-item-content" data-slot="item-content">
                                             <div class="min-w-0 flex-1">
                                                 <p class="truncate whitespace-nowrap text-sm font-semibold text-neutral-950 dark:text-neutral-50">{{ $entry['season_name'] }}</p>
-                                                <p class="mt-1 truncate whitespace-nowrap text-xs text-neutral-500 dark:text-neutral-400">{{ $entry['team_name'] ?? 'Team TBC' }}</p>
-                                                <p class="mt-1 truncate whitespace-nowrap text-xs text-neutral-500 dark:text-neutral-400">{{ $entry['section_name'] ?? 'Section TBC' }}</p>
+                                                <p class="mt-1 truncate whitespace-nowrap text-xs text-neutral-500 dark:text-neutral-400">{{ $entry['team_name'] ?? 'Team not recorded' }}</p>
+                                                <p class="mt-1 truncate whitespace-nowrap text-xs text-neutral-500 dark:text-neutral-400">{{ $entry['section_name'] ?? 'Section not recorded' }}</p>
                                             </div>
 
                                             <div class="ui-average-item-stats" data-slot="item-actions">

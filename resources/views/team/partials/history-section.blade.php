@@ -10,7 +10,7 @@
                 <div class="ui-section-intro-copy">
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">History</h3>
                     <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                        Season-by-season record for this team across previous campaigns.
+                        Compare this team's results across previous seasons.
                     </p>
                 </div>
             </div>

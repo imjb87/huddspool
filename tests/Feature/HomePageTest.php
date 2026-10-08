@@ -77,7 +77,7 @@ class HomePageTest extends TestCase
         $response->assertSee('ui-shell-grid', false);
         $response->assertSee('ui-card', false);
         $response->assertSee('ui-live-scores-card', false);
-        $response->assertSeeText('No current matches in progress right now.');
+        $response->assertSeeText('No live scores to show right now.');
         $response->assertSee('data-home-news', false);
         $response->assertSeeText('Latest news');
         $response->assertSee('icon icon-tabler icons-tabler-outline icon-tabler-news size-5 text-neutral-700 dark:text-neutral-200', false);
@@ -104,7 +104,7 @@ class HomePageTest extends TestCase
         $response->assertSee('ui-sponsor-content', false);
         $response->assertSee('ui-sponsor-logo', false);
         $response->assertSeeText('Backing the league every week');
-        $response->assertSeeText('Local businesses supporting the league. Visit the sponsors behind the tables, fixtures and nights out.');
+        $response->assertSeeText('Meet the local businesses helping keep league nights running.');
         $response->assertSee(asset('images/sponsors/nrkfabrication-logo-160.webp').'?v=', false);
         $response->assertSee(asset('images/sponsors/ukplasticsandglazing-logo-160.webp').'?v=', false);
         $response->assertSee(asset('images/sponsors/thepooltableguru-160.webp').'?v=', false);
@@ -252,7 +252,7 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Premier Division');
         $response->assertDontSeeText($data['fixture']->fixture_date->format('j M Y'));
         $response->assertSee('href="'.route('result.show', $result).'"', false);
-        $response->assertDontSeeText('No current matches in progress right now.');
+        $response->assertDontSeeText('No live scores to show right now.');
     }
 
     public function test_home_page_links_team_admin_to_resume_in_progress_match(): void
@@ -486,7 +486,7 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSeeText('No current matches in progress right now.');
+            ->assertSeeText('No live scores to show right now.');
 
         Result::factory()->create([
             'fixture_id' => $data['fixture']->id,
@@ -506,7 +506,7 @@ class HomePageTest extends TestCase
             ->assertSee('data-home-live-scores-list', false)
             ->assertSeeText('Break Masters')
             ->assertSeeText('Cue Kings')
-            ->assertDontSeeText('No current matches in progress right now.');
+            ->assertDontSeeText('No live scores to show right now.');
     }
 
     public function test_home_page_response_cache_is_cleared_when_news_changes(): void

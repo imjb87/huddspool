@@ -39,7 +39,7 @@
                     </svg>
                 </button>
             @empty
-                <div class="ui-card-row text-muted-foreground">No historical seasons yet.</div>
+                <div class="ui-card-row text-muted-foreground">Archived seasons will appear here once a season closes.</div>
             @endforelse
             </div>
         </div>

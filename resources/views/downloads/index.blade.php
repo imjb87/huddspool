@@ -21,7 +21,7 @@
                             <p class="mt-1 text-sm leading-6 text-muted-foreground">Blank match score card for recording frames and the final result.</p>
                         </div>
                         <a href="{{ asset('downloads/scorecard.pdf') }}" download="scorecard.pdf" class="ui-button-primary mt-4 shrink-0 sm:mt-0" data-download-link="scorecard">
-                            Download scorecard.pdf
+                            Download scorecard
                         </a>
                     </div>
                 </div>

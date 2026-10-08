@@ -10,7 +10,7 @@
                 <div class="ui-section-intro-copy">
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">History</h3>
                     <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                        Season-by-season playing record using the archived team and section details from recorded results.
+                        Compare your record across previous seasons, teams, and sections.
                     </p>
                 </div>
             </div>
@@ -42,8 +42,8 @@
                                 <div class="ui-card-row items-center px-4 sm:px-5">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $entry['season_name'] }}</p>
-                                        <p class="mt-1 truncate text-sm text-gray-700 dark:text-gray-300">{{ $entry['team_name'] ?? 'Team TBC' }}</p>
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $entry['section_name'] ?? 'Section TBC' }}</p>
+                                        <p class="mt-1 truncate text-sm text-gray-700 dark:text-gray-300">{{ $entry['team_name'] ?? 'Team not recorded' }}</p>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $entry['section_name'] ?? 'Section not recorded' }}</p>
                                     </div>
 
                                     <div class="ml-auto flex shrink-0 items-start gap-2 self-center text-center sm:gap-5">

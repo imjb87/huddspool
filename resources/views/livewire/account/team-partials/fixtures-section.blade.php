@@ -9,7 +9,7 @@
             <div class="ui-section-intro-copy">
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Fixtures</h3>
                 <p class="mt-1 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
-                    Current season fixtures and results for your team. Submission actions appear once a fixture date is due.
+                    Follow your fixtures and submit results once match nights are complete.
                 </p>
             </div>
         </div>
@@ -53,7 +53,7 @@
                 @empty
                     <x-ui-empty-state
                         title="No fixtures available."
-                        description="Team fixtures will appear here once the current season schedule has been generated."
+                        description="Your fixtures will appear here when the current season schedule is published."
                         data-account-team-fixtures-empty
                     />
                 @endforelse

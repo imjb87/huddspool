@@ -38,7 +38,7 @@
                         <div class="ui-section-intro-copy grid auto-rows-min items-start gap-1.5">
                             <h2 class="font-heading text-base leading-6 font-medium text-neutral-900 dark:text-neutral-50">Current sections</h2>
                             <p class="m-0 text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-                                Choose a section to view current standings, fixtures, results, and averages for {{ $ruleset->name }}.
+                                Pick a section to compare its table, fixtures, results, and player averages.
                             </p>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                         @if ($sections->isEmpty())
                             <div class="ui-card" data-ruleset-sections-empty>
                                 <x-ui-empty-state
-                                    title="No open sections are available for this ruleset yet."
+                                    title="This ruleset has no open sections yet."
                                 />
                             </div>
                         @else

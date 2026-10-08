@@ -30,7 +30,7 @@
                                 @if ($name === 'players')
                                     {{ $item->team?->name ?? 'No team assigned' }}
                                 @elseif ($name === 'teams')
-                                    {{ $item->openSection()?->name ?? 'Open section unavailable' }}
+                                    {{ $item->openSection()?->name ?? 'No open section' }}
                                 @elseif ($name === 'venues')
                                     {{ $item->address }}
                                 @endif

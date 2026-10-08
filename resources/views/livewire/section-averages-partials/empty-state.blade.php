@@ -1,5 +1,5 @@
 <x-ui-empty-state
     title="No frames"
-    description="There have been no frames played in this section yet. Please check back here again soon."
+    description="Player averages will appear after the first frames are recorded in this section."
     data-section-averages-empty
 />
