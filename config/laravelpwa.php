@@ -9,32 +9,32 @@ return [
         'background_color' => '#166534',
         'theme_color' => '#166534',
         'display' => 'standalone',
-        'orientation'=> 'any',
-        'status_bar'=> 'black',
+        'orientation' => 'any',
+        'status_bar' => 'black',
         'icons' => [
             '48x48' => [
                 'path' => '/images/icons/icon-48-48.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '72x72' => [
                 'path' => '/images/icons/icon-72-72.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '96x96' => [
                 'path' => '/images/icons/icon-96-96.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '144x144' => [
                 'path' => '/images/icons/icon-144-144.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '192x192' => [
                 'path' => '/images/icons/icon-192-192.png',
-                'purpose' => 'any maskable'
+                'purpose' => 'any maskable',
             ],
             '512x512' => [
                 'path' => '/images/icons/icon-512-512.png',
-                'purpose' => 'any maskable'
+                'purpose' => 'any maskable',
             ],
         ],
         'splash' => [
@@ -49,6 +49,12 @@ return [
             '1668x2388' => '/images/icons/splash-1668x2388.png',
             '2048x2732' => '/images/icons/splash-2048x2732.png',
         ],
-        'custom' => []
-    ]
+        'custom' => [
+            'id' => '/',
+            'scope' => '/',
+            'lang' => 'en-GB',
+            'dir' => 'ltr',
+            'categories' => ['sports'],
+        ],
+    ],
 ];

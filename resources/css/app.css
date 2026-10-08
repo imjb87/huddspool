@@ -65,6 +65,12 @@
     --accent-foreground: oklch(0.205 0 0);
     --border: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
+    --motion-duration-fast: 120ms;
+    --motion-duration-normal: 180ms;
+    --motion-duration-panel: 240ms;
+    --motion-duration-content: 360ms;
+    --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   }
 
   .dark {
@@ -123,9 +129,261 @@
       transition-timing-function: ease;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-delay: 0s !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-delay: 0s !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
+  .ui-motion-fade-in {
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-normal);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-motion-fade-out {
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-in);
+  }
+
+  .ui-motion-popover-in {
+    transition-property: transform, opacity;
+    transition-duration: var(--motion-duration-normal);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-motion-popover-out {
+    transition-property: transform, opacity;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-in);
+  }
+
+  .ui-motion-drawer-in {
+    transition-property: transform;
+    transition-duration: var(--motion-duration-panel);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-motion-drawer-out {
+    transition-property: transform;
+    transition-duration: var(--motion-duration-normal);
+    transition-timing-function: var(--motion-ease-in);
+  }
+
+  .ui-motion-icon {
+    transition-property: opacity, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-motion-icon-enter-start {
+    transform: scale(0.75) rotate(-45deg);
+    opacity: 0;
+  }
+
+  .ui-motion-icon-enter-end {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  .ui-motion-icon-leave-start {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  .ui-motion-icon-leave-end {
+    transform: scale(0.75) rotate(45deg);
+    opacity: 0;
+  }
+
+  .ui-motion-panel-in {
+    transition-property: transform, opacity;
+    transition-duration: var(--motion-duration-panel);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-motion-panel-out {
+    transition-property: transform, opacity;
+    transition-duration: var(--motion-duration-normal);
+    transition-timing-function: var(--motion-ease-in);
+  }
+
+  .ui-motion-panel-enter-start {
+    transform: translate3d(var(--mobile-menu-enter-offset, 100%), 0, 0);
+    opacity: 0;
+  }
+
+  .ui-motion-panel-enter-end {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  .ui-motion-panel-leave-start {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  .ui-motion-panel-leave-end {
+    transform: translate3d(var(--mobile-menu-leave-offset, -100%), 0, 0);
+    opacity: 0;
+  }
+
+  .mobile-menu-panel--active.mobile-menu-panel--forward {
+    --mobile-menu-enter-offset: 100%;
+  }
+
+  .mobile-menu-panel--active.mobile-menu-panel--back {
+    --mobile-menu-enter-offset: -100%;
+  }
+
+  .mobile-menu-panel--inactive.mobile-menu-panel--forward {
+    --mobile-menu-leave-offset: -100%;
+  }
+
+  .mobile-menu-panel--inactive.mobile-menu-panel--back {
+    --mobile-menu-leave-offset: 100%;
+  }
+
+  @keyframes ui-home-hero-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-home-hero-logo],
+    [data-home-hero-title],
+    [data-home-hero-description],
+    [data-home-hero-actions] {
+      animation: ui-home-hero-enter 360ms var(--motion-ease-out) both;
+    }
+
+    [data-home-hero-logo] {
+      animation-delay: 40ms;
+    }
+
+    [data-home-hero-title] {
+      animation-delay: 90ms;
+    }
+
+    [data-home-hero-description] {
+      animation-delay: 140ms;
+    }
+
+    [data-home-hero-actions] {
+      animation-delay: 190ms;
+    }
+  }
+
+  @keyframes ui-live-score-row-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ui-live-score-row-updated {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--ring) 0%, transparent);
+    }
+
+    30% {
+      box-shadow: 0 0 0 0.25rem color-mix(in oklab, var(--ring) 18%, transparent);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--ring) 0%, transparent);
+    }
+  }
+
+  .ui-live-score-item--enter {
+    animation: ui-live-score-row-enter 320ms var(--motion-ease-out) both;
+  }
+
+  [data-home-live-score-row].ui-live-score-item--enter:nth-child(2) {
+    animation-delay: 35ms;
+  }
+
+  [data-home-live-score-row].ui-live-score-item--enter:nth-child(3) {
+    animation-delay: 70ms;
+  }
+
+  [data-home-live-score-row].ui-live-score-item--enter:nth-child(4) {
+    animation-delay: 105ms;
+  }
+
+  [data-home-live-score-row].ui-live-score-item--enter:nth-child(5) {
+    animation-delay: 140ms;
+  }
+
+  [data-home-live-score-row].ui-live-score-item--enter:nth-child(6) {
+    animation-delay: 175ms;
+  }
+
+  .ui-live-score-item--updated {
+    animation: ui-live-score-row-updated 700ms var(--motion-ease-out) both;
+  }
+
+  @keyframes ui-result-avatar-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .ui-result-avatar {
+    animation: ui-result-avatar-fade-in 240ms var(--motion-ease-out) both;
+  }
+
+  @keyframes ui-result-frame-updated {
+    0% {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 0%, transparent);
+    }
+
+    35% {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 42%, transparent);
+    }
+
+    100% {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 0%, transparent);
+    }
+  }
+
+  .ui-result-form-frame-item {
+    transition-property: background-color, box-shadow;
+    transition-duration: var(--motion-duration-content);
+    transition-timing-function: var(--motion-ease-out);
+  }
+
+  .ui-result-form-frame-item--updated {
+    animation: ui-result-frame-updated 800ms var(--motion-ease-out) both;
+  }
+
   .ui-page-shell {
     @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
   }
@@ -363,7 +621,7 @@
   }
 
   .ui-card-row-link {
-    @apply block transition sm:hover:bg-muted;
+    @apply block transition-colors sm:hover:bg-muted;
   }
 
   .ui-live-scores-item-group,
@@ -918,11 +1176,11 @@
   }
 
   .ui-button-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-linear-to-r from-green-900 via-green-800 to-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-green-950/15 transition duration-150 hover:-translate-y-0.5 hover:from-green-800 hover:via-green-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:from-green-800 dark:via-green-700 dark:to-green-500 dark:focus:ring-offset-neutral-950;
+    @apply inline-flex items-center justify-center rounded-full bg-linear-to-r from-green-900 via-green-800 to-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-green-950/15 transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:from-green-800 hover:via-green-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:from-green-800 dark:via-green-700 dark:to-green-500 dark:focus:ring-offset-neutral-950;
   }
 
   .ui-button-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition duration-150 hover:-translate-y-0.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:hover:bg-neutral-800 dark:focus:ring-offset-neutral-950;
+    @apply inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:hover:bg-neutral-800 dark:focus:ring-offset-neutral-950;
   }
 
   .ui-result-button {

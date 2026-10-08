@@ -6,6 +6,8 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
     autoplayIntervalId: null,
     transitionTimeoutId: null,
     resizeHandler: null,
+    motionPreferenceQuery: null,
+    motionPreferenceHandler: null,
     isFocused: false,
     isHovered: false,
     isJumping: false,
@@ -14,10 +16,13 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
 
     start() {
         this.visibleCount = this.getVisibleCount();
-        this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.motionPreferenceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.reducedMotion = this.motionPreferenceQuery.matches;
         this.resizeHandler = () => this.handleResize();
+        this.motionPreferenceHandler = (event) => this.handleMotionPreferenceChange(event);
 
         window.addEventListener('resize', this.resizeHandler, { passive: true });
+        this.motionPreferenceQuery.addEventListener?.('change', this.motionPreferenceHandler);
         this.resume();
     },
 
@@ -31,6 +36,8 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
         if (this.resizeHandler !== null) {
             window.removeEventListener('resize', this.resizeHandler);
         }
+
+        this.motionPreferenceQuery?.removeEventListener?.('change', this.motionPreferenceHandler);
     },
 
     getVisibleCount() {
@@ -71,7 +78,7 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
             return;
         }
 
-        this.transitionTimeoutId = window.setTimeout(() => this.completeTransition(), 650);
+        this.transitionTimeoutId = window.setTimeout(() => this.completeTransition(), 520);
     },
 
     handleTransitionEnd(event) {
@@ -128,6 +135,19 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
         }
 
         this.jumpTo(this.currentIndex);
+    },
+
+    handleMotionPreferenceChange(event) {
+        this.reducedMotion = event.matches;
+
+        if (this.reducedMotion) {
+            this.pause();
+            this.completeTransition();
+
+            return;
+        }
+
+        this.resume();
     },
 
     handleMouseEnter() {

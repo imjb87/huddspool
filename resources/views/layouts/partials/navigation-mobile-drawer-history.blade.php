@@ -1,14 +1,15 @@
-<div class="absolute inset-0 overflow-y-auto px-4 py-4"
+<div class="mobile-menu-panel absolute inset-0 overflow-y-auto px-4 py-4"
     x-show="activeDrawer === 'history'"
     x-cloak
     data-mobile-history-links
     data-mobile-menu-panel="history"
-    x-transition:enter="transform transition ease-out duration-300"
-    x-transition:enter-start="translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transform transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="translate-x-full">
+    :class="mobileMenuPanelClasses('history')"
+    x-transition:enter="ui-motion-panel-in"
+    x-transition:enter-start="ui-motion-panel-enter-start"
+    x-transition:enter-end="ui-motion-panel-enter-end"
+    x-transition:leave="ui-motion-panel-out"
+    x-transition:leave-start="ui-motion-panel-leave-start"
+    x-transition:leave-end="ui-motion-panel-leave-end">
     <div class="space-y-3">
         <div class="ui-card">
             <div class="ui-card-rows">
@@ -47,23 +48,24 @@
 </div>
 
 @foreach ($historySeasonGroups as $historySeasonGroup)
-    <div class="absolute inset-0 overflow-y-auto px-4 py-4"
+    <div class="mobile-menu-panel absolute inset-0 overflow-y-auto px-4 py-4"
         x-show="activeDrawer === 'history-season-{{ $historySeasonGroup['season']->id }}'"
         x-cloak
         data-mobile-history-season-links
         data-mobile-menu-panel="history-season-{{ $historySeasonGroup['season']->id }}"
-        x-transition:enter="transform transition ease-out duration-300"
-        x-transition:enter-start="translate-x-full"
-        x-transition:enter-end="translate-x-0"
-        x-transition:leave="transform transition ease-in duration-200"
-        x-transition:leave-start="translate-x-0"
-        x-transition:leave-end="translate-x-full">
+        :class="mobileMenuPanelClasses('history-season-{{ $historySeasonGroup['season']->id }}')"
+        x-transition:enter="ui-motion-panel-in"
+        x-transition:enter-start="ui-motion-panel-enter-start"
+        x-transition:enter-end="ui-motion-panel-enter-end"
+        x-transition:leave="ui-motion-panel-out"
+        x-transition:leave-start="ui-motion-panel-leave-start"
+        x-transition:leave-end="ui-motion-panel-leave-end">
         <div class="space-y-3">
             <div class="ui-card">
                 <div class="ui-card-rows">
                     <button type="button"
                         class="ui-card-row w-full cursor-pointer items-center gap-2 text-left transition-colors"
-                        @click="openDrawer('history')">
+                        @click="openDrawer('history', 'back')">
                         <span class="flex items-center gap-2" data-mobile-back-label>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -104,23 +106,24 @@
     </div>
 
     @foreach ($historySeasonGroup['rulesets'] as $historyRulesetGroup)
-        <div class="absolute inset-0 overflow-y-auto px-4 py-4"
+        <div class="mobile-menu-panel absolute inset-0 overflow-y-auto px-4 py-4"
             x-show="activeDrawer === 'history-season-{{ $historySeasonGroup['season']->id }}-ruleset-{{ $historyRulesetGroup['ruleset']->id }}'"
             x-cloak
             data-mobile-history-section-links
             data-mobile-menu-panel="history-season-{{ $historySeasonGroup['season']->id }}-ruleset-{{ $historyRulesetGroup['ruleset']->id }}"
-            x-transition:enter="transform transition ease-out duration-300"
-            x-transition:enter-start="translate-x-full"
-            x-transition:enter-end="translate-x-0"
-            x-transition:leave="transform transition ease-in duration-200"
-            x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="translate-x-full">
+            :class="mobileMenuPanelClasses('history-season-{{ $historySeasonGroup['season']->id }}-ruleset-{{ $historyRulesetGroup['ruleset']->id }}')"
+            x-transition:enter="ui-motion-panel-in"
+            x-transition:enter-start="ui-motion-panel-enter-start"
+            x-transition:enter-end="ui-motion-panel-enter-end"
+            x-transition:leave="ui-motion-panel-out"
+            x-transition:leave-start="ui-motion-panel-leave-start"
+            x-transition:leave-end="ui-motion-panel-leave-end">
             <div class="space-y-3">
                 <div class="ui-card">
                     <div class="ui-card-rows">
                         <button type="button"
                             class="ui-card-row w-full cursor-pointer items-center gap-2 text-left transition-colors"
-                            @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}')">
+                            @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}', 'back')">
                             <span class="flex items-center gap-2" data-mobile-back-label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />

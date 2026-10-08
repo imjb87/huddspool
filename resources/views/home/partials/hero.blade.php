@@ -74,10 +74,10 @@
             </picture>
         </div>
 
-        <h1 class="max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl xl:text-5xl xl:tracking-tighter dark:text-gray-100">
+        <h1 class="max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl xl:text-5xl xl:tracking-tighter dark:text-gray-100" data-home-hero-title>
             {{ $heroTitle }}
         </h1>
-        <p class="max-w-2xl text-base leading-6 text-gray-900 sm:text-lg sm:leading-7 dark:text-gray-100">
+        <p class="max-w-2xl text-base leading-6 text-gray-900 sm:text-lg sm:leading-7 dark:text-gray-100" data-home-hero-description>
             {{ $heroDescription }}
         </p>
 
@@ -85,7 +85,7 @@
             @if ($entrySeasonCountdown['cta_url'] ?? null)
                 <a
                     href="{{ $entrySeasonCountdown['cta_url'] }}"
-                    class="group/button inline-flex h-[35px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-transparent bg-black px-4 text-sm leading-5 font-medium whitespace-nowrap text-white transition-all outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
+                    class="group/button inline-flex h-[35px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-transparent bg-black px-4 text-sm leading-5 font-medium whitespace-nowrap text-white transition-[background-color,box-shadow,transform] duration-150 outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
                     data-home-hero-registration
                 >
                     {{ $entrySeasonCountdown['cta_label'] }}
@@ -93,7 +93,7 @@
             @else
                 <a
                     href="{{ auth()->check() ? route('account.show') : route('login') }}"
-                    class="group/button inline-flex h-[35px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-transparent bg-black px-4 text-sm leading-5 font-medium whitespace-nowrap text-white transition-all outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
+                    class="group/button inline-flex h-[35px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-transparent bg-black px-4 text-sm leading-5 font-medium whitespace-nowrap text-white transition-[background-color,box-shadow,transform] duration-150 outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
                     data-home-hero-account-action
                 >
                     @auth

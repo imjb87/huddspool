@@ -49,6 +49,9 @@ class HomePageTest extends TestCase
         $response->assertSee('href="'.route('login').'"', false);
         $response->assertSeeText('Log in to view your account');
         $response->assertSee('data-home-hero-logo', false);
+        $response->assertSee('data-home-hero-title', false);
+        $response->assertSee('data-home-hero-description', false);
+        $response->assertSee('data-home-hero-actions', false);
         $response->assertSee('class="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"', false);
         $response->assertSee('alt="Huddersfield Pool League logo"', false);
         $response->assertSee(asset('images/logo-160.webp').'?v=', false);
@@ -66,6 +69,7 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Tables, fixtures, results and averages for every section');
         $response->assertDontSee('data-home-hero-account-link', false);
         $response->assertSee('data-home-live-scores', false);
+        $response->assertSee('x-data="window.homeLiveScoresMotion()"', false);
         $response->assertSeeText('Live scores');
         $response->assertSee('flex size-6 shrink-0 items-center justify-center', false);
         $response->assertSee('icon icon-tabler icons-tabler-outline icon-tabler-bolt size-5 text-neutral-700 dark:text-neutral-200', false);
@@ -243,6 +247,7 @@ class HomePageTest extends TestCase
         $response->assertSee('role="group"', false);
         $response->assertDontSee('ui-live-score-button-group', false);
         $response->assertSee('data-home-live-score-row', false);
+        $response->assertSee('data-home-live-score-key="'.$result->id.'"', false);
         $response->assertSee('data-home-live-score-pill', false);
         $response->assertSee('sm:hidden', false);
         $response->assertSee('sm:block', false);

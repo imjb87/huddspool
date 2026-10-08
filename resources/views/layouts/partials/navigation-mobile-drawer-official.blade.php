@@ -1,14 +1,15 @@
-<div class="absolute inset-0 overflow-y-auto px-4 py-4"
+<div class="mobile-menu-panel absolute inset-0 overflow-y-auto px-4 py-4"
     x-show="activeDrawer === 'official'"
     x-cloak
     data-mobile-official-links
     data-mobile-menu-panel="official"
-    x-transition:enter="transform transition ease-out duration-300"
-    x-transition:enter-start="translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transform transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="translate-x-full">
+    :class="mobileMenuPanelClasses('official')"
+    x-transition:enter="ui-motion-panel-in"
+    x-transition:enter-start="ui-motion-panel-enter-start"
+    x-transition:enter-end="ui-motion-panel-enter-end"
+    x-transition:leave="ui-motion-panel-out"
+    x-transition:leave-start="ui-motion-panel-leave-start"
+    x-transition:leave-end="ui-motion-panel-leave-end">
     <div class="space-y-3">
         <div class="ui-card">
             <div class="ui-card-rows">

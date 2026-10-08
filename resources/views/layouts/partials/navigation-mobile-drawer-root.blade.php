@@ -1,13 +1,14 @@
-<div class="absolute inset-0 overflow-y-auto px-4 py-4"
+<div class="mobile-menu-panel absolute inset-0 overflow-y-auto px-4 py-4"
     x-show="activeDrawer === 'root'"
     x-cloak
     data-mobile-menu-panel="root"
-    x-transition:enter="transform transition ease-out duration-300"
-    x-transition:enter-start="translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transform transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="-translate-x-1/4 opacity-0">
+    :class="mobileMenuPanelClasses('root')"
+    x-transition:enter="ui-motion-panel-in"
+    x-transition:enter-start="ui-motion-panel-enter-start"
+    x-transition:enter-end="ui-motion-panel-enter-end"
+    x-transition:leave="ui-motion-panel-out"
+    x-transition:leave-start="ui-motion-panel-leave-start"
+    x-transition:leave-end="ui-motion-panel-leave-end">
     <div class="space-y-3">
         @if (@auth()->user())
             <div class="ui-card">

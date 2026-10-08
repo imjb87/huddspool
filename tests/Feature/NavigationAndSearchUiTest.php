@@ -64,7 +64,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"', false);
         $response->assertSee('d="M21 21l-6 -6"', false);
         $response->assertSee('data-header-theme-toggle', false);
-        $response->assertSee('text-gray-900 transition-all outline-none hover:bg-transparent hover:text-gray-900', false);
+        $response->assertSee('text-gray-900 transition-colors duration-150 outline-none hover:bg-transparent hover:text-gray-900', false);
         $response->assertSee('aria-label="Toggle theme"', false);
         $response->assertSee('title="Toggle theme"', false);
         $response->assertSee('@click="toggleTheme()"', false);
@@ -138,6 +138,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-menu-panel="official"', false);
         $response->assertSee('data-mobile-back-label', false);
         $response->assertSee("activeDrawer: 'root'", false);
+        $response->assertSee("navigationDirection: 'forward'", false);
+        $response->assertSee('mobileMenuPanelClasses(panel)', false);
+        $response->assertSee('ui-motion-panel-in', false);
+        $response->assertSee('ui-motion-icon-enter-start', false);
         $response->assertSee("open && activeDrawer === 'root' ? closeMenu() : openMenu('root')", false);
         $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
         $response->assertDontSee('data-header-notifications-trigger', false);

@@ -14,26 +14,12 @@
     }
 @endphp
 
-@once
-    <style>
-        @keyframes result-avatar-fade-in {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
-@endonce
-
 <div
-    class="ui-result-form-frame-item transition-colors duration-1000"
+    class="ui-result-form-frame-item"
     wire:key="result-frame-{{ $row['number'] }}"
     x-data="resultFormFlashRow({{ $row['number'] }})"
     x-on:result-frames-synced.window="flashIfIncluded($event.detail.frameNumbers ?? [])"
-    :class="isFlashing ? 'bg-gray-100 dark:bg-neutral-900/80' : ''"
+    :class="isFlashing ? 'ui-result-form-frame-item--updated' : ''"
 >
     <div class="ui-result-form-frame-content">
         <p class="ui-result-form-frame-label">Frame {{ $row['number'] }}</p>
@@ -57,10 +43,9 @@
                     wire:key="result-frame-{{ $row['number'] }}-home-avatar-{{ $row['home_selected_player']->id }}"
                 >
                     <img
-                        class="size-7 rounded-full object-cover"
+                        class="ui-result-avatar size-7 rounded-full object-cover"
                         src="{{ $row['home_selected_player']->avatar_url }}"
                         alt="{{ $row['home_selected_player']->name }} avatar"
-                        style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @elseif ($row['home_is_awarded'])
@@ -69,10 +54,9 @@
                     wire:key="result-frame-{{ $row['number'] }}-home-avatar-awarded"
                 >
                     <img
-                        class="size-7 rounded-full object-cover"
+                        class="ui-result-avatar size-7 rounded-full object-cover"
                         src="{{ asset('/images/user.jpg') }}"
                         alt="Awarded"
-                        style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @else
@@ -177,10 +161,9 @@
                     wire:key="result-frame-{{ $row['number'] }}-away-avatar-{{ $row['away_selected_player']->id }}"
                 >
                     <img
-                        class="size-7 rounded-full object-cover"
+                        class="ui-result-avatar size-7 rounded-full object-cover"
                         src="{{ $row['away_selected_player']->avatar_url }}"
                         alt="{{ $row['away_selected_player']->name }} avatar"
-                        style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @elseif ($row['away_is_awarded'])
@@ -189,10 +172,9 @@
                     wire:key="result-frame-{{ $row['number'] }}-away-avatar-awarded"
                 >
                     <img
-                        class="size-7 rounded-full object-cover"
+                        class="ui-result-avatar size-7 rounded-full object-cover"
                         src="{{ asset('/images/user.jpg') }}"
                         alt="Awarded"
-                        style="animation: result-avatar-fade-in 300ms ease-out;"
                     >
                 </div>
             @else

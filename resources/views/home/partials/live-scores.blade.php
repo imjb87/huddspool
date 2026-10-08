@@ -1,4 +1,4 @@
-<section id="live-scores" class="ui-section" data-home-live-scores>
+<section id="live-scores" class="ui-section" data-home-live-scores x-data="window.homeLiveScoresMotion()" x-init="init()">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-6">
         <div class="ui-shell-grid">
             <div class="ui-section-intro gap-2">
@@ -26,7 +26,7 @@
                     </div>
                 @else
                     <div class="ui-card ui-live-scores-card" data-home-live-scores-shell>
-                        <div class="ui-live-scores-item-group max-h-80 overflow-y-auto overscroll-contain" data-home-live-scores-list>
+                        <div class="ui-live-scores-item-group max-h-80 overflow-y-auto overscroll-contain" data-home-live-scores-list x-ref="list">
                             @foreach ($liveScores as $result)
                                 @php
                                     $homeBadgeClasses = $result->home_score === $result->away_score
@@ -36,7 +36,7 @@
                                         ? 'ui-live-score-badge-draw'
                                         : ($result->away_score > $result->home_score ? 'ui-live-score-badge-win' : 'ui-live-score-badge-loss');
                                 @endphp
-                                <a href="{{ $result->live_score_url }}" class="ui-card-row-link ui-live-score-item" data-home-live-score-row data-slot="item" data-variant="muted" data-size="default">
+                                <a href="{{ $result->live_score_url }}" class="ui-card-row-link ui-live-score-item ui-live-score-item--enter" data-home-live-score-row data-home-live-score-key="{{ $result->id }}" data-slot="item" data-variant="muted" data-size="default">
                                     <div class="ui-live-score-item-content" data-slot="item-content">
                                         @if ($result->row_meta !== '')
                                             <p class="ui-live-score-section-name line-clamp-2 text-left" data-slot="item-description">{{ $result->row_meta }}</p>

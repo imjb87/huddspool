@@ -67,13 +67,13 @@
                                     <div class="isolate flex items-center -space-x-3">
                                         <template x-for="collaborator in collaboratorsUi" :key="collaborator.id">
                                             <div
-                                                class="relative flex items-center transition duration-200 ease-out"
+                                                class="relative flex items-center transition-[opacity,transform] duration-150 ease-out"
                                                 x-data="resultFormPresenceTooltip()"
                                                 x-show="collaborator.isVisible"
-                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter="ui-motion-popover-in"
                                                 x-transition:enter-start="opacity-0 scale-95"
                                                 x-transition:enter-end="opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-200"
+                                                x-transition:leave="ui-motion-popover-out"
                                                 x-transition:leave-start="opacity-100 scale-100"
                                                 x-transition:leave-end="opacity-0 scale-95"
                                                 x-on:mouseenter="showTooltip()"
@@ -85,7 +85,7 @@
                                             >
                                                 <button
                                                     type="button"
-                                                    class="relative block rounded-full ring-2 ring-white transition hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-white dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
+                                                    class="relative block rounded-full ring-2 ring-white transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-white dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
                                                     :aria-label="collaborator.name"
                                                     :style="collaboratorActivityStyle(collaborator)"
                                                     x-ref="trigger"

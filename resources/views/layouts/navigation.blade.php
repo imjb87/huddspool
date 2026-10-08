@@ -2,6 +2,7 @@
     x-data="{
         open: false,
         activeDrawer: 'root',
+        navigationDirection: 'forward',
         headerHeight: 0,
         headerHeightFrameId: null,
         headerResizeObserver: null,
@@ -54,18 +55,29 @@
         },
         openMenu(drawer = 'root') {
             this.open = true;
+            this.navigationDirection = 'forward';
             this.activeDrawer = drawer;
             this.$nextTick(() => this.scheduleHeaderHeightUpdate());
         },
         closeMenu() {
             this.open = false;
             this.activeDrawer = 'root';
+            this.navigationDirection = 'forward';
         },
-        openDrawer(drawer) {
+        openDrawer(drawer, direction = 'forward') {
+            this.navigationDirection = direction;
             this.activeDrawer = drawer;
         },
         goBackToRoot() {
-            this.activeDrawer = 'root';
+            this.openDrawer('root', 'back');
+        },
+        mobileMenuPanelClasses(panel) {
+            return {
+                'mobile-menu-panel--active': this.activeDrawer === panel,
+                'mobile-menu-panel--inactive': this.activeDrawer !== panel,
+                'mobile-menu-panel--forward': this.navigationDirection === 'forward',
+                'mobile-menu-panel--back': this.navigationDirection === 'back',
+            };
         },
     }"
     x-init="syncInstallAvailability(); bindHeaderResizeObserver(); scheduleHeaderHeightUpdate(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => scheduleHeaderHeightUpdate()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
@@ -94,7 +106,7 @@
             </button>
             <div class="ml-2 hidden h-4 w-px shrink-0 bg-gray-200 lg:block dark:bg-neutral-800" role="separator" aria-orientation="vertical"></div>
             <button type="button"
-                class="group/toggle inline-flex size-8 shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap text-gray-900 transition-all outline-none hover:bg-transparent hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 dark:text-gray-100 dark:hover:bg-transparent dark:hover:text-gray-100 dark:focus-visible:ring-gray-100/20"
+                class="group/toggle inline-flex size-8 shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap text-gray-900 transition-colors duration-150 outline-none hover:bg-transparent hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 dark:text-gray-100 dark:hover:bg-transparent dark:hover:text-gray-100 dark:focus-visible:ring-gray-100/20"
                 @click="toggleTheme()"
                 aria-label="Toggle theme"
                 title="Toggle theme"
@@ -120,18 +132,18 @@
                 @click="open && activeDrawer === 'root' ? closeMenu() : openMenu('root')" :aria-expanded="open && activeDrawer === 'root'" aria-label="Toggle main menu"
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>
-                <span class="flex size-4 items-center justify-center" aria-hidden="true">
-                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="!open || activeDrawer !== 'root'">
+                <span class="relative flex size-4 items-center justify-center" aria-hidden="true">
+                    <svg class="ui-motion-icon absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="!open || activeDrawer !== 'root'" x-transition:enter="ui-motion-icon" x-transition:enter-start="ui-motion-icon-enter-start" x-transition:enter-end="ui-motion-icon-enter-end" x-transition:leave="ui-motion-icon" x-transition:leave-start="ui-motion-icon-leave-start" x-transition:leave-end="ui-motion-icon-leave-end">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M4 6l16 0" />
                         <path d="M4 12l16 0" />
                         <path d="M4 18l16 0" />
                     </svg>
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="open && activeDrawer === 'root'">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M18 6l-12 12" />
-                            <path d="M6 6l12 12" />
-                        </svg>
+                    <svg class="ui-motion-icon absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="open && activeDrawer === 'root'" x-transition:enter="ui-motion-icon" x-transition:enter-start="ui-motion-icon-enter-start" x-transition:enter-end="ui-motion-icon-enter-end" x-transition:leave="ui-motion-icon" x-transition:leave-start="ui-motion-icon-leave-start" x-transition:leave-end="ui-motion-icon-leave-end">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M18 6l-12 12" />
+                        <path d="M6 6l12 12" />
+                    </svg>
                 </span>
             </button>
             @include('layouts.partials.navigation-desktop-account')            

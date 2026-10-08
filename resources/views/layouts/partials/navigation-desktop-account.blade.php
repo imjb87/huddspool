@@ -59,7 +59,7 @@
             @close.stop="close()"
             @nav-dropdown-open.window="if ($event.detail.id !== id) close()">
             <button type="button"
-                class="group/button inline-flex h-[31px] shrink-0 items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-black px-2.5 text-[0.8rem] font-medium whitespace-nowrap text-white transition-all outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
+                class="group/button inline-flex h-[31px] shrink-0 items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-black px-2.5 text-[0.8rem] font-medium whitespace-nowrap text-white transition-[background-color,box-shadow,transform] duration-150 outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
                 aria-expanded="false"
                 aria-label="Open user menu for {{ auth()->user()->name }}"
                 @click="toggle()"
@@ -68,7 +68,7 @@
                     alt=""
                     class="size-5 rounded-full object-cover ring-1 ring-white/20 dark:ring-black/10">
                 <span class="hidden max-w-32 truncate sm:inline">{{ auth()->user()->name }}</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 opacity-80 transition duration-300" :class="open ? 'rotate-180' : ''" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 opacity-80 transition-transform duration-150" :class="open ? 'rotate-180' : ''" aria-hidden="true">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M6 9l6 6l6 -6" />
                 </svg>
@@ -83,10 +83,10 @@
                 class="absolute right-0 top-full z-50 mt-1.5 w-72 origin-top-right overflow-hidden rounded-md border border-gray-200 bg-white p-2 pr-2.5 text-gray-900 shadow-lg shadow-black/5 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:shadow-black/20"
                 x-show="open"
                 x-cloak
-                x-transition:enter="transform transition duration-200 ease-out"
+                x-transition:enter="ui-motion-popover-in"
                 x-transition:enter-start="translate-y-1 scale-95 opacity-0"
                 x-transition:enter-end="translate-y-0 scale-100 opacity-100"
-                x-transition:leave="transform transition duration-150 ease-in"
+                x-transition:leave="ui-motion-popover-out"
                 x-transition:leave-start="translate-y-0 scale-100 opacity-100"
                 x-transition:leave-end="translate-y-1 scale-95 opacity-0"
                 @mouseenter="cancelClose()">
@@ -135,7 +135,7 @@
         </div>
     @else
         <a href="{{ route('login') }}"
-            class="group/button inline-flex h-[31px] shrink-0 items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-black px-2.5 text-[0.8rem] font-medium whitespace-nowrap text-white transition-all outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
+            class="group/button inline-flex h-[31px] shrink-0 items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-black px-2.5 text-[0.8rem] font-medium whitespace-nowrap text-white transition-[background-color,box-shadow,transform] duration-150 outline-none select-none hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-black/50 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-200/80 dark:focus-visible:ring-gray-200/50"
             aria-label="Log in"
             data-header-login-link>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true">

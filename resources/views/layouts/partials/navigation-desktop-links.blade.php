@@ -82,7 +82,7 @@
                 :data-state="open ? 'open' : 'closed'"
                 data-navigation-menu-trigger>
                 {{ $navigationRuleset['ruleset']->name }}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition duration-300 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition-transform duration-150 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M6 9l6 6l6 -6" />
                 </svg>
@@ -96,10 +96,10 @@
                 class="absolute left-0 top-full z-50 mt-1.5 w-72 origin-top-left overflow-hidden rounded-md border border-gray-200 bg-white p-2 pr-2.5 text-gray-900 shadow-lg shadow-black/5 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:shadow-black/20"
                 x-show="open"
                 x-cloak
-                x-transition:enter="transform transition duration-200 ease-out"
+                x-transition:enter="ui-motion-popover-in"
                 x-transition:enter-start="translate-y-1 scale-95 opacity-0"
                 x-transition:enter-end="translate-y-0 scale-100 opacity-100"
-                x-transition:leave="transform transition duration-150 ease-in"
+                x-transition:leave="ui-motion-popover-out"
                 x-transition:leave-start="translate-y-0 scale-100 opacity-100"
                 x-transition:leave-end="translate-y-1 scale-95 opacity-0"
                 @mouseenter="cancelClose()"
@@ -207,7 +207,7 @@
             :data-state="open ? 'open' : 'closed'"
             data-navigation-menu-trigger>
             Knockouts
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition duration-300 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition-transform duration-150 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M6 9l6 6l6 -6" />
             </svg>
@@ -221,10 +221,10 @@
             class="absolute left-0 top-full z-50 mt-1.5 w-72 origin-top-left overflow-hidden rounded-md border border-gray-200 bg-white p-2 pr-2.5 text-gray-900 shadow-lg shadow-black/5 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:shadow-black/20"
             x-show="open"
             x-cloak
-            x-transition:enter="transform transition duration-200 ease-out"
+            x-transition:enter="ui-motion-popover-in"
             x-transition:enter-start="translate-y-1 scale-95 opacity-0"
             x-transition:enter-end="translate-y-0 scale-100 opacity-100"
-            x-transition:leave="transform transition duration-150 ease-in"
+            x-transition:leave="ui-motion-popover-out"
             x-transition:leave-start="translate-y-0 scale-100 opacity-100"
             x-transition:leave-end="translate-y-1 scale-95 opacity-0"
             @mouseenter="cancelClose()"
@@ -359,7 +359,7 @@
             :data-state="open ? 'open' : 'closed'"
             data-navigation-menu-trigger>
             History
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition duration-300 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative top-px ml-1 size-3 flex-none text-neutral-400 transition-transform duration-150 dark:text-neutral-500" :class="open ? 'rotate-180' : ''" aria-hidden="true">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M6 9l6 6l6 -6" />
             </svg>
@@ -373,10 +373,10 @@
             class="fixed left-1/2 top-16 z-50 mt-1.5 max-h-[calc(100vh-5rem)] w-[32rem] max-w-[calc(100vw-2rem)] origin-top overflow-y-auto overflow-x-hidden rounded-md border border-gray-200 bg-white p-2 pr-2.5 text-gray-900 shadow-lg shadow-black/5 -translate-x-1/2 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:shadow-black/20"
             x-show="open"
             x-cloak
-            x-transition:enter="transform transition duration-200 ease-out"
+            x-transition:enter="ui-motion-popover-in"
             x-transition:enter-start="translate-y-1 scale-95 opacity-0"
             x-transition:enter-end="translate-y-0 scale-100 opacity-100"
-            x-transition:leave="transform transition duration-150 ease-in"
+            x-transition:leave="ui-motion-popover-out"
             x-transition:leave-start="translate-y-0 scale-100 opacity-100"
             x-transition:leave-end="translate-y-1 scale-95 opacity-0"
             @mouseenter="cancelClose()"
