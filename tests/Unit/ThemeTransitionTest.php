@@ -66,4 +66,21 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row', $css);
         $this->assertStringContainsString('@apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;', $css);
     }
+
+    public function test_mobile_menu_icon_uses_morph_svg_plugin_with_a_post_x_wobble(): void
+    {
+        $script = file_get_contents(resource_path('js/mobile-menu-icon.js'));
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString("import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';", $script);
+        $this->assertStringContainsString('gsap.registerPlugin(MorphSVGPlugin);', $script);
+        $this->assertStringContainsString('const wobbleShapes = {', $script);
+        $this->assertStringContainsString("const springEase = 'elastic.out(1.2, 0.55)'", $script);
+        $this->assertStringContainsString('data-mobile-menu-icon-group', $script);
+        $this->assertStringContainsString('rotation: -4, scale: 0.98', $script);
+        $this->assertStringContainsString('rotation: 2, scale: 1.02', $script);
+        $this->assertStringContainsString('setIconState(icon, isOpen);', $script);
+        $this->assertStringContainsString('morphSVG: shapes.top', $script);
+        $this->assertStringContainsString('morphSVG: shapes.bottom', $script);
+    }
 }

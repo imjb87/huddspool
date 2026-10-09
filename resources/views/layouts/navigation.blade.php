@@ -43,6 +43,9 @@
         toggleTheme() {
             window.siteTheme?.toggleTheme?.();
         },
+        syncMobileMenuIcon() {
+            window.mobileMenuIcon?.set(this.$refs.mobileMenuIcon, this.open && this.activeDrawer === 'root');
+        },
         async installApp() {
             if (!this.deferredInstallPrompt) {
                 return;
@@ -57,16 +60,19 @@
             this.open = true;
             this.navigationDirection = 'forward';
             this.activeDrawer = drawer;
+            this.syncMobileMenuIcon();
             this.$nextTick(() => this.scheduleHeaderHeightUpdate());
         },
         closeMenu() {
             this.open = false;
             this.activeDrawer = 'root';
             this.navigationDirection = 'forward';
+            this.syncMobileMenuIcon();
         },
         openDrawer(drawer, direction = 'forward') {
             this.navigationDirection = direction;
             this.activeDrawer = drawer;
+            this.syncMobileMenuIcon();
         },
         goBackToRoot() {
             this.openDrawer('root', 'back');
@@ -80,7 +86,7 @@
             };
         },
     }"
-    x-init="syncInstallAvailability(); bindHeaderResizeObserver(); scheduleHeaderHeightUpdate(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => scheduleHeaderHeightUpdate()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
+    x-init="syncInstallAvailability(); bindHeaderResizeObserver(); scheduleHeaderHeightUpdate(); syncMobileMenuIcon(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => scheduleHeaderHeightUpdate()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
     x-ref="header">
     <nav class="flex h-16 w-full items-center gap-2 px-4 sm:px-6" aria-label="Global">
         <div class="flex shrink-0">
@@ -133,16 +139,13 @@
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>
                 <span class="relative flex size-4 items-center justify-center" aria-hidden="true">
-                    <svg class="ui-motion-icon absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="!open || activeDrawer !== 'root'" x-transition:enter="ui-motion-icon" x-transition:enter-start="ui-motion-icon-enter-start" x-transition:enter-end="ui-motion-icon-enter-end" x-transition:leave="ui-motion-icon" x-transition:leave-start="ui-motion-icon-leave-start" x-transition:leave-end="ui-motion-icon-leave-end">
+                    <svg class="absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" data-mobile-menu-icon data-mobile-menu-icon-state="closed" x-ref="mobileMenuIcon">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M4 6l16 0" />
-                        <path d="M4 12l16 0" />
-                        <path d="M4 18l16 0" />
-                    </svg>
-                    <svg class="ui-motion-icon absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" x-cloak x-show="open && activeDrawer === 'root'" x-transition:enter="ui-motion-icon" x-transition:enter-start="ui-motion-icon-enter-start" x-transition:enter-end="ui-motion-icon-enter-end" x-transition:leave="ui-motion-icon" x-transition:leave-start="ui-motion-icon-leave-start" x-transition:leave-end="ui-motion-icon-leave-end">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M18 6l-12 12" />
-                        <path d="M6 6l12 12" />
+                        <g data-mobile-menu-icon-group>
+                            <path d="M4 6l16 0" data-mobile-menu-icon-top />
+                            <path d="M4 12l16 0" data-mobile-menu-icon-middle />
+                            <path d="M4 18l16 0" data-mobile-menu-icon-bottom />
+                        </g>
                     </svg>
                 </span>
             </button>

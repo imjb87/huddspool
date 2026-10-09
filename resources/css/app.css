@@ -237,32 +237,6 @@
     backface-visibility: hidden;
   }
 
-  .ui-motion-icon {
-    transition-property: opacity, transform;
-    transition-duration: var(--motion-duration-fast);
-    transition-timing-function: var(--motion-ease-out);
-  }
-
-  .ui-motion-icon-enter-start {
-    transform: scale(0.75) rotate(-45deg);
-    opacity: 0;
-  }
-
-  .ui-motion-icon-enter-end {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-
-  .ui-motion-icon-leave-start {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-
-  .ui-motion-icon-leave-end {
-    transform: scale(0.75) rotate(45deg);
-    opacity: 0;
-  }
-
   .ui-motion-panel-in {
     transition-property: transform, opacity;
     transition-duration: var(--motion-duration-panel);

@@ -105,8 +105,11 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('d="M4 6l16 0"', false);
         $response->assertSee('d="M4 12l16 0"', false);
         $response->assertSee('d="M4 18l16 0"', false);
-        $response->assertSee('d="M18 6l-12 12"', false);
-        $response->assertSee('d="M6 6l12 12"', false);
+        $response->assertSee('data-mobile-menu-icon', false);
+        $response->assertSee('data-mobile-menu-icon-state="closed"', false);
+        $response->assertSee('data-mobile-menu-icon-top', false);
+        $response->assertSee('data-mobile-menu-icon-middle', false);
+        $response->assertSee('data-mobile-menu-icon-bottom', false);
         $response->assertSee('<a href="/"', false);
         $response->assertSeeText('International Rules');
         $response->assertSeeText('Blackball Rules');
@@ -143,7 +146,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("navigationDirection: 'forward'", false);
         $response->assertSee('mobileMenuPanelClasses(panel)', false);
         $response->assertSee('ui-motion-panel-in', false);
-        $response->assertSee('ui-motion-icon-enter-start', false);
+        $response->assertSee('syncMobileMenuIcon()', false);
         $response->assertSee("open && activeDrawer === 'root' ? closeMenu() : openMenu('root')", false);
         $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
         $response->assertDontSee('data-header-notifications-trigger', false);
