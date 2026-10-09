@@ -139,8 +139,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('<a href="/"', false);
         $response->assertSee('data-mobile-menu-toggle', false);
         $response->assertSee('data-mobile-menu-drawer', false);
-        $response->assertSee('x-transition:enter-start="ui-motion-drawer-enter-start"', false);
-        $response->assertSee('x-transition:leave-end="ui-motion-drawer-leave-end"', false);
+        $response->assertSee('x-transition:enter="ui-motion-mobile-menu-in"', false);
+        $response->assertSee('x-transition:leave="ui-motion-mobile-menu-out"', false);
         $response->assertSee('data-mobile-menu-panel="root"', false);
         $response->assertDontSeeText('Appearance');
         $response->assertSee('data-mobile-ruleset-trigger', false);
@@ -194,7 +194,6 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("\$dispatch('nav-dropdown-open', { id: this.id })", false);
         $response->assertDontSee('Open notifications menu', false);
         $response->assertSee('@click.stop', false);
-        $response->assertSee('ui-motion-drawer-enter-start', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white dark:bg-neutral-950', false);
         $response->assertSee('ui-page-shell', false);

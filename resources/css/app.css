@@ -225,6 +225,46 @@
     transform: translate3d(100%, 0, 0);
   }
 
+  @keyframes ui-mobile-menu-enter {
+    0% {
+      transform: translate3d(100%, 0, 0);
+    }
+
+    72% {
+      transform: translate3d(-1.5%, 0, 0);
+    }
+
+    88% {
+      transform: translate3d(0.5%, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes ui-mobile-menu-leave {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(100%, 0, 0);
+    }
+  }
+
+  .ui-motion-mobile-menu-in {
+    animation: ui-mobile-menu-enter 360ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .ui-motion-mobile-menu-out {
+    animation: ui-mobile-menu-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
   @keyframes ui-search-shell-enter {
     from {
       transform: translate3d(0, 0, 0) scale(0.95);

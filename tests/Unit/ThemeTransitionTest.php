@@ -41,6 +41,8 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('transition-property: transform, opacity;', $css);
         $this->assertStringContainsString('@keyframes ui-search-shell-enter', $css);
         $this->assertStringContainsString('@keyframes ui-search-shell-leave', $css);
+        $this->assertStringContainsString('@keyframes ui-mobile-menu-enter', $css);
+        $this->assertStringContainsString('cubic-bezier(0.22, 1.2, 0.36, 1)', $css);
     }
 
     public function test_search_and_notification_surfaces_keep_their_transform_transitions(): void
