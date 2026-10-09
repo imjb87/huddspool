@@ -158,15 +158,15 @@
   }
 
   .dark .application-logo-eight-ball-gradient-start {
-    stop-color: #475569;
-  }
-
-  .dark .application-logo-eight-ball-gradient-middle {
     stop-color: #334155;
   }
 
+  .dark .application-logo-eight-ball-gradient-middle {
+    stop-color: #1f2937;
+  }
+
   .dark .application-logo-eight-ball-gradient-end {
-    stop-color: #1e293b;
+    stop-color: #0f172a;
   }
 
   .ui-motion-fade-in {
