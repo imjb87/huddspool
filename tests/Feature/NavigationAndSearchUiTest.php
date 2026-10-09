@@ -103,11 +103,14 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('class="size-5"', false);
         $response->assertSee('class="inline-flex -mt-1 h-8 w-10 items-center justify-center', false);
         $response->assertSee('fill="url(#application-logo-red-ball-gradient)"', false);
+        $response->assertSee('id="application-logo-red-ball-shine-gradient"', false);
         $response->assertSee('fill="url(#application-logo-yellow-ball-gradient)"', false);
+        $response->assertSee('id="application-logo-yellow-ball-shine-gradient"', false);
         $response->assertSee('class="absolute left-0 top-0 ml-4 h-full w-full origin-center scale-90 text-center text-white"', false);
         $response->assertSee('fill="currentColor"', false);
         $response->assertSee('class="application-logo-eight-ball absolute', false);
         $response->assertSee('fill="url(#application-logo-eight-ball-gradient)"', false);
+        $response->assertSee('id="application-logo-eight-ball-shine-gradient"', false);
         $response->assertSee('class="application-logo-eight-ball-gradient-start"', false);
         $response->assertSee('class="absolute size-5"', false);
         $response->assertSee('class="relative flex size-5 items-center justify-center"', false);

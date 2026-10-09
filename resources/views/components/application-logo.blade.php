@@ -6,8 +6,14 @@
                 <stop offset="48%" stop-color="#dc2626" />
                 <stop offset="100%" stop-color="#991b1b" />
             </radialGradient>
+            <radialGradient id="application-logo-red-ball-shine-gradient" cx="74%" cy="78%" r="42%">
+                <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.12" />
+                <stop offset="45%" stop-color="#fecaca" stop-opacity="0.05" />
+                <stop offset="100%" stop-color="#fecaca" stop-opacity="0" />
+            </radialGradient>
         </defs>
         <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/>
+        <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z" fill="url(#application-logo-red-ball-shine-gradient)"/>
     </svg>
     <svg viewBox="0 0 640 640" class="absolute left-0 top-0 ml-2 -mt-2 h-full w-full text-center" fill="url(#application-logo-yellow-ball-gradient)" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -16,8 +22,14 @@
                 <stop offset="48%" stop-color="#eab308" />
                 <stop offset="100%" stop-color="#ca8a04" />
             </radialGradient>
+            <radialGradient id="application-logo-yellow-ball-shine-gradient" cx="74%" cy="78%" r="42%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.14" />
+                <stop offset="45%" stop-color="#fef3c7" stop-opacity="0.06" />
+                <stop offset="100%" stop-color="#fef3c7" stop-opacity="0" />
+            </radialGradient>
         </defs>
         <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/>
+        <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z" fill="url(#application-logo-yellow-ball-shine-gradient)"/>
     </svg>
     <svg viewBox="0 0 640 640" class="absolute left-0 top-0 ml-4 h-full w-full origin-center scale-90 text-center text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/>
@@ -29,7 +41,13 @@
                 <stop offset="48%" stop-color="#111827" class="application-logo-eight-ball-gradient-middle" />
                 <stop offset="100%" stop-color="#030712" class="application-logo-eight-ball-gradient-end" />
             </radialGradient>
+            <radialGradient id="application-logo-eight-ball-shine-gradient" cx="74%" cy="78%" r="42%">
+                <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.16" />
+                <stop offset="45%" stop-color="#cbd5e1" stop-opacity="0.06" />
+                <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0" />
+            </radialGradient>
         </defs>
         <path d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 112C395.1 112 456 172.9 456 248C456 323.1 395.1 384 320 384C244.9 384 184 323.1 184 248C184 172.9 244.9 112 320 112zM320 184C328.8 184 336 191.2 336 200C336 208.8 328.8 216 320 216C311.2 216 304 208.8 304 200C304 191.2 311.2 184 320 184zM363.8 234.9C371.5 225.3 376 213.2 376 200C376 169.1 350.9 144 320 144C289.1 144 264 169.1 264 200C264 213.2 268.6 225.4 276.2 234.9C266.1 245.6 260 260.1 260 276C260 309.1 286.9 336 320 336C353.1 336 380 309.1 380 276C380 260.1 373.8 245.7 363.8 234.9zM320 296C309 296 300 287 300 276C300 265 309 256 320 256C331 256 340 265 340 276C340 287 331 296 320 296z"/>
+        <path d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 112C395.1 112 456 172.9 456 248C456 323.1 395.1 384 320 384C244.9 384 184 323.1 184 248C184 172.9 244.9 112 320 112zM320 184C328.8 184 336 191.2 336 200C336 208.8 328.8 216 320 216C311.2 216 304 208.8 304 200C304 191.2 311.2 184 320 184zM363.8 234.9C371.5 225.3 376 213.2 376 200C376 169.1 350.9 144 320 144C289.1 144 264 169.1 264 200C264 213.2 268.6 225.4 276.2 234.9C266.1 245.6 260 260.1 260 276C260 309.1 286.9 336 320 336C353.1 336 380 309.1 380 276C380 260.1 373.8 245.7 363.8 234.9zM320 296C309 296 300 287 300 276C300 265 309 256 320 256C331 256 340 265 340 276C340 287 331 296 320 296z" fill="url(#application-logo-eight-ball-shine-gradient)"/>
     </svg>
 </span>
