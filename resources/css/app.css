@@ -145,6 +145,30 @@
 }
 
 @layer components {
+  .application-logo-eight-ball-gradient-start {
+    stop-color: #374151;
+  }
+
+  .application-logo-eight-ball-gradient-middle {
+    stop-color: #111827;
+  }
+
+  .application-logo-eight-ball-gradient-end {
+    stop-color: #030712;
+  }
+
+  .dark .application-logo-eight-ball-gradient-start {
+    stop-color: #475569;
+  }
+
+  .dark .application-logo-eight-ball-gradient-middle {
+    stop-color: #334155;
+  }
+
+  .dark .application-logo-eight-ball-gradient-end {
+    stop-color: #1e293b;
+  }
+
   .ui-motion-fade-in {
     transition-property: opacity;
     transition-duration: var(--motion-duration-normal);
