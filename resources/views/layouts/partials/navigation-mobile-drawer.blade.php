@@ -11,9 +11,9 @@
         :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
         data-mobile-menu-drawer
         x-show="open" x-transition:enter="ui-motion-drawer-in"
-        x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+        x-transition:enter-start="ui-motion-drawer-enter-start" x-transition:enter-end="ui-motion-drawer-enter-end"
         x-transition:leave="ui-motion-drawer-out"
-        x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+        x-transition:leave-start="ui-motion-drawer-leave-start" x-transition:leave-end="ui-motion-drawer-leave-end">
         <div class="navigation-mobile-menu relative h-full overflow-hidden bg-white dark:bg-neutral-950">
             @include('layouts.partials.navigation-mobile-drawer-root')
             @include('layouts.partials.navigation-mobile-drawer-official')

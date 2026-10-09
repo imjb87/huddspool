@@ -1128,11 +1128,7 @@
   }
 
   .navigation-mobile-menu .ui-card-row {
-    @apply min-h-0 rounded-sm px-2 py-2 text-sm leading-5 font-medium;
-  }
-
-  .navigation-mobile-menu .ui-card-row .text-base {
-    @apply text-sm leading-5 font-medium;
+    @apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;
   }
 
   .navigation-mobile-menu .ui-card-row > .inline-flex.size-8 {

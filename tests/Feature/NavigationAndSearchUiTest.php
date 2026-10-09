@@ -84,7 +84,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('placeholder:text-gray-600 focus:ring-0 dark:text-gray-100 dark:placeholder:text-gray-400', false);
         $response->assertSee('data-search-modal-shell', false);
-        $response->assertSee('max-w-none transform overflow-hidden rounded-xl', false);
+        $response->assertSee('max-w-none overflow-hidden rounded-xl', false);
         $response->assertSee('rounded-xl border border-gray-200/80 bg-white p-2 pb-11', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm', false);
@@ -124,6 +124,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('<a href="/"', false);
         $response->assertSee('data-mobile-menu-toggle', false);
         $response->assertSee('data-mobile-menu-drawer', false);
+        $response->assertSee('x-transition:enter-start="ui-motion-drawer-enter-start"', false);
+        $response->assertSee('x-transition:leave-end="ui-motion-drawer-leave-end"', false);
         $response->assertSee('data-mobile-menu-panel="root"', false);
         $response->assertDontSeeText('Appearance');
         $response->assertSee('data-mobile-ruleset-trigger', false);
@@ -177,7 +179,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee("\$dispatch('nav-dropdown-open', { id: this.id })", false);
         $response->assertDontSee('Open notifications menu', false);
         $response->assertSee('@click.stop', false);
-        $response->assertSee('translate-x-full', false);
+        $response->assertSee('ui-motion-drawer-enter-start', false);
         $response->assertSee('height: calc(100dvh - ${headerHeight}px);', false);
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white dark:bg-neutral-950', false);
         $response->assertSee('ui-page-shell', false);

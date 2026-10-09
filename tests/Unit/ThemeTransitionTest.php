@@ -57,4 +57,13 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('ui-motion-drawer-leave-end', $notifications);
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
+
+    public function test_mobile_navigation_rows_use_sixteen_pixel_text(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertIsString($css);
+        $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row', $css);
+        $this->assertStringContainsString('@apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;', $css);
+    }
 }
