@@ -103,7 +103,7 @@
             <button type="button"
                 class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-transparent text-sm font-medium whitespace-nowrap text-black shadow-none outline-none transition-colors hover:bg-gray-100 hover:text-black focus-visible:ring-2 focus-visible:ring-gray-900/20 sm:h-8 sm:w-28 sm:min-w-0 sm:flex-none sm:justify-start sm:gap-2 sm:rounded-[10px] sm:bg-gray-100 sm:px-4 sm:py-2 sm:pl-3 sm:hover:bg-gray-200/70 md:w-48 lg:w-64 dark:bg-transparent dark:text-gray-50 dark:hover:bg-neutral-800/50 dark:hover:text-gray-50 dark:focus-visible:ring-gray-100/20 sm:dark:bg-neutral-900"
                 data-site-search-trigger aria-label="Open search">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 sm:hidden" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 sm:hidden" aria-hidden="true">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
                     <path d="M21 21l-6 -6" />
@@ -117,7 +117,7 @@
                 aria-label="Toggle theme"
                 title="Toggle theme"
                 data-header-theme-toggle>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4.5" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
                     <path d="M12 3l0 18" />
@@ -138,8 +138,8 @@
                 @click="open && activeDrawer === 'root' ? closeMenu() : openMenu('root')" :aria-expanded="open && activeDrawer === 'root'" aria-label="Toggle main menu"
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>
-                <span class="relative flex size-4 items-center justify-center" aria-hidden="true">
-                    <svg class="absolute size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" data-mobile-menu-icon data-mobile-menu-icon-state="closed" x-ref="mobileMenuIcon">
+                <span class="relative flex size-5 items-center justify-center" aria-hidden="true">
+                    <svg class="absolute size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-slot="icon" data-mobile-menu-icon data-mobile-menu-icon-state="closed" x-ref="mobileMenuIcon">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <g data-mobile-menu-icon-group>
                             <path d="M4 6l16 0" data-mobile-menu-icon-top />
