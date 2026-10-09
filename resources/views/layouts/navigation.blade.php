@@ -91,7 +91,7 @@
     <nav class="flex h-16 w-full items-center gap-2 px-4 sm:px-6" aria-label="Global">
         <div class="flex shrink-0">
             <a href="/"
-                class="inline-flex h-8 w-10 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600/50">
+                class="inline-flex -mt-1 h-8 w-10 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600/50">
                 <span class="sr-only">Huddersfield & District Tuesday Night Pool League</span>
                 <x-application-logo />
             </a>

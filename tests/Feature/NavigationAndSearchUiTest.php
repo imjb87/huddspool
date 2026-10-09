@@ -101,6 +101,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('class="relative hidden lg:ml-4 lg:flex lg:items-center lg:gap-1"', false);
         $response->assertSee('ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-none', false);
         $response->assertSee('class="size-5"', false);
+        $response->assertSee('class="inline-flex -mt-1 h-8 w-10 items-center justify-center', false);
         $response->assertSee('class="absolute size-5"', false);
         $response->assertSee('class="relative flex size-5 items-center justify-center"', false);
         $response->assertSee('d="M4 6l16 0"', false);
