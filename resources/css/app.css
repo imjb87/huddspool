@@ -1254,7 +1254,7 @@
   }
 
   .navigation-mobile-menu .ui-card {
-    @apply overflow-hidden rounded-md border border-border bg-card p-2 pr-2.5 text-card-foreground shadow-lg shadow-black/5 dark:shadow-black/20;
+    @apply p-2 pr-2.5;
   }
 
   .navigation-mobile-menu .ui-card-rows {
@@ -1262,11 +1262,27 @@
   }
 
   .navigation-mobile-menu .ui-card-row-link {
-    @apply block rounded-sm transition-colors hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:hover:bg-neutral-800 dark:focus:bg-neutral-800;
+    @apply block;
   }
 
   .navigation-mobile-menu .ui-card-row {
-    @apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;
+    @apply min-h-0 px-2 py-2 text-base leading-6 font-medium;
+  }
+
+  .navigation-mobile-menu .ui-card-row-link,
+  .navigation-mobile-menu .ui-card-row {
+    @apply rounded-lg transition-colors duration-100;
+    background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
+  }
+
+  .dark .navigation-mobile-menu .ui-card-row-link,
+  .dark .navigation-mobile-menu .ui-card-row {
+    background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  .navigation-mobile-menu .ui-card-row-link:focus-visible,
+  .navigation-mobile-menu button.ui-card-row:focus-visible {
+    @apply outline-none ring-2 ring-foreground/20;
   }
 
   .navigation-mobile-menu .ui-card-row > .inline-flex.size-8 {

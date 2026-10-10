@@ -77,13 +77,20 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
 
-    public function test_mobile_navigation_rows_use_sixteen_pixel_text(): void
+    public function test_mobile_navigation_rows_match_card_surfaces_and_use_sixteen_pixel_text(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
 
         $this->assertIsString($css);
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row', $css);
-        $this->assertStringContainsString('@apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;', $css);
+        $this->assertStringContainsString('@apply min-h-0 px-2 py-2 text-base leading-6 font-medium;', $css);
+        $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row-link,', $css);
+        $this->assertStringContainsString('@apply rounded-lg transition-colors duration-100;', $css);
+        $this->assertStringContainsString('background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);', $css);
+        $this->assertStringContainsString('.dark .navigation-mobile-menu .ui-card-row-link,', $css);
+        $this->assertStringContainsString('background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);', $css);
+        $this->assertStringContainsString('.navigation-mobile-menu .ui-card {', $css);
+        $this->assertStringContainsString('@apply p-2 pr-2.5;', $css);
     }
 
     public function test_mobile_menu_icon_uses_morph_svg_plugin_with_damped_rebounds(): void
