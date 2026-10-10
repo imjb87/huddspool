@@ -87,6 +87,18 @@ export const notificationsDrawer = () => ({
     configure(urls) {
         this.$store.headerNotifications.configure(urls);
     },
+    syncTriggerIcon() {
+        const trigger = this.$root.querySelector('[data-header-notifications-trigger]');
+
+        if (!trigger) {
+            return;
+        }
+
+        window.headerActionIcon?.set(
+            trigger.querySelector('[data-header-action-icon="notifications"]'),
+            this.open,
+        );
+    },
     toggle() {
         if (this.open) {
             this.close();
@@ -95,9 +107,11 @@ export const notificationsDrawer = () => ({
         }
 
         this.open = true;
+        this.syncTriggerIcon();
         this.$store.headerNotifications.refresh();
     },
     close() {
         this.open = false;
+        this.syncTriggerIcon();
     },
 });
