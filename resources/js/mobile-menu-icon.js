@@ -99,7 +99,7 @@ const animateIcon = (icon, isOpen) => {
 
     if (isOpen) {
         timeline
-            .to(group, { rotation: 14, scale: 0.78, duration: 0.14, ease: 'power3.in' }, 0)
+            .to(group, { rotation: -14, scale: 0.78, duration: 0.14, ease: 'power3.in' }, 0)
             .to(paths.top, { morphSVG: wobbleShapes.top, duration: 0.2, ease: 'power3.out' }, 0)
             .to(paths.bottom, { morphSVG: wobbleShapes.bottom, duration: 0.2, ease: 'power3.out' }, 0)
             .to(paths.middle, {
@@ -108,16 +108,16 @@ const animateIcon = (icon, isOpen) => {
                 duration: 0.14,
                 ease: 'power2.in',
             }, 0)
-            .to(group, { rotation: -7, scale: 1.1, duration: 0.16, ease: 'back.out(2.2)' }, 0.13)
+            .to(group, { rotation: 7, scale: 1.1, duration: 0.16, ease: 'power2.inOut' }, 0.13)
             .to(paths.top, { morphSVG: closeShapes.top, duration: 0.28, ease: 'back.out(2.2)' }, 0.14)
             .to(paths.bottom, { morphSVG: closeShapes.bottom, duration: 0.28, ease: 'back.out(2.2)' }, 0.16)
-            .to(group, { rotation: 0, scale: 1.04, duration: 0.2, ease: 'back.out(1.8)' }, 0.28)
-            .to(group, { rotation: -4, scale: 0.98, duration: 0.12, ease: 'power2.inOut' }, 0.48)
-            .to(group, { rotation: 2, scale: 1.02, duration: 0.1, ease: 'power2.inOut' }, 0.6)
+            .to(group, { rotation: -3.5, scale: 0.95, duration: 0.2, ease: 'power2.inOut' }, 0.28)
+            .to(group, { rotation: 1.75, scale: 1.025, duration: 0.12, ease: 'power2.inOut' }, 0.48)
+            .to(group, { rotation: -0.75, scale: 0.99, duration: 0.1, ease: 'power2.inOut' }, 0.6)
             .to(group, { rotation: 0, scale: 1, duration: 0.22, ease: springEase }, 0.7);
     } else {
         timeline
-            .to(group, { rotation: -14, scale: 0.78, duration: 0.14, ease: 'power3.in' }, 0)
+            .to(group, { rotation: 14, scale: 0.78, duration: 0.14, ease: 'power3.in' }, 0)
             .to(paths.top, { morphSVG: wobbleShapes.top, duration: 0.2, ease: 'power3.out' }, 0)
             .to(paths.bottom, { morphSVG: wobbleShapes.bottom, duration: 0.2, ease: 'power3.out' }, 0)
             .to(paths.middle, {
@@ -126,10 +126,13 @@ const animateIcon = (icon, isOpen) => {
                 duration: 0.14,
                 ease: 'power2.out',
             }, 0.08)
-            .to(group, { rotation: 7, scale: 1.1, duration: 0.16, ease: 'back.out(2.2)' }, 0.13)
+            .to(group, { rotation: -7, scale: 1.1, duration: 0.16, ease: 'power2.inOut' }, 0.13)
             .to(paths.top, { morphSVG: burgerShapes.top, duration: 0.27, ease: 'back.out(2)' }, 0.15)
             .to(paths.bottom, { morphSVG: burgerShapes.bottom, duration: 0.27, ease: 'back.out(2)' }, 0.15)
-            .to(group, { rotation: 0, scale: 1, duration: 0.34, ease: springEase }, 0.28);
+            .to(group, { rotation: 3.5, scale: 0.95, duration: 0.2, ease: 'power2.inOut' }, 0.28)
+            .to(group, { rotation: -1.75, scale: 1.025, duration: 0.12, ease: 'power2.inOut' }, 0.48)
+            .to(group, { rotation: 0.75, scale: 0.99, duration: 0.1, ease: 'power2.inOut' }, 0.6)
+            .to(group, { rotation: 0, scale: 1, duration: 0.22, ease: springEase }, 0.7);
     }
 
     timelines.set(icon, timeline);
