@@ -93,7 +93,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('window.headerActionIcon?.set(', false);
         $response->assertSee('trigger.querySelector(\'[data-header-action-icon="search"]\')', false);
         $response->assertSee('flex h-full w-full flex-col overflow-hidden bg-background text-foreground', false);
-        $response->assertDontSee('rounded-xl border border-border/70 bg-background', false);
+        $response->assertDontSee('rounded-xl border border-border/70 bg-background p-2 pb-11 text-foreground shadow-xl', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm', false);
         $response->assertSee('data-search-loading-skeleton', false);
