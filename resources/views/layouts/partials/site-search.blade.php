@@ -205,6 +205,7 @@
                 openActiveResult() {},
                 navigateToResult() {},
                 scrollActiveResultIntoView() {},
+                focusInput() {},
                 initializeSiteSearch() {},
                 syncSearchViewport() {
                     const viewport = window.visualViewport;
@@ -298,15 +299,18 @@
                 },
                 async openSearch() {
                     window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }));
-                    this.open = true;
-                    this.syncSearchTrigger();
+                    this.openLoadedSearch();
                     await this.ensureEnhanced();
 
                     if (!this.open) {
                         return;
                     }
 
-                    this.openLoadedSearch();
+                    if (this.searchTerm.trim().length >= 3) {
+                        this.scheduleSearch(this.searchTerm);
+                    }
+
+                    this.focusInput();
                 },
                 close() {
                     if (!this.isEnhanced) {
