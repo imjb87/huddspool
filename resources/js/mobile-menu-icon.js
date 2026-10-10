@@ -144,3 +144,116 @@ export const mobileMenuIcon = {
         animateIcon(icon, Boolean(isOpen));
     },
 };
+const headerActionShapes = {
+    search: {
+        closed: {
+            primary: 'M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0',
+            secondary: 'M21 21l-6 -6',
+        },
+        wobble: {
+            primary: 'M4 10 C8 8 16 16 20 14',
+            secondary: 'M20 20 C16 16 8 8 4 4',
+        },
+        open: {
+            primary: 'M6 6l12 12',
+            secondary: 'M18 6l-12 12',
+        },
+    },
+    notifications: {
+        closed: {
+            primary: 'M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6',
+            secondary: 'M9 17v1a3 3 0 0 0 6 0v-1',
+        },
+        wobble: {
+            primary: 'M4 12 C8 10 16 14 20 12',
+            secondary: 'M8 16 C10 18 14 18 16 16',
+        },
+        open: {
+            primary: 'M6 6l12 12',
+            secondary: 'M18 6l-12 12',
+        },
+    },
+};
+
+const headerActionTimelines = new WeakMap();
+
+const getHeaderActionIconParts = (icon) => ({
+    primary: icon.querySelector('[data-header-action-icon-primary]'),
+    secondary: icon.querySelector('[data-header-action-icon-secondary]'),
+    group: icon.querySelector('[data-header-action-icon-group]'),
+});
+
+const setHeaderActionIconState = (icon, isOpen) => {
+    const shapeSet = headerActionShapes[icon.dataset.headerActionIcon];
+    const parts = getHeaderActionIconParts(icon);
+
+    if (!shapeSet || Object.values(parts).some((part) => !part)) {
+        return;
+    }
+
+    resetIconGroup(parts.group);
+    gsap.set(parts.primary, { morphSVG: shapeSet[isOpen ? 'open' : 'closed'].primary });
+    gsap.set(parts.secondary, { morphSVG: shapeSet[isOpen ? 'open' : 'closed'].secondary });
+};
+
+const animateHeaderActionIcon = (icon, isOpen) => {
+    if (!icon) {
+        return;
+    }
+
+    const shapeSet = headerActionShapes[icon.dataset.headerActionIcon];
+    const parts = getHeaderActionIconParts(icon);
+
+    if (!shapeSet || Object.values(parts).some((part) => !part)) {
+        return;
+    }
+
+    const nextState = isOpen ? 'open' : 'closed';
+    const activeTimeline = headerActionTimelines.get(icon);
+
+    if (icon.dataset.headerActionIconState === nextState) {
+        return;
+    }
+
+    activeTimeline?.kill();
+
+    if (prefersReducedMotion()) {
+        setHeaderActionIconState(icon, isOpen);
+        icon.dataset.headerActionIconState = nextState;
+
+        return;
+    }
+
+    const direction = isOpen ? 1 : -1;
+    const targetShapes = shapeSet[isOpen ? 'open' : 'closed'];
+    const timeline = gsap.timeline({
+        onComplete: () => {
+            setHeaderActionIconState(icon, isOpen);
+
+            if (headerActionTimelines.get(icon) === timeline) {
+                headerActionTimelines.delete(icon);
+            }
+        },
+    });
+
+    timeline
+        .to(parts.group, { rotation: direction * 9, scale: 0.82, duration: 0.14, ease: 'power3.in' }, 0)
+        .to(parts.primary, { morphSVG: shapeSet.wobble.primary, duration: 0.22, ease: 'power3.out' }, 0)
+        .to(parts.secondary, { morphSVG: shapeSet.wobble.secondary, duration: 0.22, ease: 'power3.out' }, 0)
+        .to(parts.group, { rotation: direction * -4.5, scale: 1.08, duration: 0.18, ease: 'power2.inOut' }, 0.16)
+        .to(parts.primary, { morphSVG: targetShapes.primary, duration: 0.25, ease: 'back.out(1.8)' }, 0.17)
+        .to(parts.secondary, { morphSVG: targetShapes.secondary, duration: 0.25, ease: 'back.out(1.8)' }, 0.19)
+        .to(parts.group, { rotation: direction * 2.25, scale: 0.96, duration: 0.18, ease: 'power2.inOut' }, 0.36)
+        .to(parts.group, { rotation: direction * -1, scale: 1.025, duration: 0.14, ease: 'power2.inOut' }, 0.54)
+        .to(parts.group, { rotation: direction * 0.4, scale: 0.99, duration: 0.12, ease: 'power2.inOut' }, 0.68)
+        .to(parts.group, { rotation: 0, scale: 1, duration: 0.22, ease: springEase }, 0.8);
+
+    headerActionTimelines.set(icon, timeline);
+    icon.dataset.headerActionIconState = nextState;
+};
+
+export const headerActionIcon = {
+    set(icon, isOpen) {
+        animateHeaderActionIcon(icon, Boolean(isOpen));
+    },
+};
