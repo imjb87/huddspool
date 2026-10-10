@@ -82,6 +82,10 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('@apply min-h-0 px-3 py-2.5 text-base leading-6 font-medium sm:px-4;', $css);
         $this->assertStringContainsString('@apply flex flex-col gap-2 divide-y-0 px-3 py-4 sm:px-5;', $css);
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row-link,', $css);
+        $this->assertStringContainsString('.navigation-mobile-menu a.ui-card.navigation-mobile-menu__account-card', $css);
+        $this->assertStringContainsString('.navigation-mobile-menu button.ui-card.navigation-mobile-menu__back-card', $css);
+        $this->assertStringContainsString('@apply flex items-center gap-3 px-3 py-2.5 text-base leading-6 font-medium sm:px-5;', $css);
+        $this->assertStringContainsString('@apply flex w-full cursor-pointer items-center gap-2 px-3 py-2.5 text-left text-base leading-6 font-medium;', $css);
         $this->assertStringContainsString('@apply rounded-lg transition-colors duration-100;', $css);
         $this->assertStringContainsString('background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);', $css);
         $this->assertStringContainsString('.dark .navigation-mobile-menu .ui-card-row-link,', $css);
