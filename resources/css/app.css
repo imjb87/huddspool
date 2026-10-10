@@ -513,6 +513,11 @@
 
   .ui-page-shell {
     @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
+    background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);
+  }
+
+  .dark .ui-page-shell {
+    background-image: none;
   }
 
   .ui-page-body {
