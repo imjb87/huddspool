@@ -176,10 +176,12 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
             if (Math.abs(deltaX) >= 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
                 this.suppressClickUntil = Date.now() + 500;
 
+                const steps = this.visibleCount;
+
                 if (deltaX < 0) {
-                    this.next(2);
+                    this.next(steps);
                 } else {
-                    this.previous(2);
+                    this.previous(steps);
                 }
             }
         }
