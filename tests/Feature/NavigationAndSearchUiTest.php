@@ -94,6 +94,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5', false);
         $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent', false);
         $response->assertSee('data-search-player-avatar', false);
+        $response->assertSee('@click="navigateToResult($event)"', false);
         $response->assertSee('Navigate', false);
         $response->assertSee('Open', false);
         $response->assertSee('Close', false);
