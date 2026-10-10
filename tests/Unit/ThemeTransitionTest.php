@@ -97,6 +97,20 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString("import './sponsor-carousel';", $livewireApp);
     }
 
+    public function test_sponsor_carousel_swipes_move_two_items_and_wrap_correctly(): void
+    {
+        $script = file_get_contents(resource_path('js/sponsor-carousel.js'));
+
+        $this->assertIsString($script);
+        $this->assertStringContainsString('next(steps = 1)', $script);
+        $this->assertStringContainsString('previous(steps = 1)', $script);
+        $this->assertStringContainsString('this.next(2);', $script);
+        $this->assertStringContainsString('this.previous(2);', $script);
+        $this->assertStringContainsString('this.currentIndex += direction * steps;', $script);
+        $this->assertStringContainsString('this.jumpTo(this.currentIndex - this.totalSlides);', $script);
+        $this->assertStringContainsString('this.jumpTo(this.currentIndex + this.totalSlides);', $script);
+    }
+
     public function test_mobile_navigation_rows_match_card_surfaces_and_use_sixteen_pixel_text(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
