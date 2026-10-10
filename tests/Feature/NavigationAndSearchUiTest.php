@@ -81,6 +81,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('x-init="initializeSearchViewport()"', false);
         $response->assertSee("window.visualViewport?.addEventListener('resize'", false);
         $response->assertSee("window.visualViewport?.addEventListener('scroll'", false);
+        $response->assertSee('const visualTop = viewport?.offsetTop ?? 0;', false);
+        $response->assertSee('const visibleBottom = visualTop + (viewport?.height ?? window.innerHeight);', false);
+        $response->assertSee('const visibleTop = Math.max(visualTop, headerBottom);', false);
+        $response->assertSee('Math.max(0, visibleBottom - visibleTop)', false);
         $response->assertSee("window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }))", false);
         $response->assertSee('header-overlay-open', false);
         $response->assertSee('class="absolute inset-0 z-10 flex overflow-hidden"', false);
