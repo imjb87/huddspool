@@ -35,10 +35,16 @@
                     @if ($fixtureDateLabel || ($showPrint ?? false))
                         <div class="flex items-center justify-between gap-4 border-b border-border px-5 py-4" data-section-fixtures-header>
                             @if ($fixtureDateLabel)
-                                <p class="m-0 text-sm leading-5 font-medium text-neutral-700 dark:text-neutral-200" data-section-fixtures-date>{{ $fixtureDateLabel }}</p>
+                                <p class="m-0 text-sm leading-5 font-medium text-neutral-700 dark:text-neutral-200" wire:loading.remove wire:target="previousWeek, nextWeek" data-section-fixtures-date>{{ $fixtureDateLabel }}</p>
                             @else
-                                <span aria-hidden="true"></span>
+                                <span aria-hidden="true" wire:loading.remove wire:target="previousWeek, nextWeek"></span>
                             @endif
+
+                            <div class="h-4 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-neutral-800"
+                                wire:loading.block
+                                wire:target="previousWeek, nextWeek"
+                                aria-hidden="true"
+                                data-section-fixtures-date-skeleton></div>
 
                             @if ($showPrint ?? false)
                                 <a href="{{ route('fixture.download', ['ruleset' => $ruleset, 'section' => $section]) }}"
@@ -55,6 +61,15 @@
                                     <span>Print</span>
                                 </a>
                             @endif
+                        </div>
+                    @else
+                        <div class="flex items-center justify-between gap-4 border-b border-border px-5 py-4"
+                            wire:loading.flex
+                            wire:target="previousWeek, nextWeek"
+                            data-section-fixtures-header>
+                            <div class="h-4 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-neutral-800"
+                                aria-hidden="true"
+                                data-section-fixtures-date-skeleton></div>
                         </div>
                     @endif
 
@@ -120,10 +135,6 @@
                     </div>
 
                     <div class="animate-pulse" wire:loading.block wire:target="previousWeek, nextWeek" data-section-fixtures-row-skeleton>
-                        <div class="ui-fixtures-date-heading">
-                            <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                        </div>
-
                         <div class="ui-fixtures-item-group">
                             @foreach (range(1, 5) as $row)
                                 <div class="ui-fixture-item" data-section-fixtures-row-skeleton-row data-section-fixtures-band>

@@ -471,7 +471,13 @@ class RulesetHubPageTest extends TestCase
         $fixturesResponse->assertSee('data-section-fixtures-band', false);
         $fixturesResponse->assertSee('data-section-fixtures-controls', false);
         $fixturesResponse->assertSee('data-section-fixtures-row-skeleton', false);
+        $fixturesResponse->assertSee('data-section-fixtures-date-skeleton', false);
         $fixturesResponse->assertSee('wire:target="previousWeek, nextWeek"', false);
+        $fixtureDocument = new \DOMDocument();
+        $fixtureDocument->loadHTML($fixturesResponse->getContent(), LIBXML_NONET);
+        $fixtureXPath = new \DOMXPath($fixtureDocument);
+        $this->assertSame(1, $fixtureXPath->query('//*[@data-section-fixtures-header]//*[@data-section-fixtures-date-skeleton]')->length);
+        $this->assertSame(0, $fixtureXPath->query('//*[@data-section-fixtures-row-skeleton]//*[@data-section-fixtures-date-skeleton]')->length);
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-tab-skeleton-row="fixtures-results"'));
         $this->assertSame(5, substr_count($fixturesResponse->getContent(), 'data-section-fixtures-row-skeleton-row'));
         $fixturesResponse->assertSee('ui-shell-grid', false);
