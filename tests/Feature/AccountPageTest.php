@@ -60,10 +60,28 @@ class AccountPageTest extends TestCase
             ->assertSee('class="group flex flex-col gap-2 rounded-xl border border-border bg-card', false)
             ->assertSee('data-notifications-links', false)
             ->assertSee('data-notifications-mark-all', false)
+            ->assertSee(':disabled="$store.headerNotifications.markingAll || $store.headerNotifications.unreadCount === 0"', false)
             ->assertSee('notificationsDrawer', false)
             ->assertSeeText('Notifications')
             ->assertSeeText('Mark all as read')
             ->assertDontSeeText('Showing your latest notifications.');
+    }
+
+    public function test_mark_all_notifications_button_remains_visible_when_there_are_no_unread_notifications(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('account.show'));
+
+        $response->assertOk()
+            ->assertSeeText('Mark all as read');
+
+        $drawer = file_get_contents(resource_path('views/components/account/notifications-drawer.blade.php'));
+
+        $this->assertIsString($drawer);
+        $this->assertSame(1, preg_match('/<button\\b(?=[^>]*data-notifications-mark-all)[^>]*>/s', $drawer, $buttonMatches));
+        $this->assertStringNotContainsString('x-show=', $buttonMatches[0]);
+        $this->assertStringContainsString(':disabled="$store.headerNotifications.markingAll || $store.headerNotifications.unreadCount === 0"', $buttonMatches[0]);
     }
 
     public function test_opening_a_notification_marks_it_as_read_and_redirects_to_its_target(): void
