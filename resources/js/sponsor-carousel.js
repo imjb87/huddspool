@@ -58,20 +58,20 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
         return this.currentIndex * (100 / this.visibleCount);
     },
 
-    next() {
-        this.move(1);
+    next(steps = 1) {
+        this.move(1, steps);
     },
 
-    previous() {
-        this.move(-1);
+    previous(steps = 1) {
+        this.move(-1, steps);
     },
 
-    move(direction) {
+    move(direction, steps = 1) {
         if (this.isTransitioning || this.isJumping) {
             return;
         }
 
-        this.currentIndex += direction;
+        this.currentIndex += direction * steps;
         this.isTransitioning = true;
 
         if (this.reducedMotion) {
@@ -104,9 +104,9 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
         }
 
         if (this.currentIndex >= this.cloneCount + this.totalSlides) {
-            this.jumpTo(this.cloneCount);
+            this.jumpTo(this.currentIndex - this.totalSlides);
         } else if (this.currentIndex < this.cloneCount) {
-            this.jumpTo(this.cloneCount + this.totalSlides - 1);
+            this.jumpTo(this.currentIndex + this.totalSlides);
         }
     },
 
@@ -176,10 +176,12 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
             if (Math.abs(deltaX) >= 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
                 this.suppressClickUntil = Date.now() + 500;
 
+                const steps = 2;
+
                 if (deltaX < 0) {
-                    this.next();
+                    this.next(steps);
                 } else {
-                    this.previous();
+                    this.previous(steps);
                 }
             }
         }
