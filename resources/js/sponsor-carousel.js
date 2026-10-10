@@ -13,6 +13,8 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
     isJumping: false,
     isTransitioning: false,
     reducedMotion: false,
+    touchStartPoint: null,
+    suppressClickUntil: 0,
 
     start() {
         this.visibleCount = this.getVisibleCount();
@@ -148,6 +150,56 @@ const sponsorCarousel = (totalSlides, cloneCount = 3) => ({
         }
 
         this.resume();
+    },
+
+    handleTouchStart(event) {
+        if (event.touches.length !== 1) {
+            this.touchStartPoint = null;
+
+            return;
+        }
+
+        const touch = event.touches[0];
+        this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
+        this.pause();
+    },
+
+    handleTouchEnd(event) {
+        const start = this.touchStartPoint;
+        const touch = event.changedTouches?.[0];
+        this.touchStartPoint = null;
+
+        if (start && touch) {
+            const deltaX = touch.clientX - start.x;
+            const deltaY = touch.clientY - start.y;
+
+            if (Math.abs(deltaX) >= 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                this.suppressClickUntil = Date.now() + 500;
+
+                if (deltaX < 0) {
+                    this.next();
+                } else {
+                    this.previous();
+                }
+            }
+        }
+
+        this.resume();
+    },
+
+    handleTouchCancel() {
+        this.touchStartPoint = null;
+        this.resume();
+    },
+
+    handleSwipeClick(event) {
+        if (Date.now() > this.suppressClickUntil || !event.target.closest?.('a')) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        this.suppressClickUntil = 0;
     },
 
     handleMouseEnter() {
