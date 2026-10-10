@@ -6,7 +6,7 @@
         x-transition:enter="ui-motion-fade-in" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ui-motion-fade-out"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-    <div class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white shadow-xl dark:bg-neutral-950"
+    <div class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white dark:bg-neutral-950"
         @click.stop
         :style="`top: ${headerHeight}px; height: calc(100dvh - ${headerHeight}px);`"
         data-mobile-menu-drawer
