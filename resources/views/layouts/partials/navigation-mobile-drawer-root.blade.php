@@ -11,19 +11,13 @@
     x-transition:leave-end="ui-motion-panel-leave-end">
     <div class="space-y-3">
         @if (@auth()->user())
-            <div class="ui-card">
-                <div class="ui-card-rows">
-                    <a href="{{ route('account.show') }}"
-                        class="ui-card-row-link">
-                        <div class="ui-card-row items-center justify-start gap-3">
-                            <img src="{{ auth()->user()->avatar_url }}"
-                                alt="{{ auth()->user()->name }} avatar"
-                                class="size-8 shrink-0 rounded-full object-cover ring-1 ring-foreground/10">
-                            <span class="min-w-0 truncate font-medium">{{ auth()->user()->name }}</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
+            <a href="{{ route('account.show') }}"
+                class="ui-card navigation-mobile-menu__account-card">
+                <img src="{{ auth()->user()->avatar_url }}"
+                    alt="{{ auth()->user()->name }} avatar"
+                    class="size-8 shrink-0 rounded-full object-cover ring-1 ring-foreground/10">
+                <span class="min-w-0 truncate font-medium">{{ auth()->user()->name }}</span>
+            </a>
         @else
             <div class="ui-card">
                 <div class="ui-card-rows">
