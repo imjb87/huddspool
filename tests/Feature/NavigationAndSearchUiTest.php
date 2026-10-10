@@ -94,6 +94,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5', false);
         $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent', false);
         $response->assertSee('data-search-player-avatar', false);
+        $response->assertSee('@click="navigateToResult($event)"', false);
         $response->assertSee('Navigate', false);
         $response->assertSee('Open', false);
         $response->assertSee('Close', false);
@@ -154,6 +155,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-official-links', false);
         $response->assertSee('data-mobile-menu-panel="official"', false);
         $response->assertSee('data-mobile-back-label', false);
+        $response->assertSee('class="ui-card navigation-mobile-menu__back-card"', false);
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee("navigationDirection: 'forward'", false);
         $response->assertSee('mobileMenuPanelClasses(panel)', false);
@@ -423,6 +425,8 @@ class NavigationAndSearchUiTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
+        $response->assertSee('class="ui-card navigation-mobile-menu__account-card"', false);
+        $response->assertDontSee('ui-card-row items-center justify-start gap-3', false);
         $response->assertSeeText($user->name);
         $response->assertSee('alt="'.$user->name.' avatar"', false);
         $response->assertSee('src="'.$user->avatar_url.'"', false);

@@ -11,21 +11,17 @@
     x-transition:leave-start="ui-motion-panel-leave-start"
     x-transition:leave-end="ui-motion-panel-leave-end">
     <div class="space-y-3">
-        <div class="ui-card">
-            <div class="ui-card-rows">
-                <button type="button"
-                    class="ui-card-row w-full cursor-pointer items-center gap-2 text-left transition-colors"
-                    @click="goBackToRoot()">
-                    <span class="flex items-center gap-2" data-mobile-back-label>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M15 6l-6 6l6 6" />
-                        </svg>
-                        History
-                    </span>
-                </button>
-            </div>
-        </div>
+        <button type="button"
+            class="ui-card navigation-mobile-menu__back-card"
+            @click="goBackToRoot()">
+            <span class="flex items-center gap-2" data-mobile-back-label>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M15 6l-6 6l6 6" />
+                </svg>
+                History
+            </span>
+        </button>
         <div class="ui-card">
             <div class="ui-card-rows">
             @forelse ($historySeasonGroups as $historySeasonGroup)
@@ -61,21 +57,17 @@
         x-transition:leave-start="ui-motion-panel-leave-start"
         x-transition:leave-end="ui-motion-panel-leave-end">
         <div class="space-y-3">
-            <div class="ui-card">
-                <div class="ui-card-rows">
-                    <button type="button"
-                        class="ui-card-row w-full cursor-pointer items-center gap-2 text-left transition-colors"
-                        @click="openDrawer('history', 'back')">
-                        <span class="flex items-center gap-2" data-mobile-back-label>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M15 6l-6 6l6 6" />
-                            </svg>
-                            {{ $historySeasonGroup['season']->name }}
-                        </span>
-                    </button>
-                </div>
-            </div>
+            <button type="button"
+                class="ui-card navigation-mobile-menu__back-card"
+                @click="openDrawer('history', 'back')">
+                <span class="flex items-center gap-2" data-mobile-back-label>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M15 6l-6 6l6 6" />
+                    </svg>
+                    {{ $historySeasonGroup['season']->name }}
+                </span>
+            </button>
             <div class="ui-card">
                 <div class="ui-card-rows">
                 @foreach ($historySeasonGroup['rulesets'] as $historyRulesetGroup)
@@ -119,21 +111,17 @@
             x-transition:leave-start="ui-motion-panel-leave-start"
             x-transition:leave-end="ui-motion-panel-leave-end">
             <div class="space-y-3">
-                <div class="ui-card">
-                    <div class="ui-card-rows">
-                        <button type="button"
-                            class="ui-card-row w-full cursor-pointer items-center gap-2 text-left transition-colors"
-                            @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}', 'back')">
-                            <span class="flex items-center gap-2" data-mobile-back-label>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M15 6l-6 6l6 6" />
-                                </svg>
-                                {{ $historyRulesetGroup['ruleset']->name }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
+                <button type="button"
+                    class="ui-card navigation-mobile-menu__back-card"
+                    @click="openDrawer('history-season-{{ $historySeasonGroup['season']->id }}', 'back')">
+                    <span class="flex items-center gap-2" data-mobile-back-label>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-400 dark:text-gray-500" aria-hidden="true">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M15 6l-6 6l6 6" />
+                        </svg>
+                        {{ $historyRulesetGroup['ruleset']->name }}
+                    </span>
+                </button>
                 <div class="ui-card">
                     <div class="ui-card-rows">
                     @foreach ($historyRulesetGroup['sections'] as $historySection)

@@ -60,6 +60,20 @@ export function enhanceSiteSearch(component) {
 
             window.location.assign(activeResult.href);
         },
+        navigateToResult(event) {
+            const href = event.currentTarget?.href;
+
+            if (!href || event.defaultPrevented) {
+                return;
+            }
+
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+            }
+
+            event.preventDefault();
+            window.location.assign(href);
+        },
         scrollActiveResultIntoView() {
             this.$nextTick(() => {
                 document.getElementById(this.activeResultId())?.scrollIntoView({

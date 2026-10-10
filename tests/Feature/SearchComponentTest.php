@@ -64,7 +64,8 @@ class SearchComponentTest extends TestCase
             ->assertDontSee('ui-card-row', false)
             ->assertSeeText('Imperial Club')
             ->assertSeeText('12 West Street')
-            ->assertSee('data-search-result-link', false);
+            ->assertSee('data-search-result-link', false)
+            ->assertSee('x-on:click="navigateToResult($event)"', false);
     }
 
     public function test_component_only_matches_players_by_their_own_name(): void

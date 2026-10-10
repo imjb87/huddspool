@@ -12,6 +12,20 @@
             this.open = false
             this.$wire.closeSearch()
         },
+        navigateToResult(event) {
+            const href = event.currentTarget?.href
+
+            if (!href || event.defaultPrevented) {
+                return
+            }
+
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return
+            }
+
+            event.preventDefault()
+            window.location.assign(href)
+        },
         focusInput() {
             if (this.focusTimer) {
                 clearTimeout(this.focusTimer)
