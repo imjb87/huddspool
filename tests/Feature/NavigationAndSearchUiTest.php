@@ -51,7 +51,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('site-header', false);
         $response->assertSee('bg-gray-500/25', false);
         $response->assertSee('bg-black/20 transition-opacity dark:bg-black/60', false);
-        $response->assertSee('overflow-hidden border-l border-gray-200 bg-white shadow-xl dark:border-neutral-800 dark:bg-neutral-950', false);
+        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white shadow-xl dark:bg-neutral-950"', false);
         $response->assertSee('data-site-search-trigger', false);
         $response->assertSee('rounded-lg bg-transparent', false);
         $response->assertSee('sm:rounded-[10px] sm:bg-gray-100', false);
@@ -204,7 +204,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white dark:bg-neutral-950', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-mobile-menu-drawer', false);
-        $response->assertSee('overflow-hidden border-l border-gray-200 bg-white shadow-xl dark:border-neutral-800 dark:bg-neutral-950', false);
+        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white shadow-xl dark:bg-neutral-950"', false);
         $response->assertSee('navigation-mobile-menu relative h-full overflow-hidden bg-white dark:bg-neutral-950', false);
         $response->assertSee('bg-black/20 transition-opacity dark:bg-black/60', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
