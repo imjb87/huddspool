@@ -49,17 +49,18 @@ class NavigationAndSearchUiTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('site-header', false);
-        $response->assertSee('bg-gray-500/25', false);
+        $response->assertSee('absolute inset-0 z-0 bg-black/20 transition-opacity dark:bg-black/60', false);
         $response->assertSee('bg-black/20 transition-opacity dark:bg-black/60', false);
-        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white shadow-xl dark:bg-neutral-950"', false);
+        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white dark:bg-neutral-950"', false);
         $response->assertSee('data-site-search-trigger', false);
+        $response->assertSee('data-header-action-icon="search"', false);
         $response->assertSee('rounded-lg bg-transparent', false);
         $response->assertSee('sm:rounded-[10px] sm:bg-gray-100', false);
         $response->assertSee('ml-2 hidden h-4 w-px shrink-0 bg-gray-200 lg:block dark:bg-neutral-800', false);
         $response->assertSee('role="separator" aria-orientation="vertical"', false);
         $response->assertDontSee('data-header-notifications-account-separator', false);
-        $response->assertSee('aria-label="Open search"', false);
-        $response->assertSee('class="size-5 sm:hidden"', false);
+        $response->assertSee('aria-label="Open search" aria-expanded="false"', false);
+        $response->assertSee('class="size-5"', false);
         $response->assertSee('class="hidden truncate sm:inline"', false);
         $response->assertSee('d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"', false);
         $response->assertSee('d="M21 21l-6 -6"', false);
@@ -76,8 +77,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('data-theme-toggle', false);
         $response->assertDontSee('data-mobile-theme-toggle', false);
         $response->assertDontSee('Open settings menu', false);
-        $response->assertSee('fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center', false);
-        $response->assertSee('class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"', false);
+        $response->assertSee('style="top: var(--site-header-height, 4rem);"', false);
+        $response->assertSee('class="absolute inset-0 z-10 flex items-start justify-center overflow-y-auto p-2"', false);
+        $response->assertSee('x-on:site-search:toggle.window="toggleSearch()"', false);
         $response->assertSee(":class=\"open ? 'pointer-events-auto' : 'pointer-events-none'\"", false);
         $response->assertDontSee('class="pointer-events-none fixed inset-0 z-10', false);
         $response->assertSee('site-theme', false);
@@ -85,17 +87,17 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('<kbd class="ml-auto hidden', false);
         $response->assertDontSee('Ctrl K', false);
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
-        $response->assertSee('placeholder:text-gray-600 focus:ring-0 dark:text-gray-100 dark:placeholder:text-gray-400', false);
+        $response->assertSee('text-foreground placeholder:text-muted-foreground focus:ring-0', false);
         $response->assertSee('data-search-modal-shell', false);
         $response->assertSee('max-w-none overflow-hidden rounded-xl', false);
-        $response->assertSee('rounded-xl border border-gray-200/80 bg-white p-2 pb-11', false);
+        $response->assertSee('rounded-xl border border-border/70 bg-background p-2 pb-11 text-foreground shadow-xl', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm', false);
         $response->assertSee('data-search-loading-skeleton', false);
         $response->assertSee('aria-hidden="true"', false);
         $response->assertSee('animate-pulse rounded-md bg-gray-200/80', false);
         $response->assertSee('min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5', false);
-        $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent', false);
+        $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40', false);
         $response->assertSee('data-search-player-avatar', false);
         $response->assertSee('@click="navigateToResult($event)"', false);
         $response->assertSee('Navigate', false);
@@ -204,7 +206,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('site-header fixed top-0 z-50 w-full bg-white dark:bg-neutral-950', false);
         $response->assertSee('ui-page-shell', false);
         $response->assertSee('data-mobile-menu-drawer', false);
-        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white shadow-xl dark:bg-neutral-950"', false);
+        $response->assertSee('class="fixed inset-x-0 right-0 z-30 overflow-hidden bg-white dark:bg-neutral-950"', false);
         $response->assertSee('navigation-mobile-menu relative h-full overflow-hidden bg-white dark:bg-neutral-950', false);
         $response->assertSee('bg-black/20 transition-opacity dark:bg-black/60', false);
         $response->assertDontSee(":class=\"{ 'dark:border-transparent': open }\"", false);
@@ -365,6 +367,7 @@ class NavigationAndSearchUiTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-header-notifications-trigger', false);
+        $response->assertSee('data-header-action-icon="notifications"', false);
         $response->assertSee('aria-label="Open notifications"', false);
         $response->assertSee('class="size-5"', false);
         $response->assertSee('data-notifications-drawer', false);
@@ -446,6 +449,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('href="'.route('support.tickets').'"', false);
         $response->assertSeeText('Open user menu for '.$user->name);
         $response->assertSee('data-header-notifications-trigger', false);
+        $response->assertSee('data-header-action-icon="notifications"', false);
         $response->assertSee('data-notifications-drawer', false);
         $response->assertSee('data-header-notifications-account-separator', false);
         $response->assertSeeText('Notifications');
