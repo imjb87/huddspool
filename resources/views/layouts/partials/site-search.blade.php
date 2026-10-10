@@ -1,18 +1,23 @@
 <div
-    class="relative z-99 duration-300"
+    class="fixed inset-x-0 bottom-0 z-40"
+    style="top: var(--site-header-height, 4rem);"
+    :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
     role="dialog"
     aria-modal="true"
+    :aria-hidden="!open"
+    :inert="!open"
     aria-labelledby="site-search-dialog-title"
     x-data="window.createSiteSearch({
         endpoint: @js(route('search.index')),
         moduleUrl: @js(Vite::asset('resources/js/site-search-modal.js')),
     })"
     x-on:site-search:open.window="openSearch()"
+    x-on:site-search:toggle.window="toggleSearch()"
     x-on:keydown.escape.window="if (open) { close() }"
     x-cloak
 >
     <div
-        class="fixed inset-0 bg-gray-500/25 transition-opacity dark:bg-black/70"
+        class="absolute inset-0 z-0 bg-black/20 transition-opacity dark:bg-black/60"
         x-show="open"
         x-transition:enter="ui-motion-fade-in"
         x-transition:enter-start="opacity-0"
@@ -25,21 +30,21 @@
     ></div>
 
     <div
-        class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
-        :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
+        class="absolute inset-0 z-10 flex items-start justify-center overflow-y-auto p-2"
+        @click="close()"
     >
         <div
-            @click.outside="close()"
             x-show="open"
-            x-transition:enter="ui-motion-search-shell-in"
-            x-transition:leave="ui-motion-search-shell-out"
-            class="relative mx-auto w-full max-w-none overflow-hidden rounded-xl border border-gray-200/80 bg-white p-2 pb-11 text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 sm:max-w-lg dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800"
+            @click.stop
+            x-transition:enter="ui-motion-mobile-menu-in"
+            x-transition:leave="ui-motion-mobile-menu-out"
+            class="relative mx-auto w-full max-w-none overflow-hidden rounded-xl border border-border/70 bg-background p-2 pb-11 text-foreground shadow-xl sm:max-w-lg"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>
-            <div class="relative flex h-9 items-center rounded-md border border-gray-200 bg-gray-50/70 px-3 dark:border-neutral-800 dark:bg-neutral-800/50">
+            <div class="relative flex h-9 items-center rounded-md border border-border/70 bg-muted/50 px-3">
                 <svg
-                    class="pointer-events-none mr-2 size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                    class="pointer-events-none mr-2 size-4 shrink-0 text-muted-foreground"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -57,7 +62,7 @@
                     x-ref="searchInput"
                     x-model="searchTerm"
                     autocomplete="off"
-                    class="h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm text-gray-900 placeholder:text-gray-600 focus:ring-0 dark:text-gray-100 dark:placeholder:text-gray-400"
+                    class="h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm text-foreground placeholder:text-muted-foreground focus:ring-0"
                     placeholder="Search players, teams, venues..."
                     role="combobox"
                     :aria-expanded="resultGroups.length > 0 ? 'true' : 'false'"
@@ -74,18 +79,18 @@
                     @foreach (['players', 'teams'] as $groupName)
                         <div class="w-full">
                             <div class="px-3 pt-3 pb-1">
-                                <div class="h-3 w-20 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80"></div>
+                                <div class="h-3 w-20 animate-pulse rounded-md bg-muted"></div>
                             </div>
                             <div class="space-y-0.5">
                                 @foreach (range(1, 3) as $rowIndex)
-                                    <div class="flex h-9 items-center justify-between gap-4 rounded-md border border-transparent px-3">
+                                    <div class="flex h-9 items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40 px-3">
                                         <div class="flex min-w-0 flex-1 items-center gap-2">
                                             @if ($groupName === 'players')
-                                                <div class="size-6 shrink-0 animate-pulse rounded-full bg-gray-200/80 dark:bg-neutral-800/80"></div>
+                                                <div class="size-6 shrink-0 animate-pulse rounded-full bg-muted"></div>
                                             @endif
-                                            <div class="h-3.5 w-32 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80 sm:w-40"></div>
+                                            <div class="h-3.5 w-32 animate-pulse rounded-md bg-muted sm:w-40"></div>
                                         </div>
-                                        <div class="h-3 w-24 animate-pulse rounded-md bg-gray-200/80 dark:bg-neutral-800/80 sm:w-28"></div>
+                                        <div class="h-3 w-24 animate-pulse rounded-md bg-muted sm:w-28"></div>
                                     </div>
                                 @endforeach
                             </div>
@@ -120,15 +125,15 @@
                 <template x-for="group in resultGroups" :key="group.key">
                     <li>
                         <div class="px-3 pt-3 pb-1">
-                            <h2 class="text-xs font-medium text-gray-500 dark:text-gray-400" x-text="group.heading"></h2>
+                            <h2 class="text-xs font-medium text-muted-foreground" x-text="group.heading"></h2>
                         </div>
                         <div class="space-y-0.5 pb-1.5" data-search-result-group>
                             <template x-for="item in group.results" :key="`${group.key}-${item.id}`">
                                 <a
-                                    class="flex h-9 w-full items-center justify-between gap-4 rounded-md border border-transparent px-3 text-sm font-medium outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 dark:hover:bg-neutral-800 dark:hover:text-gray-100 dark:focus:bg-neutral-800 dark:focus:text-gray-100"
+                                    class="flex h-9 w-full items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40 px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus:bg-muted"
                                     :id="`site-search-result-${group.key}-${item.id}`"
                                     :href="item.href"
-                                    :class="{ 'border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
+                                    :class="{ 'border-border/70 bg-muted': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
                                     data-search-result-link
                                     @mouseenter="setActiveResultById(`site-search-result-${group.key}-${item.id}`)"
                                     @click="navigateToResult($event)"
@@ -149,17 +154,17 @@
                 </template>
             </ul>
 
-            <div class="absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-3 rounded-b-xl border-t border-gray-200 bg-gray-50 px-4 text-xs font-medium text-gray-500 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-400">
+            <div class="absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-3 rounded-b-xl border-t border-border/70 bg-muted/50 px-4 text-xs font-medium text-muted-foreground">
                 <div class="flex items-center gap-1.5">
-                    <kbd class="pointer-events-none flex h-5 items-center justify-center gap-1 rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↑↓</kbd>
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center gap-1 rounded border border-border/70 bg-background px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↑↓</kbd>
                     <span>Navigate</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↵</kbd>
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-border/70 bg-background px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↵</kbd>
                     <span>Open</span>
                 </div>
                 <div class="ml-auto flex items-center gap-1.5">
-                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-gray-200 bg-white px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">Esc</kbd>
+                    <kbd class="pointer-events-none flex h-5 items-center justify-center rounded border border-border/70 bg-background px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">Esc</kbd>
                     <span>Close</span>
                 </div>
             </div>
@@ -198,12 +203,43 @@
                 navigateToResult() {},
                 scrollActiveResultIntoView() {},
                 initializeSiteSearch() {},
+                syncSearchTrigger() {
+                    const trigger = document.querySelector('[data-site-search-trigger]');
+
+                    if (!trigger) {
+                        return;
+                    }
+
+                    trigger.setAttribute('aria-expanded', this.open ? 'true' : 'false');
+                    trigger.setAttribute('aria-label', this.open ? 'Close search' : 'Open search');
+
+                    const label = trigger.querySelector('[data-search-trigger-label]');
+
+                    if (label) {
+                        label.textContent = this.open ? 'Close' : 'Search...';
+                    }
+
+                    window.headerActionIcon?.set(
+                        trigger.querySelector('[data-header-action-icon="search"]'),
+                        this.open,
+                    );
+                },
+                toggleSearch() {
+                    if (this.open) {
+                        this.close();
+
+                        return;
+                    }
+
+                    this.openSearch();
+                },
                 openLoadedSearch() {
                     this.open = true;
                     this.searchTerm = '';
                     this.resultGroups = [];
                     this.activeResultIndex = -1;
                     this.isLoading = false;
+                    this.syncSearchTrigger();
                     this.focusInput();
                 },
                 closeLoadedSearch() {
@@ -212,6 +248,7 @@
                     this.resultGroups = [];
                     this.activeResultIndex = -1;
                     this.isLoading = false;
+                    this.syncSearchTrigger();
                 },
                 async ensureEnhanced() {
                     if (this.isEnhanced) {
@@ -248,12 +285,12 @@
     if (!window.siteSearchBindingsRegistered) {
         window.siteSearchBindingsRegistered = true;
 
-        const dispatchSiteSearchOpen = (event = null) => {
+        const dispatchSiteSearchEvent = (name, event = null) => {
             if (event) {
                 event.preventDefault();
             }
 
-            window.dispatchEvent(new CustomEvent('site-search:open'));
+            window.dispatchEvent(new CustomEvent(name));
         };
 
         document.addEventListener('click', (event) => {
@@ -263,7 +300,7 @@
                 return;
             }
 
-            dispatchSiteSearchOpen(event);
+            dispatchSiteSearchEvent('site-search:toggle', event);
         });
 
         document.addEventListener('keydown', (event) => {
@@ -275,7 +312,7 @@
                 return;
             }
 
-            dispatchSiteSearchOpen(event);
+            dispatchSiteSearchEvent('site-search:open', event);
         });
     }
 </script>

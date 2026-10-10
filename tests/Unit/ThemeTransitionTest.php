@@ -65,23 +65,47 @@ class ThemeTransitionTest extends TestCase
 
         $this->assertIsString($search);
         $this->assertIsString($notifications);
-        $this->assertStringContainsString('x-transition:enter="ui-motion-search-shell-in"', $search);
-        $this->assertStringContainsString('x-transition:leave="ui-motion-search-shell-out"', $search);
-        $this->assertStringContainsString('x-transition:enter="ui-motion-drawer-in"', $notifications);
-        $this->assertStringContainsString('ui-motion-drawer-enter-start', $notifications);
-        $this->assertStringContainsString('ui-motion-drawer-leave-end', $notifications);
+        $this->assertStringContainsString('x-transition:enter="ui-motion-mobile-menu-in"', $search);
+        $this->assertStringContainsString('x-transition:leave="ui-motion-mobile-menu-out"', $search);
+        $this->assertStringContainsString('x-transition:enter="ui-motion-mobile-menu-in"', $notifications);
+        $this->assertStringContainsString('x-transition:leave="ui-motion-mobile-menu-out"', $notifications);
+        $this->assertStringContainsString('top: var(--site-header-height, 4rem);', $search);
+        $this->assertStringContainsString('var(--site-header-height, 4rem)', $notifications);
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
 
-    public function test_light_mode_gradient_covers_mobile_and_notification_drawers(): void
+    public function test_search_and_notification_trigger_icons_share_morphing_action_icon_animation(): void
+    {
+        $script = file_get_contents(resource_path('js/mobile-menu-icon.js'));
+        $navigation = file_get_contents(resource_path('views/layouts/navigation.blade.php'));
+        $notifications = file_get_contents(resource_path('views/components/account/notifications-drawer.blade.php'));
+        $app = file_get_contents(resource_path('js/app.js'));
+        $livewireApp = file_get_contents(resource_path('js/livewire-app.js'));
+
+        $this->assertIsString($script);
+        $this->assertIsString($navigation);
+        $this->assertIsString($notifications);
+        $this->assertIsString($app);
+        $this->assertIsString($livewireApp);
+        $this->assertStringContainsString('data-header-action-icon="search"', $navigation);
+        $this->assertStringContainsString('data-header-action-icon="notifications"', $notifications);
+        $this->assertStringContainsString('export const headerActionIcon', $script);
+        $this->assertStringContainsString('window.headerActionIcon = headerActionIcon;', $app);
+        $this->assertStringContainsString('window.headerActionIcon = headerActionIcon;', $livewireApp);
+        $this->assertStringContainsString('headerActionIcon?.set(', file_get_contents(resource_path('js/notifications.js')));
+    }
+
+    public function test_light_mode_gradient_covers_mobile_search_and_notification_drawers(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
 
         $this->assertIsString($css);
         $this->assertStringContainsString('.navigation-mobile-menu,', $css);
         $this->assertStringContainsString('[data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('[data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);', $css);
         $this->assertStringContainsString('.dark [data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('.dark [data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: none;', $css);
         $this->assertStringContainsString('touch-action: pan-y;', $css);
     }
