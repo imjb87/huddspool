@@ -209,14 +209,17 @@
                 initializeSiteSearch() {},
                 syncSearchViewport() {
                     const viewport = window.visualViewport;
-                    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height
+                    const header = document.querySelector('.site-header');
+                    const headerHeight = header?.getBoundingClientRect().height
                         || Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'))
                         || 64;
-                    const visibleHeight = viewport?.height ?? window.innerHeight;
-                    const visibleTop = (viewport?.offsetTop ?? 0) + headerHeight;
+                    const headerBottom = header?.getBoundingClientRect().bottom ?? headerHeight;
+                    const visualTop = viewport?.offsetTop ?? 0;
+                    const visibleBottom = visualTop + (viewport?.height ?? window.innerHeight);
+                    const visibleTop = Math.max(visualTop, headerBottom);
 
                     document.documentElement.style.setProperty('--site-search-visible-top', `${visibleTop}px`);
-                    document.documentElement.style.setProperty('--site-search-panel-height', `${Math.max(0, visibleHeight - headerHeight)}px`);
+                    document.documentElement.style.setProperty('--site-search-panel-height', `${Math.max(0, visibleBottom - visibleTop)}px`);
                 },
                 scheduleSearchViewportUpdate() {
                     if (this.viewportFrameId !== null) {
