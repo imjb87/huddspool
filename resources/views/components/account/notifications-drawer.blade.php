@@ -13,11 +13,14 @@
             :aria-expanded="open"
             aria-controls="notifications-drawer"
             aria-label="Open notifications"
+            :aria-label="open ? 'Close notifications' : 'Open notifications'"
             data-header-notifications-trigger>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-header-action-icon="notifications" data-header-action-icon-state="closed">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                <g data-header-action-icon-group>
+                    <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" data-header-action-icon-primary />
+                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" data-header-action-icon-secondary />
+                </g>
             </svg>
             <span x-show="$store.headerNotifications.unreadCount > 0"
                 x-cloak
@@ -36,27 +39,25 @@
             x-transition:leave="ui-motion-fade-out"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-[60] bg-black/80"
+            class="fixed inset-x-0 bottom-0 z-[60] bg-black/20 dark:bg-black/60"
+            style="top: var(--site-header-height, 4rem);"
             @click="close()"
             data-notifications-drawer-overlay></div>
 
         <aside id="notifications-drawer"
             x-show="open"
             x-cloak
-            x-transition:enter="ui-motion-drawer-in"
-            x-transition:enter-start="ui-motion-drawer-enter-start"
-            x-transition:enter-end="ui-motion-drawer-enter-end"
-            x-transition:leave="ui-motion-drawer-out"
-            x-transition:leave-start="ui-motion-drawer-leave-start"
-            x-transition:leave-end="ui-motion-drawer-leave-end"
-            class="fixed inset-y-2 right-2 left-2 z-[70] flex h-[calc(100%-1rem)] w-auto max-w-none flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white text-gray-900 shadow-2xl shadow-black/10 ring-4 ring-gray-200/80 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:ring-neutral-800 sm:inset-y-4 sm:right-4 sm:left-auto sm:h-[calc(100%-2rem)] sm:w-[calc(100%-2rem)] sm:max-w-sm"
+            x-transition:enter="ui-motion-mobile-menu-in"
+            x-transition:leave="ui-motion-mobile-menu-out"
+            class="fixed right-2 bottom-2 left-2 z-[70] flex w-auto max-w-none flex-col overflow-hidden rounded-xl border border-border/70 bg-background text-foreground shadow-xl sm:right-4 sm:left-auto sm:w-[calc(100%-2rem)] sm:max-w-sm"
+            style="top: calc(var(--site-header-height, 4rem) + 0.5rem);"
             role="dialog"
             aria-modal="true"
             aria-labelledby="notifications-drawer-title"
             aria-describedby="notifications-drawer-description"
             @click.stop
             data-notifications-drawer>
-            <header class="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-800">
+            <header class="flex shrink-0 items-start justify-between gap-4 border-b border-border/70 bg-muted/50 p-4 sm:p-6">
                 <div class="min-w-0 space-y-1">
                     <h2 id="notifications-drawer-title" class="text-lg leading-none font-semibold tracking-tight">Notifications</h2>
                     <p id="notifications-drawer-description" class="text-sm text-muted-foreground">Updates about your account and league activity.</p>
@@ -81,7 +82,7 @@
                     class="space-y-3"
                     data-notifications-skeleton>
                     @foreach (range(1, 3) as $skeleton)
-                        <div class="flex items-start gap-3 rounded-xl border border-border p-4">
+                        <div class="flex items-start gap-3 rounded-xl border border-border/70 bg-muted/40 p-4">
                             <div class="size-9 shrink-0 animate-pulse rounded-lg bg-muted"></div>
                             <div class="min-w-0 flex-1 space-y-2">
                                 <div class="h-4 w-2/3 animate-pulse rounded bg-muted"></div>
@@ -96,7 +97,7 @@
                     x-cloak
                     class="flex min-h-64 flex-col items-center justify-center gap-3 px-6 text-center"
                     data-notifications-empty>
-                    <span class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-muted/50 text-muted-foreground">
+                    <span class="inline-flex size-10 items-center justify-center rounded-lg border border-border/70 bg-muted/50 text-muted-foreground">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
@@ -115,8 +116,8 @@
                     data-notifications-list>
                     <template x-for="notification in $store.headerNotifications.notifications" :key="notification.id">
                         <a :href="notification.open_url"
-                            class="group flex flex-col gap-2 rounded-xl border border-border bg-card p-4 text-card-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-                            :class="! notification.read ? 'bg-accent/60' : ''"
+                            class="group flex flex-col gap-2 rounded-xl border border-border/70 bg-muted/40 p-4 text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                            :class="! notification.read ? 'bg-muted/80' : ''"
                             :aria-label="notification.title || 'Notification'">
                             <span class="min-w-0 flex-1 space-y-1">
                                 <span class="flex items-start justify-between gap-3">
@@ -131,7 +132,7 @@
                 </div>
             </div>
 
-            <footer class="mt-auto flex shrink-0 flex-col gap-2 border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-800 dark:bg-neutral-800">
+            <footer class="mt-auto flex shrink-0 flex-col gap-2 border-t border-border/70 bg-muted/50 p-4">
                 <button type="button"
                     class="inline-flex h-10 w-full shrink-0 items-center justify-center rounded-full bg-foreground px-4 text-sm font-medium text-background outline-none transition-colors hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
                     @click="$store.headerNotifications.markAllAsRead()"
