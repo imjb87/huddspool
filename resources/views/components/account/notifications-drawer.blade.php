@@ -6,7 +6,8 @@
             readAllUrl: @js(route('account.notifications.read-all')),
             readUrlTemplate: @js(route('account.notifications.read', ['notification' => '__NOTIFICATION__'])),
         })"
-        @keydown.escape.window="close()">
+        @keydown.escape.window="close()"
+        @header-overlay-open.window="if ($event.detail.id !== 'notifications' && open) close()">
         <button type="button"
             class="relative inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-gray-900 outline-none transition-colors hover:bg-transparent hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 dark:text-gray-100 dark:hover:bg-transparent dark:hover:text-gray-100 dark:focus-visible:ring-gray-100/20"
             @click="toggle()"
@@ -57,14 +58,14 @@
             aria-describedby="notifications-drawer-description"
             @click.stop
             data-notifications-drawer>
-            <header class="ui-card m-2 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:m-3 sm:p-6">
+            <header class="ui-card mx-4 mt-4 mb-0 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:p-6">
                 <div class="min-w-0 space-y-1">
                     <h2 id="notifications-drawer-title" class="text-lg leading-none font-semibold tracking-tight">Notifications</h2>
                     <p id="notifications-drawer-description" class="text-sm text-muted-foreground">Updates about your account and league activity.</p>
                 </div>
             </header>
 
-            <div class="min-h-0 flex-1 overflow-y-auto p-4" data-notifications-links>
+            <div class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-4" data-notifications-links>
                 <div x-show="$store.headerNotifications.loading && ! $store.headerNotifications.initialized"
                     x-cloak
                     class="space-y-3"
