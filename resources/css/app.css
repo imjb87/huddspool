@@ -69,10 +69,23 @@
     --motion-duration-normal: 180ms;
     --motion-duration-panel: 240ms;
     --motion-duration-content: 360ms;
-    --motion-duration-mobile-menu: 620ms;
+    --motion-duration-mobile-menu: 900ms;
     --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --motion-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-    --motion-ease-mobile-menu: cubic-bezier(0.2, 1.12, 0.3, 1);
+    /* Sampled spring curve: overshoot, recoil, then progressively smaller rebounds. */
+    --motion-ease-mobile-menu: linear(
+      0,
+      .0099 2%, .0392 4%, .0868 6%, .1508 8%, .2289 10%,
+      .3179 12%, .4145 14%, .515 16%, .6155 18%, .7121 20%,
+      .8011 22%, .8792 24%, .9432 26%, .9908 28%, 1.0201 30%,
+      1.03 32%, 1.0293 34%, 1.0273 36%, 1.0241 38%, 1.02 40%,
+      1.0152 42%, 1.01 44%, 1.0048 46%, 1 48%, .9959 50%,
+      .9927 52%, .9907 54%, .99 56%, .9902 58%, .9909 60%,
+      .9921 62%, .9935 64%, .9952 66%, .997 68%, .9988 70%,
+      1.0005 72%, 1.0019 74%, 1.0031 76%, 1.0038 78%, 1.004 80%,
+      1.0039 82%, 1.0036 84%, 1.0032 86%, 1.0026 88%, 1.002 90%,
+      1.0014 92%, 1.0008 94%, 1.0004 96%, 1.0001 98%, 1
+    );
   }
 
   .dark {
@@ -228,53 +241,21 @@
   }
 
   @keyframes ui-mobile-menu-enter {
-    0% {
+    from {
       transform: translate3d(100%, 0, 0);
     }
 
-    52% {
-      transform: translate3d(-3%, 0, 0);
-    }
-
-    69% {
-      transform: translate3d(1%, 0, 0);
-    }
-
-    81% {
-      transform: translate3d(-0.4%, 0, 0);
-    }
-
-    91% {
-      transform: translate3d(0.15%, 0, 0);
-    }
-
-    100% {
+    to {
       transform: translate3d(0, 0, 0);
     }
   }
 
   @keyframes ui-mobile-menu-leave {
-    0% {
+    from {
       transform: translate3d(0, 0, 0);
     }
 
-    52% {
-      transform: translate3d(103%, 0, 0);
-    }
-
-    69% {
-      transform: translate3d(99%, 0, 0);
-    }
-
-    81% {
-      transform: translate3d(100.4%, 0, 0);
-    }
-
-    91% {
-      transform: translate3d(99.85%, 0, 0);
-    }
-
-    100% {
+    to {
       transform: translate3d(100%, 0, 0);
     }
   }
@@ -328,53 +309,21 @@
   }
 
   @keyframes ui-mobile-menu-panel-enter {
-    0% {
+    from {
       transform: translate3d(var(--mobile-menu-enter-offset, 100%), 0, 0);
     }
 
-    52% {
-      transform: translate3d(var(--mobile-menu-enter-overshoot, -3%), 0, 0);
-    }
-
-    69% {
-      transform: translate3d(var(--mobile-menu-enter-settle, 1%), 0, 0);
-    }
-
-    81% {
-      transform: translate3d(var(--mobile-menu-enter-overshoot-small, -0.4%), 0, 0);
-    }
-
-    91% {
-      transform: translate3d(var(--mobile-menu-enter-settle-small, 0.15%), 0, 0);
-    }
-
-    100% {
+    to {
       transform: translate3d(0, 0, 0);
     }
   }
 
   @keyframes ui-mobile-menu-panel-leave {
-    0% {
+    from {
       transform: translate3d(0, 0, 0);
     }
 
-    52% {
-      transform: translate3d(var(--mobile-menu-leave-overshoot, -103%), 0, 0);
-    }
-
-    69% {
-      transform: translate3d(var(--mobile-menu-leave-settle, -99%), 0, 0);
-    }
-
-    81% {
-      transform: translate3d(var(--mobile-menu-leave-overshoot-small, -100.4%), 0, 0);
-    }
-
-    91% {
-      transform: translate3d(var(--mobile-menu-leave-settle-small, -99.85%), 0, 0);
-    }
-
-    100% {
+    to {
       transform: translate3d(var(--mobile-menu-leave-offset, -100%), 0, 0);
     }
   }
@@ -382,7 +331,7 @@
   .ui-motion-panel-in {
     transition-property: opacity;
     transition-duration: var(--motion-duration-mobile-menu);
-    transition-timing-function: var(--motion-ease-mobile-menu);
+    transition-timing-function: var(--motion-ease-out);
     animation: ui-mobile-menu-panel-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform, opacity;
     backface-visibility: hidden;
@@ -391,7 +340,7 @@
   .ui-motion-panel-out {
     transition-property: opacity;
     transition-duration: var(--motion-duration-mobile-menu);
-    transition-timing-function: var(--motion-ease-mobile-menu);
+    transition-timing-function: var(--motion-ease-in);
     animation: ui-mobile-menu-panel-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform, opacity;
     backface-visibility: hidden;
@@ -419,34 +368,18 @@
 
   .mobile-menu-panel--active.mobile-menu-panel--forward {
     --mobile-menu-enter-offset: 100%;
-    --mobile-menu-enter-overshoot: -3%;
-    --mobile-menu-enter-settle: 1%;
-    --mobile-menu-enter-overshoot-small: -0.4%;
-    --mobile-menu-enter-settle-small: 0.15%;
   }
 
   .mobile-menu-panel--active.mobile-menu-panel--back {
     --mobile-menu-enter-offset: -100%;
-    --mobile-menu-enter-overshoot: 3%;
-    --mobile-menu-enter-settle: -1%;
-    --mobile-menu-enter-overshoot-small: 0.4%;
-    --mobile-menu-enter-settle-small: -0.15%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--forward {
     --mobile-menu-leave-offset: -100%;
-    --mobile-menu-leave-overshoot: -103%;
-    --mobile-menu-leave-settle: -99%;
-    --mobile-menu-leave-overshoot-small: -100.4%;
-    --mobile-menu-leave-settle-small: -99.85%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--back {
     --mobile-menu-leave-offset: 100%;
-    --mobile-menu-leave-overshoot: 103%;
-    --mobile-menu-leave-settle: 99%;
-    --mobile-menu-leave-overshoot-small: 100.4%;
-    --mobile-menu-leave-settle-small: 99.85%;
   }
 
   @keyframes ui-home-hero-enter {
