@@ -97,19 +97,16 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString("import './sponsor-carousel';", $livewireApp);
     }
 
-    public function test_sponsor_carousel_swipes_move_the_visible_group_and_wrap_correctly(): void
+    public function test_sponsor_carousel_swipes_move_two_items_and_wrap_correctly(): void
     {
         $script = file_get_contents(resource_path('js/sponsor-carousel.js'));
 
         $this->assertIsString($script);
         $this->assertStringContainsString('next(steps = 1)', $script);
         $this->assertStringContainsString('previous(steps = 1)', $script);
-        $this->assertStringContainsString('const steps = this.visibleCount;', $script);
+        $this->assertStringContainsString('const steps = 2;', $script);
         $this->assertStringContainsString('this.next(steps);', $script);
         $this->assertStringContainsString('this.previous(steps);', $script);
-        $this->assertStringContainsString('if (window.innerWidth >= 1024) {', $script);
-        $this->assertStringContainsString('return 3;', $script);
-        $this->assertStringContainsString('return 2;', $script);
         $this->assertStringContainsString('this.currentIndex += direction * steps;', $script);
         $this->assertStringContainsString('this.jumpTo(this.currentIndex - this.totalSlides);', $script);
         $this->assertStringContainsString('this.jumpTo(this.currentIndex + this.totalSlides);', $script);
