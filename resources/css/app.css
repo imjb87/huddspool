@@ -234,8 +234,12 @@
       transform: translate3d(-1.5%, 0, 0);
     }
 
-    88% {
+    82% {
       transform: translate3d(0.5%, 0, 0);
+    }
+
+    91% {
+      transform: translate3d(-0.25%, 0, 0);
     }
 
     100% {
@@ -301,16 +305,66 @@
     backface-visibility: hidden;
   }
 
+  @keyframes ui-mobile-menu-panel-enter {
+    0% {
+      transform: translate3d(var(--mobile-menu-enter-offset, 100%), 0, 0);
+    }
+
+    72% {
+      transform: translate3d(var(--mobile-menu-enter-overshoot, -1.5%), 0, 0);
+    }
+
+    82% {
+      transform: translate3d(var(--mobile-menu-enter-settle, 0.5%), 0, 0);
+    }
+
+    91% {
+      transform: translate3d(var(--mobile-menu-enter-overshoot-small, -0.25%), 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes ui-mobile-menu-panel-leave {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    72% {
+      transform: translate3d(var(--mobile-menu-leave-overshoot, -101.5%), 0, 0);
+    }
+
+    82% {
+      transform: translate3d(var(--mobile-menu-leave-settle, -99.5%), 0, 0);
+    }
+
+    91% {
+      transform: translate3d(var(--mobile-menu-leave-overshoot-small, -100.25%), 0, 0);
+    }
+
+    100% {
+      transform: translate3d(var(--mobile-menu-leave-offset, -100%), 0, 0);
+    }
+  }
+
   .ui-motion-panel-in {
-    transition-property: transform, opacity;
-    transition-duration: var(--motion-duration-panel);
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-content);
     transition-timing-function: var(--motion-ease-out);
+    animation: ui-mobile-menu-panel-enter var(--motion-duration-content) cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
   }
 
   .ui-motion-panel-out {
-    transition-property: transform, opacity;
-    transition-duration: var(--motion-duration-normal);
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-content);
     transition-timing-function: var(--motion-ease-in);
+    animation: ui-mobile-menu-panel-leave var(--motion-duration-content) cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
   }
 
   .ui-motion-panel-enter-start {
@@ -335,18 +389,30 @@
 
   .mobile-menu-panel--active.mobile-menu-panel--forward {
     --mobile-menu-enter-offset: 100%;
+    --mobile-menu-enter-overshoot: -1.5%;
+    --mobile-menu-enter-settle: 0.5%;
+    --mobile-menu-enter-overshoot-small: -0.25%;
   }
 
   .mobile-menu-panel--active.mobile-menu-panel--back {
     --mobile-menu-enter-offset: -100%;
+    --mobile-menu-enter-overshoot: 1.5%;
+    --mobile-menu-enter-settle: -0.5%;
+    --mobile-menu-enter-overshoot-small: 0.25%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--forward {
     --mobile-menu-leave-offset: -100%;
+    --mobile-menu-leave-overshoot: -101.5%;
+    --mobile-menu-leave-settle: -99.5%;
+    --mobile-menu-leave-overshoot-small: -100.25%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--back {
     --mobile-menu-leave-offset: 100%;
+    --mobile-menu-leave-overshoot: 101.5%;
+    --mobile-menu-leave-settle: 99.5%;
+    --mobile-menu-leave-overshoot-small: 100.25%;
   }
 
   @keyframes ui-home-hero-enter {
