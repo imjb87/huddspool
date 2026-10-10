@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <section class="bg-card text-card-foreground ring-1 ring-foreground/10"
+    <section class="bg-muted dark:bg-card text-card-foreground ring-1 ring-foreground/10"
         data-section-tabs
         data-active-section-tab="{{ $activeTab }}">
         <div class="ui-tab-strip-shell"
