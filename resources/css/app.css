@@ -517,13 +517,15 @@
 
   .ui-page-shell,
   .navigation-mobile-menu,
-  [data-notifications-drawer] {
+  [data-notifications-drawer],
+  [data-search-modal-shell] {
     background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);
   }
 
   .dark .ui-page-shell,
   .dark .navigation-mobile-menu,
-  .dark [data-notifications-drawer] {
+  .dark [data-notifications-drawer],
+  .dark [data-search-modal-shell] {
     background-image: none;
   }
 
