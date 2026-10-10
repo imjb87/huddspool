@@ -154,6 +154,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-mobile-official-links', false);
         $response->assertSee('data-mobile-menu-panel="official"', false);
         $response->assertSee('data-mobile-back-label', false);
+        $response->assertSee('class="ui-card navigation-mobile-menu__back-card"', false);
         $response->assertSee("activeDrawer: 'root'", false);
         $response->assertSee("navigationDirection: 'forward'", false);
         $response->assertSee('mobileMenuPanelClasses(panel)', false);
@@ -423,6 +424,8 @@ class NavigationAndSearchUiTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('href="'.route('account.show').'"', false);
+        $response->assertSee('class="ui-card navigation-mobile-menu__account-card"', false);
+        $response->assertDontSee('ui-card-row items-center justify-start gap-3', false);
         $response->assertSeeText($user->name);
         $response->assertSee('alt="'.$user->name.' avatar"', false);
         $response->assertSee('src="'.$user->avatar_url.'"', false);
