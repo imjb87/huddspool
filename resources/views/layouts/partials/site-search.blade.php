@@ -298,7 +298,14 @@
                 },
                 async openSearch() {
                     window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }));
+                    this.open = true;
+                    this.syncSearchTrigger();
                     await this.ensureEnhanced();
+
+                    if (!this.open) {
+                        return;
+                    }
+
                     this.openLoadedSearch();
                 },
                 close() {
