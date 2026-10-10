@@ -1254,11 +1254,11 @@
   }
 
   .navigation-mobile-menu .ui-card {
-    @apply p-2 pr-2.5;
+    @apply p-0;
   }
 
   .navigation-mobile-menu .ui-card-rows {
-    @apply flex flex-col gap-1 divide-y-0;
+    @apply flex flex-col gap-2 divide-y-0 px-3 py-4 sm:px-5;
   }
 
   .navigation-mobile-menu .ui-card-row-link {
@@ -1266,7 +1266,7 @@
   }
 
   .navigation-mobile-menu .ui-card-row {
-    @apply min-h-0 px-2 py-2 text-base leading-6 font-medium;
+    @apply min-h-0 px-3 py-2.5 text-base leading-6 font-medium sm:px-4;
   }
 
   .navigation-mobile-menu .ui-card-row-link,
