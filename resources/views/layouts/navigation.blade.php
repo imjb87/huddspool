@@ -44,7 +44,7 @@
             window.siteTheme?.toggleTheme?.();
         },
         syncMobileMenuIcon() {
-            window.mobileMenuIcon?.set(this.$refs.mobileMenuIcon, this.open && this.activeDrawer === 'root');
+            window.mobileMenuIcon?.set(this.$refs.mobileMenuIcon, this.open);
         },
         async installApp() {
             if (!this.deferredInstallPrompt) {
@@ -135,7 +135,7 @@
                     data-header-notifications-account-separator></div>
             @endauth
             <button type="button" class="inline-flex size-8 items-center justify-center rounded-md text-gray-900 outline-none transition-colors hover:bg-transparent hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/20 lg:hidden dark:text-gray-100 dark:hover:bg-transparent dark:hover:text-gray-100 dark:focus-visible:ring-gray-100/20"
-                @click="open && activeDrawer === 'root' ? closeMenu() : openMenu('root')" :aria-expanded="open && activeDrawer === 'root'" aria-label="Toggle main menu"
+                @click="open ? closeMenu() : openMenu('root')" :aria-expanded="open" aria-label="Toggle main menu"
                 data-mobile-menu-toggle>
                 <span class="sr-only">Toggle main menu</span>
                 <span class="relative flex size-5 items-center justify-center" aria-hidden="true">
