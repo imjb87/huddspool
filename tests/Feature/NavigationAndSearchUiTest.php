@@ -77,6 +77,9 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('data-mobile-theme-toggle', false);
         $response->assertDontSee('Open settings menu', false);
         $response->assertSee('fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center', false);
+        $response->assertSee('class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"', false);
+        $response->assertSee(":class=\"open ? 'pointer-events-auto' : 'pointer-events-none'\"", false);
+        $response->assertDontSee('class="pointer-events-none fixed inset-0 z-10', false);
         $response->assertSee('site-theme', false);
         $response->assertSee('prefers-color-scheme: dark', false);
         $response->assertDontSee('<kbd class="ml-auto hidden', false);
