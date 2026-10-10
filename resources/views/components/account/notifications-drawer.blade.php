@@ -49,31 +49,19 @@
             x-cloak
             x-transition:enter="ui-motion-mobile-menu-in"
             x-transition:leave="ui-motion-mobile-menu-out"
-            class="fixed right-2 bottom-2 left-2 z-[70] flex w-auto max-w-none flex-col overflow-hidden rounded-xl border border-border/70 bg-background text-foreground shadow-xl sm:right-4 sm:left-auto sm:w-[calc(100%-2rem)] sm:max-w-sm"
-            style="top: calc(var(--site-header-height, 4rem) + 0.5rem);"
+            class="fixed inset-x-0 bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground"
+            style="top: var(--site-header-height, 4rem);"
             role="dialog"
             aria-modal="true"
             aria-labelledby="notifications-drawer-title"
             aria-describedby="notifications-drawer-description"
             @click.stop
             data-notifications-drawer>
-            <header class="flex shrink-0 items-start justify-between gap-4 border-b border-border/70 bg-muted/50 p-4 sm:p-6">
+            <header class="ui-card m-2 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:m-3 sm:p-6">
                 <div class="min-w-0 space-y-1">
                     <h2 id="notifications-drawer-title" class="text-lg leading-none font-semibold tracking-tight">Notifications</h2>
                     <p id="notifications-drawer-description" class="text-sm text-muted-foreground">Updates about your account and league activity.</p>
                 </div>
-                <button type="button"
-                    class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border/70 bg-muted text-muted-foreground shadow-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-                    @click="close()"
-                    aria-label="Close notifications"
-                    data-notifications-close>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M18 6l-12 12" />
-                        <path d="M6 6l12 12" />
-                    </svg>
-                    <span class="sr-only">Close</span>
-                </button>
             </header>
 
             <div class="min-h-0 flex-1 overflow-y-auto p-4" data-notifications-links>

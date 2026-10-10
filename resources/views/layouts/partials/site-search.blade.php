@@ -30,7 +30,7 @@
     ></div>
 
     <div
-        class="absolute inset-0 z-10 flex items-start justify-center overflow-y-auto p-2"
+        class="absolute inset-0 z-10 flex overflow-hidden"
         @click="close()"
     >
         <div
@@ -38,11 +38,11 @@
             @click.stop
             x-transition:enter="ui-motion-mobile-menu-in"
             x-transition:leave="ui-motion-mobile-menu-out"
-            class="relative mx-auto w-full max-w-none overflow-hidden rounded-xl border border-border/70 bg-background p-2 pb-11 text-foreground shadow-xl sm:max-w-lg"
+            class="relative flex h-full w-full flex-col overflow-hidden bg-background text-foreground"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>
-            <div class="relative flex h-9 items-center rounded-md border border-border/70 bg-muted/50 px-3">
+            <div class="relative mx-2 mt-2 flex h-9 shrink-0 items-center rounded-md border border-border/70 bg-muted/50 px-3">
                 <svg
                     class="pointer-events-none mr-2 size-4 shrink-0 text-muted-foreground"
                     viewBox="0 0 24 24"
@@ -74,7 +74,7 @@
                 >
             </div>
 
-            <div class="min-h-80 w-full" x-show="isLoading" data-search-loading-state>
+            <div class="min-h-0 w-full flex-1 overflow-y-auto p-2" x-show="isLoading" data-search-loading-state>
                 <div class="w-full space-y-1" data-search-loading-skeleton aria-hidden="true">
                     @foreach (['players', 'teams'] as $groupName)
                         <div class="w-full">
@@ -99,7 +99,7 @@
                 </div>
             </div>
 
-            <div x-show="!isLoading && searchTerm.trim().length < 3" data-search-empty-prompt>
+            <div class="min-h-0 flex-1 overflow-y-auto" x-show="!isLoading && searchTerm.trim().length < 3" data-search-empty-prompt>
                 <x-ui-empty-state
                     layout="search"
                     title="Search for players, teams and venues"
@@ -107,7 +107,7 @@
                 />
             </div>
 
-            <div x-show="!isLoading && searchTerm.trim().length >= 3 && resultGroups.length === 0" data-search-no-results>
+            <div class="min-h-0 flex-1 overflow-y-auto" x-show="!isLoading && searchTerm.trim().length >= 3 && resultGroups.length === 0" data-search-no-results>
                 <x-ui-empty-state
                     layout="search"
                     title="No results found"
@@ -117,7 +117,7 @@
 
             <ul
                 x-show="!isLoading && resultGroups.length > 0"
-                class="min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5"
+                class="min-h-0 flex-1 overflow-y-auto scroll-py-1.5 px-2 pb-2"
                 id="search-results"
                 role="listbox"
                 data-search-results-shell
@@ -154,7 +154,7 @@
                 </template>
             </ul>
 
-            <div class="absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-3 rounded-b-xl border-t border-border/70 bg-muted/50 px-4 text-xs font-medium text-muted-foreground">
+            <div class="mt-auto flex h-10 shrink-0 items-center gap-3 border-t border-border/70 bg-muted/50 px-4 text-xs font-medium text-muted-foreground">
                 <div class="flex items-center gap-1.5">
                     <kbd class="pointer-events-none flex h-5 items-center justify-center gap-1 rounded border border-border/70 bg-background px-1 font-sans text-[0.7rem] font-medium text-gray-500 shadow-sm select-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">↑↓</kbd>
                     <span>Navigate</span>
@@ -292,16 +292,6 @@
 
             window.dispatchEvent(new CustomEvent(name));
         };
-
-        document.addEventListener('click', (event) => {
-            const trigger = event.target.closest('[data-site-search-trigger]');
-
-            if (!trigger) {
-                return;
-            }
-
-            dispatchSiteSearchEvent('site-search:toggle', event);
-        });
 
         document.addEventListener('keydown', (event) => {
             if (!(event.metaKey || event.ctrlKey)) {
