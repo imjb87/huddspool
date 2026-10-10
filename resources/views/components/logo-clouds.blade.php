@@ -109,9 +109,13 @@
                             x-on:visibilitychange.window="handleVisibilityChange()"
                             x-on:keydown.arrow-left.prevent="previous()"
                             x-on:keydown.arrow-right.prevent="next()"
+                            x-on:click.capture="handleSwipeClick($event)"
                             tabindex="0"
                             data-section-sponsors-carousel>
                             <div class="ui-sponsor-carousel-viewport"
+                                x-on:touchstart.passive="handleTouchStart($event)"
+                                x-on:touchend.passive="handleTouchEnd($event)"
+                                x-on:touchcancel.passive="handleTouchCancel()"
                                 role="region"
                                 aria-roledescription="carousel"
                                 aria-label="League sponsors">

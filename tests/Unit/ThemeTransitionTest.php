@@ -73,6 +73,30 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
 
+    public function test_light_mode_gradient_covers_mobile_and_notification_drawers(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertIsString($css);
+        $this->assertStringContainsString('.navigation-mobile-menu,', $css);
+        $this->assertStringContainsString('[data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);', $css);
+        $this->assertStringContainsString('.dark [data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('background-image: none;', $css);
+        $this->assertStringContainsString('touch-action: pan-y;', $css);
+    }
+
+    public function test_sponsor_carousel_is_loaded_by_both_frontend_entry_points(): void
+    {
+        $app = file_get_contents(resource_path('js/app.js'));
+        $livewireApp = file_get_contents(resource_path('js/livewire-app.js'));
+
+        $this->assertIsString($app);
+        $this->assertIsString($livewireApp);
+        $this->assertStringContainsString("import './sponsor-carousel';", $app);
+        $this->assertStringContainsString("import './sponsor-carousel';", $livewireApp);
+    }
+
     public function test_mobile_navigation_rows_match_card_surfaces_and_use_sixteen_pixel_text(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));

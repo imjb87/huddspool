@@ -92,6 +92,9 @@ class HomePageTest extends TestCase
         $response->assertSee('data-section-sponsors', false);
         $response->assertSee('data-section-sponsors-carousel', false);
         $response->assertSee('x-data="window.sponsorCarousel(6, 3)"', false);
+        $response->assertSee('x-on:touchstart.passive="handleTouchStart($event)"', false);
+        $response->assertSee('x-on:touchend.passive="handleTouchEnd($event)"', false);
+        $response->assertSee('x-on:click.capture="handleSwipeClick($event)"', false);
         $response->assertSee('aria-roledescription="carousel"', false);
         $response->assertSee('basis-1/2 pl-3 lg:basis-1/3', false);
         $response->assertSee('ui-sponsor-carousel-button', false);

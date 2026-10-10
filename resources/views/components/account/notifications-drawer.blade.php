@@ -133,11 +133,9 @@
 
             <footer class="mt-auto flex shrink-0 flex-col gap-2 border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-800 dark:bg-neutral-800">
                 <button type="button"
-                    x-show="$store.headerNotifications.unreadCount > 0"
-                    x-cloak
                     class="inline-flex h-10 w-full shrink-0 items-center justify-center rounded-full bg-foreground px-4 text-sm font-medium text-background outline-none transition-colors hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
                     @click="$store.headerNotifications.markAllAsRead()"
-                    :disabled="$store.headerNotifications.markingAll"
+                    :disabled="$store.headerNotifications.markingAll || $store.headerNotifications.unreadCount === 0"
                     data-notifications-mark-all>
                     <span x-show="! $store.headerNotifications.markingAll">Mark all as read</span>
                     <span x-show="$store.headerNotifications.markingAll" x-cloak>Updating...</span>

@@ -3,6 +3,7 @@ import { Alpine, Livewire } from '../../vendor/livewire/livewire/dist/livewire.e
 import { bootDeferredGoogleAnalytics } from './google-analytics';
 import { mobileMenuIcon } from './mobile-menu-icon';
 import { notificationsDrawer, registerHeaderNotificationsStore } from './notifications';
+import './sponsor-carousel';
 
 window.Alpine = Alpine;
 window.mobileMenuIcon = mobileMenuIcon;

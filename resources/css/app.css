@@ -513,10 +513,17 @@
 
   .ui-page-shell {
     @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
+  }
+
+  .ui-page-shell,
+  .navigation-mobile-menu,
+  [data-notifications-drawer] {
     background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);
   }
 
-  .dark .ui-page-shell {
+  .dark .ui-page-shell,
+  .dark .navigation-mobile-menu,
+  .dark [data-notifications-drawer] {
     background-image: none;
   }
 
@@ -668,6 +675,7 @@
   .ui-sponsor-carousel-viewport {
     @apply overflow-visible;
     clip-path: inset(-0.5rem);
+    touch-action: pan-y;
   }
 
   @media (prefers-reduced-motion: reduce) {

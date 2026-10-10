@@ -520,6 +520,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee(route('ruleset.show', $ruleset), false);
         $tablesResponse->assertSeeText('Division A');
         $tablesResponse->assertSee('data-section-tabs', false);
+        $tablesResponse->assertSee('class="bg-muted dark:bg-card text-card-foreground ring-1 ring-foreground/10"', false);
         $tablesResponse->assertSee('data-section-tabs-scroll', false);
         $tablesResponse->assertSee('data-active-section-tab="tables"', false);
         $tablesResponse->assertSee('data-section-tab="fixtures-results"', false);
@@ -571,6 +572,9 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('href="'.route('ruleset.section.show', ['ruleset' => $ruleset, 'section' => Section::query()->where('name', 'Division B')->firstOrFail()]).'"', false);
         $tablesResponse->assertSee('data-section-sponsors', false);
         $tablesResponse->assertSee('data-section-sponsors-carousel', false);
+        $tablesResponse->assertSee('x-on:touchstart.passive="handleTouchStart($event)"', false);
+        $tablesResponse->assertSee('x-on:touchend.passive="handleTouchEnd($event)"', false);
+        $tablesResponse->assertSee('x-on:click.capture="handleSwipeClick($event)"', false);
         $tablesResponse->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $tablesResponse->assertSee('ui-shell-grid', false);
         $tablesResponse->assertSee('ui-card', false);
