@@ -14,6 +14,7 @@
             }
 
             this.headerHeight = Math.ceil(this.$refs.header.getBoundingClientRect().bottom);
+            document.documentElement.style.setProperty('--site-header-height', `${this.headerHeight}px`);
         },
         scheduleHeaderHeightUpdate() {
             if (this.headerHeightFrameId) {
@@ -102,13 +103,15 @@
         <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-none">
             <button type="button"
                 class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-transparent text-sm font-medium whitespace-nowrap text-black shadow-none outline-none transition-colors hover:bg-gray-100 hover:text-black focus-visible:ring-2 focus-visible:ring-gray-900/20 sm:h-8 sm:w-28 sm:min-w-0 sm:flex-none sm:justify-start sm:gap-2 sm:rounded-[10px] sm:bg-gray-100 sm:px-4 sm:py-2 sm:pl-3 sm:hover:bg-gray-200/70 md:w-48 lg:w-64 dark:bg-transparent dark:text-gray-50 dark:hover:bg-neutral-800/50 dark:hover:text-gray-50 dark:focus-visible:ring-gray-100/20 sm:dark:bg-neutral-900"
-                data-site-search-trigger aria-label="Open search">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 sm:hidden" aria-hidden="true">
+                data-site-search-trigger aria-label="Open search" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-header-action-icon="search" data-header-action-icon-state="closed">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                    <path d="M21 21l-6 -6" />
+                    <g data-header-action-icon-group>
+                        <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" data-header-action-icon-primary />
+                        <path d="M21 21l-6 -6" data-header-action-icon-secondary />
+                    </g>
                 </svg>
-                <span class="hidden truncate sm:inline">Search...</span>
+                <span class="hidden truncate sm:inline" data-search-trigger-label>Search...</span>
             </button>
             <div class="ml-2 hidden h-4 w-px shrink-0 bg-gray-200 lg:block dark:bg-neutral-800" role="separator" aria-orientation="vertical"></div>
             <button type="button"
