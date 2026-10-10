@@ -131,7 +131,7 @@
                                     :class="{ 'border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60': activeResultId() === `site-search-result-${group.key}-${item.id}` }"
                                     data-search-result-link
                                     @mouseenter="setActiveResultById(`site-search-result-${group.key}-${item.id}`)"
-                                    @click="close()"
+                                    @click="navigateToResult($event)"
                                 >
                                     <div class="flex min-w-0 flex-1 items-center gap-2">
                                         <template x-if="group.key === 'players'">
@@ -195,6 +195,7 @@
                 setActiveResultById() {},
                 moveActiveResult() {},
                 openActiveResult() {},
+                navigateToResult() {},
                 scrollActiveResultIntoView() {},
                 initializeSiteSearch() {},
                 openLoadedSearch() {
