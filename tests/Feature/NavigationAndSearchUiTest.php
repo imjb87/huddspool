@@ -159,7 +159,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('mobileMenuPanelClasses(panel)', false);
         $response->assertSee('ui-motion-panel-in', false);
         $response->assertSee('syncMobileMenuIcon()', false);
-        $response->assertSee("open && activeDrawer === 'root' ? closeMenu() : openMenu('root')", false);
+        $response->assertSee('window.mobileMenuIcon?.set(this.$refs.mobileMenuIcon, this.open);', false);
+        $response->assertSee("@click=\"open ? closeMenu() : openMenu('root')\" :aria-expanded=\"open\"", false);
         $response->assertSee("\$watch('open', value => document.body.classList.toggle('overflow-hidden', value))", false);
         $response->assertDontSee('data-header-notifications-trigger', false);
         $response->assertDontSee('data-notifications-drawer', false);
