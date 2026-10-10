@@ -92,6 +92,7 @@ export function enhanceSiteSearch(component) {
             this.resultGroups = [];
             this.activeResultIndex = -1;
             this.isLoading = false;
+            this.syncSearchTrigger();
             this.focusInput();
         },
         closeLoadedSearch() {
@@ -111,6 +112,7 @@ export function enhanceSiteSearch(component) {
             this.resultGroups = [];
             this.activeResultIndex = -1;
             this.isLoading = false;
+            this.syncSearchTrigger();
         },
         focusInput() {
             if (this.focusTimer) {

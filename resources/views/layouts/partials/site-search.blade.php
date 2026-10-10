@@ -1,6 +1,6 @@
 <div
-    class="fixed inset-x-0 bottom-0 z-40"
-    style="top: var(--site-header-height, 4rem);"
+    class="fixed inset-x-0 z-40"
+    style="top: var(--site-search-visible-top, var(--site-header-height, 4rem)); height: var(--site-search-panel-height, calc(100dvh - var(--site-header-height, 4rem)));"
     :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
     role="dialog"
     aria-modal="true"
@@ -11,8 +11,10 @@
         endpoint: @js(route('search.index')),
         moduleUrl: @js(Vite::asset('resources/js/site-search-modal.js')),
     })"
+    x-init="initializeSearchViewport()"
     x-on:site-search:open.window="openSearch()"
     x-on:site-search:toggle.window="toggleSearch()"
+    x-on:header-overlay-open.window="if ($event.detail.id !== 'search' && open) close()"
     x-on:keydown.escape.window="if (open) { close() }"
     x-cloak
 >
@@ -127,7 +129,7 @@
                         <div class="px-3 pt-3 pb-1">
                             <h2 class="text-xs font-medium text-muted-foreground" x-text="group.heading"></h2>
                         </div>
-                        <div class="space-y-0.5 pb-1.5" data-search-result-group>
+                        <div class="mx-3 space-y-2 pb-2" data-search-result-group>
                             <template x-for="item in group.results" :key="`${group.key}-${item.id}`">
                                 <a
                                     class="flex h-9 w-full items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40 px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus:bg-muted"
@@ -184,6 +186,7 @@
                 isLoading: false,
                 focusTimer: null,
                 searchTimer: null,
+                viewportFrameId: null,
                 abortController: null,
                 activeResultIndex: -1,
                 isEnhanced: false,
@@ -202,7 +205,38 @@
                 openActiveResult() {},
                 navigateToResult() {},
                 scrollActiveResultIntoView() {},
+                focusInput() {},
                 initializeSiteSearch() {},
+                syncSearchViewport() {
+                    const viewport = window.visualViewport;
+                    const header = document.querySelector('.site-header');
+                    const headerHeight = header?.getBoundingClientRect().height
+                        || Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'))
+                        || 64;
+                    const headerBottom = header?.getBoundingClientRect().bottom ?? headerHeight;
+                    const visualTop = viewport?.offsetTop ?? 0;
+                    const visibleBottom = visualTop + (viewport?.height ?? window.innerHeight);
+                    const visibleTop = Math.max(visualTop, headerBottom);
+
+                    document.documentElement.style.setProperty('--site-search-visible-top', `${visibleTop}px`);
+                    document.documentElement.style.setProperty('--site-search-panel-height', `${Math.max(0, visibleBottom - visibleTop)}px`);
+                },
+                scheduleSearchViewportUpdate() {
+                    if (this.viewportFrameId !== null) {
+                        window.cancelAnimationFrame(this.viewportFrameId);
+                    }
+
+                    this.viewportFrameId = window.requestAnimationFrame(() => {
+                        this.viewportFrameId = null;
+                        this.syncSearchViewport();
+                    });
+                },
+                initializeSearchViewport() {
+                    this.syncSearchViewport();
+                    window.visualViewport?.addEventListener('resize', () => this.scheduleSearchViewportUpdate());
+                    window.visualViewport?.addEventListener('scroll', () => this.scheduleSearchViewportUpdate());
+                    window.addEventListener('resize', () => this.scheduleSearchViewportUpdate());
+                },
                 syncSearchTrigger() {
                     const trigger = document.querySelector('[data-site-search-trigger]');
 
@@ -267,8 +301,19 @@
                     this.initializeSiteSearch();
                 },
                 async openSearch() {
-                    await this.ensureEnhanced();
+                    window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }));
                     this.openLoadedSearch();
+                    await this.ensureEnhanced();
+
+                    if (!this.open) {
+                        return;
+                    }
+
+                    if (this.searchTerm.trim().length >= 3) {
+                        this.scheduleSearch(this.searchTerm);
+                    }
+
+                    this.focusInput();
                 },
                 close() {
                     if (!this.isEnhanced) {

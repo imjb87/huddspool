@@ -62,6 +62,7 @@
             this.navigationDirection = 'forward';
             this.activeDrawer = drawer;
             this.syncMobileMenuIcon();
+            window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'mobile-menu' } }));
             this.$nextTick(() => this.scheduleHeaderHeightUpdate());
         },
         closeMenu() {
@@ -88,6 +89,7 @@
         },
     }"
     x-init="syncInstallAvailability(); bindHeaderResizeObserver(); scheduleHeaderHeightUpdate(); syncMobileMenuIcon(); $watch('open', value => document.body.classList.toggle('overflow-hidden', value)); window.addEventListener('resize', () => scheduleHeaderHeightUpdate()); window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; syncInstallAvailability(); }); window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; syncInstallAvailability(); })"
+    @header-overlay-open.window="if ($event.detail.id !== 'mobile-menu' && open) closeMenu()"
     x-ref="header">
     <nav class="flex h-16 w-full items-center gap-2 px-4 sm:px-6" aria-label="Global">
         <div class="flex shrink-0">
@@ -103,7 +105,7 @@
         <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-none">
             <button type="button"
                 class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-transparent text-sm font-medium whitespace-nowrap text-black shadow-none outline-none transition-colors hover:bg-gray-100 hover:text-black focus-visible:ring-2 focus-visible:ring-gray-900/20 sm:h-8 sm:w-28 sm:min-w-0 sm:flex-none sm:justify-start sm:gap-2 sm:rounded-[10px] sm:bg-gray-100 sm:px-4 sm:py-2 sm:pl-3 sm:hover:bg-gray-200/70 md:w-48 lg:w-64 dark:bg-transparent dark:text-gray-50 dark:hover:bg-neutral-800/50 dark:hover:text-gray-50 dark:focus-visible:ring-gray-100/20 sm:dark:bg-neutral-900"
-                @click="window.dispatchEvent(new CustomEvent('site-search:toggle'))"
+                @click="window.headerActionIcon?.set($el.querySelector('[data-header-action-icon=search]'), $el.getAttribute('aria-expanded') !== 'true'); window.dispatchEvent(new CustomEvent('site-search:toggle'))"
                 data-site-search-trigger aria-label="Open search" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-header-action-icon="search" data-header-action-icon-state="closed">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />

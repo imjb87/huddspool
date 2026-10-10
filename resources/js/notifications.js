@@ -108,6 +108,7 @@ export const notificationsDrawer = () => ({
 
         this.open = true;
         this.syncTriggerIcon();
+        window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'notifications' } }));
         this.$store.headerNotifications.refresh();
     },
     close() {
