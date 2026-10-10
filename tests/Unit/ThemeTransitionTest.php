@@ -33,8 +33,9 @@ class ThemeTransitionTest extends TestCase
         $this->assertIsString($css);
         $this->assertStringContainsString('--motion-duration-fast: 120ms;', $css);
         $this->assertStringContainsString('--motion-duration-panel: 240ms;', $css);
-        $this->assertStringContainsString('--motion-duration-mobile-menu: 620ms;', $css);
-        $this->assertStringContainsString('--motion-ease-mobile-menu: cubic-bezier(0.2, 1.12, 0.3, 1);', $css);
+        $this->assertStringContainsString('--motion-duration-mobile-menu: 900ms;', $css);
+        $this->assertStringContainsString('--motion-ease-mobile-menu: linear(', $css);
+        $this->assertStringContainsString("      0,\n", $css);
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
         $this->assertStringContainsString('animation-duration: 0.01ms !important;', $css);
         $this->assertStringContainsString('.ui-motion-panel-enter-start', $css);
@@ -46,20 +47,15 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('@keyframes ui-mobile-menu-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-leave', $css);
-        $this->assertStringContainsString('--mobile-menu-enter-overshoot: -3%;', $css);
-        $this->assertStringContainsString('--mobile-menu-enter-overshoot: 3%;', $css);
-        $this->assertStringContainsString('--mobile-menu-enter-settle: 1%;', $css);
-        $this->assertStringContainsString('--mobile-menu-leave-overshoot: -103%;', $css);
-        $this->assertStringContainsString('--mobile-menu-leave-overshoot: 103%;', $css);
-        $this->assertStringContainsString('--mobile-menu-enter-overshoot-small: -0.4%;', $css);
-        $this->assertStringContainsString('--mobile-menu-enter-overshoot-small: 0.4%;', $css);
-        $this->assertStringContainsString('--mobile-menu-leave-overshoot-small: -100.4%;', $css);
-        $this->assertStringContainsString('--mobile-menu-leave-overshoot-small: 100.4%;', $css);
-        $this->assertStringContainsString('52% {', $css);
-        $this->assertStringContainsString('69% {', $css);
-        $this->assertStringContainsString('81% {', $css);
-        $this->assertStringContainsString('91% {', $css);
+        $this->assertStringContainsString('1.03 32%,', $css);
+        $this->assertStringContainsString('.99 56%,', $css);
+        $this->assertStringContainsString('1.004 80%,', $css);
+        $this->assertStringContainsString('animation: ui-mobile-menu-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
+        $this->assertStringContainsString('animation: ui-mobile-menu-panel-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
+        $this->assertStringContainsString('animation: ui-mobile-menu-panel-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
+        $this->assertStringNotContainsString('--mobile-menu-enter-overshoot', $css);
+        $this->assertStringNotContainsString('--mobile-menu-leave-overshoot', $css);
     }
 
     public function test_search_and_notification_surfaces_keep_their_transform_transitions(): void
