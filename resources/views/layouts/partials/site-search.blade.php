@@ -25,7 +25,7 @@
     ></div>
 
     <div
-        class="pointer-events-none fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
+        class="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto p-2 sm:items-center"
         :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
     >
         <div
