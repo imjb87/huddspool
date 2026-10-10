@@ -83,14 +83,15 @@ class ThemeTransitionTest extends TestCase
 
         $this->assertIsString($css);
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row', $css);
-        $this->assertStringContainsString('@apply min-h-0 px-2 py-2 text-base leading-6 font-medium;', $css);
+        $this->assertStringContainsString('@apply min-h-0 px-3 py-2.5 text-base leading-6 font-medium sm:px-4;', $css);
+        $this->assertStringContainsString('@apply flex flex-col gap-2 divide-y-0 px-3 py-4 sm:px-5;', $css);
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card-row-link,', $css);
         $this->assertStringContainsString('@apply rounded-lg transition-colors duration-100;', $css);
         $this->assertStringContainsString('background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);', $css);
         $this->assertStringContainsString('.dark .navigation-mobile-menu .ui-card-row-link,', $css);
         $this->assertStringContainsString('background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);', $css);
         $this->assertStringContainsString('.navigation-mobile-menu .ui-card {', $css);
-        $this->assertStringContainsString('@apply p-2 pr-2.5;', $css);
+        $this->assertStringContainsString('@apply p-0;', $css);
     }
 
     public function test_mobile_menu_icon_uses_morph_svg_plugin_with_damped_rebounds(): void
