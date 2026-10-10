@@ -95,7 +95,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm', false);
         $response->assertSee('data-search-loading-skeleton', false);
         $response->assertSee('aria-hidden="true"', false);
-        $response->assertSee('animate-pulse rounded-md bg-gray-200/80', false);
+        $response->assertSee('animate-pulse rounded-md bg-muted', false);
         $response->assertSee('min-h-80 max-h-[28rem] overflow-y-auto scroll-py-1.5', false);
         $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40', false);
         $response->assertSee('data-search-player-avatar', false);
