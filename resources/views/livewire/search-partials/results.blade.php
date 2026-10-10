@@ -17,7 +17,7 @@
                             href="{{ route($group['route'] . '.show', $item->id) }}"
                             data-search-result-link
                             wire:key="search-result-{{ $name }}-{{ $item->id }}"
-                            x-on:click="close()">
+                            x-on:click="navigateToResult($event)">
                             <div class="flex min-w-0 flex-1 items-center gap-2">
                                 @if ($name === 'players')
                                     <span class="relative flex size-6 shrink-0 overflow-hidden rounded-full bg-gray-100 select-none dark:bg-neutral-800" data-search-player-avatar aria-hidden="true">
