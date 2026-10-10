@@ -95,15 +95,17 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('headerActionIcon?.set(', file_get_contents(resource_path('js/notifications.js')));
     }
 
-    public function test_light_mode_gradient_covers_mobile_and_notification_drawers(): void
+    public function test_light_mode_gradient_covers_mobile_search_and_notification_drawers(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
 
         $this->assertIsString($css);
         $this->assertStringContainsString('.navigation-mobile-menu,', $css);
         $this->assertStringContainsString('[data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('[data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);', $css);
         $this->assertStringContainsString('.dark [data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('.dark [data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: none;', $css);
         $this->assertStringContainsString('touch-action: pan-y;', $css);
     }
