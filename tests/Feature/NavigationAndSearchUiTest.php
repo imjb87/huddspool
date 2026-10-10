@@ -77,10 +77,16 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('data-theme-toggle', false);
         $response->assertDontSee('data-mobile-theme-toggle', false);
         $response->assertDontSee('Open settings menu', false);
-        $response->assertSee('style="top: var(--site-header-height, 4rem);"', false);
+        $response->assertSee('style="top: var(--site-search-visible-top, var(--site-header-height, 4rem)); height: var(--site-search-panel-height, calc(100dvh - var(--site-header-height, 4rem)));"', false);
+        $response->assertSee('x-init="initializeSearchViewport()"', false);
+        $response->assertSee("window.visualViewport?.addEventListener('resize'", false);
+        $response->assertSee("window.visualViewport?.addEventListener('scroll'", false);
+        $response->assertSee("window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }))", false);
+        $response->assertSee('header-overlay-open', false);
         $response->assertSee('class="absolute inset-0 z-10 flex overflow-hidden"', false);
         $response->assertSee('x-on:site-search:toggle.window="toggleSearch()"', false);
-        $response->assertSee("@click=\"window.dispatchEvent(new CustomEvent('site-search:toggle'))\"", false);
+        $response->assertSee('@click="window.headerActionIcon?.set(', false);
+        $response->assertSee("window.dispatchEvent(new CustomEvent('site-search:toggle'))", false);
         $response->assertSee(":class=\"open ? 'pointer-events-auto' : 'pointer-events-none'\"", false);
         $response->assertDontSee('class="pointer-events-none fixed inset-0 z-10', false);
         $response->assertSee('site-theme', false);
@@ -100,6 +106,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('aria-hidden="true"', false);
         $response->assertSee('animate-pulse rounded-md bg-muted', false);
         $response->assertSee('min-h-0 flex-1 overflow-y-auto scroll-py-1.5 px-2 pb-2', false);
+        $response->assertSee('class="mx-3 space-y-2 pb-2" data-search-result-group', false);
         $response->assertSee('flex h-9 w-full items-center justify-between gap-4 rounded-md border border-border/50 bg-muted/40', false);
         $response->assertSee('data-search-player-avatar', false);
         $response->assertSee('@click="navigateToResult($event)"', false);
@@ -375,7 +382,10 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('class="size-5"', false);
         $response->assertSee('data-notifications-drawer', false);
         $response->assertSee('class="fixed inset-x-0 bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground"', false);
-        $response->assertSee('class="ui-card m-2 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:m-3 sm:p-6"', false);
+        $response->assertSee('class="ui-card mx-4 mt-4 mb-0 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:p-6"', false);
+        $response->assertSee('class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-4"', false);
+        $response->assertSee("id !== 'notifications' && open) close()", false);
+        $response->assertSee("window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'mobile-menu' } }))", false);
         $response->assertDontSee('data-notifications-close', false);
         $response->assertSee('data-notifications-links', false);
         $response->assertSee('data-unread-notifications-badge', false);
