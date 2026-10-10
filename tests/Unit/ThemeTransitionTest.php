@@ -42,6 +42,17 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('@keyframes ui-search-shell-enter', $css);
         $this->assertStringContainsString('@keyframes ui-search-shell-leave', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-enter', $css);
+        $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-enter', $css);
+        $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-leave', $css);
+        $this->assertStringContainsString('--mobile-menu-enter-overshoot: -1.5%;', $css);
+        $this->assertStringContainsString('--mobile-menu-enter-overshoot: 1.5%;', $css);
+        $this->assertStringContainsString('--mobile-menu-leave-overshoot: -101.5%;', $css);
+        $this->assertStringContainsString('--mobile-menu-leave-overshoot: 101.5%;', $css);
+        $this->assertStringContainsString('--mobile-menu-enter-overshoot-small: -0.25%;', $css);
+        $this->assertStringContainsString('--mobile-menu-enter-overshoot-small: 0.25%;', $css);
+        $this->assertStringContainsString('--mobile-menu-leave-overshoot-small: -100.25%;', $css);
+        $this->assertStringContainsString('--mobile-menu-leave-overshoot-small: 100.25%;', $css);
+        $this->assertStringContainsString('91% {', $css);
         $this->assertStringContainsString('cubic-bezier(0.22, 1.2, 0.36, 1)', $css);
     }
 
@@ -69,7 +80,7 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('@apply min-h-0 rounded-sm px-2 py-2 text-base leading-6 font-medium;', $css);
     }
 
-    public function test_mobile_menu_icon_uses_morph_svg_plugin_with_a_post_x_wobble(): void
+    public function test_mobile_menu_icon_uses_morph_svg_plugin_with_damped_rebounds(): void
     {
         $script = file_get_contents(resource_path('js/mobile-menu-icon.js'));
 
@@ -79,8 +90,17 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('const wobbleShapes = {', $script);
         $this->assertStringContainsString("const springEase = 'elastic.out(1.2, 0.55)'", $script);
         $this->assertStringContainsString('data-mobile-menu-icon-group', $script);
-        $this->assertStringContainsString('rotation: -4, scale: 0.98', $script);
-        $this->assertStringContainsString('rotation: 2, scale: 1.02', $script);
+        $this->assertStringContainsString('rotation: -14, scale: 0.78', $script);
+        $this->assertStringContainsString('rotation: 7, scale: 1.1', $script);
+        $this->assertStringContainsString('rotation: -3.5, scale: 0.95', $script);
+        $this->assertStringContainsString('rotation: 1.75, scale: 1.025', $script);
+        $this->assertStringContainsString('rotation: -0.75, scale: 0.99', $script);
+        $this->assertStringContainsString('rotation: 14, scale: 0.78', $script);
+        $this->assertStringContainsString('rotation: -7, scale: 1.1', $script);
+        $this->assertStringContainsString('rotation: 3.5, scale: 0.95', $script);
+        $this->assertStringContainsString('rotation: -1.75, scale: 1.025', $script);
+        $this->assertStringContainsString('rotation: 0.75, scale: 0.99', $script);
+        $this->assertStringNotContainsString('x:', $script);
         $this->assertStringContainsString('setIconState(icon, isOpen);', $script);
         $this->assertStringContainsString('morphSVG: shapes.top', $script);
         $this->assertStringContainsString('morphSVG: shapes.bottom', $script);
