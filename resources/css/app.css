@@ -69,8 +69,10 @@
     --motion-duration-normal: 180ms;
     --motion-duration-panel: 240ms;
     --motion-duration-content: 360ms;
+    --motion-duration-mobile-menu: 480ms;
     --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --motion-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --motion-ease-mobile-menu: cubic-bezier(0.2, 1.35, 0.3, 1);
   }
 
   .dark {
@@ -230,16 +232,20 @@
       transform: translate3d(100%, 0, 0);
     }
 
+    58% {
+      transform: translate3d(-4%, 0, 0);
+    }
+
     72% {
-      transform: translate3d(-1.5%, 0, 0);
+      transform: translate3d(1.5%, 0, 0);
     }
 
-    82% {
-      transform: translate3d(0.5%, 0, 0);
+    83% {
+      transform: translate3d(-0.6%, 0, 0);
     }
 
-    91% {
-      transform: translate3d(-0.25%, 0, 0);
+    92% {
+      transform: translate3d(0.2%, 0, 0);
     }
 
     100% {
@@ -248,23 +254,39 @@
   }
 
   @keyframes ui-mobile-menu-leave {
-    from {
+    0% {
       transform: translate3d(0, 0, 0);
     }
 
-    to {
+    58% {
+      transform: translate3d(104%, 0, 0);
+    }
+
+    72% {
+      transform: translate3d(98.5%, 0, 0);
+    }
+
+    83% {
+      transform: translate3d(100.6%, 0, 0);
+    }
+
+    92% {
+      transform: translate3d(99.8%, 0, 0);
+    }
+
+    100% {
       transform: translate3d(100%, 0, 0);
     }
   }
 
   .ui-motion-mobile-menu-in {
-    animation: ui-mobile-menu-enter 360ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    animation: ui-mobile-menu-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform;
     backface-visibility: hidden;
   }
 
   .ui-motion-mobile-menu-out {
-    animation: ui-mobile-menu-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+    animation: ui-mobile-menu-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform;
     backface-visibility: hidden;
   }
@@ -310,16 +332,20 @@
       transform: translate3d(var(--mobile-menu-enter-offset, 100%), 0, 0);
     }
 
+    58% {
+      transform: translate3d(var(--mobile-menu-enter-overshoot, -4%), 0, 0);
+    }
+
     72% {
-      transform: translate3d(var(--mobile-menu-enter-overshoot, -1.5%), 0, 0);
+      transform: translate3d(var(--mobile-menu-enter-settle, 1.5%), 0, 0);
     }
 
-    82% {
-      transform: translate3d(var(--mobile-menu-enter-settle, 0.5%), 0, 0);
+    83% {
+      transform: translate3d(var(--mobile-menu-enter-overshoot-small, -0.6%), 0, 0);
     }
 
-    91% {
-      transform: translate3d(var(--mobile-menu-enter-overshoot-small, -0.25%), 0, 0);
+    92% {
+      transform: translate3d(var(--mobile-menu-enter-settle-small, 0.2%), 0, 0);
     }
 
     100% {
@@ -332,16 +358,20 @@
       transform: translate3d(0, 0, 0);
     }
 
+    58% {
+      transform: translate3d(var(--mobile-menu-leave-overshoot, -104%), 0, 0);
+    }
+
     72% {
-      transform: translate3d(var(--mobile-menu-leave-overshoot, -101.5%), 0, 0);
+      transform: translate3d(var(--mobile-menu-leave-settle, -98.5%), 0, 0);
     }
 
-    82% {
-      transform: translate3d(var(--mobile-menu-leave-settle, -99.5%), 0, 0);
+    83% {
+      transform: translate3d(var(--mobile-menu-leave-overshoot-small, -100.6%), 0, 0);
     }
 
-    91% {
-      transform: translate3d(var(--mobile-menu-leave-overshoot-small, -100.25%), 0, 0);
+    92% {
+      transform: translate3d(var(--mobile-menu-leave-settle-small, -99.8%), 0, 0);
     }
 
     100% {
@@ -351,18 +381,18 @@
 
   .ui-motion-panel-in {
     transition-property: opacity;
-    transition-duration: var(--motion-duration-content);
-    transition-timing-function: var(--motion-ease-out);
-    animation: ui-mobile-menu-panel-enter var(--motion-duration-content) cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    transition-duration: var(--motion-duration-mobile-menu);
+    transition-timing-function: var(--motion-ease-mobile-menu);
+    animation: ui-mobile-menu-panel-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform, opacity;
     backface-visibility: hidden;
   }
 
   .ui-motion-panel-out {
     transition-property: opacity;
-    transition-duration: var(--motion-duration-content);
-    transition-timing-function: var(--motion-ease-in);
-    animation: ui-mobile-menu-panel-leave var(--motion-duration-content) cubic-bezier(0.22, 1.2, 0.36, 1) both;
+    transition-duration: var(--motion-duration-mobile-menu);
+    transition-timing-function: var(--motion-ease-mobile-menu);
+    animation: ui-mobile-menu-panel-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform, opacity;
     backface-visibility: hidden;
   }
@@ -389,30 +419,34 @@
 
   .mobile-menu-panel--active.mobile-menu-panel--forward {
     --mobile-menu-enter-offset: 100%;
-    --mobile-menu-enter-overshoot: -1.5%;
-    --mobile-menu-enter-settle: 0.5%;
-    --mobile-menu-enter-overshoot-small: -0.25%;
+    --mobile-menu-enter-overshoot: -4%;
+    --mobile-menu-enter-settle: 1.5%;
+    --mobile-menu-enter-overshoot-small: -0.6%;
+    --mobile-menu-enter-settle-small: 0.2%;
   }
 
   .mobile-menu-panel--active.mobile-menu-panel--back {
     --mobile-menu-enter-offset: -100%;
-    --mobile-menu-enter-overshoot: 1.5%;
-    --mobile-menu-enter-settle: -0.5%;
-    --mobile-menu-enter-overshoot-small: 0.25%;
+    --mobile-menu-enter-overshoot: 4%;
+    --mobile-menu-enter-settle: -1.5%;
+    --mobile-menu-enter-overshoot-small: 0.6%;
+    --mobile-menu-enter-settle-small: -0.2%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--forward {
     --mobile-menu-leave-offset: -100%;
-    --mobile-menu-leave-overshoot: -101.5%;
-    --mobile-menu-leave-settle: -99.5%;
-    --mobile-menu-leave-overshoot-small: -100.25%;
+    --mobile-menu-leave-overshoot: -104%;
+    --mobile-menu-leave-settle: -98.5%;
+    --mobile-menu-leave-overshoot-small: -100.6%;
+    --mobile-menu-leave-settle-small: -99.8%;
   }
 
   .mobile-menu-panel--inactive.mobile-menu-panel--back {
     --mobile-menu-leave-offset: 100%;
-    --mobile-menu-leave-overshoot: 101.5%;
-    --mobile-menu-leave-settle: 99.5%;
-    --mobile-menu-leave-overshoot-small: 100.25%;
+    --mobile-menu-leave-overshoot: 104%;
+    --mobile-menu-leave-settle: 98.5%;
+    --mobile-menu-leave-overshoot-small: 100.6%;
+    --mobile-menu-leave-settle-small: 99.8%;
   }
 
   @keyframes ui-home-hero-enter {

@@ -70,7 +70,7 @@ const animateIcon = (icon, isOpen) => {
     const nextState = isOpen ? 'open' : 'closed';
     const activeTimeline = timelines.get(icon);
 
-    if (icon.dataset.mobileMenuIconState === nextState && !activeTimeline) {
+    if (icon.dataset.mobileMenuIconState === nextState) {
         return;
     }
 
