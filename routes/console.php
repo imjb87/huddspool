@@ -28,7 +28,7 @@ Artisan::command('app:search:reindex {--flush}', function (): int {
 
     foreach ($models as $model) {
         if ($this->option('flush') && $this->call('scout:flush', ['model' => $model]) !== 0) {
-            return self::FAILURE;
+            return 1;
         }
 
         if ($this->call('scout:import', ['model' => $model]) !== 0) {
@@ -38,7 +38,7 @@ Artisan::command('app:search:reindex {--flush}', function (): int {
 
     $this->info('Scout search indexes have been refreshed.');
 
-    return self::SUCCESS;
+    return 0;
 })->purpose('Refresh all Scout search indexes');
 
 Schedule::command('sitemap:generate')->daily();
