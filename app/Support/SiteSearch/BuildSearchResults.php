@@ -215,7 +215,10 @@ class BuildSearchResults
                                     ->where('name', 'like', $like));
                         });
                 })
-                ->whereHas('team.openSections')
+                ->whereHas('team', fn (Builder $teamQuery) => $teamQuery
+                    ->whereNull('folded_at')
+                    ->notBye()
+                    ->inOpenSeason())
                 ->orderBy('name')
                 ->limit(self::RESULT_LIMIT)
                 ->get(),
