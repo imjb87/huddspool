@@ -27,6 +27,7 @@ class Team extends Model
         $this->loadMissing(['venue:id,name', 'openSections:id,name']);
 
         return array_filter([
+            'id' => (string) $this->getKey(),
             'name' => $this->name,
             'shortname' => $this->shortname,
             'venue_name' => $this->venue?->name,
