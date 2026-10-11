@@ -13,11 +13,6 @@ class Venue extends Model
 {
     use HasFactory, Searchable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     public function searchableAs(): string
     {
         return config('scout.prefix').'venues';
@@ -37,6 +32,11 @@ class Venue extends Model
         return ! $this->trashed();
     }
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'address',
