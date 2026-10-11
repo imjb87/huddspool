@@ -37,6 +37,7 @@ class Section extends Model
         ]);
 
         return array_filter([
+            'id' => (string) $this->getKey(),
             'name' => $this->name,
             'ruleset_name' => $this->ruleset?->name,
             'season_name' => $this->season?->name,
