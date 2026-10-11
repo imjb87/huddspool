@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Foundation\Inspiring;
+use App\Models\Section;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\Venue;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -18,6 +22,24 @@ use Illuminate\Support\Facades\Schedule;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('app:search:reindex {--flush}', function (): int {
+    $models = [User::class, Team::class, Venue::class, Section::class];
+
+    foreach ($models as $model) {
+        if ($this->option('flush') && $this->call('scout:flush', ['model' => $model]) !== 0) {
+            return self::FAILURE;
+        }
+
+        if ($this->call('scout:import', ['model' => $model]) !== 0) {
+            return self::FAILURE;
+        }
+    }
+
+    $this->info('Scout search indexes have been refreshed.');
+
+    return self::SUCCESS;
+})->purpose('Refresh all Scout search indexes');
 
 Schedule::command('sitemap:generate')->daily();
 Schedule::command('app:purge-old-notifications')->dailyAt('01:00');
