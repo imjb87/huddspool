@@ -15,10 +15,49 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Section extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'sections';
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing(['ruleset:id,name', 'season:id,name']);
+
+        return array_filter([
+            'name' => $this->name,
+            'ruleset_name' => $this->ruleset?->name,
+            'season_name' => $this->season?->name,
+            'team_names' => $this->teams()
+                ->whereNull('teams.folded_at')
+                ->where('teams.name', '!=', Team::BYE_NAME)
+                ->pluck('teams.name')
+                ->values()
+                ->all(),
+            'search_terms' => 'section division league',
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return ! $this->trashed()
+            && $this->season()->where('is_open', true)->exists();
+    }
+
+    public function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query
+            ->with(['ruleset:id,name', 'season:id,name'])
+            ->whereHas('season', fn (Builder $seasonQuery): Builder => $seasonQuery
+                ->where('is_open', true));
+    }
 
     protected static function booted(): void
     {
