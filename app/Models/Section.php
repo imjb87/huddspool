@@ -19,7 +19,7 @@ use Laravel\Scout\Searchable;
 
 class Section extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     public function searchableAs(): string
     {
