@@ -21,6 +21,7 @@ class Venue extends Model
     public function toSearchableArray(): array
     {
         return array_filter([
+            'id' => (string) $this->getKey(),
             'name' => $this->name,
             'address' => $this->address,
             'created_at' => $this->created_at?->getTimestamp() ?? 0,
