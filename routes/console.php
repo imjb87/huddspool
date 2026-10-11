@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
+use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -32,7 +32,7 @@ Artisan::command('app:search:reindex {--flush}', function (): int {
         }
 
         if ($this->call('scout:import', ['model' => $model]) !== 0) {
-            return self::FAILURE;
+            return 1;
         }
     }
 
