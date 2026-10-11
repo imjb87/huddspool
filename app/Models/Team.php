@@ -40,7 +40,9 @@ class Team extends Model
         return ! $this->trashed()
             && $this->folded_at === null
             && ! $this->isBye()
-            && $this->openSections()->exists();
+            && ($this->relationLoaded('openSections')
+                ? $this->openSections->isNotEmpty()
+                : $this->openSections()->exists());
     }
 
     public function makeAllSearchableUsing(Builder $query): Builder
