@@ -47,9 +47,9 @@ class BuildSearchResults
             'prioritize_exact_match' => true,
         ],
         'sections' => [
-            'query_by_weights' => '12,4,3,2,1',
-            'num_typos' => '2,1,1,1,0',
-            'prefix' => 'true,false,false,false,false',
+            'query_by_weights' => '12,4,3,2',
+            'num_typos' => '2,1,1,1',
+            'prefix' => 'true,false,false,false',
             'drop_tokens_threshold' => 1,
             'typo_tokens_threshold' => 1,
             'min_len_1typo' => 4,
