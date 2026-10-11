@@ -114,6 +114,45 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
     /**
      * Get the user's team.
      */
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'players';
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing('team.openSections:id,name');
+
+        return array_filter([
+            'name' => $this->name,
+            'team_name' => $this->team?->name,
+            'team_shortname' => $this->team?->shortname,
+            'section_names' => $this->team?->openSections?->pluck('name')->values()->all() ?? [],
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        $team = $this->team;
+
+        return $team !== null
+            && ! $team->trashed()
+            && $team->folded_at === null
+            && ! $team->isBye()
+            && $team->openSections()->exists();
+    }
+
+    public function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query
+            ->with('team.openSections:id,name')
+            ->whereHas('team', fn (Builder $teamQuery): Builder => $teamQuery
+                ->whereNull('folded_at')
+                ->notBye()
+                ->inOpenSeason());
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
