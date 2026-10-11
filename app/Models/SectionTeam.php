@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\CompetitionCacheInvalidator;
+use App\Support\SiteSearch\SearchableRelationRefresher;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -23,7 +24,7 @@ class SectionTeam extends Pivot
         };
 
         $refreshSearch = function (SectionTeam $pivot): void {
-            app(\\App\\Support\\SiteSearch\\SearchableRelationRefresher::class)->refreshSectionTeam($pivot);
+            app(SearchableRelationRefresher::class)->refreshSectionTeam($pivot);
         };
 
         static::saved(function (SectionTeam $pivot) use ($flush, $refreshSearch): void {
