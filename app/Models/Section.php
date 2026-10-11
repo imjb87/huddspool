@@ -40,7 +40,6 @@ class Section extends Model
                 ->pluck('teams.name')
                 ->values()
                 ->all(),
-            'search_terms' => 'section division league',
             'created_at' => $this->created_at?->getTimestamp() ?? 0,
         ], static fn (mixed $value): bool => $value !== null && $value !== []);
     }
