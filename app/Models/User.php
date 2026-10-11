@@ -124,6 +124,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
         $this->loadMissing('team.openSections:id,name');
 
         return array_filter([
+            'id' => (string) $this->getKey(),
             'name' => $this->name,
             'team_name' => $this->team?->name,
             'team_shortname' => $this->team?->shortname,
