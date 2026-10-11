@@ -31,7 +31,7 @@ class Section extends Model
         $this->loadMissing([
             'ruleset:id,name',
             'season:id,name',
-            'teams' => fn (BelongsToMany $teamQuery): BelongsToMany => $teamQuery
+            'teams' => fn (BelongsToMany $teamQuery) => $teamQuery
                 ->whereNull('teams.folded_at')
                 ->where('teams.name', '!=', Team::BYE_NAME),
         ]);
@@ -40,7 +40,11 @@ class Section extends Model
             'name' => $this->name,
             'ruleset_name' => $this->ruleset?->name,
             'season_name' => $this->season?->name,
-            'team_names' => $this->teams->pluck('name')->values()->all(),
+            'team_names' => $this->teams
+                ->filter(fn (Team $team): bool => ! $team->trashed() && $team->folded_at === null && ! $team->isBye())
+                ->pluck('name')
+                ->values()
+                ->all(),
             'created_at' => $this->created_at?->getTimestamp() ?? 0,
         ], static fn (mixed $value): bool => $value !== null && $value !== []);
     }
