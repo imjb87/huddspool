@@ -19,7 +19,10 @@ class SiteSearchTest extends TestCase
     {
         Model::withoutEvents(function (): void {
             $season = Season::factory()->create(['is_open' => true]);
-            $section = Section::factory()->create(['season_id' => $season->id]);
+            $section = Section::factory()->create([
+                'name' => 'Imperial Division',
+                'season_id' => $season->id,
+            ]);
             $team = Team::factory()->create(['name' => 'Imperial Club']);
 
             $team->sections()->attach($section);
@@ -50,7 +53,7 @@ class SiteSearchTest extends TestCase
         $response->assertJsonPath('groups.2.results.0.name', 'Imperial Hall');
         $response->assertJsonPath('groups.2.results.0.secondaryText', '12 West Street');
         $response->assertJsonPath('groups.3.heading', 'Sections');
-        $response->assertJsonPath('groups.3.results.0.name', $section->name);
+        $response->assertJsonPath('groups.3.results.0.name', 'Imperial Division');
     }
 
     public function test_search_only_returns_sections_from_open_seasons(): void
