@@ -103,6 +103,12 @@ class SearchableRelationRefresher
 
         $model = $model->fresh() ?? $model;
 
+        if (! $model->exists) {
+            $model->unsearchable();
+
+            return;
+        }
+
         if ($model->shouldBeSearchable()) {
             $model->searchable();
 
