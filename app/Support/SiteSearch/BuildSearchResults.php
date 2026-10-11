@@ -59,7 +59,7 @@ class BuildSearchResults
     ];
 
     /**
-     * @return array<string, array{heading: string, badge: string, route: string, results: Collection}>
+     * @return array<string, array{heading: string, badge: string, route: ?string, results: Collection}>
      */
     public function build(string $searchTerm): array
     {
@@ -260,8 +260,12 @@ class BuildSearchResults
                         ->orWhereHas('season', fn (Builder $seasonQuery) => $seasonQuery
                             ->where('name', 'like', $like))
                         ->orWhereHas('teams', function (Builder $teamQuery) use ($like): void {
-                            $teamQuery->where('name', 'like', $like)
-                                ->orWhere('shortname', 'like', $like);
+                            $teamQuery->whereNull('folded_at')
+                                ->notBye()
+                                ->where(function (Builder $query) use ($like): void {
+                                    $query->where('name', 'like', $like)
+                                        ->orWhere('shortname', 'like', $like);
+                                });
                         });
                 })
                 ->orderBy('name')
