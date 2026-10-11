@@ -23,9 +23,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Contracts\OAuthenticatable as PassportAuthenticatable;
 use Laravel\Passport\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
@@ -137,7 +137,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
     {
         $team = $this->team;
 
-        return $team !== null
+        return ! $this->trashed()
+            && $team !== null
             && ! $team->trashed()
             && $team->folded_at === null
             && ! $team->isBye()
