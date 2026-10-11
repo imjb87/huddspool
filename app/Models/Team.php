@@ -15,7 +15,7 @@ use Laravel\Scout\Searchable;
 
 class Team extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     public function searchableAs(): string
     {
