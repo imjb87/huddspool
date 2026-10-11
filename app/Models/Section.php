@@ -28,18 +28,19 @@ class Section extends Model
 
     public function toSearchableArray(): array
     {
-        $this->loadMissing(['ruleset:id,name', 'season:id,name']);
+        $this->loadMissing([
+            'ruleset:id,name',
+            'season:id,name',
+            'teams' => fn (BelongsToMany $teamQuery): BelongsToMany => $teamQuery
+                ->whereNull('teams.folded_at')
+                ->where('teams.name', '!=', Team::BYE_NAME),
+        ]);
 
         return array_filter([
             'name' => $this->name,
             'ruleset_name' => $this->ruleset?->name,
             'season_name' => $this->season?->name,
-            'team_names' => $this->teams()
-                ->whereNull('teams.folded_at')
-                ->where('teams.name', '!=', Team::BYE_NAME)
-                ->pluck('teams.name')
-                ->values()
-                ->all(),
+            'team_names' => $this->teams->pluck('name')->values()->all(),
             'created_at' => $this->created_at?->getTimestamp() ?? 0,
         ], static fn (mixed $value): bool => $value !== null && $value !== []);
     }
@@ -47,13 +48,21 @@ class Section extends Model
     public function shouldBeSearchable(): bool
     {
         return ! $this->trashed()
-            && $this->season()->where('is_open', true)->exists();
+            && ($this->relationLoaded('season')
+                ? $this->season?->is_open === true
+                : $this->season()->where('is_open', true)->exists());
     }
 
     public function makeAllSearchableUsing(Builder $query): Builder
     {
         return $query
-            ->with(['ruleset:id,name', 'season:id,name'])
+            ->with([
+                'ruleset:id,name',
+                'season:id,name',
+                'teams' => fn (BelongsToMany $teamQuery): BelongsToMany => $teamQuery
+                    ->whereNull('teams.folded_at')
+                    ->where('teams.name', '!=', Team::BYE_NAME),
+            ])
             ->whereHas('season', fn (Builder $seasonQuery): Builder => $seasonQuery
                 ->where('is_open', true));
     }
