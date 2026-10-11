@@ -21,6 +21,7 @@ class SiteSearchTest extends TestCase
             $season = Season::factory()->create(['is_open' => true]);
             $section = Section::factory()->create([
                 'name' => 'Imperial Division',
+                'slug' => 'imperial-division',
                 'season_id' => $season->id,
             ]);
             $team = Team::factory()->create(['name' => 'Imperial Club']);
