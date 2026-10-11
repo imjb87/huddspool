@@ -22,8 +22,18 @@ class SectionTeam extends Pivot
             $cacheInvalidator->forgetForSectionTeam($pivot);
         };
 
-        static::saved($flush);
-        static::deleted($flush);
+        $refreshSearch = function (SectionTeam $pivot): void {
+            app(\\App\\Support\\SiteSearch\\SearchableRelationRefresher::class)->refreshSectionTeam($pivot);
+        };
+
+        static::saved(function (SectionTeam $pivot) use ($flush, $refreshSearch): void {
+            $flush($pivot);
+            $refreshSearch($pivot);
+        });
+        static::deleted(function (SectionTeam $pivot) use ($flush, $refreshSearch): void {
+            $flush($pivot);
+            $refreshSearch($pivot);
+        });
     }
 
     /**
