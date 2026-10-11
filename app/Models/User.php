@@ -111,9 +111,6 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
         return $this->email_verified_at !== null;
     }
 
-    /**
-     * Get the user's team.
-     */
     public function searchableAs(): string
     {
         return config('scout.prefix').'players';
@@ -157,6 +154,9 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
                 ->inOpenSeason());
     }
 
+    /**
+     * Get the user's team.
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
