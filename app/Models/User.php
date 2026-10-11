@@ -28,7 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
 {
-    use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
+    use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, Searchable, SoftDeletes;
 
     protected string $guard_name = 'web';
 
