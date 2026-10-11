@@ -140,7 +140,9 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
             && ! $team->trashed()
             && $team->folded_at === null
             && ! $team->isBye()
-            && $team->openSections()->exists();
+            && ($team->relationLoaded('openSections')
+                ? $team->openSections->isNotEmpty()
+                : $team->openSections()->exists());
     }
 
     public function makeAllSearchableUsing(Builder $query): Builder
