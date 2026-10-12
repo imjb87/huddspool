@@ -86,7 +86,13 @@
         </svg>
     </button>
 
-    <span x-show="open" x-cloak x-transition
+        <span x-show="open" x-cloak
+            x-transition:enter="ui-motion-fade-in"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ui-motion-fade-out"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
         class="absolute left-1/2 top-full z-50 size-2 -translate-x-1/2 translate-y-1/2 rotate-45 bg-white ring-1 ring-gray-200 dark:bg-neutral-900 dark:ring-neutral-800"
         aria-hidden="true"></span>
 
@@ -95,11 +101,7 @@
         x-show="open"
         x-cloak
             x-transition:enter="ui-motion-navigation-dropdown-in"
-        x-transition:enter-start="translate-y-1 scale-95 opacity-0"
-        x-transition:enter-end="translate-y-0 scale-100 opacity-100"
             x-transition:leave="ui-motion-navigation-dropdown-out"
-        x-transition:leave-start="translate-y-0 scale-100 opacity-100"
-        x-transition:leave-end="translate-y-1 scale-95 opacity-0"
         @mouseenter="cancelClose()"
         data-navigation-menu-content
         :data-state="open ? 'open' : 'closed'"

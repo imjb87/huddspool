@@ -48,6 +48,8 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('@keyframes ui-search-shell-leave', $css);
         $this->assertStringContainsString('@keyframes ui-navigation-dropdown-enter', $css);
         $this->assertStringContainsString('@keyframes ui-navigation-dropdown-leave', $css);
+        $this->assertStringContainsString('55% {', $css);
+        $this->assertStringContainsString('translate3d(0, -0.125rem, 0) scale(1.015);', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-leave', $css);

@@ -75,7 +75,7 @@
     --motion-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
     --motion-ease-spring: linear(
       0,
-      .08 10%, .52 35%, .92 55%, 1.04 70%, .985 84%, 1.01 93%, 1
+      .22 18%, .62 42%, .9 62%, .98 78%, 1
     );
     /* Sampled spring curve: overshoot, recoil, then progressively smaller rebounds. */
     --motion-ease-mobile-menu: linear(
@@ -214,12 +214,25 @@
   }
 
   @keyframes ui-navigation-dropdown-enter {
-    from {
+    0% {
       transform: translate3d(0, 0.5rem, 0) scale(0.97);
       opacity: 0;
     }
 
-    to {
+    55% {
+      transform: translate3d(0, -0.125rem, 0) scale(1.015);
+      opacity: 1;
+    }
+
+    72% {
+      transform: translate3d(0, 0.05rem, 0) scale(0.997);
+    }
+
+    86% {
+      transform: translate3d(0, -0.025rem, 0) scale(1.003);
+    }
+
+    100% {
       transform: translate3d(0, 0, 0) scale(1);
       opacity: 1;
     }
@@ -314,12 +327,25 @@
   }
 
   @keyframes ui-search-shell-enter {
-    from {
+    0% {
       transform: translate3d(0, 0.75rem, 0) scale(0.985);
       opacity: 0;
     }
 
-    to {
+    55% {
+      transform: translate3d(0, -0.125rem, 0) scale(1.012);
+      opacity: 1;
+    }
+
+    72% {
+      transform: translate3d(0, 0.05rem, 0) scale(0.998);
+    }
+
+    86% {
+      transform: translate3d(0, -0.025rem, 0) scale(1.002);
+    }
+
+    100% {
       transform: translate3d(0, 0, 0) scale(1);
       opacity: 1;
     }

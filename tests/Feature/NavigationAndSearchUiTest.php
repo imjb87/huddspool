@@ -205,6 +205,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-navigation-menu-content', false);
         $response->assertSee('x-transition:enter="ui-motion-navigation-dropdown-in"', false);
         $response->assertSee('x-transition:leave="ui-motion-navigation-dropdown-out"', false);
+        $response->assertSee('x-transition:enter="ui-motion-fade-in"', false);
+        $response->assertSee('x-transition:leave="ui-motion-fade-out"', false);
         $response->assertSee('@focusin="show()"', false);
         $response->assertSee('@keydown.escape.stop="close(); $el.querySelector(\'[data-navigation-menu-trigger]\')?.focus()"', false);
         $response->assertSee('@click.outside="close()"', false);
@@ -214,7 +216,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('@keydown.end.prevent="focusTrigger(\'last\')"', false);
         $response->assertSee('data-[state=open]:bg-gray-100', false);
         $response->assertSee('h-8 w-max items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-2', false);
-        $response->assertSee('x-transition:enter-start="translate-y-1 scale-95 opacity-0"', false);
+        $response->assertSee('x-transition:enter-start="opacity-0"', false);
+        $response->assertDontSee('x-transition:enter-start="translate-y-1 scale-95 opacity-0"', false);
         $response->assertSee('mt-1.5 w-72 origin-top-left', false);
         $response->assertDontSee('size-4 shrink-0 items-center justify-center text-gray-500 dark:text-gray-400', false);
         $response->assertSee('@click="toggle()"', false);
