@@ -201,6 +201,18 @@
     transition-timing-function: var(--motion-ease-in);
   }
 
+  .site-search-overlay {
+    top: var(--site-search-visible-top, var(--site-header-height, 4rem));
+    height: var(--site-search-panel-height, calc(100dvh - var(--site-header-height, 4rem)));
+  }
+
+  @media (min-width: 40rem) {
+    .site-search-overlay {
+      top: 0;
+      height: 100dvh;
+    }
+  }
+
   .ui-motion-popover-in {
     transition-property: transform, opacity;
     transition-duration: var(--motion-duration-normal);

@@ -77,7 +77,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertDontSee('data-theme-toggle', false);
         $response->assertDontSee('data-mobile-theme-toggle', false);
         $response->assertDontSee('Open settings menu', false);
-        $response->assertSee('style="top: var(--site-search-visible-top, var(--site-header-height, 4rem)); height: var(--site-search-panel-height, calc(100dvh - var(--site-header-height, 4rem)));"', false);
+        $response->assertSee('class="site-search-overlay fixed inset-x-0 z-[60]"', false);
+        $response->assertDontSee('style="top: var(--site-search-visible-top', false);
         $response->assertSee('x-init="initializeSearchViewport()"', false);
         $response->assertSee("window.visualViewport?.addEventListener('resize'", false);
         $response->assertSee("window.visualViewport?.addEventListener('scroll'", false);
@@ -103,6 +104,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-search-modal-shell', false);
         $response->assertSee('x-transition:enter="ui-motion-search-shell-in"', false);
         $response->assertSee('x-transition:leave="ui-motion-search-shell-out"', false);
+        $response->assertSee("label.textContent = 'Search...';", false);
+        $response->assertDontSee("label.textContent = this.open ? 'Close' : 'Search...';", false);
         $response->assertSee('window.headerActionIcon?.set(', false);
         $response->assertSee('trigger.querySelector(\'[data-header-action-icon="search"]\')', false);
         $response->assertSee('flex h-full w-full flex-col overflow-hidden bg-background text-foreground', false);

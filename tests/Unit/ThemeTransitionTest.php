@@ -74,14 +74,21 @@ class ThemeTransitionTest extends TestCase
     {
         $search = file_get_contents(resource_path('views/layouts/partials/site-search.blade.php'));
         $notifications = file_get_contents(resource_path('views/components/account/notifications-drawer.blade.php'));
+        $css = file_get_contents(resource_path('css/app.css'));
 
         $this->assertIsString($search);
         $this->assertIsString($notifications);
+        $this->assertIsString($css);
         $this->assertStringContainsString('x-transition:enter="ui-motion-search-shell-in"', $search);
         $this->assertStringContainsString('x-transition:leave="ui-motion-search-shell-out"', $search);
         $this->assertStringContainsString('x-transition:enter="ui-motion-mobile-menu-in"', $notifications);
         $this->assertStringContainsString('x-transition:leave="ui-motion-mobile-menu-out"', $notifications);
-        $this->assertStringContainsString('style="top: var(--site-search-visible-top', $search);
+        $this->assertStringContainsString('class="site-search-overlay fixed inset-x-0 z-[60]"', $search);
+        $this->assertStringNotContainsString('style="top: var(--site-search-visible-top', $search);
+        $this->assertStringContainsString("label.textContent = 'Search...';", $search);
+        $this->assertStringNotContainsString("label.textContent = this.open ? 'Close' : 'Search...';", $search);
+        $this->assertStringContainsString('.site-search-overlay {', $css);
+        $this->assertStringContainsString("@media (min-width: 40rem) {\n    .site-search-overlay {\n      top: 0;\n      height: 100dvh;\n    }", $css);
         $this->assertStringContainsString('top-[var(--site-header-height,4rem)]', $notifications);
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }

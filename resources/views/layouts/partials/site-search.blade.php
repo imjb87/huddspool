@@ -1,6 +1,5 @@
 <div
-    class="fixed inset-x-0 z-40"
-    style="top: var(--site-search-visible-top, var(--site-header-height, 4rem)); height: var(--site-search-panel-height, calc(100dvh - var(--site-header-height, 4rem)));"
+    class="site-search-overlay fixed inset-x-0 z-[60]"
     :class="open ? 'pointer-events-auto' : 'pointer-events-none'"
     role="dialog"
     aria-modal="true"
@@ -250,7 +249,7 @@
                     const label = trigger.querySelector('[data-search-trigger-label]');
 
                     if (label) {
-                        label.textContent = this.open ? 'Close' : 'Search...';
+                        label.textContent = 'Search...';
                     }
 
                     window.headerActionIcon?.set(
