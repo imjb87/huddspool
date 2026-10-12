@@ -7,10 +7,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Venue extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'venues';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return array_filter([
+            'id' => (string) $this->getKey(),
+            'name' => $this->name,
+            'address' => $this->address,
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return ! $this->trashed();
+    }
 
     /**
      * The attributes that are mass assignable.

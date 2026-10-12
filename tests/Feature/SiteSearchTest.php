@@ -19,7 +19,11 @@ class SiteSearchTest extends TestCase
     {
         Model::withoutEvents(function (): void {
             $season = Season::factory()->create(['is_open' => true]);
-            $section = Section::factory()->create(['season_id' => $season->id]);
+            $section = Section::factory()->create([
+                'name' => 'Imperial Division',
+                'slug' => 'imperial-division',
+                'season_id' => $season->id,
+            ]);
             $team = Team::factory()->create(['name' => 'Imperial Club']);
 
             $team->sections()->attach($section);
@@ -40,7 +44,7 @@ class SiteSearchTest extends TestCase
         $response = $this->getJson(route('search.index', ['q' => '  Imperial  ']));
 
         $response->assertOk();
-        $response->assertJsonCount(3, 'groups');
+        $response->assertJsonCount(4, 'groups');
         $response->assertJsonPath('groups.0.heading', 'Players');
         $response->assertJsonPath('groups.0.results.0.name', 'Alex Carter');
         $response->assertJsonPath('groups.0.results.0.secondaryText', 'Imperial Club');
@@ -49,6 +53,32 @@ class SiteSearchTest extends TestCase
         $response->assertJsonPath('groups.2.heading', 'Venues');
         $response->assertJsonPath('groups.2.results.0.name', 'Imperial Hall');
         $response->assertJsonPath('groups.2.results.0.secondaryText', '12 West Street');
+        $response->assertJsonPath('groups.3.heading', 'Sections');
+        $response->assertJsonPath('groups.3.results.0.name', 'Imperial Division');
+    }
+
+    public function test_search_only_returns_sections_from_open_seasons(): void
+    {
+        $openSeason = Season::factory()->create(['is_open' => true]);
+        $closedSeason = Season::factory()->create(['is_open' => false]);
+
+        Section::factory()->create([
+            'name' => 'Division North',
+            'season_id' => $openSeason->id,
+        ]);
+
+        Section::factory()->create([
+            'name' => 'Division South',
+            'season_id' => $closedSeason->id,
+        ]);
+
+        $response = $this->getJson(route('search.index', ['q' => 'Division']));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'groups');
+        $response->assertJsonPath('groups.0.heading', 'Sections');
+        $response->assertJsonCount(1, 'groups.0.results');
+        $response->assertJsonPath('groups.0.results.0.name', 'Division North');
     }
 
     public function test_search_endpoint_returns_empty_groups_for_short_queries(): void

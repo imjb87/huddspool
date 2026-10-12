@@ -64,7 +64,7 @@
                     x-model="searchTerm"
                     autocomplete="off"
                     class="h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm text-foreground placeholder:text-muted-foreground focus:ring-0"
-                    placeholder="Search players, teams, venues..."
+                    placeholder="Search players, teams, venues, and sections..."
                     role="combobox"
                     :aria-expanded="resultGroups.length > 0 ? 'true' : 'false'"
                     :aria-activedescendant="activeResultId()"
@@ -77,7 +77,7 @@
 
             <div class="min-h-0 w-full flex-1 overflow-y-auto p-2" x-show="isLoading" data-search-loading-state>
                 <div class="w-full space-y-1" data-search-loading-skeleton aria-hidden="true">
-                    @foreach (['players', 'teams'] as $groupName)
+                    @foreach (['players', 'teams', 'venues', 'sections'] as $groupName)
                         <div class="w-full">
                             <div class="px-3 pt-3 pb-1">
                                 <div class="h-3 w-20 animate-pulse rounded-md bg-muted"></div>
@@ -103,8 +103,8 @@
             <div class="min-h-0 flex-1 overflow-y-auto" x-show="!isLoading && searchTerm.trim().length < 3" data-search-empty-prompt>
                 <x-ui-empty-state
                     layout="search"
-                    title="Search for players, teams and venues"
-                    description="Search players, teams, and venues by name."
+                    title="Search for players, teams, venues and sections"
+                    description="Search players, teams, venues, and sections by name."
                 />
             </div>
 
@@ -112,7 +112,7 @@
                 <x-ui-empty-state
                     layout="search"
                     title="No results found"
-                    description="No players, teams, or venues matched that search. Try a different name."
+                    description="No players, teams, venues, or sections matched that search. Try a different name."
                 />
             </div>
 
