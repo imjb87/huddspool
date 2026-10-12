@@ -32,15 +32,15 @@
     ></div>
 
     <div
-        class="absolute inset-0 z-10 flex overflow-hidden"
+        class="absolute inset-0 z-10 flex overflow-hidden sm:items-center sm:justify-center sm:p-4"
         @click="close()"
     >
         <div
             x-show="open"
             @click.stop
-            x-transition:enter="ui-motion-mobile-menu-in"
-            x-transition:leave="ui-motion-mobile-menu-out"
-            class="relative flex h-full w-full flex-col overflow-hidden bg-background text-foreground"
+            x-transition:enter="ui-motion-search-shell-in"
+            x-transition:leave="ui-motion-search-shell-out"
+            class="relative flex h-full w-full flex-col overflow-hidden bg-background text-foreground sm:h-[36rem] sm:max-h-[calc(100dvh-2rem)] sm:w-full sm:max-w-lg sm:rounded-xl sm:border sm:border-border/70 sm:bg-card sm:text-card-foreground sm:shadow-2xl sm:ring-1 sm:ring-foreground/10"
             data-search-modal-shell
         >
             <h2 id="site-search-dialog-title" class="sr-only">Site search</h2>

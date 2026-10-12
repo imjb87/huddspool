@@ -52,6 +52,10 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('1.004 80%,', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
+        $this->assertStringContainsString('transform: translate3d(0, 0.75rem, 0) scale(0.985);', $css);
+        $this->assertStringContainsString('@media (min-width: 40rem)', $css);
+        $this->assertStringContainsString('animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;', $css);
+        $this->assertStringContainsString('animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-in) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-panel-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-panel-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringNotContainsString('--mobile-menu-enter-overshoot', $css);
@@ -65,12 +69,12 @@ class ThemeTransitionTest extends TestCase
 
         $this->assertIsString($search);
         $this->assertIsString($notifications);
-        $this->assertStringContainsString('x-transition:enter="ui-motion-mobile-menu-in"', $search);
-        $this->assertStringContainsString('x-transition:leave="ui-motion-mobile-menu-out"', $search);
+        $this->assertStringContainsString('x-transition:enter="ui-motion-search-shell-in"', $search);
+        $this->assertStringContainsString('x-transition:leave="ui-motion-search-shell-out"', $search);
         $this->assertStringContainsString('x-transition:enter="ui-motion-mobile-menu-in"', $notifications);
         $this->assertStringContainsString('x-transition:leave="ui-motion-mobile-menu-out"', $notifications);
-        $this->assertStringContainsString('top: var(--site-header-height, 4rem);', $search);
-        $this->assertStringContainsString('var(--site-header-height, 4rem)', $notifications);
+        $this->assertStringContainsString('style="top: var(--site-search-visible-top', $search);
+        $this->assertStringContainsString('top-[var(--site-header-height,4rem)]', $notifications);
         $this->assertStringNotContainsString('transition-[background-color,border-color,box-shadow,color]', $notifications);
     }
 
@@ -101,10 +105,10 @@ class ThemeTransitionTest extends TestCase
 
         $this->assertIsString($css);
         $this->assertStringContainsString('.navigation-mobile-menu,', $css);
-        $this->assertStringContainsString('[data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('[data-notifications-drawer],', $css);
         $this->assertStringContainsString('[data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: linear-gradient(to bottom, var(--background) 0%, var(--muted) 100%);', $css);
-        $this->assertStringContainsString('.dark [data-notifications-drawer] {', $css);
+        $this->assertStringContainsString('.dark [data-notifications-drawer],', $css);
         $this->assertStringContainsString('.dark [data-search-modal-shell] {', $css);
         $this->assertStringContainsString('background-image: none;', $css);
         $this->assertStringContainsString('touch-action: pan-y;', $css);

@@ -274,7 +274,7 @@
 
   @keyframes ui-search-shell-enter {
     from {
-      transform: translate3d(0, 0, 0) scale(0.95);
+      transform: translate3d(0, 0.75rem, 0) scale(0.985);
       opacity: 0;
     }
 
@@ -291,21 +291,33 @@
     }
 
     to {
-      transform: translate3d(0, 0, 0) scale(0.95);
+      transform: translate3d(0, 0.75rem, 0) scale(0.985);
       opacity: 0;
     }
   }
 
   .ui-motion-search-shell-in {
-    animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;
+    animation: ui-mobile-menu-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform;
     backface-visibility: hidden;
   }
 
   .ui-motion-search-shell-out {
-    animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-out) both;
+    animation: ui-mobile-menu-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;
     will-change: transform;
     backface-visibility: hidden;
+  }
+
+  @media (min-width: 40rem) {
+    .ui-motion-search-shell-in {
+      animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;
+      will-change: transform, opacity;
+    }
+
+    .ui-motion-search-shell-out {
+      animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+      will-change: transform, opacity;
+    }
   }
 
   @keyframes ui-mobile-menu-panel-enter {

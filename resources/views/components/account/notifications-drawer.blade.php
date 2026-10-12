@@ -40,8 +40,7 @@
             x-transition:leave="ui-motion-fade-out"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-x-0 bottom-0 z-[60] bg-black/20 dark:bg-black/60"
-            style="top: var(--site-header-height, 4rem);"
+            class="fixed inset-x-0 top-[var(--site-header-height,4rem)] bottom-0 z-[60] bg-black/20 dark:bg-black/60 sm:inset-0"
             @click="close()"
             data-notifications-drawer-overlay></div>
 
@@ -50,8 +49,7 @@
             x-cloak
             x-transition:enter="ui-motion-mobile-menu-in"
             x-transition:leave="ui-motion-mobile-menu-out"
-            class="fixed inset-x-0 bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground"
-            style="top: var(--site-header-height, 4rem);"
+            class="fixed inset-x-0 top-[var(--site-header-height,4rem)] bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground sm:inset-y-4 sm:right-4 sm:left-auto sm:w-96 sm:max-w-[calc(100vw-2rem)] sm:rounded-xl sm:border sm:border-border/70 sm:bg-card sm:shadow-2xl sm:ring-1 sm:ring-foreground/10"
             role="dialog"
             aria-modal="true"
             aria-labelledby="notifications-drawer-title"

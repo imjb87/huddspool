@@ -87,7 +87,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('Math.max(0, visibleBottom - visibleTop)', false);
         $response->assertSee("window.dispatchEvent(new CustomEvent('header-overlay-open', { detail: { id: 'search' } }))", false);
         $response->assertSee('header-overlay-open', false);
-        $response->assertSee('class="absolute inset-0 z-10 flex overflow-hidden"', false);
+        $response->assertSee('class="absolute inset-0 z-10 flex overflow-hidden sm:items-center sm:justify-center sm:p-4', false);
+        $response->assertSee('sm:items-center sm:justify-center sm:p-4', false);
         $response->assertSee('x-on:site-search:toggle.window="toggleSearch()"', false);
         $response->assertSee('@click="window.headerActionIcon?.set(', false);
         $response->assertSee("window.dispatchEvent(new CustomEvent('site-search:toggle'))", false);
@@ -100,10 +101,12 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('placeholder="Search players, teams, venues..."', false);
         $response->assertSee('text-foreground placeholder:text-muted-foreground focus:ring-0', false);
         $response->assertSee('data-search-modal-shell', false);
+        $response->assertSee('x-transition:enter="ui-motion-search-shell-in"', false);
+        $response->assertSee('x-transition:leave="ui-motion-search-shell-out"', false);
         $response->assertSee('window.headerActionIcon?.set(', false);
         $response->assertSee('trigger.querySelector(\'[data-header-action-icon="search"]\')', false);
         $response->assertSee('flex h-full w-full flex-col overflow-hidden bg-background text-foreground', false);
-        $response->assertDontSee('rounded-xl border border-border/70 bg-background p-2 pb-11 text-foreground shadow-xl', false);
+        $response->assertSee('sm:h-[36rem] sm:max-h-[calc(100dvh-2rem)] sm:w-full sm:max-w-lg', false);
         $response->assertSee('endpoint:', false);
         $response->assertSee('h-9 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm', false);
         $response->assertSee('data-search-loading-skeleton', false);
@@ -385,7 +388,7 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('aria-label="Open notifications"', false);
         $response->assertSee('class="size-5"', false);
         $response->assertSee('data-notifications-drawer', false);
-        $response->assertSee('class="fixed inset-x-0 bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground"', false);
+        $response->assertSee('class="fixed inset-x-0 top-[var(--site-header-height,4rem)] bottom-0 z-[70] flex flex-col overflow-hidden bg-background text-foreground sm:inset-y-4 sm:right-4 sm:left-auto sm:w-96 sm:max-w-[calc(100vw-2rem)]', false);
         $response->assertSee('class="ui-card mx-4 mt-4 mb-0 flex shrink-0 items-start gap-4 bg-muted/50 p-4 sm:p-6"', false);
         $response->assertSee('class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-4"', false);
         $response->assertSee("id !== 'notifications' && open) close()", false);
