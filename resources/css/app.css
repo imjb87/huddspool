@@ -68,10 +68,15 @@
     --motion-duration-fast: 120ms;
     --motion-duration-normal: 180ms;
     --motion-duration-panel: 240ms;
+    --motion-duration-popover: 280ms;
     --motion-duration-content: 360ms;
     --motion-duration-mobile-menu: 900ms;
     --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --motion-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --motion-ease-spring: linear(
+      0,
+      .08 10%, .52 35%, .92 55%, 1.04 70%, .985 84%, 1.01 93%, 1
+    );
     /* Sampled spring curve: overshoot, recoil, then progressively smaller rebounds. */
     --motion-ease-mobile-menu: linear(
       0,
@@ -208,6 +213,42 @@
     transition-timing-function: var(--motion-ease-in);
   }
 
+  @keyframes ui-navigation-dropdown-enter {
+    from {
+      transform: translate3d(0, 0.5rem, 0) scale(0.97);
+      opacity: 0;
+    }
+
+    to {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes ui-navigation-dropdown-leave {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+
+    to {
+      transform: translate3d(0, 0.25rem, 0) scale(0.985);
+      opacity: 0;
+    }
+  }
+
+  .ui-motion-navigation-dropdown-in {
+    animation: ui-navigation-dropdown-enter var(--motion-duration-popover) var(--motion-ease-spring) both;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+
+  .ui-motion-navigation-dropdown-out {
+    animation: ui-navigation-dropdown-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+
   .ui-motion-drawer-in {
     transition-property: transform;
     transition-duration: var(--motion-duration-panel);
@@ -310,7 +351,7 @@
 
   @media (min-width: 40rem) {
     .ui-motion-search-shell-in {
-      animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;
+      animation: ui-search-shell-enter var(--motion-duration-popover) var(--motion-ease-spring) both;
       will-change: transform, opacity;
     }
 

@@ -203,6 +203,8 @@ class NavigationAndSearchUiTest extends TestCase
         $response->assertSee('data-navigation-menu', false);
         $response->assertSee('data-navigation-menu-trigger', false);
         $response->assertSee('data-navigation-menu-content', false);
+        $response->assertSee('x-transition:enter="ui-motion-navigation-dropdown-in"', false);
+        $response->assertSee('x-transition:leave="ui-motion-navigation-dropdown-out"', false);
         $response->assertSee('@focusin="show()"', false);
         $response->assertSee('@keydown.escape.stop="close(); $el.querySelector(\'[data-navigation-menu-trigger]\')?.focus()"', false);
         $response->assertSee('@click.outside="close()"', false);

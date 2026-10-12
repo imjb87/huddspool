@@ -83,10 +83,10 @@
                 class="absolute right-0 top-full z-50 mt-1.5 w-72 origin-top-right overflow-hidden rounded-md border border-gray-200 bg-white p-2 pr-2.5 text-gray-900 shadow-lg shadow-black/5 dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:shadow-black/20"
                 x-show="open"
                 x-cloak
-                x-transition:enter="ui-motion-popover-in"
+                x-transition:enter="ui-motion-navigation-dropdown-in"
                 x-transition:enter-start="translate-y-1 scale-95 opacity-0"
                 x-transition:enter-end="translate-y-0 scale-100 opacity-100"
-                x-transition:leave="ui-motion-popover-out"
+                x-transition:leave="ui-motion-navigation-dropdown-out"
                 x-transition:leave-start="translate-y-0 scale-100 opacity-100"
                 x-transition:leave-end="translate-y-1 scale-95 opacity-0"
                 @mouseenter="cancelClose()">

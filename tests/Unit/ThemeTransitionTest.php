@@ -33,8 +33,10 @@ class ThemeTransitionTest extends TestCase
         $this->assertIsString($css);
         $this->assertStringContainsString('--motion-duration-fast: 120ms;', $css);
         $this->assertStringContainsString('--motion-duration-panel: 240ms;', $css);
+        $this->assertStringContainsString('--motion-duration-popover: 280ms;', $css);
         $this->assertStringContainsString('--motion-duration-mobile-menu: 900ms;', $css);
         $this->assertStringContainsString('--motion-ease-mobile-menu: linear(', $css);
+        $this->assertStringContainsString('--motion-ease-spring: linear(', $css);
         $this->assertStringContainsString("      0,\n", $css);
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
         $this->assertStringContainsString('animation-duration: 0.01ms !important;', $css);
@@ -44,6 +46,8 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('transition-property: transform, opacity;', $css);
         $this->assertStringContainsString('@keyframes ui-search-shell-enter', $css);
         $this->assertStringContainsString('@keyframes ui-search-shell-leave', $css);
+        $this->assertStringContainsString('@keyframes ui-navigation-dropdown-enter', $css);
+        $this->assertStringContainsString('@keyframes ui-navigation-dropdown-leave', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-enter', $css);
         $this->assertStringContainsString('@keyframes ui-mobile-menu-panel-leave', $css);
@@ -54,7 +58,9 @@ class ThemeTransitionTest extends TestCase
         $this->assertStringContainsString('animation: ui-mobile-menu-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringContainsString('transform: translate3d(0, 0.75rem, 0) scale(0.985);', $css);
         $this->assertStringContainsString('@media (min-width: 40rem)', $css);
-        $this->assertStringContainsString('animation: ui-search-shell-enter var(--motion-duration-panel) var(--motion-ease-out) both;', $css);
+        $this->assertStringContainsString('animation: ui-navigation-dropdown-enter var(--motion-duration-popover) var(--motion-ease-spring) both;', $css);
+        $this->assertStringContainsString('animation: ui-navigation-dropdown-leave var(--motion-duration-normal) var(--motion-ease-in) both;', $css);
+        $this->assertStringContainsString('animation: ui-search-shell-enter var(--motion-duration-popover) var(--motion-ease-spring) both;', $css);
         $this->assertStringContainsString('animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-in) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-panel-enter var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
         $this->assertStringContainsString('animation: ui-mobile-menu-panel-leave var(--motion-duration-mobile-menu) var(--motion-ease-mobile-menu) both;', $css);
