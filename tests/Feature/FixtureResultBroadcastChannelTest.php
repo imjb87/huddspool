@@ -52,6 +52,8 @@ class FixtureResultBroadcastChannelTest extends TestCase
         $this->assertSame($teamAdmin->name, $channelData['user_info']['name']);
         $this->assertSame($teamAdmin->avatar_url, $channelData['user_info']['avatar_url']);
         $this->assertSame(ResultFormCollaboratorColor::forUser((int) $teamAdmin->id), $channelData['user_info']['color']);
+        $this->assertIsInt($channelData['user_info']['joined_at']);
+        $this->assertGreaterThan(0, $channelData['user_info']['joined_at']);
     }
 
     public function test_unauthorized_user_cannot_join_fixture_result_presence_channel(): void

@@ -429,7 +429,8 @@ window.resultFormCollaboration = ({
             field_key: fieldKey,
             client_id: String(event.client_id),
             claimed_at: Number(event.claimed_at ?? Date.now()),
-            color: /^#[0-9a-f]{6}$/i.test(String(event.color ?? '')) ? event.color : '#64748b',
+            color: this.collaboratorColorAssignments?.[Number(event.user_id)]
+                ?? (/^#[0-9a-f]{6}$/i.test(String(event.color ?? '')) ? event.color : '#64748b'),
             user_id: Number(event.user_id ?? 0),
             user_name: event.user_name ?? 'Another editor',
             expires_at: Number(event.expires_at ?? Date.now() + this.fieldLockTtlMs),
@@ -469,11 +470,13 @@ window.resultFormCollaboration = ({
 
         const borderRadius = fieldKey.endsWith('_player_id') ? '0.5rem' : '9999px';
 
-        return `outline: 2px solid ${lock.color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${lock.color}55; border-radius: ${borderRadius};`;
+        const color = this.collaboratorColorAssignments?.[Number(lock.user_id)] ?? lock.color;
+
+        return `outline: 2px solid ${color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${color}55; border-radius: ${borderRadius};`;
     },
     collaboratorActivityStyle(collaborator) {
         const lock = Object.values(this.fieldLocks).find((fieldLock) => Number(fieldLock.user_id) === Number(collaborator.id));
-        const color = lock?.color ?? collaborator.color ?? '#64748b';
+        const color = this.collaboratorColorAssignments?.[Number(collaborator.id)] ?? collaborator.color ?? lock?.color ?? '#64748b';
 
         return `position: relative; z-index: 2; outline: 2px solid ${color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${color}55;`;
     },
@@ -956,7 +959,9 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
     collaboratorsUi: [],
     initEditors() {
         this.collaboratorsUi = [];
-        this.syncCollaboratorsUi(initialCollaborators);
+        this.normalizedCollaborators(initialCollaborators).forEach((member) => {
+            this.collaboratorJoinedUi({ ...member, color: '#64748b' }, false);
+        });
     },
     syncCollaboratorsUi(members = []) {
         const normalizedMembers = this.normalizedCollaborators(members);
@@ -982,7 +987,7 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
                 .filter(([collaboratorId]) => collaboratorId > 0),
         ).entries()]
             .map(([collaboratorId, member]) => ({ ...member, id: collaboratorId }))
-            .sort((first, second) => first.id - second.id);
+            .sort((first, second) => Number(first.joined_at ?? 0) - Number(second.joined_at ?? 0) || first.id - second.id);
     },
     hslToHex(hue, saturation, lightness) {
         const normalizedHue = ((hue % 360) + 360) % 360;
@@ -1016,7 +1021,7 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
         return this.hslToHex(hue, 72, lightness);
     },
     rebalanceCollaboratorColors(members = this.collaboratorsUi) {
-        const normalizedMembers = this.normalizedCollaborators(members);
+        const normalizedMembers = this.normalizedCollaborators(members.filter((member) => !member.isLeaving));
         const assignments = {};
         const usedColors = new Set();
         let generatedColorIndex = this.collaboratorColorPalette.length;
@@ -1064,6 +1069,8 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
             existingCollaborator.name = member.name ?? existingCollaborator.name;
             existingCollaborator.avatar_url = member.avatar_url ?? existingCollaborator.avatar_url;
             existingCollaborator.color = member.color ?? existingCollaborator.color;
+            existingCollaborator.joined_at = member.joined_at ?? existingCollaborator.joined_at;
+            existingCollaborator.isLeaving = false;
             existingCollaborator.isVisible = true;
 
             if (rebalance) {
@@ -1078,6 +1085,8 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
             name: member.name ?? 'Team admin',
             avatar_url: member.avatar_url ?? '/images/user.jpg',
             color: member.color ?? '#64748b',
+            joined_at: member.joined_at ?? 0,
+            isLeaving: false,
             isVisible: false,
         });
 
@@ -1102,9 +1111,14 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
         }
 
         collaborator.isVisible = false;
+        collaborator.isLeaving = true;
         this.rebalanceCollaboratorColors(this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId));
 
         window.setTimeout(() => {
+            if (!collaborator.isLeaving) {
+                return;
+            }
+
             this.collaboratorsUi = this.collaboratorsUi.filter((entry) => entry.id !== collaboratorId);
             this.rebalanceCollaboratorColors();
         }, 220);

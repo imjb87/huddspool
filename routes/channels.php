@@ -35,5 +35,6 @@ Broadcast::channel('fixture-results.{fixtureId}', function (User $user, int $fix
         'name' => $user->name,
         'avatar_url' => $user->avatar_url,
         'color' => ResultFormCollaboratorColor::forUser((int) $user->getKey()),
+        'joined_at' => (int) floor(microtime(true) * 1_000_000),
     ];
 });
