@@ -1,4 +1,5 @@
-<section data-home-hero>
+<section class="home-hero relative isolate overflow-hidden" data-home-hero>
+    @include('home.partials.orbits')
     @php
         $heroLogo160PngUrl = asset('images/logo-160.png') . '?v=' . filemtime(public_path('images/logo-160.png'));
         $heroLogo160WebpUrl = asset('images/logo-160.webp') . '?v=' . filemtime(public_path('images/logo-160.webp'));
@@ -13,7 +14,7 @@
             ? 'League registration is now open for ' . $entrySeason->name . ' until ' . $entrySeasonCountdown['target_label'] . '. Registration covers your teams, knockout entries and the key details needed for the upcoming season.'
             : 'Tables, fixtures, results and averages for every section, with the latest league information always close at hand.';
     @endphp
-    <div class="mx-auto flex max-w-6xl flex-col items-center gap-1.5 px-6 py-4 text-center sm:gap-2 md:py-6 lg:py-8 xl:gap-3">
+    <div class="home-hero-content relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 px-6 py-16 text-center sm:gap-5 sm:py-20 lg:py-24">
         @if ($entrySeason && $entrySeasonCountdown)
             <div
                 x-data="{
@@ -74,10 +75,10 @@
             </picture>
         </div>
 
-        <h1 class="max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl xl:text-5xl xl:tracking-tighter dark:text-gray-100" data-home-hero-title>
+        <h1 class="max-w-2xl text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl xl:text-5xl xl:tracking-tighter dark:text-gray-100" data-home-hero-title>
             {{ $heroTitle }}
         </h1>
-        <p class="max-w-2xl text-base leading-6 text-gray-900 sm:text-lg sm:leading-7 dark:text-gray-100" data-home-hero-description>
+        <p class="max-w-lg text-base leading-6 text-gray-600 sm:text-lg sm:leading-7 dark:text-gray-400" data-home-hero-description>
             {{ $heroDescription }}
         </p>
 

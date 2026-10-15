@@ -1,4 +1,5 @@
 import './bootstrap';
+import './home-hero-orbits';
 import Alpine from 'alpinejs';
 import { bootDeferredGoogleAnalytics } from './google-analytics';
 import { headerActionIcon, mobileMenuIcon } from './mobile-menu-icon';

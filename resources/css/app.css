@@ -606,6 +606,98 @@
     @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
   }
 
+  .home-hero {
+    --hero-orbit-base-size: 16rem;
+    --hero-orbit-spacing: 12rem;
+    --hero-orbit-line: rgb(22 101 52 / 0.09);
+    --hero-glow: rgb(34 197 94 / 0.1);
+  }
+
+  .dark .home-hero {
+    --hero-orbit-line: rgb(134 239 172 / 0.07);
+    --hero-glow: rgb(34 197 94 / 0.08);
+  }
+
+  .home-hero-content {
+    min-height: 34rem;
+  }
+
+  .home-hero-orbits {
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 80%, transparent);
+  }
+
+  .home-hero-glow {
+    background: radial-gradient(ellipse 48% 62% at 50% 48%, var(--hero-glow), transparent 85%);
+  }
+
+  .home-hero-orbit-field {
+    mask-image: radial-gradient(circle at center, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.28) 12rem, rgb(0 0 0 / 0.55) 19rem, rgb(0 0 0 / 0.8) 25rem, #000 32rem);
+  }
+
+  .home-hero-orbit {
+    --orbit-size: calc(var(--hero-orbit-base-size) + var(--orbit-index) * var(--hero-orbit-spacing));
+    width: var(--orbit-size);
+    height: var(--orbit-size);
+    translate: -50% -50%;
+  }
+
+  .home-hero-orbit-track {
+    border-color: var(--hero-orbit-line);
+    transform: rotate(var(--orbit-start));
+  }
+
+  .home-hero-orbit-arm {
+    transform: rotate(var(--ball-angle));
+  }
+
+  .home-hero-orbit-ball {
+    width: var(--ball-size);
+    height: var(--ball-size);
+    translate: -50% -50%;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
+  }
+
+  @media (min-width: 640px) {
+    .home-hero-content {
+      min-height: 38rem;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .home-hero {
+      --hero-orbit-base-size: 14rem;
+      --hero-orbit-spacing: 8rem;
+    }
+
+    .home-hero-orbit-ball {
+      width: calc(var(--ball-size) * 0.75);
+      height: calc(var(--ball-size) * 0.75);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-orbit-track {
+      animation: home-hero-orbit var(--orbit-duration) linear infinite;
+      animation-delay: var(--orbit-delay);
+    }
+
+    .home-hero-orbit-2 .home-hero-orbit-track,
+    .home-hero-orbit-4 .home-hero-orbit-track {
+      animation-direction: reverse;
+    }
+  }
+
+  @keyframes home-hero-orbit {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .ui-page-shell,
   .navigation-mobile-menu,
   [data-notifications-drawer],

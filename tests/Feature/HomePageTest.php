@@ -29,7 +29,7 @@ class HomePageTest extends TestCase
         ResponseCache::clear();
     }
 
-    public function test_home_page_renders_a_shadcn_style_hero_with_the_centered_league_logo(): void
+    public function test_home_page_renders_an_orbiting_hero_with_the_centered_league_logo(): void
     {
         $response = $this->get(route('home'));
 
@@ -39,10 +39,36 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-hero', false);
         $response->assertDontSee('/livewire/livewire.min.js', false);
         $response->assertDontSee('window.livewireScriptConfig', false);
-        $response->assertSee('mx-auto flex max-w-6xl flex-col items-center gap-1.5 px-6 py-4 text-center sm:gap-2 md:py-6 lg:py-8 xl:gap-3', false);
+        $response->assertSee('home-hero-content relative z-10 mx-auto flex w-full max-w-6xl', false);
         $response->assertDontSeeText('Huddersfield & District Pool League');
         $response->assertSee('text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-gray-900', false);
-        $response->assertSee('max-w-2xl text-base leading-6 text-gray-900 sm:text-lg sm:leading-7 dark:text-gray-100', false);
+        $response->assertSee('max-w-lg text-base leading-6 text-gray-600 sm:text-lg sm:leading-7 dark:text-gray-400', false);
+        $response->assertSee('aria-hidden="true" data-home-hero-orbits', false);
+        $this->assertSame(5, substr_count($response->getContent(), ' data-home-hero-orbit>'));
+        preg_match_all('/--orbit-index: (\d+);/', $response->getContent(), $orbitIndexes);
+        $this->assertSame(['0', '1', '2', '3', '4'], $orbitIndexes[1]);
+        $this->assertSame(29, substr_count($response->getContent(), ' data-home-hero-ball='));
+        $response->assertSee('data-home-hero-orbit-field', false);
+        $response->assertSee('x-data="homeHeroOrbits()"', false);
+        $response->assertSee('<circle cx="320" cy="248" r="136" fill="#f8fafc" data-home-hero-eight-face', false);
+        $response->assertDontSee('<circle cx="320" cy="320" r="256" fill="#f8fafc"', false);
+        $response->assertSee('href="#home-hero-eight-ball"', false);
+        $response->assertSee('href="#home-hero-solid-ball"', false);
+        $response->assertSee('viewBox="0 0 512 512"', false);
+
+        preg_match_all('/<svg class="block size-full" width="(\d+)" height="(\d+)" viewBox="0 0 512 512"/', $response->getContent(), $ballDimensions);
+
+        $this->assertCount(29, $ballDimensions[0]);
+        $this->assertSame($ballDimensions[1], $ballDimensions[2]);
+
+        preg_match_all('/id="(home-hero-[^"]+)"/', $response->getContent(), $artworkIds);
+        preg_match_all('/(?:url\(#|href="#)(home-hero-[^"\)]+)/', $response->getContent(), $artworkReferences);
+
+        $this->assertCount(count($artworkIds[1]), array_unique($artworkIds[1]));
+
+        foreach ($artworkReferences[1] as $reference) {
+            $this->assertContains($reference, $artworkIds[1]);
+        }
         $response->assertSee('flex w-full items-center justify-center gap-2 pt-1', false);
         $response->assertSee('data-home-hero-actions', false);
         $response->assertSee('data-home-hero-account-action', false);
@@ -163,6 +189,7 @@ class HomePageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('data-home-hero-entry-countdown', false);
+        $response->assertSee('aria-hidden="true" data-home-hero-orbits', false);
         $response->assertSeeText('Closes in');
         $response->assertSeeText('Registration for the next season is now open');
         $response->assertSeeText('League registration is now open for Summer 2026 until');
