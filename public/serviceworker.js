@@ -14,6 +14,9 @@ const CORE_PRECACHE_URLS = [
     "/images/icons/icon-144-144.png",
     "/images/icons/icon-192-192.png",
     "/images/icons/icon-512-512.png",
+    "/games/8-ball/index.html",
+    ...["config.mjs", "physics.mjs", "match.mjs", "transport.mjs", "render.mjs", "audio.mjs", "input.mjs", "game.mjs", "game.css"]
+        .map((file) => `/games/8-ball/v1/${file}`),
 ];
 
 const PRIVATE_PATH_PREFIXES = [
@@ -240,7 +243,7 @@ self.addEventListener("install", (event) => {
             uniqueUrls([...CORE_PRECACHE_URLS, ...buildAssetUrls]),
         );
 
-        await self.skipWaiting();
+        // A new worker waits until existing tabs close. Never replace a live match's engine.
     })());
 });
 

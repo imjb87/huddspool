@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101c19">
+    <title>Huddspool • 8-ball</title>
+    <link rel="stylesheet" href="./v1/game.css">
+</head>
+<body>
+<main id="pool" class="pool-app">
+    <header class="topbar">
+        <a class="brand" href="/" target="_top" aria-label="Return to Huddspool"><span class="brand-mark">8</span> hudds<span>pool</span><small>THE VIRTUAL CLUB</small></a>
+        <div class="room"><span class="live-dot"></span> THE CLUBROOM <span class="separator">/</span> 8-BALL POOL</div>
+        <div class="tools"><button id="help" aria-label="How to play">?</button><button id="mute" aria-label="Mute sound" aria-pressed="false">♫</button><button id="settings" aria-label="Game settings">⚙</button><button id="exit" aria-label="Exit game">↗</button></div>
+    </header>
+    <section class="match-heading"><div><span class="eyebrow">PULL UP A CUE</span><h1>A little friendly competition.</h1></div><span class="mode-pill">♧ &nbsp; LOCAL · 2 PLAYERS</span></section>
+    <section class="scoreboard" aria-label="Players">
+        <article id="player-0" class="player-panel"><div class="avatar">P1</div><div class="player-detail"><div class="player-name">Player 1</div><div class="player-label">OPEN TABLE</div><div class="ball-track"></div></div><span class="turn-tag">YOUR TURN</span><div class="clock-track"><div></div></div></article>
+        <div class="match-center"><span class="rack-label">FRIENDLY MATCH</span><strong id="score">0 <span>–</span> 0</strong><span id="rack-count">RACK 01</span></div>
+        <article id="player-1" class="player-panel opponent"><div class="avatar">P2</div><div class="player-detail"><div class="player-name">Player 2</div><div class="player-label">OPEN TABLE</div><div class="ball-track"></div></div><span class="turn-tag">YOUR TURN</span><div class="clock-track"><div></div></div></article>
+    </section>
+    <section class="arena" aria-label="Pool table and shot controls">
+        <div class="power-column"><span class="control-label">POWER</span><span class="power-max">MAX</span><div id="power" class="power-meter" role="slider" tabindex="0" aria-label="Shot power. Drag down and release to shoot; use arrows then the Shoot button for keyboard play." aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="power-fill"></div><div class="power-ticks"></div><div class="power-handle"></div></div><span class="power-min">MIN</span><span id="power-number">0%</span></div>
+        <div class="table-wrap"><canvas id="table" width="1120" height="620" tabindex="0" aria-label="Pool table. Drag to aim or place the cue ball. Arrow keys adjust aim."></canvas><div id="pocket-buttons" aria-label="Call the 8-ball pocket"></div><div class="table-caption"><span>HUDDSPOOL <b>CLUB SERIES</b></span><span>8-BALL · STANDARD TABLE</span></div></div>
+    </section>
+    <div class="status-row"><span id="status-icon">↳</span><p id="status" role="status" aria-live="polite">Setting up the table…</p><span id="clock" aria-label="Shot clock">30<span>s</span></span><button id="confirm" class="primary">Confirm placement</button></div>
+    <section class="control-deck" aria-label="Shot controls">
+        <div class="spin-control"><button id="spin" class="spin-ball" aria-label="Adjust cue-ball spin" aria-haspopup="dialog"><span></span></button><div><strong>Cue ball spin</strong><small id="spin-description">Center ball</small></div></div>
+        <div class="fine-control"><button id="aim-left" aria-label="Fine aim counterclockwise">−</button><label for="fine">FINE AIM<input id="fine" type="range" min="-100" max="100" value="0" aria-label="Fine aim"></label><button id="aim-right" aria-label="Fine aim clockwise">+</button></div>
+        <button id="shoot" class="shot-button" disabled>Shoot <span>↵</span></button>
+    </section>
+    <footer class="game-footer"><span><i class="live-dot"></i> <span id="connection">Pass & play · saved on this device</span></span><button id="new-match">New match</button><span class="desktop-hint">Aim on the table <b>·</b> Pull down to shoot</span><span class="portrait-hint">Rotate for a bigger table</span></footer>
+    <dialog id="modal"><form method="dialog"><button class="close" aria-label="Close dialog">×</button></form><div id="modal-content"></div></dialog>
+    <noscript>This game requires JavaScript. Enable it to play local 8-ball.</noscript>
+</main>
+<script type="module" src="./v1/game.mjs"></script>
+</body>
+</html>
