@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { RULES, PHYSICS as P, groupOf } from '../../public/games/8-ball/v1/config.mjs';
 import { rack, Simulation, validPlacement, respot, predict } from '../../public/games/8-ball/v1/physics.mjs';
 import { PoolMatch, FixedStepper, targets, resolveShot } from '../../public/games/8-ball/v1/match.mjs';
-import { bindPowerMeter } from '../../public/games/8-ball/v1/input.mjs';
+import { bindPowerMeter, bindTableDrag } from '../../public/games/8-ball/v1/input.mjs';
 import { Renderer } from '../../public/games/8-ball/v1/render.mjs';
 
 const players = [{id:'one',name:'One'},{id:'two',name:'Two'}];
@@ -111,6 +111,25 @@ test('touch cancellation, lost capture and explicit Escape/resize cancellation n
 test('second pointer cannot steer or release another pointer power gesture',()=>{const p=powerFixture();p.send('pointerdown');p.send('pointermove',100,2);p.send('pointerup',100,2);assert.equal(p.power,0);assert.equal(p.shots,0);p.send('pointermove',100);p.send('pointerup',100);assert.equal(p.shots,1);});
 test('timeout or disabled controls prevent a pending pointer release shot',()=>{const p=powerFixture();p.send('pointerdown');p.send('pointermove',100);p.disable();p.send('pointerup',100);assert.equal(p.shots,0);assert.equal(p.power,0);});
 test('disposal aborts power listeners',()=>{const p=powerFixture();p.abort.abort();p.send('pointerdown');p.send('pointermove',100);p.send('pointerup',100);assert.equal(p.shots,0);});
+function tableFixture() {
+    const element=new EventTarget(),capture=new Set(),abort=new AbortController();
+    element.setPointerCapture=id=>capture.add(id);
+    element.hasPointerCapture=id=>capture.has(id);
+    element.releasePointerCapture=id=>{capture.delete(id);send('lostpointercapture',id);};
+    const send=(type,id=1)=>element.dispatchEvent(Object.assign(new Event(type),{pointerId:id,button:0}));
+    let owner=null,moves=0;
+    const control=bindTableDrag({element,signal:abort.signal,isEnabled:()=>true,onMove:()=>moves++,onCapture:id=>{owner=id;}});
+    return {send,control,get owner(){return owner;},get moves(){return moves;}};
+}
+test('lost table capture clears ownership and permits the next table drag',()=>{const t=tableFixture();t.send('pointerdown');assert.equal(t.owner,1);t.send('lostpointercapture');assert.equal(t.owner,null);assert.equal(t.control.active,false);t.send('pointerdown',2);t.send('pointermove',2);assert.equal(t.owner,2);assert.equal(t.moves,3);t.send('pointerup',2);assert.equal(t.owner,null);});
+test('lost capture from a different pointer does not cancel the table owner',()=>{const t=tableFixture();t.send('pointerdown');t.send('lostpointercapture',2);assert.equal(t.owner,1);assert.equal(t.control.active,true);});
+test('losing table capture unlocks the power meter for a subsequent shot',()=>{
+    const t=tableFixture(),element=new EventTarget();let power=0,shots=0;
+    element.setPointerCapture=()=>{};element.hasPointerCapture=()=>false;element.getBoundingClientRect=()=>({height:100});
+    bindPowerMeter({element,signal:new AbortController().signal,isEnabled:()=>t.owner===null,onPower:p=>{power=p;},onCommit:()=>{if(power>0)shots++;}});
+    const send=(type,y=0)=>element.dispatchEvent(Object.assign(new Event(type),{pointerId:2,clientY:y,button:0}));
+    t.send('pointerdown');send('pointerdown');assert.equal(power,0);t.send('lostpointercapture');send('pointerdown');send('pointermove',75);send('pointerup',75);assert.equal(shots,1);
+});
 test('screen-to-world conversion stays correct after portrait/landscape resize and DPR change',()=>{
     let rect={left:10,top:20,width:1120,height:620};
     const canvas={getContext:()=>({}),getBoundingClientRect:()=>rect};

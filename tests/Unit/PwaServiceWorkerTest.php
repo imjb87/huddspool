@@ -2,10 +2,20 @@
 
 namespace Tests\Unit;
 
+use Symfony\Component\Process\Process;
 use Tests\TestCase;
 
 class PwaServiceWorkerTest extends TestCase
 {
+    public function test_waiting_worker_cache_isolation_and_activation_lifecycle(): void
+    {
+        $process = new Process(['node', base_path('tests/fixtures/pool-worker.mjs')]);
+        $process->setTimeout(30);
+        $process->run();
+
+        $this->assertSame(0, $process->getExitCode(), $process->getOutput().$process->getErrorOutput());
+    }
+
     public function test_service_worker_precaches_the_offline_shell_and_discovers_built_assets(): void
     {
         $serviceWorker = file_get_contents(public_path('serviceworker.js'));
@@ -13,7 +23,7 @@ class PwaServiceWorkerTest extends TestCase
         $this->assertIsString($serviceWorker);
         $this->assertStringContainsString('const OFFLINE_URL = "/offline";', $serviceWorker);
         $this->assertStringContainsString('const BUILD_MANIFEST_URL = "/build/manifest.json";', $serviceWorker);
-        $this->assertStringContainsString('const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v3`;', $serviceWorker);
+        $this->assertStringContainsString('const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v4`;', $serviceWorker);
         $this->assertStringContainsString('"/manifest.json"', $serviceWorker);
         $this->assertStringContainsString('"/images/icons/icon-48-48.png"', $serviceWorker);
         $this->assertStringContainsString('"/images/icons/icon-72-72.png"', $serviceWorker);

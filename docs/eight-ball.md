@@ -20,6 +20,7 @@ No packages were added. The renderer is Canvas 2D; the engine is browser/Node ES
 | `resources/views/games/eight-ball.blade.php` | Huddspool integration |
 | `resources/js/pool-host.js` | Profile handshake and structured host events |
 | `tests/fixtures/pool-engine.mjs` | Executable engine checks using Node's built-in test runner |
+| `tests/fixtures/pool-worker.mjs` | Waiting-worker cache isolation and activation checks |
 | `tests/Unit/PoolEngineTest.php` | PHPUnit wrapper and offline asset policy checks |
 | `tests/Feature/PoolGamePageTest.php` | Laravel route/embedding check |
 
@@ -32,6 +33,7 @@ vendor/bin/sail up -d
 vendor/bin/sail npm run build
 vendor/bin/sail artisan test --compact tests/Unit/PoolEngineTest.php tests/Feature/PoolGamePageTest.php tests/Unit/PwaServiceWorkerTest.php
 vendor/bin/sail node tests/fixtures/pool-engine.mjs
+vendor/bin/sail node tests/fixtures/pool-worker.mjs
 vendor/bin/sail bin pint --dirty
 ```
 
@@ -39,7 +41,7 @@ The game is accessible directly at `/play/8-ball`; it is not linked in the globa
 
 For offline play, load the app online and allow its service worker to install and cache the game shell/modules. The public static URL `/games/8-ball/index.html` is the offline entry point and can be bookmarked. The normal Laravel page contains personalized navigation and is intentionally not added to the public document cache. The standalone offline entry uses the guest save slot; profile-specific saves remain accessible through the authenticated host when available. Game asset URLs are versioned; release incompatible changes under a new version directory and update both shell and service worker lists together. Do not edit a released rules profile in place.
 
-Worker installation no longer calls `skipWaiting()`. An installed replacement waits for existing tabs to close, preventing a new worker/cache cleanup from taking control during a match. This deliberately affects update activation across the whole PWA, not just the game. Close all application tabs to activate updates. The original worker already active on a device must first be replaced before this policy governs later updates.
+Worker installation no longer calls `skipWaiting()`. An installed replacement waits for existing tabs to close, preventing a new worker/cache cleanup from taking control during a match. The candidate installs into isolated `static-v4`/`runtime-v4` caches; it never overwrites the previous worker's v3 caches. Cache reads are scoped to the controlling worker's own version, and obsolete caches are deleted only on activation. Bump both cache names with each release that changes precached assets. This deliberately affects update activation across the whole PWA, not just the game. Close all application tabs to activate updates. The original worker already active on a device must first be replaced before this policy governs later updates.
 
 ## Rules profile
 
@@ -82,7 +84,7 @@ Required backend work:
 
 ## Verification and fidelity report
 
-54 Node engine/input checks passed in this workspace. They cover the requested rule edge cases, legal/illegal breaks, open and mixed assignment, fouls, rail sequencing, 8-ball outcomes and re-spotting, placement, deadlines, stale/duplicate/forged commands, saved-state compatibility, pause, high-speed collisions, one-time capture, collision prediction, visible follow/draw and byte-equivalent simulated break outcomes at 30/60/144 render FPS. Input checks cover one-shot power release, taps, pointer cancellation, lost capture, explicit cancellation, competing pointers, disabled controls, disposal, and coordinate conversion after viewport/DPR changes. They exercise handlers with EventTarget fixtures rather than a real touch browser.
+57 Node engine/input checks and 3 worker lifecycle checks passed in this workspace. They cover the requested rule edge cases, legal/illegal breaks, open and mixed assignment, fouls, rail sequencing, 8-ball outcomes and re-spotting, placement, deadlines, stale/duplicate/forged commands, saved-state compatibility, pause, high-speed collisions, one-time capture, collision prediction, visible follow/draw and byte-equivalent simulated break outcomes at 30/60/144 render FPS. Input checks cover one-shot power release, taps, pointer cancellation, lost capture, explicit cancellation, competing pointers, disabled controls, disposal, and coordinate conversion after viewport/DPR changes. Table-capture regressions confirm that losing capture clears ownership, permits the next drag and unlocks the power meter. Worker checks verify isolated installation, version-scoped reads, and cleanup only on activation. These use EventTarget and worker VM fixtures rather than a real touch browser.
 
 Sail reported `Docker is not running`; the managed Docker socket was unavailable. The dependency-free checks and Vite production build passed using the installed Node runtime instead. Laravel route tests, PHPUnit wrapper and Pint could not run through Sail. No browser-control tool was available, so desktop/mobile visual, touch, orientation, audio and offline service-worker end-to-end QA remains required; source inspection and event fixtures are not claimed as device verification.
 

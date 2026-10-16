@@ -3,7 +3,7 @@ import { PoolMatch, FixedStepper, targets } from './match.mjs';
 import { validPlacement } from './physics.mjs';
 import { Renderer, COLORS } from './render.mjs';
 import { PoolAudio } from './audio.mjs';
-import { bindPowerMeter } from './input.mjs';
+import { bindPowerMeter, bindTableDrag } from './input.mjs';
 
 const $ = id => document.getElementById(id);
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -162,14 +162,10 @@ export class HuddspoolGame {
             if(['BREAK_SETUP','BALL_IN_HAND'].includes(state.phase)) {this.placement=point;$('confirm').disabled=!validPlacement(state.balls,point.x,point.y,state.phase==='BREAK_SETUP');}
             else if(this.canAim()) this.angle=Math.atan2(point.y-state.balls[0].y,point.x-state.balls[0].x);
         };
-        this.on(canvas,'pointerdown',event=>{
-            if(!this.match || this.match.paused || this.gesture || this.powerInput.active || event.button!==0) return;
-            if(!['BREAK_SETUP','BALL_IN_HAND','AIMING'].includes(this.match.state.phase)) return;
-            this.gesture={type:'table',id:event.pointerId};canvas.setPointerCapture(event.pointerId);tableMove(event);
+        this.tableInput=bindTableDrag({element:canvas,signal:this.abort.signal,
+            isEnabled:()=>this.match&&!this.match.paused&&!this.powerInput.active&&['BREAK_SETUP','BALL_IN_HAND','AIMING'].includes(this.match.state.phase),
+            onMove:tableMove,onCapture:id=>{this.gesture=id===null?null:{type:'table',id};},
         });
-        this.on(canvas,'pointermove',event=>{if(this.gesture?.type==='table' && this.gesture.id===event.pointerId)tableMove(event);});
-        this.on(canvas,'pointerup',event=>{if(this.gesture?.id===event.pointerId){this.gesture=null;canvas.releasePointerCapture(event.pointerId);}});
-        this.on(canvas,'pointercancel',()=>this.cancelGesture());
         this.powerInput=bindPowerMeter({element:$('power'),signal:this.abort.signal,isEnabled:()=>this.canAim()&&!this.gesture,onPower:power=>this.setPower(power),onCommit:()=>this.commit()});
         this.on($('power'),'keydown',event=>{if(!this.canAim())return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();this.setPower(this.power+(['ArrowDown','ArrowRight'].includes(event.key)?.05:-.05));}});
         this.on($('shoot'),'click',()=>this.commit());
@@ -192,8 +188,7 @@ export class HuddspoolGame {
     }
     adjustAim(delta) {if(this.canAim())this.angle=Math.atan2(Math.sin(this.angle+delta),Math.cos(this.angle+delta));}
     cancelGesture() {
-        const gesture=this.gesture;this.gesture=null;
-        if(gesture){const target=gesture.type==='power'?$('power'):$('table');if(target.hasPointerCapture?.(gesture.id))target.releasePointerCapture(gesture.id);}
+        this.tableInput?.cancel();this.gesture=null;
         this.powerInput?.cancel();this.setPower(0);
     }
     openDialog(title,html) {this.cancelGesture();this.pause();$('modal-content').innerHTML='<h2></h2>'+html;$('modal-content').querySelector('h2').textContent=title;if(!$('modal').open)$('modal').showModal();}

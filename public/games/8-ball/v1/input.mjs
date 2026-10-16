@@ -28,3 +28,26 @@ export function bindPowerMeter({ element, signal, isEnabled, onPower, onCommit }
     on('lostpointercapture', event => { if (gesture?.id === event.pointerId) cancel(); });
     return { cancel, get active() { return gesture !== null; } };
 }
+export function bindTableDrag({ element, signal, isEnabled, onMove, onCapture }) {
+    let pointerId = null;
+    const on = (type, fn) => element.addEventListener(type, fn, { signal });
+    const cancel = () => {
+        const previous = pointerId; pointerId = null;
+        onCapture(null);
+        if (previous !== null && element.hasPointerCapture?.(previous)) element.releasePointerCapture(previous);
+    };
+    on('pointerdown', event => {
+        if (!isEnabled() || pointerId !== null || event.button !== 0) return;
+        pointerId = event.pointerId; onCapture(pointerId);
+        element.setPointerCapture(pointerId); onMove(event);
+    });
+    on('pointermove', event => {
+        if (pointerId !== event.pointerId) return;
+        if (!isEnabled()) { cancel(); return; }
+        onMove(event);
+    });
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+        on(type, event => { if (pointerId === event.pointerId) cancel(); });
+    }
+    return { cancel, get active() { return pointerId !== null; } };
+}
