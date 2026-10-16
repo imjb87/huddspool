@@ -1,30 +1,39 @@
+import gameShell from '../../public/games/8-ball/index.html?raw';
+import '../../public/games/8-ball/v1/match-screen.css';
+
 const host = document.querySelector('[data-pool-host]');
 if (host) {
-    const frame = host.querySelector('[data-pool-frame]');
-    const abort = new AbortController();
-    window.addEventListener('message', event => {
-        if (event.origin !== location.origin || event.source !== frame.contentWindow) return;
-        if (event.data?.type === 'huddspool:ready') {
-            frame.contentWindow.postMessage({ type: 'huddspool:init', config: {
+    const showError = error => {
+        host.dataset.gameState = 'error';
+        const panel = document.createElement('section');
+        panel.className = 'pool-startup-message';
+        panel.innerHTML = '<h2>The table couldn’t start.</h2><p>Please reload to try again.</p><button type="button">Reload game</button><details><summary>Error details</summary><pre></pre></details>';
+        panel.querySelector('pre').textContent = error instanceof Error ? error.message : String(error);
+        panel.querySelector('button').addEventListener('click', () => location.reload());
+        host.replaceChildren(panel);
+        console.error('[huddspool:startup]', error);
+    };
+    (async () => {
+        try {
+            const documentFragment = new DOMParser().parseFromString(gameShell, 'text/html');
+            const root = documentFragment.querySelector('#pool');
+            if (!root) throw new Error('Game interface is missing');
+            host.replaceChildren(document.importNode(root, true));
+            const { bootGame } = await import('../../public/games/8-ball/v1/game.mjs');
+            const game = bootGame({
                 players: [
                     { id: host.dataset.playerId, name: host.dataset.playerName, avatar: host.dataset.playerAvatar },
                     { id: 'local-2', name: 'Player 2' },
                 ],
                 storageId: host.dataset.playerId,
                 returnUrl: host.dataset.returnUrl,
-            } }, location.origin);
+            });
+            host.dataset.gameState = 'ready';
+            window.addEventListener('pagehide', event => {
+                if (!event.persisted) game.dispose();
+            }, { once: true });
+        } catch (error) {
+            showError(error);
         }
-        if (event.data?.type === 'huddspool:event') {
-            host.dispatchEvent(new CustomEvent(`huddspool:${event.data.event.type}`, { bubbles: true, detail: event.data.event }));
-        }
-    }, { signal: abort.signal });
-    // Also initializes an already-loaded frame if Vite arrived after its ready message.
-    frame.addEventListener('load', () => frame.contentWindow.postMessage({ type: 'huddspool:host-ready' }, location.origin), { signal: abort.signal });
-    frame.contentWindow.postMessage({ type: 'huddspool:host-ready' }, location.origin);
-    window.addEventListener('pagehide', event => {
-        if (!event.persisted) {
-            frame.contentWindow?.huddspoolGame?.dispose();
-            abort.abort();
-        }
-    }, { signal: abort.signal });
+    })();
 }

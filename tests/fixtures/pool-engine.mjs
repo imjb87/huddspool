@@ -138,6 +138,15 @@ test('screen-to-world conversion stays correct after portrait/landscape resize a
     rect={left:30,top:80,width:336,height:186};globalThis.devicePixelRatio=2;renderer.resize();
     assert.deepEqual(renderer.point({clientX:198,clientY:173}),{x:500,y:250});assert.equal(canvas.width,672);
 });
+test('portrait table rotates world coordinates without stretching and projects pockets correctly',()=>{
+    globalThis.devicePixelRatio=2;
+    const canvas={getContext:()=>({}),getBoundingClientRect:()=>({left:10,top:20,width:310,height:560})};
+    const renderer=new Renderer(canvas);
+    assert.equal(renderer.portrait,true);assert.equal(canvas.width,620);assert.equal(canvas.height,1120);
+    assert.deepEqual(renderer.point({clientX:165,clientY:300}),{x:500,y:250});
+    assert.deepEqual(renderer.point({clientX:290,clientY:50}),{x:0,y:0});
+    assert.deepEqual(renderer.project(0,0),{left:560/620*100,top:60/1120*100});
+});
 test('full power breaks with side spin settle without live overlaps',()=>{
     for(const seed of [1,10,100]){const m=ready();m.state.balls=rack(seed);m.state.balls[0].x=240;m.commit(command(m,{power:1,angle:.02,spin:{x:.6,y:.8}}));settle(m);const live=m.state.balls.filter(b=>!b.pocketed);for(let i=0;i<live.length;i++)for(let j=i+1;j<live.length;j++)assert.ok(Math.hypot(live[i].x-live[j].x,live[i].y-live[j].y)>=P.radius*2-.05);}
 });

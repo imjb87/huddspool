@@ -23,7 +23,7 @@ class PwaServiceWorkerTest extends TestCase
         $this->assertIsString($serviceWorker);
         $this->assertStringContainsString('const OFFLINE_URL = "/offline";', $serviceWorker);
         $this->assertStringContainsString('const BUILD_MANIFEST_URL = "/build/manifest.json";', $serviceWorker);
-        $this->assertStringContainsString('const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v4`;', $serviceWorker);
+        $this->assertStringContainsString('const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v5`;', $serviceWorker);
         $this->assertStringContainsString('"/manifest.json"', $serviceWorker);
         $this->assertStringContainsString('"/images/icons/icon-48-48.png"', $serviceWorker);
         $this->assertStringContainsString('"/images/icons/icon-72-72.png"', $serviceWorker);

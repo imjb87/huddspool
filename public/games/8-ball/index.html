@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#101c19">
     <title>Huddspool • 8-ball</title>
-    <link rel="stylesheet" href="./v1/game.css">
+    <link rel="stylesheet" href="./v1/match-screen.css">
 </head>
 <body>
 <main id="pool" class="pool-app">
     <header class="topbar">
-        <a class="brand" href="/" target="_top" aria-label="Return to Huddspool"><span class="brand-mark">8</span> hudds<span>pool</span><small>THE VIRTUAL CLUB</small></a>
-        <div class="room"><span class="live-dot"></span> THE CLUBROOM <span class="separator">/</span> 8-BALL POOL</div>
-        <div class="tools"><button id="help" aria-label="How to play">?</button><button id="mute" aria-label="Mute sound" aria-pressed="false">♫</button><button id="settings" aria-label="Game settings">⚙</button><button id="exit" aria-label="Exit game">↗</button></div>
+        <a class="brand" href="/" target="_top" aria-label="Return to Huddspool"><span class="brand-mark">8</span><span>8-ball pool<small>HUDDSPOOL CLUBROOM</small></span></a>
+        <div class="room"><span class="live-dot"></span> LOCAL MATCH · TWO PLAYERS</div>
+        <div class="tools">
+            <button id="help" aria-label="How to play">?</button>
+            <button id="mute" aria-label="Mute sound" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z M15 8a6 6 0 0 1 0 8 M18 5a10 10 0 0 1 0 14"/></svg></button>
+            <button id="settings" aria-label="Game settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3v18 M12 3v18 M19 3v18"/><path d="M2 8h6 M9 16h6 M16 9h6" stroke-width="4"/></svg></button>
+            <button id="exit" aria-label="Exit game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 5H5v14h9 M10 12h11 M17 8l4 4-4 4"/></svg></button>
+        </div>
     </header>
-    <section class="match-heading"><div><span class="eyebrow">PULL UP A CUE</span><h1>A little friendly competition.</h1></div><span class="mode-pill">♧ &nbsp; LOCAL · 2 PLAYERS</span></section>
+    <h1 class="sr-game">Huddspool two-player 8-ball</h1>
     <section class="scoreboard" aria-label="Players">
         <article id="player-0" class="player-panel"><div class="avatar">P1</div><div class="player-detail"><div class="player-name">Player 1</div><div class="player-label">OPEN TABLE</div><div class="ball-track"></div></div><span class="turn-tag">YOUR TURN</span><div class="clock-track"><div></div></div></article>
         <div class="match-center"><span class="rack-label">FRIENDLY MATCH</span><strong id="score">0 <span>–</span> 0</strong><span id="rack-count">RACK 01</span></div>
@@ -34,6 +39,6 @@
     <dialog id="modal"><form method="dialog"><button class="close" aria-label="Close dialog">×</button></form><div id="modal-content"></div></dialog>
     <noscript>This game requires JavaScript. Enable it to play local 8-ball.</noscript>
 </main>
-<script type="module" src="./v1/game.mjs"></script>
+<script type="module" src="./boot.js"></script>
 </body>
 </html>
