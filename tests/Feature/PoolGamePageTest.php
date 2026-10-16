@@ -11,7 +11,8 @@ class PoolGamePageTest extends TestCase
         $this->get(route('games.eight-ball'))
             ->assertOk()
             ->assertSee('data-pool-host', false)
-            ->assertSee('games/8-ball/index.html')
+            ->assertSee('data-game-state="loading"', false)
+            ->assertDontSee('<iframe', false)
             ->assertSee('data-player-name="Player 1"', false);
     }
 }

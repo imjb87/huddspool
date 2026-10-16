@@ -16,7 +16,7 @@ export class HuddspoolGame {
         this.storageKey = 'huddspool.pool.v1.guest'; this.lastTime = performance.now(); this.lowSecond = null;
         this.on = (target, event, fn, options = {}) => target.addEventListener(event, fn, { ...options, signal: this.abort.signal });
         this.bind();
-        this.resizeObserver = new ResizeObserver(() => { this.cancelGesture(); this.renderer.resize(); }); this.resizeObserver.observe($('table'));
+        this.resizeObserver = new ResizeObserver(() => { this.cancelGesture(); this.renderer.resize(); if(this.match)this.update(); }); this.resizeObserver.observe($('table'));
         this.on(document, 'visibilitychange', () => {
             this.cancelGesture();
             if (document.hidden) { this.pause(); this.save(); }
@@ -29,7 +29,7 @@ export class HuddspoolGame {
     initialize({ players = [{ id: 'local-1', name: 'Player 1' }, { id: 'local-2', name: 'Player 2' }], storageId = 'guest', returnUrl = '/' } = {}) {
         if (this.match) return;
         this.returnUrl = new URL(returnUrl, location.origin).origin === location.origin ? returnUrl : '/';
-        document.querySelector('.brand').href = this.returnUrl;
+        this.root.querySelector('.brand').href = this.returnUrl;
         this.storageKey = `huddspool.pool.v1.${storageId}`;
         this.players = players.map(p => ({ id: String(p.id), name: String(p.name).slice(0, 32), avatar: p.avatar || null }));
         this.newRack();
@@ -149,7 +149,7 @@ export class HuddspoolGame {
         $('spin-description').textContent=Math.hypot(this.spin.x,this.spin.y)<.05?'Center ball':`${this.spin.y>.15?'Follow':this.spin.y<-.15?'Draw':''} ${this.spin.x<-.15?'Left':this.spin.x>.15?'Right':''}`.trim();
         const pockets=$('pocket-buttons');pockets.replaceChildren();
         if(['AIMING','POCKET_SELECTION'].includes(state.phase) && targets(state).includes(8)) {
-            POCKETS.forEach((p,i)=>{const button=document.createElement('button');button.textContent=i+1;button.className=state.selectedPocket===i?'selected':'';button.setAttribute('aria-label',`Call pocket ${i+1}`);button.setAttribute('aria-pressed',String(state.selectedPocket===i));button.style.left=`${(p.x+60)/1120*100}%`;button.style.top=`${(p.y+60)/620*100}%`;button.disabled=this.match.paused;this.on(button,'click',()=>this.tryAction(()=>{this.match.selectPocket(this.playerId(),i);this.update();}));pockets.append(button);});
+            POCKETS.forEach((p,i)=>{const button=document.createElement('button');button.textContent=i+1;button.className=state.selectedPocket===i?'selected':'';button.setAttribute('aria-label',`Call pocket ${i+1}`);button.setAttribute('aria-pressed',String(state.selectedPocket===i));const position=this.renderer.project(p.x,p.y);button.style.left=`${position.left}%`;button.style.top=`${position.top}%`;button.disabled=this.match.paused;this.on(button,'click',()=>this.tryAction(()=>{this.match.selectPocket(this.playerId(),i);this.update();}));pockets.append(button);});
         }
         this.root.classList.toggle('paused',this.match.paused);
     }
@@ -193,7 +193,7 @@ export class HuddspoolGame {
     }
     openDialog(title,html) {this.cancelGesture();this.pause();$('modal-content').innerHTML='<h2></h2>'+html;$('modal-content').querySelector('h2').textContent=title;if(!$('modal').open)$('modal').showModal();}
     playerDialog() {
-        this.openDialog('Meet at the table.', '<p>Two people. One table. Pass the device when the turn changes.</p><label>Player one<input id="name-0" type="text" maxlength="32" autocomplete="off"></label><label>Player two<input id="name-1" type="text" maxlength="32" autocomplete="off"></label><div class="actions"><button id="start" class="primary">Let’s play →</button></div>');
+        this.openDialog('Start a local match', '<p>Enter both players’ names. Pass the device when the turn changes.</p><label>Player one<input id="name-0" type="text" maxlength="32" autocomplete="off"></label><label>Player two<input id="name-1" type="text" maxlength="32" autocomplete="off"></label><div class="actions"><button id="start" class="primary">Start match →</button></div>');
         $('name-0').value=this.players[0].name;$('name-1').value=this.players[1].name;
         this.on($('start'),'click',()=>{this.configurePlayers(this.players.map((p,i)=>({...p,name:$(`name-${i}`).value})));$('modal').close();this.save();});
     }
@@ -250,14 +250,11 @@ export class HuddspoolGame {
     dispose() {this.save();this.disposed=true;cancelAnimationFrame(this.raf);this.abort.abort();this.resizeObserver.disconnect();this.match?.dispose();this.audio.dispose();}
 }
 
-const game=new HuddspoolGame();
-window.huddspoolGame=game;
-if(window.parent===window)game.initialize();
-else {
-    const receive=event=>{
-        if(event.origin!==location.origin||event.source!==parent)return;
-        if(event.data?.type==='huddspool:init')game.initialize(event.data.config);
-        if(event.data?.type==='huddspool:host-ready')parent.postMessage({type:'huddspool:ready'},location.origin);
-    };
-    game.on(window,'message',receive);parent.postMessage({type:'huddspool:ready'},location.origin);
+export function bootGame(config = {}) {
+    const game = new HuddspoolGame();
+    window.huddspoolGame = game;
+    try { game.initialize(config); }
+    catch (error) { game.dispose(); throw error; }
+    return game;
 }
+if (!document.querySelector('[data-pool-host]')) bootGame();

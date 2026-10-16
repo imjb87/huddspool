@@ -1,6 +1,6 @@
 # Huddspool two-player 8-ball
 
-The local game is integrated at the named Laravel route `games.eight-ball` (`/play/8-ball`). The Blade page retains the application layout, navigation, authentication and player profile. A same-origin iframe isolates the continuously animated table from Alpine and Livewire updates. It receives the authenticated player's ID/name/avatar through an origin-checked handshake. Player two is a separate human sharing the device. There is no AI opponent.
+The local game is integrated at the named Laravel route `games.eight-ball` (`/play/8-ball`). The Blade page retains the application layout, navigation, authentication and player profile. Vite bundles the game and its scoped CSS into normal hashed `.js`/`.css` assets and mounts it directly into the page. Profile configuration comes from the server-rendered host attributes; there is no iframe handshake. Player two is a separate human sharing the device. There is no AI opponent.
 
 No packages were added. The renderer is Canvas 2D; the engine is browser/Node ES modules. All table, ball, cloth, rail and cue artwork is original procedural drawing. Sounds are original Web Audio tones. There are no Miniclip assets or third-party image requests beyond an existing profile avatar.
 
@@ -9,6 +9,8 @@ No packages were added. The renderer is Canvas 2D; the engine is browser/Node ES
 | Path | Responsibility |
 | --- | --- |
 | `public/games/8-ball/index.html` | Standalone offline game shell |
+| `public/games/8-ball/boot.js` | Loads the Vite-built game from the cached build manifest |
+| `public/games/8-ball/v1/match-screen.css` | Scoped match UI, including rotated portrait presentation |
 | `public/games/8-ball/v1/config.mjs` | Frozen rules, physical parameters, world geometry |
 | `public/games/8-ball/v1/physics.mjs` | Seeded rack, fixed-step simulation, placement, spotting, prediction |
 | `public/games/8-ball/v1/match.mjs` | State machine, authority validation, adjudication, snapshots |
@@ -18,9 +20,10 @@ No packages were added. The renderer is Canvas 2D; the engine is browser/Node ES
 | `public/games/8-ball/v1/input.mjs` | Captured power gesture and cancellation |
 | `public/games/8-ball/v1/transport.mjs` | Transport interface and injected server/Echo bridge |
 | `resources/views/games/eight-ball.blade.php` | Huddspool integration |
-| `resources/js/pool-host.js` | Profile handshake and structured host events |
+| `resources/js/pool-host.js` | Vite entry, direct mounting, profile initialization and startup-error reporting |
 | `tests/fixtures/pool-engine.mjs` | Executable engine checks using Node's built-in test runner |
 | `tests/fixtures/pool-worker.mjs` | Waiting-worker cache isolation and activation checks |
+| `tests/fixtures/pool-ui.mjs` | Real controller startup, shot commitment, rendering calls and resume with a DOM fixture |
 | `tests/Unit/PoolEngineTest.php` | PHPUnit wrapper and offline asset policy checks |
 | `tests/Feature/PoolGamePageTest.php` | Laravel route/embedding check |
 
@@ -34,14 +37,15 @@ vendor/bin/sail npm run build
 vendor/bin/sail artisan test --compact tests/Unit/PoolEngineTest.php tests/Feature/PoolGamePageTest.php tests/Unit/PwaServiceWorkerTest.php
 vendor/bin/sail node tests/fixtures/pool-engine.mjs
 vendor/bin/sail node tests/fixtures/pool-worker.mjs
+vendor/bin/sail node tests/fixtures/pool-ui.mjs
 vendor/bin/sail bin pint --dirty
 ```
 
-The game is accessible directly at `/play/8-ball`; it is not linked in the global navigation yet. Deploy with the application's normal Laravel deployment process, including the Vite build and `public/games/8-ball` directory. No migrations, credentials or new services are required for local play. Configure the web server to serve `.mjs` as JavaScript (Laravel's supported Nginx configuration normally does so).
+The game is accessible directly at `/play/8-ball`; it is not linked in the global navigation yet. Deploy with the application's normal Laravel deployment process, including `npm run build`, the generated `public/build` assets/manifest and the `public/games/8-ball` directory. No migrations, credentials or new services are required for local play. Browsers now load bundled `.js` files; production `.mjs` MIME mappings are no longer a startup dependency. Rebuilding the assets is required for this change.
 
 For offline play, load the app online and allow its service worker to install and cache the game shell/modules. The public static URL `/games/8-ball/index.html` is the offline entry point and can be bookmarked. The normal Laravel page contains personalized navigation and is intentionally not added to the public document cache. The standalone offline entry uses the guest save slot; profile-specific saves remain accessible through the authenticated host when available. Game asset URLs are versioned; release incompatible changes under a new version directory and update both shell and service worker lists together. Do not edit a released rules profile in place.
 
-Worker installation no longer calls `skipWaiting()`. An installed replacement waits for existing tabs to close, preventing a new worker/cache cleanup from taking control during a match. The candidate installs into isolated `static-v4`/`runtime-v4` caches; it never overwrites the previous worker's v3 caches. Cache reads are scoped to the controlling worker's own version, and obsolete caches are deleted only on activation. Bump both cache names with each release that changes precached assets. This deliberately affects update activation across the whole PWA, not just the game. Close all application tabs to activate updates. The original worker already active on a device must first be replaced before this policy governs later updates.
+Worker installation no longer calls `skipWaiting()`. An installed replacement waits for existing tabs to close, preventing a new worker/cache cleanup from taking control during a match. The candidate installs into isolated `static-v5`/`runtime-v5` caches; it never overwrites the previous worker's v4 caches. Cache reads are scoped to the controlling worker's own version, and obsolete caches are deleted only on activation. Bump both cache names with each release that changes precached assets. This deliberately affects update activation across the whole PWA, not just the game. Close all application tabs to activate updates. The original worker already active on a device must first be replaced before this policy governs later updates.
 
 ## Rules profile
 
@@ -84,9 +88,9 @@ Required backend work:
 
 ## Verification and fidelity report
 
-57 Node engine/input checks and 3 worker lifecycle checks passed in this workspace. They cover the requested rule edge cases, legal/illegal breaks, open and mixed assignment, fouls, rail sequencing, 8-ball outcomes and re-spotting, placement, deadlines, stale/duplicate/forged commands, saved-state compatibility, pause, high-speed collisions, one-time capture, collision prediction, visible follow/draw and byte-equivalent simulated break outcomes at 30/60/144 render FPS. Input checks cover one-shot power release, taps, pointer cancellation, lost capture, explicit cancellation, competing pointers, disabled controls, disposal, and coordinate conversion after viewport/DPR changes. Table-capture regressions confirm that losing capture clears ownership, permits the next drag and unlocks the power meter. Worker checks verify isolated installation, version-scoped reads, and cleanup only on activation. These use EventTarget and worker VM fixtures rather than a real touch browser.
+58 Node engine/input checks, 3 worker lifecycle checks and 3 controller checks passed in this workspace (64 total). They cover the requested rule edge cases, legal/illegal breaks, open and mixed assignment, fouls, rail sequencing, 8-ball outcomes and re-spotting, placement, deadlines, stale/duplicate/forged commands, saved-state compatibility, pause, high-speed collisions, one-time capture, collision prediction, visible follow/draw and byte-equivalent simulated break outcomes at 30/60/144 render FPS. Input checks cover power release/cancellation, pointer ownership, disposal, and coordinate conversion after viewport/DPR changes, including rotated portrait tables. Controller checks execute the actual startup, placement confirmation, keyboard shot, render path and saved-state resume. Worker checks verify isolated installation, version-scoped reads, and cleanup only on activation. These use DOM/EventTarget and worker VM fixtures rather than a real touch browser.
 
-Sail reported `Docker is not running`; the managed Docker socket was unavailable. The dependency-free checks and Vite production build passed using the installed Node runtime instead. Laravel route tests, PHPUnit wrapper and Pint could not run through Sail. No browser-control tool was available, so desktop/mobile visual, touch, orientation, audio and offline service-worker end-to-end QA remains required; source inspection and event fixtures are not claimed as device verification.
+Sail reported `Docker is not running`; the managed Docker socket was unavailable. The dependency-free checks and Vite production build passed using the installed Node runtime instead. Laravel route tests, PHPUnit wrapper and Pint could not run through Sail. Chromium is installed but sandbox socket restrictions prevent browser execution; network access to the live URL also failed. The live failure's exact cause therefore remains unverified. Raw-module MIME handling and iframe startup were identified as deployment risks and removed, rather than claimed as a confirmed diagnosis. Desktop/mobile visual, touch, orientation, audio and offline service-worker end-to-end QA remains required; source inspection and event fixtures are not claimed as device verification.
 
 Verified reference interactions: Miniclip's official [How to Aim with the Cue](https://support.miniclip.com/hc/en-us/articles/203747546-How-to-Aim-with-the-Cue-8-Ball-Pool) documents aiming, the power bar, fine aiming and remaining-ball indicators. [Advanced Plays — Spins](https://support.miniclip.com/hc/en-us/articles/35451960569361-Advanced-Plays-Spins-8-Ball-Pool) documents selecting contact position for follow, draw and side-spin effects. These informed the interaction hierarchy. No supplied gameplay footage/screenshots were present. Exact layout, timing, physics, break behavior, group assignment ties and mode-dependent calling rules are not verified Miniclip parity. They use the explicit Huddspool defaults above.
 

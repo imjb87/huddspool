@@ -1,7 +1,7 @@
 const CACHE_PREFIX = "pwa-";
 // Bump both names whenever the precached shell or assets change.
-const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v4`;
-const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v4`;
+const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v5`;
+const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v5`;
 const OFFLINE_URL = "/offline";
 const BUILD_MANIFEST_URL = "/build/manifest.json";
 const MAX_RUNTIME_ENTRIES = 100;
@@ -16,7 +16,8 @@ const CORE_PRECACHE_URLS = [
     "/images/icons/icon-192-192.png",
     "/images/icons/icon-512-512.png",
     "/games/8-ball/index.html",
-    ...["config.mjs", "physics.mjs", "match.mjs", "transport.mjs", "render.mjs", "audio.mjs", "input.mjs", "game.mjs", "game.css"]
+    "/games/8-ball/boot.js",
+    ...["config.mjs", "physics.mjs", "match.mjs", "transport.mjs", "render.mjs", "audio.mjs", "input.mjs", "game.mjs", "game.css", "match-screen.css"]
         .map((file) => `/games/8-ball/v1/${file}`),
 ];
 

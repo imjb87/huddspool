@@ -1,0 +1,198 @@
+/* Scoped to the game: application navigation and theme keep their own styles. */
+body:has(> .pool-app) { margin: 0; background: #09121d; }
+.pool-host { background: #09121d; padding-top: 0 !important; padding-bottom: 0 !important; }
+.pool-startup-message { min-height: 360px; padding: 70px 24px; color: #e8f0fa; text-align: center; background: #09121d; }
+.pool-startup-message h2 { font-size: 24px; margin-bottom: 12px; }
+.pool-startup-message button { margin: 20px; padding: 12px 22px; border-radius: 8px; background: #b7dc82; color: #182719; }
+.pool-startup-message details { max-width: 600px; margin: auto; font-size: 12px; }
+.pool-startup-message pre { white-space: pre-wrap; }
+.pool-app {
+    --ink: #e7eff9;
+    --muted: #8798ad;
+    --accent: #c3e68d;
+    color: var(--ink);
+    color-scheme: dark;
+    font: 14px/1.4 "Geist Variable", Inter, system-ui, sans-serif;
+    background: radial-gradient(ellipse at 50% 43%, #203648 0, #111e2c 47%, #09121d 90%);
+    min-height: min(900px, calc(100dvh - 64px));
+    padding: 0 max(18px, env(safe-area-inset-right)) 16px max(18px, env(safe-area-inset-left));
+    isolation: isolate;
+    overflow: hidden;
+}
+.pool-app *, .pool-app *::before, .pool-app *::after { box-sizing: border-box; }
+.pool-app button { font: inherit; color: inherit; border: 1px solid #ffffff18; border-radius: 9px; background: #ffffff05; cursor: pointer; min-height: 44px; min-width: 44px; touch-action: manipulation; }
+.pool-app button:hover:not(:disabled) { background: #ffffff12; }
+.pool-app button:disabled { opacity: .35; cursor: not-allowed; }
+.pool-app :is(button, input, a, canvas, [role=slider]):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.pool-app a { color: inherit; text-decoration: none; }
+.pool-app .sr-game { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pool-app .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1280px; height: 76px; margin: auto; border-bottom: 1px solid #ffffff0c; }
+.pool-app .brand { display: flex; gap: 11px; align-items: center; font-size: 18px; font-weight: 650; letter-spacing: -.4px; }
+.pool-app .brand small { display: block; margin-top: 2px; font-size: 8px; font-weight: 500; letter-spacing: 1.6px; color: var(--muted); }
+.pool-app .brand-mark { width: 35px; height: 35px; display: grid; place-items: center; border: 1px solid #596a7e; border-radius: 50%; background: radial-gradient(circle at 35% 25%, #46566b, #111926 70%); box-shadow: inset 0 0 0 5px #0a111c; font-size: 20px; }
+.pool-app .room { color: var(--muted); font-size: 9px; letter-spacing: 1.5px; }
+.pool-app .live-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-right: 7px; }
+.pool-app .tools { display: flex; gap: 5px; }
+.pool-app .tools button { border-color: transparent; color: #a6b6ca; font-size: 20px; }
+.pool-app .tools button[aria-pressed=true] { color: var(--accent); background: #c3e68d12; }
+.pool-app .tools svg { width: 20px; height: 20px; display: block; margin: auto; }
+.pool-app .scoreboard { max-width: 1060px; margin: 22px auto 4px; display: grid; grid-template-columns: 1fr 140px 1fr; gap: 18px; align-items: center; }
+.pool-app .player-panel { display: flex; align-items: center; gap: 13px; min-height: 96px; padding: 16px 18px; border: 1px solid #ffffff14; background: linear-gradient(135deg, #253347, #162333); border-radius: 12px; position: relative; overflow: hidden; }
+.pool-app .player-panel.active { border-color: #c3e68d99; box-shadow: 0 0 22px #c3e68d0a, inset 0 0 30px #c3e68d06; }
+.pool-app .avatar { display: grid; place-items: center; flex: 0 0 45px; width: 45px; height: 45px; border-radius: 9px; background: linear-gradient(135deg, #7a9d63, #314e37); color: #edf6e1; font-size: 17px; font-weight: 650; overflow: hidden; }
+.pool-app .opponent .avatar { background: linear-gradient(135deg, #b68b55, #5a392b); }
+.pool-app .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pool-app .player-detail { min-width: 0; }
+.pool-app .player-name { font-size: 14px; font-weight: 650; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 210px; }
+.pool-app .player-label { margin: 4px 0 8px; color: #98a8ba; font-size: 8px; text-transform: uppercase; letter-spacing: 1.2px; }
+.pool-app .ball-track { display: flex; gap: 4px; min-height: 17px; }
+.pool-app .mini-ball { width: 17px; height: 17px; border-radius: 50%; display: inline-grid; place-items: center; background: radial-gradient(circle at 30% 20%, #ffffff88, transparent 50%), var(--ball); box-shadow: 0 2px 3px #0007; color: #101722; font-size: 8px; font-weight: 800; }
+.pool-app .mini-ball.stripe { background: linear-gradient(#f5f0df 22%, var(--ball) 22%, var(--ball) 78%, #f5f0df 78%); }
+.pool-app .mini-ball.potted { opacity: .18; }
+.pool-app .turn-tag { display: none; position: absolute; right: 12px; top: 14px; font-size: 7px; letter-spacing: 1.3px; color: var(--accent); }
+.pool-app .active .turn-tag { display: block; }
+.pool-app .clock-track { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: #ffffff08; }
+.pool-app .clock-track > div { height: 100%; background: var(--accent); }
+.pool-app .match-center { display: grid; gap: 4px; text-align: center; }
+.pool-app .rack-label { color: var(--muted); font-size: 8px; letter-spacing: 1.5px; }
+.pool-app .match-center strong { font-size: 30px; font-weight: 450; font-variant-numeric: tabular-nums; }
+.pool-app .match-center strong span { color: #52657c; padding: 0 8px; }
+.pool-app #rack-count { font-size: 8px; letter-spacing: 1.5px; color: var(--muted); }
+.pool-app .arena { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: center; max-width: min(1280px, calc((100dvh - 335px) * 1.806 + 100px)); margin: 2px auto; padding-right: 56px; }
+.pool-app .table-wrap { min-width: 0; position: relative; }
+.pool-app canvas { display: block; width: 100%; height: auto; aspect-ratio: 1120 / 620; touch-action: none; user-select: none; filter: drop-shadow(0 18px 24px #0008); }
+.pool-app .table-caption { position: absolute; bottom: 0; left: 7%; right: 7%; display: flex; justify-content: space-between; color: #72849b; font-size: 7px; letter-spacing: 1.5px; }
+.pool-app .table-caption b { font-weight: 500; color: #b6a582; margin-left: 6px; }
+.pool-app .power-column { display: flex; align-items: center; flex-direction: column; gap: 9px; color: var(--muted); font-size: 8px; user-select: none; }
+.pool-app .control-label { font-size: 8px; letter-spacing: 1px; color: #a9b7c8; }
+.pool-app .power-meter { width: 29px; height: 200px; border-radius: 16px; background: #070d16; border: 1px solid #4e5a6b; box-shadow: inset 0 0 0 4px #202d3c; position: relative; touch-action: none; cursor: ns-resize; }
+.pool-app .power-meter::before { content: ''; position: absolute; inset: -4px -12px; }
+.pool-app .power-fill { position: absolute; bottom: 5px; left: 5px; right: 5px; height: 0; border-radius: 9px; background: linear-gradient(to top, #83c892, #d5df8c 65%, #ec9e71); }
+.pool-app .power-ticks { position: absolute; inset: 7px; background: repeating-linear-gradient(to top, transparent 0 14px, #0a1421 14px 16px); }
+.pool-app .power-handle { position: absolute; top: 0; left: -6px; right: -6px; height: 13px; background: linear-gradient(#f0e4ba, #a99b74); border: 1px solid #e5d7b0; border-radius: 4px; box-shadow: 0 3px 6px #0009; }
+.pool-app #power-number { color: var(--accent); font-size: 12px; font-variant-numeric: tabular-nums; }
+.pool-app .status-row { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 1000px; min-height: 52px; margin: 3px auto 12px; font-size: 12px; color: #c1ccdb; }
+.pool-app #status { margin: 0; }
+.pool-app #status-icon { font-size: 22px; color: var(--accent); }
+.pool-app #clock { font-size: 24px; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pool-app #clock span { font-size: 11px; color: var(--muted); margin-left: 3px; }
+.pool-app #clock.low { color: #f4b086; }
+.pool-app .primary, .pool-app .shot-button { padding: 10px 20px; color: #172418; background: var(--accent); border: 0; font-weight: 650; }
+.pool-app .primary:hover:not(:disabled), .pool-app .shot-button:hover:not(:disabled) { background: #d6efa9; }
+.pool-app .primary { font-size: 12px; white-space: nowrap; }
+.pool-app [hidden] { display: none !important; }
+.pool-app .control-deck { max-width: 1000px; display: flex; justify-content: space-between; align-items: center; gap: 18px; margin: auto; padding: 12px 20px; border: 1px solid #ffffff12; border-radius: 12px; background: #172537; }
+.pool-app .spin-control { display: flex; align-items: center; gap: 12px; min-width: 180px; }
+.pool-app .spin-ball { position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 25%, white, #e7e9df 55%, #8e9a9e) !important; box-shadow: 0 4px 8px #0006; }
+.pool-app .spin-ball span { position: absolute; width: 7px; height: 7px; border: 2px solid #c96d59; border-radius: 50%; left: calc(50% - 3.5px); top: calc(50% - 3.5px); }
+.pool-app .spin-control strong { display: block; font-size: 12px; font-weight: 550; }
+.pool-app .spin-control small { display: block; font-size: 10px; color: var(--muted); margin-top: 3px; }
+.pool-app .fine-control { display: flex; align-items: center; gap: 8px; }
+.pool-app .fine-control button { background: transparent; border: 0; font-size: 20px; color: #b4c2d3; }
+.pool-app .fine-control label { display: grid; gap: 10px; text-align: center; color: var(--muted); font-size: 8px; letter-spacing: 1.5px; }
+.pool-app .fine-control input { width: 230px; height: 4px; margin: 0; accent-color: var(--accent); }
+.pool-app .shot-button { min-width: 120px; font-size: 13px; }
+.pool-app .shot-button span { margin-left: 15px; opacity: .5; }
+.pool-app .game-footer { max-width: 1000px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px auto 0; font-size: 9px; color: var(--muted); }
+.pool-app .game-footer button { font-size: 10px; background: none; border: 0; color: #b5c2d0; }
+.pool-app .game-footer b { font-weight: 400; padding: 0 5px; }
+.pool-app .portrait-hint { display: none; }
+.pool-app.right-handed .arena { grid-template-columns: minmax(0, 1fr) 44px; padding-right: 0; padding-left: 56px; }
+.pool-app.right-handed .power-column { grid-row: 1; grid-column: 2; }
+.pool-app.right-handed .table-wrap { grid-row: 1; grid-column: 1; }
+.pool-app dialog { background: #172537; border: 1px solid #62748d66; color: var(--ink); width: min(430px, calc(100% - 32px)); border-radius: 16px; padding: 30px; box-shadow: 0 25px 90px #0009; }
+.pool-app dialog::backdrop { background: #050b13bb; backdrop-filter: blur(3px); }
+.pool-app dialog h2 { font-size: 24px; font-weight: 550; line-height: 1.3; margin: 0 0 14px; }
+.pool-app dialog p { font-size: 13px; line-height: 1.7; color: #b4c2d1; margin: 10px 0; }
+.pool-app dialog label { display: block; font-size: 12px; margin: 18px 0; }
+.pool-app dialog input[type=text] { width: 100%; padding: 11px; border: 1px solid #62748d66; border-radius: 7px; background: #0a1523; color: var(--ink); margin-top: 7px; }
+.pool-app dialog input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 13px; }
+.pool-app dialog select { background: #0a1523; border: 1px solid #62748d66; border-radius: 6px; padding: 8px; float: right; }
+.pool-app dialog .close { position: absolute; right: 7px; top: 7px; font-size: 23px; border: 0; background: none; }
+.pool-app dialog .actions { display: flex; gap: 9px; margin-top: 22px; }
+.pool-app dialog .actions button { flex: 1; font-size: 12px; }
+.pool-app #spin-pad { width: 210px; height: 210px; border-radius: 50%; margin: 24px auto; position: relative; background: radial-gradient(circle at 35% 25%, white, #e7e9df 55%, #8e9a9e); touch-action: none; cursor: crosshair; }
+.pool-app #spin-pad::before, .pool-app #spin-pad::after { content: ''; position: absolute; background: #8996a366; }
+.pool-app #spin-pad::before { height: 1px; top: 50%; left: 10%; right: 10%; }
+.pool-app #spin-pad::after { width: 1px; left: 50%; top: 10%; bottom: 10%; }
+.pool-app #spin-marker { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; border: 3px solid #c96d59; border-radius: 50%; transform: translate(-50%, -50%); }
+.pool-app #pocket-buttons button { position: absolute; width: 44px; height: 44px; transform: translate(-50%, -50%); border: 2px dashed var(--accent); border-radius: 50%; background: #c3e68d20; color: #efffda; padding: 0; font-size: 11px; }
+.pool-app #pocket-buttons button.selected { background: var(--accent); color: #172418; border-style: solid; }
+@media (max-width: 850px) {
+    .pool-app .topbar { height: 64px; }
+    .pool-app .room { display: none; }
+    .pool-app .scoreboard { grid-template-columns: 1fr 85px 1fr; gap: 10px; margin-top: 14px; }
+    .pool-app .player-panel { padding: 13px 12px; gap: 9px; min-height: 90px; }
+    .pool-app .avatar { flex-basis: 36px; width: 36px; height: 40px; font-size: 15px; }
+    .pool-app .player-name { font-size: 12px; max-width: 130px; }
+    .pool-app .turn-tag { top: 7px; right: 7px; font-size: 6px; }
+    .pool-app .arena, .pool-app.right-handed .arena { max-width: 100%; padding-left: 0; padding-right: 0; gap: 5px; }
+    .pool-app .fine-control input { width: 135px; }
+    .pool-app .spin-control { min-width: 130px; }
+    .pool-app .control-deck { padding: 10px 12px; gap: 10px; }
+    .pool-app .shot-button { min-width: 90px; }
+    .pool-app .shot-button span { display: none; }
+}
+@media (max-width: 600px) and (orientation: portrait) {
+    .pool-app { padding: 0 10px 12px; display: flex; flex-direction: column; }
+    .pool-app .topbar { width: 100%; order: 0; }
+    .pool-app .scoreboard { width: 100%; order: 1; }
+    .pool-app .status-row { order: 2; }
+    .pool-app .arena { width: 100%; order: 3; }
+    .pool-app .control-deck { width: 100%; order: 4; }
+    .pool-app .game-footer { width: 100%; order: 5; }
+    .pool-app .topbar { gap: 6px; }
+    .pool-app .brand { font-size: 16px; gap: 7px; }
+    .pool-app .brand small { font-size: 6px; letter-spacing: 1px; }
+    .pool-app .brand-mark { width: 29px; height: 29px; }
+    .pool-app .tools { gap: 0; }
+    .pool-app .tools button { width: 44px; }
+    .pool-app .scoreboard { grid-template-columns: 1fr 52px 1fr; gap: 6px; margin: 9px auto 3px; }
+    .pool-app .player-panel { padding: 12px 9px; min-height: 83px; border-radius: 9px; }
+    .pool-app .avatar { display: none; }
+    .pool-app .player-name { max-width: 105px; font-size: 12px; }
+    .pool-app .player-label { font-size: 7px; margin: 3px 0 7px; letter-spacing: .5px; }
+    .pool-app .ball-track { gap: 2px; }
+    .pool-app .mini-ball { width: 13px; height: 13px; font-size: 7px; }
+    .pool-app .turn-tag { font-size: 5px; top: 4px; right: 5px; }
+    .pool-app .rack-label { display: none; }
+    .pool-app .match-center strong { font-size: 20px; }
+    .pool-app .match-center strong span { padding: 0 2px; }
+    .pool-app #rack-count { font-size: 6px; letter-spacing: .5px; }
+    .pool-app .arena { grid-template-columns: 36px minmax(0, 1fr); max-width: clamp(230px, calc((100dvh - 390px) * .5536 + 42px), 430px); }
+    .pool-app.right-handed .arena { grid-template-columns: minmax(0, 1fr) 36px; }
+    .pool-app canvas { aspect-ratio: 620 / 1120; }
+    .pool-app .table-caption { display: none; }
+    .pool-app .power-meter { width: 24px; height: 180px; }
+    .pool-app .power-max, .pool-app .power-min { display: none; }
+    .pool-app .control-label { font-size: 7px; }
+    .pool-app .status-row { flex-wrap: wrap; gap: 7px; margin: 2px 0 10px; justify-content: flex-start; font-size: 11px; }
+    .pool-app #status { flex: 1; }
+    .pool-app #clock { font-size: 20px; }
+    .pool-app #confirm { width: 100%; }
+    .pool-app .control-deck { flex-wrap: wrap; gap: 9px; padding: 10px 12px; }
+    .pool-app .spin-control { flex: 1; min-width: 0; }
+    .pool-app .fine-control { width: 100%; order: 3; justify-content: space-between; border-top: 1px solid #ffffff10; padding-top: 8px; }
+    .pool-app .fine-control label { width: 74%; }
+    .pool-app .fine-control input { width: 100%; }
+    .pool-app .game-footer { flex-wrap: wrap; font-size: 8px; }
+    .pool-app .desktop-hint { display: none; }
+    .pool-app .portrait-hint { display: block; width: 100%; text-align: center; font-size: 9px; }
+}
+@media (max-height: 600px) and (orientation: landscape) {
+    .pool-app { padding: 0 10px 8px; }
+    .pool-app .topbar { height: 44px; }
+    .pool-app .brand-mark { height: 28px; width: 28px; }
+    .pool-app .brand small, .pool-app .game-footer, .pool-app .table-caption { display: none; }
+    .pool-app .scoreboard { max-width: 700px; margin: 4px auto 0; grid-template-columns: 1fr 90px 1fr; }
+    .pool-app .player-panel { min-height: 60px; padding: 7px 12px; }
+    .pool-app .avatar { width: 32px; height: 32px; flex-basis: 32px; }
+    .pool-app .player-label { margin: 2px 0 3px; }
+    .pool-app .arena { max-width: calc((100dvh - 240px) * 1.806 + 88px); grid-template-columns: 36px minmax(0, 1fr); margin-top: 0; }
+    .pool-app .power-meter { height: 110px; }
+    .pool-app .power-max, .pool-app .power-min { display: none; }
+    .pool-app .status-row { min-height: 40px; margin: 0 auto 3px; font-size: 10px; }
+    .pool-app #clock { font-size: 19px; }
+    .pool-app .control-deck { max-width: 720px; padding: 5px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .pool-app * { transition: none !important; animation: none !important; } }
