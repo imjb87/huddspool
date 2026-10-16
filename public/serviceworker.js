@@ -1,6 +1,7 @@
 const CACHE_PREFIX = "pwa-";
-const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v3`;
-const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v3`;
+// Bump both names whenever the precached shell or assets change.
+const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v4`;
+const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v4`;
 const OFFLINE_URL = "/offline";
 const BUILD_MANIFEST_URL = "/build/manifest.json";
 const MAX_RUNTIME_ENTRIES = 100;
@@ -14,6 +15,9 @@ const CORE_PRECACHE_URLS = [
     "/images/icons/icon-144-144.png",
     "/images/icons/icon-192-192.png",
     "/images/icons/icon-512-512.png",
+    "/games/8-ball/index.html",
+    ...["config.mjs", "physics.mjs", "match.mjs", "transport.mjs", "render.mjs", "audio.mjs", "input.mjs", "game.mjs", "game.css"]
+        .map((file) => `/games/8-ball/v1/${file}`),
 ];
 
 const PRIVATE_PATH_PREFIXES = [
@@ -179,6 +183,13 @@ async function cacheRuntimeResponse(request, response) {
     }
 }
 
+async function matchCurrentCache(request) {
+    const staticCache = await caches.open(STATIC_CACHE_NAME);
+    const runtimeCache = await caches.open(RUNTIME_CACHE_NAME);
+
+    return await staticCache.match(request) || runtimeCache.match(request);
+}
+
 async function handleNavigation(request) {
     const requestUrl = new URL(request.url);
 
@@ -191,14 +202,14 @@ async function handleNavigation(request) {
 
         return response;
     } catch (_error) {
-        const cachedPage = await caches.match(request);
+        const cachedPage = await matchCurrentCache(request);
 
-        return cachedPage || caches.match(OFFLINE_URL);
+        return cachedPage || matchCurrentCache(OFFLINE_URL);
     }
 }
 
 async function handleAsset(request) {
-    const cachedResponse = await caches.match(request);
+    const cachedResponse = await matchCurrentCache(request);
 
     if (cachedResponse) {
         return cachedResponse;
@@ -240,7 +251,7 @@ self.addEventListener("install", (event) => {
             uniqueUrls([...CORE_PRECACHE_URLS, ...buildAssetUrls]),
         );
 
-        await self.skipWaiting();
+        // A new worker waits until existing tabs close. Never replace a live match's engine.
     })());
 });
 
