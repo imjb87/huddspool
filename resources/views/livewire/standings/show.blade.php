@@ -36,7 +36,7 @@
                             $standingCount = $standingRows->count();
                         @endphp
 
-                        <div class="ui-standings-item-group" data-slot="item-group">
+                        <div class="ui-standings-item-group tracking-[-0.02em]" data-slot="item-group">
                             <div class="ui-standings-item ui-standings-item-header" data-section-table-band data-slot="item" data-variant="muted" data-size="default">
                                 <div class="ui-standings-item-content" data-slot="item-content">
                                     <div class="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3"></div>
@@ -90,7 +90,7 @@
                                                 {{ $row->position }}
                                             </div>
                                             <div class="min-w-0">
-                                                <p class="truncate whitespace-nowrap text-sm font-semibold {{ $row->text_class }}">
+                                                <p class="truncate whitespace-nowrap text-sm font-normal {{ $row->text_class }}">
                                                     <span class="{{ $row->shortname ? 'hidden md:inline' : '' }}">
                                                         {{ $row->name }}
                                                     </span>
@@ -105,16 +105,16 @@
 
                                         <div class="ui-standings-item-stats" data-slot="item-actions">
                                             <div class="w-8 sm:w-10">
-                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->played }}</p>
+                                                <p class="text-sm font-normal {{ $row->text_class }}">{{ $row->played }}</p>
                                             </div>
                                             <div class="w-8 sm:w-10">
-                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->wins }}</p>
+                                                <p class="text-sm font-normal {{ $row->text_class }}">{{ $row->wins }}</p>
                                             </div>
                                             <div class="w-8 sm:w-10">
-                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->draws }}</p>
+                                                <p class="text-sm font-normal {{ $row->text_class }}">{{ $row->draws }}</p>
                                             </div>
                                             <div class="hidden w-8 sm:block sm:w-10">
-                                                <p class="text-sm font-semibold {{ $row->text_class }}">{{ $row->losses }}</p>
+                                                <p class="text-sm font-normal {{ $row->text_class }}">{{ $row->losses }}</p>
                                             </div>
                                             <div class="w-8 sm:w-10">
                                                 <p class="text-sm font-semibold {{ $row->points_class }}">{{ $row->points }}</p>
