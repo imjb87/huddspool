@@ -15,10 +15,62 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Section extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'sections';
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing([
+            'ruleset:id,name',
+            'season:id,name',
+            'teams' => fn (BelongsToMany $teamQuery) => $teamQuery
+                ->whereNull('teams.folded_at')
+                ->where('teams.name', '!=', Team::BYE_NAME),
+        ]);
+
+        return array_filter([
+            'id' => (string) $this->getKey(),
+            'name' => $this->name,
+            'ruleset_name' => $this->ruleset?->name,
+            'season_name' => $this->season?->name,
+            'team_names' => $this->teams
+                ->filter(fn (Team $team): bool => ! $team->trashed() && $team->folded_at === null && ! $team->isBye())
+                ->pluck('name')
+                ->values()
+                ->all(),
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return ! $this->trashed()
+            && ($this->relationLoaded('season')
+                ? $this->season?->is_open === true
+                : $this->season()->where('is_open', true)->exists());
+    }
+
+    public function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query
+            ->with([
+                'ruleset:id,name',
+                'season:id,name',
+                'teams' => fn (BelongsToMany $teamQuery): BelongsToMany => $teamQuery
+                    ->whereNull('teams.folded_at')
+                    ->where('teams.name', '!=', Team::BYE_NAME),
+            ])
+            ->whereHas('season', fn (Builder $seasonQuery): Builder => $seasonQuery
+                ->where('is_open', true));
+    }
 
     protected static function booted(): void
     {

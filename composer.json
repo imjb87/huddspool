@@ -2,10 +2,12 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
         "althinect/filament-spatie-roles-permissions": "^3.2",
         "awobaz/compoships": "^2.2",
         "barryvdh/laravel-dompdf": "^3.1",
@@ -21,10 +23,13 @@
         "laravel/pulse": "^1.2",
         "laravel/reverb": "^1.5",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^11.0",
         "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^4.0",
         "minishlink/web-push": "^9.0",
+        "php": "^8.2",
+        "php-http/guzzle7-adapter": "^1.1",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.13",
         "silviolleite/laravelpwa": "^2.0",
@@ -34,7 +39,8 @@
         "spatie/laravel-sitemap": "^8.1",
         "stechstudio/filament-impersonate": "^5.0",
         "symfony/brevo-mailer": "^8.0",
-        "symfony/http-client": "^8.0"
+        "symfony/http-client": "^8.0",
+        "typesense/typesense-php": "^4.9.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -88,7 +94,9 @@
             "php-http/discovery": true
         },
         "audit": {
-            "ignore": ["PKSA-yb9k-ykqx-p2zw"]
+            "ignore": [
+                "PKSA-yb9k-ykqx-p2zw"
+            ]
         }
     },
     "minimum-stability": "stable",

@@ -11,10 +11,49 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Team extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'teams';
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing(['venue:id,name', 'openSections:id,name']);
+
+        return array_filter([
+            'id' => (string) $this->getKey(),
+            'name' => $this->name,
+            'shortname' => $this->shortname,
+            'venue_name' => $this->venue?->name,
+            'section_names' => $this->openSections->pluck('name')->values()->all(),
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return ! $this->trashed()
+            && $this->folded_at === null
+            && ! $this->isBye()
+            && ($this->relationLoaded('openSections')
+                ? $this->openSections->isNotEmpty()
+                : $this->openSections()->exists());
+    }
+
+    public function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query
+            ->with(['venue:id,name', 'openSections:id,name'])
+            ->whereNull('folded_at')
+            ->notBye()
+            ->inOpenSeason();
+    }
 
     public const string BYE_NAME = 'Bye';
 

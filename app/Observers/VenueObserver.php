@@ -5,22 +5,26 @@ namespace App\Observers;
 use App\Models\Venue;
 use App\Support\CompetitionCacheInvalidator;
 use App\Support\Geocoding\NominatimGeocoder;
+use App\Support\SiteSearch\SearchableRelationRefresher;
 
 class VenueObserver
 {
     public function saved(Venue $venue): void
     {
         (new CompetitionCacheInvalidator)->forgetForVenue($venue);
+        app(SearchableRelationRefresher::class)->refreshVenueTeams($venue);
     }
 
     public function deleted(Venue $venue): void
     {
         (new CompetitionCacheInvalidator)->forgetForVenue($venue);
+        app(SearchableRelationRefresher::class)->refreshVenueTeams($venue);
     }
 
     public function restored(Venue $venue): void
     {
         (new CompetitionCacheInvalidator)->forgetForVenue($venue);
+        app(SearchableRelationRefresher::class)->refreshVenueTeams($venue);
     }
 
     public function saving(Venue $venue): void

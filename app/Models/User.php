@@ -10,6 +10,7 @@ use App\Support\SiteAuthorization;
 use EslamRedaDiv\FilamentCopilot\Concerns\HasCopilotChat;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,13 +23,14 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Contracts\OAuthenticatable as PassportAuthenticatable;
 use Laravel\Passport\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
 {
-    use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
+    use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, Searchable, SoftDeletes;
 
     protected string $guard_name = 'web';
 
@@ -107,6 +109,49 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
     public function getConfirmedAttribute(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix').'players';
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing('team.openSections:id,name');
+
+        return array_filter([
+            'id' => (string) $this->getKey(),
+            'name' => $this->name,
+            'team_name' => $this->team?->name,
+            'team_shortname' => $this->team?->shortname,
+            'section_names' => $this->team?->openSections?->pluck('name')->values()->all() ?? [],
+            'created_at' => $this->created_at?->getTimestamp() ?? 0,
+        ], static fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        $team = $this->team;
+
+        return ! $this->trashed()
+            && $team !== null
+            && ! $team->trashed()
+            && $team->folded_at === null
+            && ! $team->isBye()
+            && ($team->relationLoaded('openSections')
+                ? $team->openSections->isNotEmpty()
+                : $team->openSections()->exists());
+    }
+
+    public function makeAllSearchableUsing(Builder $query): Builder
+    {
+        return $query
+            ->with('team.openSections:id,name')
+            ->whereHas('team', fn (Builder $teamQuery): Builder => $teamQuery
+                ->whereNull('folded_at')
+                ->notBye()
+                ->inOpenSeason());
     }
 
     /**
