@@ -469,7 +469,7 @@ class HomePageTest extends TestCase
             News::query()->create([
                 'title' => 'Captains meeting',
                 'slug' => 'captains-meeting',
-                'content' => "Captains should arrive for 7:15pm.\nImportant league notices will be covered before the break.",
+                'content' => str_repeat('Important league notices will be covered before the break. ', 5)."\nFinal announcement at the end of the article.",
                 'published_at' => now()->subDay(),
                 'author_id' => $author->id,
             ]);
@@ -506,6 +506,9 @@ class HomePageTest extends TestCase
         $response->assertSee('data-home-news-card', false);
         $response->assertSeeText('Fixture dates updated');
         $response->assertSeeText('Captains meeting');
+        $response->assertSeeText('Final announcement at the end of the article.');
+        $response->assertSee('whitespace-pre-wrap text-sm leading-6', false);
+        $response->assertDontSee('line-clamp-4', false);
         $response->assertDontSeeText('Draft article');
         $response->assertSeeText($expectedDate);
         $response->assertDontSee('href="'.route('news.show', News::query()->published()->latest('published_at')->firstOrFail()).'"', false);

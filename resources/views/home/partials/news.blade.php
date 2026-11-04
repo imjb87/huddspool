@@ -43,8 +43,8 @@
                                             {{ $article->title }}
                                         </h3>
 
-                                        <p class="line-clamp-4 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                            {{ $article->excerpt(220) }}
+                                        <p class="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">
+                                            {{ $article->content }}
                                         </p>
                                     </div>
                                 </div>
