@@ -508,6 +508,7 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Captains meeting');
         $response->assertSeeText('Final announcement at the end of the article.');
         $response->assertSee('whitespace-pre-wrap text-sm leading-6', false);
+        $response->assertSee('<p class="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">Important league notices', false);
         $response->assertDontSee('line-clamp-4', false);
         $response->assertDontSeeText('Draft article');
         $response->assertSeeText($expectedDate);

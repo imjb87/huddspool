@@ -43,9 +43,7 @@
                                             {{ $article->title }}
                                         </h3>
 
-                                        <p class="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                            {{ $article->content }}
-                                        </p>
+                                        <p class="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">{{ $article->content }}</p>
                                     </div>
                                 </div>
                             </article>
