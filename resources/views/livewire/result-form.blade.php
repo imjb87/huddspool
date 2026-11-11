@@ -85,7 +85,7 @@
                                             >
                                                 <button
                                                     type="button"
-                                                    class="relative block rounded-full ring-2 ring-white transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-white dark:ring-neutral-950 dark:focus:ring-offset-neutral-950"
+                                                    class="relative block rounded-full ring-2 ring-card transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 focus:outline-hidden focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-card"
                                                     :aria-label="collaborator.name"
                                                     :style="collaboratorActivityStyle(collaborator)"
                                                     x-ref="trigger"
