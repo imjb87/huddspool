@@ -478,7 +478,7 @@ window.resultFormCollaboration = ({
         const lock = Object.values(this.fieldLocks).find((fieldLock) => Number(fieldLock.user_id) === Number(collaborator.id));
         const color = this.collaboratorColorAssignments?.[Number(collaborator.id)] ?? collaborator.color ?? lock?.color ?? '#64748b';
 
-        return `position: relative; z-index: 2; outline: 2px solid ${color}aa; outline-offset: 2px; box-shadow: 0 0 12px 4px ${color}55;`;
+        return `position: relative; z-index: 2; outline: 2px solid ${color}aa; outline-offset: 2px; box-shadow: 0 0 0 2px var(--card), 0 0 12px 4px ${color}55;`;
     },
     isResultFieldDisabled(fieldKey) {
         const lock = this.fieldLocks[fieldKey];
