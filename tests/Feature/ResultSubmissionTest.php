@@ -16,7 +16,6 @@ use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\LeagueResultSubmissionMailer;
-use App\Support\ResultFormCollaboratorColor;
 use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -605,40 +604,24 @@ class ResultSubmissionTest extends TestCase
             ->assertSee($awayPlayers[0]->avatar_url, false);
     }
 
-    public function test_result_form_shows_every_collaborator_with_avatar_and_last_edited_timestamp(): void
+    public function test_result_form_shows_the_current_collaborator_with_avatar_and_last_edited_timestamp(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
 
         [
             'fixture' => $fixture,
             'primaryAdmin' => $primaryAdmin,
-            'secondaryAdmin' => $secondaryAdmin,
             'homePlayers' => $homePlayers,
             'awayPlayers' => $awayPlayers,
         ] = $this->createResultFormLockContext();
 
         $component = Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->call('syncCollaborators', [
-                [
-                    'id' => $primaryAdmin->id,
-                    'name' => $primaryAdmin->name,
-                    'avatar_url' => $primaryAdmin->avatar_url,
-                ],
-                [
-                    'id' => $secondaryAdmin->id,
-                    'name' => $secondaryAdmin->name,
-                    'avatar_url' => $secondaryAdmin->avatar_url,
-                ],
-            ])
-            ->assertSet('collaborators.1.color', ResultFormCollaboratorColor::forUser((int) $secondaryAdmin->id))
+            ->assertSet('collaborators.0.id', $primaryAdmin->id)
             ->assertSee($primaryAdmin->avatar_url, false)
-            ->assertSee($secondaryAdmin->avatar_url, false)
             ->assertSee('isolate flex items-center -space-x-3', false)
             ->assertSee('aria-label="'.$primaryAdmin->name.'"', false)
-            ->assertSee('aria-label="'.$secondaryAdmin->name.'"', false)
             ->assertSeeText($primaryAdmin->name)
-            ->assertSeeText($secondaryAdmin->name)
             ->assertDontSeeText('(You)');
 
         $component
@@ -661,7 +644,7 @@ class ResultSubmissionTest extends TestCase
 
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->call('syncDraftFromBroadcast', [
+            ->call('refreshSharedDraft', [
                 'fixture_id' => $fixture->id,
                 'result_id' => 1,
                 'draft_version' => 1,

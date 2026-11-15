@@ -152,8 +152,12 @@ class ResultFormCollaborationTest extends TestCase
             const second = {id: 4, joined_at: 200, name: 'Second'};
             const field = 'frames.0.home_player_id';
             const makeEditor = (id, clientId) => ({
-                ...window.resultFormCollaboration({collaboratorId: id, clientId}),
-                ...window.resultFormEditors([id === 41 ? first : second], [blue, purple]),
+                ...window.resultForm({
+                    collaboratorId: id,
+                    clientId,
+                    collaborators: [id === 41 ? first : second],
+                    colorPalette: [blue, purple],
+                }),
                 $nextTick: callback => callback(),
             });
             const lockEvent = (overrides = {}) => ({

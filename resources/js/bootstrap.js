@@ -92,7 +92,7 @@ window.ensureEcho = async () => {
     return echoLoader;
 };
 
-window.resultFormCollaboration = ({
+const resultFormCollaboration = ({
     componentId,
     channelName,
     clientId,
@@ -688,7 +688,7 @@ window.resultFormCollaboration = ({
 
         return lock && lock.client_id !== clientId ? `${lock.user_name} is editing this field` : '';
     },
-    async init() {
+    async initCollaboration() {
         let echo = window.Echo ?? null;
 
         if (!echo) {
@@ -749,7 +749,7 @@ window.resultFormCollaboration = ({
                     return;
                 }
 
-                window.Livewire.find(componentId)?.call('syncDraftFromBroadcast', event);
+                window.Livewire.find(componentId)?.call('refreshSharedDraft', event);
             })
             .listen('.league-result.submitted', (event) => {
                 if (event.client_id === clientId || !event.result_url) {
@@ -1168,7 +1168,7 @@ window.nativePushPermissionPrompt = ({ publicKey, subscribeUrl, acknowledgeUrl }
     },
 });
 
-window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
+const resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
     collaboratorColorPalette: Array.isArray(colorPalette) ? colorPalette : [],
     collaboratorColorAssignments: {},
     collaboratorsUi: [],
@@ -1340,7 +1340,7 @@ window.resultFormEditors = (initialCollaborators = [], colorPalette = []) => ({
     },
 });
 
-window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) => ({
+const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) => ({
     currentDraftVersion: Number(draftVersion ?? 0),
     storageKey: `result-form-recovery:${fixtureId}`,
     saveTimeoutId: null,
@@ -1522,6 +1522,46 @@ window.resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked })
 
             return mergedFrames;
         }, {});
+    },
+});
+
+window.resultForm = ({
+    componentId,
+    channelName,
+    clientId,
+    collaboratorId,
+    collaboratorName,
+    collaboratorColor,
+    formLocked,
+    formCanEdit,
+    fixtureId,
+    draftVersion,
+    isLocked,
+    collaborators = [],
+    colorPalette = [],
+}) => ({
+    ...resultFormCollaboration({
+        componentId,
+        channelName,
+        clientId,
+        collaboratorId,
+        collaboratorName,
+        collaboratorColor,
+        formLocked,
+        formCanEdit,
+    }),
+    ...resultFormEditors(collaborators, colorPalette),
+    ...resultFormRecovery({
+        componentId,
+        fixtureId,
+        draftVersion,
+        isLocked,
+    }),
+    init() {
+        this.initEditors();
+        this.initRecovery();
+
+        return this.initCollaboration();
     },
 });
 
