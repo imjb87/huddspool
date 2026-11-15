@@ -68,6 +68,27 @@ class ResultFormCollaborationTest extends TestCase
             JS);
     }
 
+    public function test_a_stale_release_cannot_remove_a_reclaimed_lock(): void
+    {
+        $this->assertScenario(<<<'JS'
+            const editor = makeEditor(4, 'second');
+            editor.receiveResultFieldLock(lockEvent({lock_id: 'old-lock', claimed_at: 100}));
+            editor.receiveResultFieldLock(lockEvent({action: 'renewed', lock_id: 'new-lock', claimed_at: 200}));
+            editor.receiveResultFieldLock(lockEvent({action: 'released', lock_id: 'old-lock', claimed_at: 100}));
+            assert.equal(editor.fieldLocks[field].lock_id, 'new-lock');
+            assert.equal(editor.isResultFieldDisabled(field), true);
+            JS);
+    }
+
+    public function test_expired_field_locks_are_ignored(): void
+    {
+        $this->assertScenario(<<<'JS'
+            const editor = makeEditor(4, 'second');
+            editor.receiveResultFieldLock(lockEvent({expires_at: Date.now() - 1}));
+            assert.equal(editor.fieldLocks[field], undefined);
+            JS);
+    }
+
     public function test_rejoining_before_the_leave_animation_finishes_preserves_the_editor(): void
     {
         $this->assertScenario(<<<'JS'
@@ -138,7 +159,7 @@ class ResultFormCollaborationTest extends TestCase
             const lockEvent = (overrides = {}) => ({
                 action: 'acquired', field_key: field, client_id: 'first', user_id: 41,
                 user_name: 'First', claimed_at: 100, expires_at: Date.now() + 12000,
-                color: blue, ...overrides,
+                lock_id: 'first-lock', color: blue, ...overrides,
             });
             const flushTimers = () => {
                 const callbacks = [...timers.values()];

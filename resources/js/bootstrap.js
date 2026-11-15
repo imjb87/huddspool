@@ -99,6 +99,8 @@ window.resultFormCollaboration = ({
     collaboratorId,
     collaboratorName,
     collaboratorColor,
+    formLocked,
+    formCanEdit,
 }) => ({
     connectionHealth: 'healthy',
     connectionBadgeText: 'Live updates connected',
@@ -116,8 +118,15 @@ window.resultFormCollaboration = ({
     activeFieldKey: null,
     fieldLockRenewalId: null,
     fieldLockExpiryTimers: {},
+    fieldLockDomSyncFrameId: null,
+    fieldLockDomObserver: null,
+    livewireFieldLockHookCleanup: null,
+    hasBoundFieldLockDomSync: false,
+    formLocked: Boolean(formLocked),
+    formCanEdit: formCanEdit !== false,
     fieldLockTtlMs: 12000,
     fieldLockRenewalMs: 4000,
+    fieldLockBlurGraceMs: 250,
     statusClassName(status, classes) {
         return classes[status] ?? classes.healthy;
     },
@@ -228,6 +237,122 @@ window.resultFormCollaboration = ({
             this.queueForegroundSync();
         });
     },
+    syncServerResultState(detail = {}) {
+        const payload = Array.isArray(detail) ? (detail[0] ?? {}) : detail;
+
+        if (Object.prototype.hasOwnProperty.call(payload, 'isLocked')) {
+            this.formLocked = Boolean(payload.isLocked);
+        }
+
+        if (Object.prototype.hasOwnProperty.call(payload, 'canEdit')) {
+            this.formCanEdit = Boolean(payload.canEdit);
+        }
+
+        this.queueFieldLockDomSync();
+    },
+    queueFieldLockDomSync() {
+        if (this.fieldLockDomSyncFrameId) {
+            return;
+        }
+
+        const schedule = window.requestAnimationFrame
+            ? (callback) => window.requestAnimationFrame(callback)
+            : (callback) => window.setTimeout(callback, 0);
+
+        this.fieldLockDomSyncFrameId = schedule(() => {
+            this.fieldLockDomSyncFrameId = null;
+            this.syncResultFieldLockDom();
+        });
+    },
+    syncResultFieldLockDom() {
+        if (!this.$el?.querySelectorAll) {
+            return;
+        }
+
+        this.$el.querySelectorAll('[data-result-field-group]').forEach((group) => {
+            const fieldKey = group.dataset.resultFieldKey;
+            const lock = fieldKey ? this.fieldLocks[fieldKey] : null;
+
+            const nextStyle = fieldKey ? this.resultFieldActivityStyle(fieldKey) : '';
+
+            if ((group.getAttribute('style') ?? '') !== nextStyle) {
+                if (nextStyle) {
+                    group.setAttribute('style', nextStyle);
+                } else {
+                    group.removeAttribute('style');
+                }
+            }
+
+            if (lock) {
+                group.dataset.resultFieldLocked = 'true';
+                group.setAttribute('aria-label', lock.user_name + ' is editing this field');
+            } else {
+                delete group.dataset.resultFieldLocked;
+                group.removeAttribute('aria-label');
+            }
+        });
+
+        this.$el.querySelectorAll('select[data-result-field-key]').forEach((field) => {
+            const fieldKey = field.dataset.resultFieldKey;
+            const lock = fieldKey ? this.fieldLocks[fieldKey] : null;
+            const remoteLock = Boolean(lock && lock.client_id !== clientId);
+            const serverDisabled = this.formLocked || !this.formCanEdit;
+
+            if (remoteLock || serverDisabled) {
+                if (!field.disabled) {
+                    field.setAttribute('disabled', 'disabled');
+                }
+            } else if (field.dataset.resultFieldLockDisabled === 'true') {
+                field.removeAttribute('disabled');
+            }
+
+            if (remoteLock) {
+                field.dataset.resultFieldLockDisabled = 'true';
+                const title = lock.user_name + ' is editing this field';
+
+                if (field.getAttribute('title') !== title) {
+                    field.setAttribute('title', title);
+                }
+            } else {
+                delete field.dataset.resultFieldLockDisabled;
+
+                if (! serverDisabled) {
+                    field.removeAttribute('title');
+                }
+            }
+        });
+    },
+    bindFieldLockDomSync() {
+        if (this.hasBoundFieldLockDomSync || !this.$el) {
+            return;
+        }
+
+        this.hasBoundFieldLockDomSync = true;
+        this.queueFieldLockDomSync();
+
+        if (typeof MutationObserver !== 'undefined') {
+            this.fieldLockDomObserver = new MutationObserver((mutations) => {
+                if (mutations.some((mutation) => mutation.type === 'childList' || mutation.type === 'attributes')) {
+                    this.queueFieldLockDomSync();
+                }
+            });
+
+            this.fieldLockDomObserver.observe(this.$el, {
+                attributes: true,
+                attributeFilter: ['disabled', 'style', 'title'],
+                childList: true,
+                subtree: true,
+            });
+        }
+
+        if (window.Livewire?.hook) {
+            this.livewireFieldLockHookCleanup = window.Livewire.hook('morph.updated', ({ component }) => {
+                if (component?.id === componentId) {
+                    this.queueFieldLockDomSync();
+                }
+            });
+        }
+    },
     fieldLockPayload(action, lock) {
         return {
             action,
@@ -236,7 +361,10 @@ window.resultFormCollaboration = ({
             user_name: this.collaboratorName,
             color: this.collaboratorColor,
             client_id: clientId,
+            lock_id: lock.lock_id,
             claimed_at: lock.claimed_at,
+            sent_at: Date.now(),
+            ttl_ms: this.fieldLockTtlMs,
             expires_at: Date.now() + this.fieldLockTtlMs,
         };
     },
@@ -267,6 +395,7 @@ window.resultFormCollaboration = ({
         this.fieldLocks[this.activeFieldKey] = lock;
         this.whisperFieldLock('renewed', lock);
         this.scheduleResultFieldLockExpiry(lock);
+        this.queueFieldLockDomSync();
     },
     scheduleResultFieldLockExpiry(lock) {
         if (!lock?.field_key) {
@@ -282,7 +411,7 @@ window.resultFormCollaboration = ({
         this.fieldLockExpiryTimers[lock.field_key] = window.setTimeout(() => {
             const currentLock = this.fieldLocks[lock.field_key];
 
-            if (!currentLock || currentLock.client_id !== lock.client_id || currentLock.claimed_at !== lock.claimed_at) {
+            if (!this.isSameResultFieldLock(currentLock, lock)) {
                 return;
             }
 
@@ -292,6 +421,8 @@ window.resultFormCollaboration = ({
                 this.activeFieldKey = null;
                 this.stopResultFieldLockRenewal();
             }
+
+            this.queueFieldLockDomSync();
         }, delay);
     },
     stopResultFieldLockRenewal() {
@@ -326,6 +457,34 @@ window.resultFormCollaboration = ({
             this.activeFieldKey = null;
             this.stopResultFieldLockRenewal();
         }
+
+        this.queueFieldLockDomSync();
+    },
+    createResultFieldLockId() {
+        if (globalThis.crypto?.randomUUID) {
+            return globalThis.crypto.randomUUID();
+        }
+
+        return [clientId, Date.now(), Math.random().toString(36).slice(2)].join(':');
+    },
+    touchResultFieldLock(event) {
+        const fieldKey = event.currentTarget?.dataset?.resultFieldKey;
+
+        if (!fieldKey || this.activeFieldKey !== fieldKey) {
+            return;
+        }
+
+        const lock = this.fieldLocks[fieldKey];
+
+        if (!lock || lock.client_id !== clientId) {
+            return;
+        }
+
+        lock.expires_at = Date.now() + this.fieldLockTtlMs;
+        this.fieldLocks[fieldKey] = lock;
+        this.whisperFieldLock('renewed', lock);
+        this.scheduleResultFieldLockExpiry(lock);
+        this.queueFieldLockDomSync();
     },
     beginResultFieldEditing(event) {
         const fieldKey = event.currentTarget?.dataset?.resultFieldKey;
@@ -350,7 +509,8 @@ window.resultFormCollaboration = ({
         const lock = {
             field_key: fieldKey,
             client_id: clientId,
-            claimed_at: existingLock?.claimed_at ?? Date.now(),
+            lock_id: existingLock?.lock_id ?? this.createResultFieldLockId(),
+            claimed_at: Number(existingLock?.claimed_at ?? Date.now()),
             color: this.collaboratorColor,
             user_id: this.collaboratorId,
             user_name: this.collaboratorName,
@@ -362,6 +522,7 @@ window.resultFormCollaboration = ({
         this.whisperFieldLock(existingLock ? 'renewed' : 'acquired', lock);
         this.scheduleResultFieldLockExpiry(lock);
         this.startResultFieldLockRenewal();
+        this.queueFieldLockDomSync();
     },
     endResultFieldEditing(event) {
         const fieldKey = event.currentTarget?.dataset?.resultFieldKey;
@@ -371,12 +532,15 @@ window.resultFormCollaboration = ({
         }
 
         window.setTimeout(() => {
-            if (document.activeElement?.dataset?.resultFieldKey === fieldKey) {
+            const activeFieldKey = document.activeElement?.closest?.('[data-result-field-key]')?.dataset?.resultFieldKey
+                ?? document.activeElement?.dataset?.resultFieldKey;
+
+            if (activeFieldKey === fieldKey || this.activeFieldKey !== fieldKey) {
                 return;
             }
 
             this.releaseResultFieldLock(fieldKey);
-        }, 75);
+        }, this.fieldLockBlurGraceMs);
     },
     cancelLocalResultFieldLock(fieldKey) {
         const activeElement = this.$el.querySelector(`[data-result-field-key="${fieldKey}"]`);
@@ -389,10 +553,27 @@ window.resultFormCollaboration = ({
             this.activeFieldKey = null;
             this.stopResultFieldLockRenewal();
         }
+
+        this.queueFieldLockDomSync();
+    },
+    isSameResultFieldLock(left, right) {
+        if (!left || !right || left.client_id !== right.client_id) {
+            return false;
+        }
+
+        if (left.lock_id && right.lock_id) {
+            return left.lock_id === right.lock_id;
+        }
+
+        return Number(left.claimed_at) === Number(right.claimed_at);
     },
     incomingLockWins(currentLock, incomingLock) {
         if (!currentLock) {
             return true;
+        }
+
+        if (String(incomingLock.client_id) === String(currentLock.client_id)) {
+            return Number(incomingLock.claimed_at) >= Number(currentLock.claimed_at);
         }
 
         if (Number(incomingLock.claimed_at) !== Number(currentLock.claimed_at)) {
@@ -411,7 +592,12 @@ window.resultFormCollaboration = ({
         const currentLock = this.fieldLocks[fieldKey];
 
         if (event.action === 'released') {
-            if (currentLock?.client_id !== event.client_id) {
+            if (
+                !currentLock
+                || currentLock.client_id !== String(event.client_id)
+                || (currentLock.lock_id && !event.lock_id)
+                || (event.lock_id && currentLock.lock_id !== String(event.lock_id))
+            ) {
                 return;
             }
 
@@ -422,21 +608,30 @@ window.resultFormCollaboration = ({
                 delete this.fieldLockExpiryTimers[fieldKey];
             }
 
+            this.queueFieldLockDomSync();
+
+            return;
+        }
+
+        const expiresAt = Number(event.expires_at ?? Date.now() + this.fieldLockTtlMs);
+
+        if (expiresAt <= Date.now()) {
             return;
         }
 
         const incomingLock = {
             field_key: fieldKey,
             client_id: String(event.client_id),
+            lock_id: String(event.lock_id ?? [event.client_id, event.claimed_at ?? Date.now()].join(':')),
             claimed_at: Number(event.claimed_at ?? Date.now()),
             color: this.collaboratorColorAssignments?.[Number(event.user_id)]
                 ?? (/^#[0-9a-f]{6}$/i.test(String(event.color ?? '')) ? event.color : '#64748b'),
             user_id: Number(event.user_id ?? 0),
             user_name: event.user_name ?? 'Another editor',
-            expires_at: Number(event.expires_at ?? Date.now() + this.fieldLockTtlMs),
+            expires_at: expiresAt,
         };
 
-        if (currentLock && currentLock.client_id !== incomingLock.client_id && !this.incomingLockWins(currentLock, incomingLock)) {
+        if (currentLock && !this.incomingLockWins(currentLock, incomingLock)) {
             return;
         }
 
@@ -446,6 +641,7 @@ window.resultFormCollaboration = ({
 
         this.fieldLocks[fieldKey] = incomingLock;
         this.scheduleResultFieldLockExpiry(incomingLock);
+        this.queueFieldLockDomSync();
     },
     releaseResultFieldLocksForCollaborator(userId) {
         const collaboratorId = Number(userId);
@@ -460,6 +656,8 @@ window.resultFormCollaboration = ({
                 }
             }
         });
+
+        this.queueFieldLockDomSync();
     },
     resultFieldActivityStyle(fieldKey) {
         const lock = this.fieldLocks[fieldKey];
@@ -515,6 +713,7 @@ window.resultFormCollaboration = ({
 
         this.bindConnectionStatus();
         this.bindForegroundSync();
+        this.bindFieldLockDomSync();
 
         const syncUi = (members) => this.syncCollaboratorsUi?.(members);
         const joinUi = (member) => this.collaboratorJoinedUi?.(member);
@@ -537,6 +736,7 @@ window.resultFormCollaboration = ({
 
                 syncUi(members);
                 window.setTimeout(() => this.requestResultFieldLockSync(), 200);
+                window.setTimeout(() => this.broadcastActiveResultFieldLock(), 200);
             })
             .joining((member) => {
                 joinUi(member);
@@ -561,6 +761,21 @@ window.resultFormCollaboration = ({
 
         channel.listenForWhisper('result-field-lock', (event) => this.receiveResultFieldLock(event));
         channel.listenForWhisper('result-field-lock-sync-request', () => this.broadcastActiveResultFieldLock());
+    },
+    destroy() {
+        this.stopResultFieldLockRenewal();
+
+        Object.values(this.fieldLockExpiryTimers).forEach((timerId) => window.clearTimeout(timerId));
+        this.fieldLockExpiryTimers = {};
+
+        if (this.fieldLockDomSyncFrameId) {
+            window.cancelAnimationFrame?.(this.fieldLockDomSyncFrameId);
+            this.fieldLockDomSyncFrameId = null;
+        }
+
+        this.fieldLockDomObserver?.disconnect();
+        this.livewireFieldLockHookCleanup?.();
+        this.fieldLockChannel = null;
     },
 });
 

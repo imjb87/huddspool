@@ -9,6 +9,8 @@
             collaboratorId: @js(auth()->id()),
             collaboratorName: @js(auth()->user()->name),
             collaboratorColor: @js(\App\Support\ResultFormCollaboratorColor::forUser((int) auth()->id())),
+            formLocked: @js($isLocked),
+            formCanEdit: @js($canEdit),
         }),
         ...resultFormEditors(
             @js($collaborators),
@@ -22,7 +24,7 @@
         }),
     }"
     x-init="initEditors(); initRecovery(); init()"
-    x-on:result-form-server-synced.window="syncSavedDraft($event.detail?.[0] ?? $event.detail)"
+    x-on:result-form-server-synced.window="syncServerResultState($event.detail?.[0] ?? $event.detail); syncSavedDraft($event.detail?.[0] ?? $event.detail)"
     data-result-form
 >
     @if (! $isLocked)

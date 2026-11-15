@@ -293,6 +293,7 @@ class ResultForm extends Component
             'draftVersion' => $this->draftVersion,
             'frames' => $this->form->draftFrames(),
             'isLocked' => $this->isLocked,
+            'canEdit' => $this->canEdit,
         ]);
     }
 
