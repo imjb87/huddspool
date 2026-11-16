@@ -36,6 +36,30 @@ class FixtureResultForm extends Form
         $this->recalculateScores();
     }
 
+    public function toggleFrameScore(int $frameNumber, string $side): bool
+    {
+        if ($frameNumber < 1 || $frameNumber > 10 || ! in_array($side, ['home', 'away'], true)) {
+            return false;
+        }
+
+        $selectedScoreKey = "{$side}_score";
+        $opposingSide = $side === 'home' ? 'away' : 'home';
+        $opposingScoreKey = "{$opposingSide}_score";
+        $selectedScore = (int) ($this->frames[$frameNumber][$selectedScoreKey] ?? 0);
+
+        if ($selectedScore === 1) {
+            $this->frames[$frameNumber][$selectedScoreKey] = 0;
+            $this->frames[$frameNumber][$opposingScoreKey] = 0;
+        } else {
+            $this->frames[$frameNumber][$selectedScoreKey] = 1;
+            $this->frames[$frameNumber][$opposingScoreKey] = 0;
+        }
+
+        $this->recalculateScores();
+
+        return true;
+    }
+
     public function syncFromResult(?Result $result): void
     {
         $this->syncFromResultAndDraft($result);

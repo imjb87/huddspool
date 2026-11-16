@@ -1473,6 +1473,11 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
             }
 
             const frame = frames[frameNumber];
+
+            if (valueType === 'score' && field.type === 'radio' && !field.checked) {
+                return frames;
+            }
+
             const value = field.value === '' ? null : field.value;
 
             if (side === 'home' && valueType === 'player') {

@@ -73,6 +73,17 @@ class ResultForm extends Component
         }
     }
 
+    public function toggleFrameScore(int $frameNumber, string $side): void
+    {
+        $this->refreshActionState();
+
+        if ($this->isLocked || ! $this->canEdit || ! $this->form->toggleFrameScore($frameNumber, $side)) {
+            return;
+        }
+
+        $this->handleFrameUpdate();
+    }
+
     public function submit(): ?Redirector
     {
         $this->refreshActionState();
