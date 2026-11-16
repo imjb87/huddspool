@@ -1148,7 +1148,7 @@
   }
 
   .ui-result-form-score-control {
-    @apply -ml-1 shrink-0;
+    @apply -ml-3 shrink-0;
   }
 
   .ui-result-form-score-field[data-result-field-disabled='true'] {
