@@ -1,28 +1,23 @@
 <form
     class="space-y-6 lg:contents"
     wire:submit.prevent="submit"
-    x-data="{
-        ...resultFormCollaboration({
-            componentId: @js($this->getId()),
-            channelName: @js($this->broadcastChannelName()),
-            clientId: @js($clientId),
-            collaboratorId: @js(auth()->id()),
-            collaboratorName: @js(auth()->user()->name),
-            collaboratorColor: @js(\App\Support\ResultFormCollaboratorColor::forUser((int) auth()->id())),
-        }),
-        ...resultFormEditors(
-            @js($collaborators),
-            @js(\App\Support\ResultFormCollaboratorColor::palette()),
-        ),
-        ...resultFormRecovery({
-            componentId: @js($this->getId()),
-            fixtureId: @js($fixture->getKey()),
-            draftVersion: @js($draftVersion),
-            isLocked: @js($isLocked),
-        }),
-    }"
-    x-init="initEditors(); initRecovery(); init()"
-    x-on:result-form-server-synced.window="syncSavedDraft($event.detail?.[0] ?? $event.detail)"
+    x-data="window.resultForm({
+        componentId: @js($this->getId()),
+        channelName: @js($this->broadcastChannelName()),
+        clientId: @js($clientId),
+        collaboratorId: @js(auth()->id()),
+        collaboratorName: @js(auth()->user()->name),
+        collaboratorColor: @js(\App\Support\ResultFormCollaboratorColor::forUser((int) auth()->id())),
+        formLocked: @js($isLocked),
+        formCanEdit: @js($canEdit),
+        fixtureId: @js($fixture->getKey()),
+        draftVersion: @js($draftVersion),
+        isLocked: @js($isLocked),
+        collaborators: @js($collaborators),
+        colorPalette: @js(\App\Support\ResultFormCollaboratorColor::palette()),
+    })"
+    x-init="init()"
+    x-on:result-form-server-synced.window="syncServerResultState($event.detail?.[0] ?? $event.detail); syncSavedDraft($event.detail?.[0] ?? $event.detail)"
     data-result-form
 >
     @if (! $isLocked)

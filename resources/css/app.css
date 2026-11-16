@@ -1147,6 +1147,10 @@
     @apply h-8 min-w-9 px-1.5;
   }
 
+  .ui-result-form-score-field[data-result-field-disabled='true'] {
+    @apply pointer-events-none cursor-not-allowed;
+  }
+
   .ui-result-frame-item {
     @apply flex w-full flex-col gap-3 rounded-lg border border-transparent px-4 py-3.5 text-sm outline-none transition-colors duration-100;
     background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);

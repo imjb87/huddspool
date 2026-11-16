@@ -16,7 +16,6 @@ use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\LeagueResultSubmissionMailer;
-use App\Support\ResultFormCollaboratorColor;
 use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -86,16 +85,16 @@ class ResultSubmissionTest extends TestCase
             ->assertSeeText($teamAdmin->name)
             ->assertSee('data-result-field-key="1.home_player_id"', false)
             ->assertSee('data-result-field-key="1.away_player_id"', false)
-            ->assertSee('data-result-field-key="1.home_score"', false)
-            ->assertSee('data-result-field-key="1.away_score"', false)
+            ->assertSee('type="radio"', false)
+            ->assertSee('name="frame-1-winner"', false)
+            ->assertSee("wire:click=\"toggleFrameScore(1, 'home')\"", false)
+            ->assertSee("wire:click=\"toggleFrameScore(1, 'away')\"", false)
             ->assertSee('data-result-field-group', false)
             ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.home_player_id')\"", false)
-            ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.home_score')\"", false)
-            ->assertSee("x-bind:style=\"resultFieldActivityStyle('1.away_score')\"", false)
-            ->assertSee("x-bind:disabled=\"isResultFieldDisabled('1.home_score')\"", false)
-            ->assertSee("x-bind:title=\"resultFieldLockLabel('1.home_score')\"", false)
-            ->assertSee("x-bind:disabled=\"isResultFieldDisabled('1.away_score')\"", false)
-            ->assertSee("x-bind:title=\"resultFieldLockLabel('1.away_score')\"", false)
+            ->assertDontSee('data-result-field-key="1.home_score"', false)
+            ->assertDontSee('data-result-field-key="1.away_score"', false)
+            ->assertDontSee("isResultFieldDisabled('1.home_score')", false)
+            ->assertDontSee("isResultFieldDisabled('1.away_score')", false)
             ->assertSee('collaboratorActivityStyle(collaborator)', false)
             ->assertDontSee('resultFrameActivityStyle', false);
     }
@@ -605,40 +604,24 @@ class ResultSubmissionTest extends TestCase
             ->assertSee($awayPlayers[0]->avatar_url, false);
     }
 
-    public function test_result_form_shows_every_collaborator_with_avatar_and_last_edited_timestamp(): void
+    public function test_result_form_shows_the_current_collaborator_with_avatar_and_last_edited_timestamp(): void
     {
         Carbon::setTestNow('2026-03-13 19:00:00');
 
         [
             'fixture' => $fixture,
             'primaryAdmin' => $primaryAdmin,
-            'secondaryAdmin' => $secondaryAdmin,
             'homePlayers' => $homePlayers,
             'awayPlayers' => $awayPlayers,
         ] = $this->createResultFormLockContext();
 
         $component = Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->call('syncCollaborators', [
-                [
-                    'id' => $primaryAdmin->id,
-                    'name' => $primaryAdmin->name,
-                    'avatar_url' => $primaryAdmin->avatar_url,
-                ],
-                [
-                    'id' => $secondaryAdmin->id,
-                    'name' => $secondaryAdmin->name,
-                    'avatar_url' => $secondaryAdmin->avatar_url,
-                ],
-            ])
-            ->assertSet('collaborators.1.color', ResultFormCollaboratorColor::forUser((int) $secondaryAdmin->id))
+            ->assertSet('collaborators.0.id', $primaryAdmin->id)
             ->assertSee($primaryAdmin->avatar_url, false)
-            ->assertSee($secondaryAdmin->avatar_url, false)
             ->assertSee('isolate flex items-center -space-x-3', false)
             ->assertSee('aria-label="'.$primaryAdmin->name.'"', false)
-            ->assertSee('aria-label="'.$secondaryAdmin->name.'"', false)
             ->assertSeeText($primaryAdmin->name)
-            ->assertSeeText($secondaryAdmin->name)
             ->assertDontSeeText('(You)');
 
         $component
@@ -661,7 +644,7 @@ class ResultSubmissionTest extends TestCase
 
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->call('syncDraftFromBroadcast', [
+            ->call('refreshSharedDraft', [
                 'fixture_id' => $fixture->id,
                 'result_id' => 1,
                 'draft_version' => 1,
@@ -697,13 +680,12 @@ class ResultSubmissionTest extends TestCase
 
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->set('form.frames.1.home_score', 1)
-            ->set('form.frames.1.away_score', 0)
+            ->call('toggleFrameScore', 1, 'home')
             ->assertSee('ui-live-score-badge-win', false)
             ->assertSee('ui-live-score-badge-loss', false);
     }
 
-    public function test_setting_one_frame_score_to_one_resets_the_opposing_score_to_zero(): void
+    public function test_frame_score_radio_selects_a_winner_updates_totals_and_can_be_cleared(): void
     {
         [
             'fixture' => $fixture,
@@ -712,12 +694,26 @@ class ResultSubmissionTest extends TestCase
 
         Livewire::actingAs($primaryAdmin)
             ->test(ResultForm::class, ['fixture' => $fixture])
-            ->set('form.frames.1.away_score', 1)
+            ->assertSet('form.frames.1.home_score', 0)
+            ->assertSet('form.frames.1.away_score', 0)
+            ->call('toggleFrameScore', 1, 'away')
             ->assertSet('form.frames.1.home_score', 0)
             ->assertSet('form.frames.1.away_score', 1)
-            ->set('form.frames.1.home_score', 1)
+            ->assertSet('form.homeScore', 0)
+            ->assertSet('form.awayScore', 1)
+            ->assertSet('form.totalScore', 1)
+            ->call('toggleFrameScore', 1, 'home')
             ->assertSet('form.frames.1.home_score', 1)
-            ->assertSet('form.frames.1.away_score', 0);
+            ->assertSet('form.frames.1.away_score', 0)
+            ->assertSet('form.homeScore', 1)
+            ->assertSet('form.awayScore', 0)
+            ->assertSet('form.totalScore', 1)
+            ->call('toggleFrameScore', 1, 'home')
+            ->assertSet('form.frames.1.home_score', 0)
+            ->assertSet('form.frames.1.away_score', 0)
+            ->assertSet('form.homeScore', 0)
+            ->assertSet('form.awayScore', 0)
+            ->assertSet('form.totalScore', 0);
     }
 
     public function test_result_form_submission_errors_render_with_the_refreshed_alert_styling(): void

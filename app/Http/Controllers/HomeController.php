@@ -17,12 +17,13 @@ class HomeController extends Controller
     public function __invoke(): View
     {
         $news = $this->news();
+        $entrySeason = $this->entrySeason();
 
         return view('home', [
             'title' => 'Home',
             'liveScores' => $this->liveScores(),
-            'entrySeason' => $this->entrySeason(),
-            'entrySeasonCountdown' => $this->entrySeasonCountdown(),
+            'entrySeason' => $entrySeason,
+            'entrySeasonCountdown' => $this->entrySeasonCountdown($entrySeason),
             'news' => $news,
         ]);
     }
@@ -94,10 +95,8 @@ class HomeController extends Controller
     /**
      * @return array{mode: 'closes', target_iso: string, target_label: string, headline: string, body: string, cta_label: string, cta_url: string}|null
      */
-    private function entrySeasonCountdown(): ?array
+    private function entrySeasonCountdown(?Season $season): ?array
     {
-        $season = $this->entrySeason();
-
         if (! $season) {
             return null;
         }

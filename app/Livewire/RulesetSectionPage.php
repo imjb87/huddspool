@@ -45,7 +45,7 @@ class RulesetSectionPage extends BaseSectionPage
 
     protected function fixturesQuery(): Builder
     {
-        return Section::query()->findOrFail($this->section->id)->fixtures()->getQuery();
+        return $this->section->fixtures()->getQuery();
     }
 
     protected function defaultWeek(): int

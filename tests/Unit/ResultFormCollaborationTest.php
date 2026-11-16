@@ -68,6 +68,27 @@ class ResultFormCollaborationTest extends TestCase
             JS);
     }
 
+    public function test_a_stale_release_cannot_remove_a_reclaimed_lock(): void
+    {
+        $this->assertScenario(<<<'JS'
+            const editor = makeEditor(4, 'second');
+            editor.receiveResultFieldLock(lockEvent({lock_id: 'old-lock', claimed_at: 100}));
+            editor.receiveResultFieldLock(lockEvent({action: 'renewed', lock_id: 'new-lock', claimed_at: 200}));
+            editor.receiveResultFieldLock(lockEvent({action: 'released', lock_id: 'old-lock', claimed_at: 100}));
+            assert.equal(editor.fieldLocks[field].lock_id, 'new-lock');
+            assert.equal(editor.isResultFieldDisabled(field), true);
+            JS);
+    }
+
+    public function test_expired_field_locks_are_ignored(): void
+    {
+        $this->assertScenario(<<<'JS'
+            const editor = makeEditor(4, 'second');
+            editor.receiveResultFieldLock(lockEvent({expires_at: Date.now() - 1}));
+            assert.equal(editor.fieldLocks[field], undefined);
+            JS);
+    }
+
     public function test_rejoining_before_the_leave_animation_finishes_preserves_the_editor(): void
     {
         $this->assertScenario(<<<'JS'
@@ -123,7 +144,12 @@ class ResultFormCollaborationTest extends TestCase
                 clearTimeout(id) { timers.delete(id); },
             };
             const context = vm.createContext({window, document: {head: {querySelector: () => null}}, console});
-            const source = fs.readFileSync('resources/js/bootstrap.js', 'utf8').replaceAll('import.meta.env', '({})');
+            const bootstrap = fs.readFileSync('resources/js/bootstrap.js', 'utf8')
+                .replaceAll('import.meta.env', '({})')
+                .replace(/export \{ isDeepEqual, request \};\s*$/, '');
+            const resultForm = fs.readFileSync('resources/js/result-form.js', 'utf8')
+                .replace("import { isDeepEqual } from './bootstrap';", '');
+            const source = `${bootstrap}\n${resultForm}`;
             vm.runInContext(source, context);
             const blue = '#2563eb';
             const purple = '#7c3aed';
@@ -131,14 +157,18 @@ class ResultFormCollaborationTest extends TestCase
             const second = {id: 4, joined_at: 200, name: 'Second'};
             const field = 'frames.0.home_player_id';
             const makeEditor = (id, clientId) => ({
-                ...window.resultFormCollaboration({collaboratorId: id, clientId}),
-                ...window.resultFormEditors([id === 41 ? first : second], [blue, purple]),
+                ...window.resultForm({
+                    collaboratorId: id,
+                    clientId,
+                    collaborators: [id === 41 ? first : second],
+                    colorPalette: [blue, purple],
+                }),
                 $nextTick: callback => callback(),
             });
             const lockEvent = (overrides = {}) => ({
                 action: 'acquired', field_key: field, client_id: 'first', user_id: 41,
                 user_name: 'First', claimed_at: 100, expires_at: Date.now() + 12000,
-                color: blue, ...overrides,
+                lock_id: 'first-lock', color: blue, ...overrides,
             });
             const flushTimers = () => {
                 const callbacks = [...timers.values()];

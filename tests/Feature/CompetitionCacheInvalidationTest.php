@@ -45,8 +45,8 @@ class CompetitionCacheInvalidationTest extends TestCase
         $result->delete();
 
         $keys = [
-            "team:season-history:{$homeTeam->id}",
-            "team:season-history:{$awayTeam->id}",
+            "team:season-history:v2:{$homeTeam->id}",
+            "team:season-history:v2:{$awayTeam->id}",
             'stats:season-series',
             'stats:season-series-chart',
             sprintf('history:season:%d', $season->id),
@@ -105,10 +105,10 @@ class CompetitionCacheInvalidationTest extends TestCase
             sprintf('section:%d:standings', $section->id),
             sprintf('history:season:%d', $season->id),
             sprintf('history:sections:%d:%d', $season->id, $ruleset->id),
-            "player:season-history:{$homePlayer->id}",
-            "player:season-history:{$awayPlayer->id}",
-            "team:season-history:{$homeTeam->id}",
-            "team:season-history:{$awayTeam->id}",
+            "player:season-history:v5:{$homePlayer->id}",
+            "player:season-history:v5:{$awayPlayer->id}",
+            "team:season-history:v2:{$homeTeam->id}",
+            "team:season-history:v2:{$awayTeam->id}",
         ];
 
         $this->cacheKeys($keys);
@@ -116,6 +116,60 @@ class CompetitionCacheInvalidationTest extends TestCase
         $frame->restore();
 
         $this->assertCacheKeysCleared($keys);
+    }
+
+    public function test_draft_frame_invalidation_skips_historical_caches(): void
+    {
+        Cache::flush();
+
+        [
+            'section' => $section,
+            'fixture' => $fixture,
+            'homeTeam' => $homeTeam,
+            'awayTeam' => $awayTeam,
+            'homePlayer' => $homePlayer,
+            'awayPlayer' => $awayPlayer,
+        ] = $this->createFixtureContext();
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'section_id' => $section->id,
+            'is_confirmed' => false,
+        ]);
+
+        $frame = Frame::create([
+            'result_id' => $result->id,
+            'home_player_id' => $homePlayer->id,
+            'home_score' => 1,
+            'away_player_id' => $awayPlayer->id,
+            'away_score' => 0,
+        ]);
+
+        $liveKeys = [
+            'stats:open-season',
+            sprintf('section:%d:averages', $section->id),
+            sprintf('section:%d:standings', $section->id),
+        ];
+        $historicalKeys = [
+            'stats:season-series',
+            'history:index',
+            "player:season-history:v5:{$homePlayer->id}",
+            "team:season-history:v2:{$homeTeam->id}",
+        ];
+
+        $this->cacheKeys([...$liveKeys, ...$historicalKeys]);
+
+        app(CompetitionCacheInvalidator::class)->forgetForFrame($frame);
+
+        $this->assertCacheKeysCleared($liveKeys);
+
+        foreach ($historicalKeys as $key) {
+            $this->assertTrue(Cache::has($key), "Expected draft cache key [{$key}] to remain.");
+        }
     }
 
     public function test_invalidating_an_open_season_clears_navigation_related_caches(): void

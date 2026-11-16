@@ -73,6 +73,17 @@ class ResultForm extends Component
         }
     }
 
+    public function toggleFrameScore(int $frameNumber, string $side): void
+    {
+        $this->refreshActionState();
+
+        if ($this->isLocked || ! $this->canEdit || ! $this->form->toggleFrameScore($frameNumber, $side)) {
+            return;
+        }
+
+        $this->handleFrameUpdate(refreshActionState: false);
+    }
+
     public function submit(): ?Redirector
     {
         $this->refreshActionState();
@@ -160,43 +171,6 @@ class ResultForm extends Component
     }
 
     /**
-     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}  $member
-     */
-    public function collaboratorJoined(array $member): void
-    {
-        $this->collaborators = collect($this->collaborators)
-            ->push($this->mapCollaborator($member))
-            ->unique('id')
-            ->values()
-            ->all();
-    }
-
-    /**
-     * @param  array{id: int|string}  $member
-     */
-    public function collaboratorLeft(array $member): void
-    {
-        $memberId = (int) $member['id'];
-
-        $this->collaborators = collect($this->collaborators)
-            ->reject(fn (array $collaborator): bool => $collaborator['id'] === $memberId)
-            ->values()
-            ->all();
-    }
-
-    /**
-     * @param  array<int, array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}>  $members
-     */
-    public function syncCollaborators(array $members): void
-    {
-        $this->collaborators = collect($members)
-            ->map(fn (array $member): array => $this->mapCollaborator($member))
-            ->unique('id')
-            ->values()
-            ->all();
-    }
-
-    /**
      * @param  array{
      *     fixture_id: int,
      *     result_id: int,
@@ -211,40 +185,29 @@ class ResultForm extends Component
      *     result_url: string
      * }  $payload
      */
-    public function syncDraftFromBroadcast(array $payload): void
+    public function refreshSharedDraft(?array $payload = null): void
     {
-        if ((int) $payload['fixture_id'] !== (int) $this->fixture->getKey()) {
+        if ($payload !== null && (int) ($payload['fixture_id'] ?? 0) !== (int) $this->fixture->getKey()) {
             return;
         }
 
-        $changedFrameNumbers = $this->changedFrameNumbersFromPayload($payload['frames'] ?? []);
+        $previousFrames = $this->form->draftFrames();
 
-        $this->fixture = $this->fixtureAccess()->load($this->fixture);
-
-        if ($this->fixture->result) {
-            $this->syncComponentState($this->fixture->result);
-        } else {
-            $this->result = null;
-            $this->isLocked = (bool) ($payload['is_confirmed'] ?? false);
-            $this->canEdit = ! $this->isLocked;
-            $this->draftVersion = (int) ($payload['draft_version'] ?? 0);
-            $this->lastUpdatedByName = $payload['updated_by_name'] ?? null;
-            $this->form->syncFromResultAndDraft(null, $payload['frames'] ?? []);
-        }
-
-        if ($changedFrameNumbers !== []) {
-            $this->dispatch('result-frames-synced', frameNumbers: $changedFrameNumbers);
-        }
-    }
-
-    public function refreshSharedDraft(): void
-    {
         $this->fixture = $this->fixtureAccess()->load($this->fixture);
         $this->fixtureAccess()->ensureAccessible($this->fixture);
 
-        $changedFrameNumbers = $this->changedFrameNumbersFromPayload($this->fixture->result?->draft_state ?? []);
+        if ($this->fixture->result) {
+            $this->syncComponentState($this->fixture->result);
+        } elseif ($payload !== null) {
+            $this->syncBroadcastPayload($payload);
+        } else {
+            $this->syncComponentState(null);
+        }
 
-        $this->syncComponentState($this->fixture->result);
+        $changedFrameNumbers = $this->changedFrameNumbersBetween(
+            $previousFrames,
+            $this->form->draftFrames(),
+        );
 
         if ($changedFrameNumbers !== []) {
             $this->dispatch('result-frames-synced', frameNumbers: $changedFrameNumbers);
@@ -260,10 +223,20 @@ class ResultForm extends Component
 
     private function refreshActionState(): void
     {
-        $this->fixture = $this->fixtureAccess()->load($this->fixture);
-        $this->fixtureAccess()->ensureAccessible($this->fixture);
+        $actionFixture = $this->fixtureAccess()->loadForAction($this->fixture);
+        $this->fixtureAccess()->ensureAccessible($actionFixture);
 
-        $this->result = $this->fixture->result;
+        $this->result = $actionFixture->result;
+        $this->fixture->setRelation('result', $this->result);
+
+        if (! $this->fixture->relationLoaded('homeTeam') || ! $this->fixture->homeTeam) {
+            $this->fixture->setRelation('homeTeam', $actionFixture->homeTeam);
+        }
+
+        if (! $this->fixture->relationLoaded('awayTeam') || ! $this->fixture->awayTeam) {
+            $this->fixture->setRelation('awayTeam', $actionFixture->awayTeam);
+        }
+
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
         $this->canEdit = ! $this->isLocked;
     }
@@ -275,7 +248,7 @@ class ResultForm extends Component
 
     private function syncComponentState(?Result $result): void
     {
-        $this->result = $result?->load([
+        $this->result = $result?->loadMissing([
             'frames' => fn ($query) => $query->orderBy('id'),
             'draftUpdatedBy',
         ]);
@@ -293,12 +266,38 @@ class ResultForm extends Component
             'draftVersion' => $this->draftVersion,
             'frames' => $this->form->draftFrames(),
             'isLocked' => $this->isLocked,
+            'canEdit' => $this->canEdit,
         ]);
     }
 
-    public function handleFrameUpdate(): void
+    /**
+     * Keep the broadcast path usable when the event arrives before the result row is visible to this request.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function syncBroadcastPayload(array $payload): void
     {
-        $this->refreshActionState();
+        $this->result = null;
+        $this->isLocked = (bool) ($payload['is_confirmed'] ?? false);
+        $this->canEdit = ! $this->isLocked;
+        $this->draftVersion = (int) ($payload['draft_version'] ?? 0);
+        $this->lastUpdatedByName = $payload['updated_by_name'] ?? null;
+        $this->lastEditedAt = null;
+        $this->form->syncFromResultAndDraft(null, $payload['frames'] ?? []);
+
+        $this->dispatch('result-form-server-synced', [
+            'draftVersion' => $this->draftVersion,
+            'frames' => $this->form->draftFrames(),
+            'isLocked' => $this->isLocked,
+            'canEdit' => $this->canEdit,
+        ]);
+    }
+
+    public function handleFrameUpdate(bool $refreshActionState = true): void
+    {
+        if ($refreshActionState) {
+            $this->refreshActionState();
+        }
 
         if ($this->isLocked || ! $this->canEdit) {
             return;
@@ -321,17 +320,6 @@ class ResultForm extends Component
         $this->persistCurrentDraft();
     }
 
-    private function redirectToFixtureOrResult(): Redirector
-    {
-        $result = $this->result ?? $this->fixture->result;
-
-        if ($result) {
-            return redirect()->route('result.show', $result);
-        }
-
-        return redirect()->route('fixture.show', $this->fixture);
-    }
-
     private function persister(): ResultFormPersister
     {
         return $this->persister ??= new ResultFormPersister;
@@ -349,6 +337,11 @@ class ResultForm extends Component
 
     private function frameRows(): array
     {
+        $this->fixture->loadMissing([
+            'homeTeam.players',
+            'awayTeam.players',
+        ]);
+
         return (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames);
     }
 
@@ -361,20 +354,19 @@ class ResultForm extends Component
      * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $incomingFrames
      * @return array<int, int>
      */
-    private function changedFrameNumbersFromPayload(array $incomingFrames): array
+    private function changedFrameNumbersBetween(array $previousFrames, array $nextFrames): array
     {
-        $currentFrames = $this->form->draftFrames();
         $changedFrameNumbers = [];
 
         for ($i = 1; $i <= 10; $i++) {
-            $incomingFrame = $incomingFrames[$i] ?? $incomingFrames[(string) $i] ?? [];
-            $currentFrame = $currentFrames[$i] ?? [];
+            $previousFrame = $previousFrames[$i] ?? $previousFrames[(string) $i] ?? [];
+            $nextFrame = $nextFrames[$i] ?? $nextFrames[(string) $i] ?? [];
 
             if (
-                $this->normalizeFrameValue($currentFrame['home_player_id'] ?? null) !== $this->normalizeFrameValue($incomingFrame['home_player_id'] ?? null) ||
-                $this->normalizeFrameValue($currentFrame['away_player_id'] ?? null) !== $this->normalizeFrameValue($incomingFrame['away_player_id'] ?? null) ||
-                $this->normalizeFrameValue($currentFrame['home_score'] ?? 0) !== $this->normalizeFrameValue($incomingFrame['home_score'] ?? 0) ||
-                $this->normalizeFrameValue($currentFrame['away_score'] ?? 0) !== $this->normalizeFrameValue($incomingFrame['away_score'] ?? 0)
+                $this->normalizeFrameValue($previousFrame['home_player_id'] ?? null) !== $this->normalizeFrameValue($nextFrame['home_player_id'] ?? null) ||
+                $this->normalizeFrameValue($previousFrame['away_player_id'] ?? null) !== $this->normalizeFrameValue($nextFrame['away_player_id'] ?? null) ||
+                $this->normalizeFrameValue($previousFrame['home_score'] ?? 0) !== $this->normalizeFrameValue($nextFrame['home_score'] ?? 0) ||
+                $this->normalizeFrameValue($previousFrame['away_score'] ?? 0) !== $this->normalizeFrameValue($nextFrame['away_score'] ?? 0)
             ) {
                 $changedFrameNumbers[] = $i;
             }
@@ -427,22 +419,6 @@ class ResultForm extends Component
         $this->fixture = $this->fixtureAccess()->load($this->fixture);
         $this->syncComponentState($exception->result);
         $this->addError('form.frames', $message);
-    }
-
-    /**
-     * @param  array{id: int|string, name?: string|null, avatar_url?: string|null, color?: string|null}  $member
-     * @return array{id: int, name: string, avatar_url: string, color: string}
-     */
-    private function mapCollaborator(array $member): array
-    {
-        $user = User::query()->find((int) $member['id']);
-
-        return [
-            'id' => (int) $member['id'],
-            'name' => (string) ($member['name'] ?? $user?->name ?? 'Team admin'),
-            'avatar_url' => (string) ($member['avatar_url'] ?? $user?->avatar_url ?? asset('/images/user.jpg')),
-            'color' => (string) ($member['color'] ?? ResultFormCollaboratorColor::forUser((int) $member['id'])),
-        ];
     }
 
     /**

@@ -1,0 +1,45 @@
+name: Result form E2E
+
+on:
+    pull_request:
+        branches:
+            - master
+    workflow_dispatch:
+
+jobs:
+    result-form-e2e:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+
+            - name: Install JavaScript dependencies
+              run: npm ci
+
+            - name: Install Playwright browser
+              run: npx playwright install --with-deps chromium
+
+            - name: Run result form E2E tests
+              run: npm run e2e:run
+
+            - name: Capture E2E container logs
+              if: always()
+              run: docker compose --project-name huddspool-e2e --file compose.e2e.yaml logs --no-color > e2e-compose.log || true
+
+            - name: Upload E2E diagnostics
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: result-form-e2e-diagnostics
+                  path: |
+                      test-results
+                      e2e-compose.log
+                  if-no-files-found: ignore

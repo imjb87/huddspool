@@ -21,6 +21,27 @@ class ResultFormFixtureAccess
             ->findOrFail($fixture->getKey());
     }
 
+    public function loadForAction(Fixture $fixture): Fixture
+    {
+        return Fixture::query()
+            ->select([
+                'id',
+                'fixture_date',
+                'home_team_id',
+                'away_team_id',
+                'season_id',
+                'section_id',
+                'venue_id',
+                'ruleset_id',
+            ])
+            ->with([
+                'homeTeam:id,name',
+                'awayTeam:id,name',
+                'result',
+            ])
+            ->findOrFail($fixture->getKey());
+    }
+
     public function ensureAccessible(Fixture $fixture): void
     {
         if ($fixture->isBye()) {

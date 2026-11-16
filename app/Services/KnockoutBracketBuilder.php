@@ -13,11 +13,25 @@ use Illuminate\Validation\ValidationException;
 
 class KnockoutBracketBuilder
 {
+    /**
+     * @var array<int, ?int>
+     */
+    private array $participantVenueIds = [];
+
     public function __construct(protected Knockout $knockout) {}
 
     public function generate(bool $shuffle = false): void
     {
-        $participants = $this->knockout->participants()->ordered()->get();
+        $this->participantVenueIds = [];
+
+        $participants = $this->knockout->participants()
+            ->ordered()
+            ->with('team')
+            ->get();
+
+        foreach ($participants as $participant) {
+            $this->participantVenueIds[$participant->id] = $participant->team?->venue_id;
+        }
 
         if ($shuffle) {
             $participants = $participants->shuffle()->values();
@@ -318,11 +332,15 @@ class KnockoutBracketBuilder
             return null;
         }
 
-        $participant = KnockoutParticipant::query()
-            ->with('team')
-            ->find($participantId);
+        if (! array_key_exists($participantId, $this->participantVenueIds)) {
+            $participant = KnockoutParticipant::query()
+                ->with('team')
+                ->find($participantId);
 
-        return $participant?->team?->venue_id;
+            $this->participantVenueIds[$participantId] = $participant?->team?->venue_id;
+        }
+
+        return $this->participantVenueIds[$participantId];
     }
 
     private function isNeutralRound(KnockoutRound $round): bool
@@ -420,7 +438,7 @@ class KnockoutBracketBuilder
             $position++;
         }
 
-        $rounds = $this->knockout->rounds()->orderBy('position')->take($roundCount)->get()->values();
+        $rounds = $rounds->sortBy('position')->values();
 
         foreach ($rounds as $index => $round) {
             $remainingPlayers = $bracketSize / (2 ** $index);
