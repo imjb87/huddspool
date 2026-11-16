@@ -1147,6 +1147,10 @@
     @apply h-8 min-w-9 px-1.5;
   }
 
+  .ui-result-form-score-control {
+    @apply -ml-1 shrink-0;
+  }
+
   .ui-result-form-score-field[data-result-field-disabled='true'] {
     @apply pointer-events-none cursor-not-allowed;
   }

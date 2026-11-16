@@ -97,7 +97,7 @@
                     ></div>
                 </template>
 
-                <div class="shrink-0">
+                <div class="ui-result-form-score-control">
                     <label
                         class="ui-result-form-score-field ui-fixture-badge {{ $homeScoreBadgeClasses }} transition-shadow duration-150"
                         for="result-frame-{{ $row['number'] }}-home-score"
@@ -201,7 +201,7 @@
                     ></div>
                 </template>
 
-                <div class="shrink-0">
+                <div class="ui-result-form-score-control">
                     <label
                         class="ui-result-form-score-field ui-fixture-badge {{ $awayScoreBadgeClasses }} transition-shadow duration-150"
                         for="result-frame-{{ $row['number'] }}-away-score"
