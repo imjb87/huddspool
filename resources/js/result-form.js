@@ -180,6 +180,9 @@ const resultFormCollaboration = ({
         this.$el.querySelectorAll('[data-result-field-group]').forEach((group) => {
             const fieldKey = group.dataset.resultFieldKey;
             const lock = fieldKey ? this.fieldLocks[fieldKey] : null;
+            const remoteLock = Boolean(lock && lock.client_id !== clientId);
+            const serverDisabled = this.formLocked || !this.formCanEdit;
+            const fieldDisabled = remoteLock || serverDisabled;
 
             const nextStyle = fieldKey ? this.resultFieldActivityStyle(fieldKey) : '';
 
@@ -198,20 +201,44 @@ const resultFormCollaboration = ({
                 delete group.dataset.resultFieldLocked;
                 group.removeAttribute('aria-label');
             }
+
+            if (fieldDisabled) {
+                group.dataset.resultFieldDisabled = 'true';
+                group.setAttribute('aria-disabled', 'true');
+            } else {
+                delete group.dataset.resultFieldDisabled;
+                group.removeAttribute('aria-disabled');
+            }
         });
 
-        this.$el.querySelectorAll('select[data-result-field-key]').forEach((field) => {
+        this.$el.querySelectorAll('[data-result-field-control][data-result-field-key]').forEach((field) => {
             const fieldKey = field.dataset.resultFieldKey;
             const lock = fieldKey ? this.fieldLocks[fieldKey] : null;
             const remoteLock = Boolean(lock && lock.client_id !== clientId);
             const serverDisabled = this.formLocked || !this.formCanEdit;
+            const fieldDisabled = remoteLock || serverDisabled;
+            const isLabel = field.tagName === 'LABEL';
 
-            if (remoteLock || serverDisabled) {
-                if (!field.disabled) {
+            if (fieldDisabled) {
+                if (!isLabel && !field.disabled) {
                     field.setAttribute('disabled', 'disabled');
                 }
-            } else if (field.dataset.resultFieldLockDisabled === 'true') {
+                field.dataset.resultFieldDisabled = 'true';
+                field.setAttribute('aria-disabled', 'true');
+            } else if (field.dataset.resultFieldDisabled === 'true') {
+                if (!isLabel && field.dataset.resultFieldLockDisabled === 'true') {
+                    field.removeAttribute('disabled');
+                }
+
+                delete field.dataset.resultFieldDisabled;
+                field.removeAttribute('aria-disabled');
+            }
+
+            if (fieldDisabled && !isLabel) {
+                field.dataset.resultFieldLockDisabled = 'true';
+            } else if (!fieldDisabled && field.dataset.resultFieldLockDisabled === 'true') {
                 field.removeAttribute('disabled');
+                delete field.dataset.resultFieldLockDisabled;
             }
 
             if (remoteLock) {

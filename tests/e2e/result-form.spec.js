@@ -87,20 +87,30 @@ test('presence and player-field locks synchronise between two editors', async ({
         const fieldKey = '1.home_player_id';
         const homeField = homePage.locator(`select[data-result-field-key="${fieldKey}"]`);
         const awayField = awayPage.locator(`select[data-result-field-key="${fieldKey}"]`);
+        const awaySurface = awayPage.locator(`[data-result-field-group][data-result-field-key="${fieldKey}"]`);
+        const awayScore = awayPage.locator('#result-frame-1-home-score');
+        const awayScoreBadge = awayPage.locator('label[for="result-frame-1-home-score"]');
 
         await homeField.focus();
         await expect(homeField).toBeFocused();
         await expect(awayField).toBeDisabled({ timeout: 10_000 });
         await expect(awayField).toHaveAttribute('title', /is editing this field/);
+        await expect(awaySurface).toHaveAttribute('data-result-field-disabled', 'true');
+        await expect(awaySurface).toHaveAttribute('aria-disabled', 'true');
+        await expect(awaySurface).toHaveAttribute('style', /outline:/);
+        await expect(awayScore).toBeDisabled();
+        await expect(awayScoreBadge).toHaveAttribute('data-result-field-disabled', 'true');
 
         await homeField.evaluate((field) => field.blur());
         await expect(awayField).toBeEnabled({ timeout: 10_000 });
+        await expect(awayScore).toBeEnabled();
+        await expect(awaySurface).not.toHaveAttribute('data-result-field-disabled', 'true');
 
         const homeScoreBadge = homePage.locator('label[for="result-frame-1-home-score"]');
-        const awayScoreBadge = awayPage.locator('label[for="result-frame-1-home-score"] span');
+        const awayScoreText = awayPage.locator('label[for="result-frame-1-home-score"] span');
 
         await homeScoreBadge.click();
-        await expect(awayScoreBadge).toHaveText('1', { timeout: 10_000 });
+        await expect(awayScoreText).toHaveText('1', { timeout: 10_000 });
     } finally {
         await homeContext.close();
         await awayContext.close();

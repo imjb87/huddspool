@@ -66,6 +66,7 @@
                 <select
                     wire:model.live="form.frames.{{ $row['number'] }}.home_player_id"
                     data-result-frame-field
+                    data-result-field-control
                     data-frame-number="{{ $row['number'] }}"
                     data-frame-side="home"
                     data-frame-value="player"
@@ -95,31 +96,35 @@
                         x-text="tooltipLabel()"
                     ></div>
                 </template>
-            </div>
 
-            <div class="shrink-0">
-                <label
-                    class="ui-result-form-score-field ui-fixture-badge {{ $homeScoreBadgeClasses }} transition-shadow duration-150"
-                    for="result-frame-{{ $row['number'] }}-home-score"
-                    wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'home')"
-                >
-                    <input
-                        id="result-frame-{{ $row['number'] }}-home-score"
-                        type="radio"
-                        name="frame-{{ $row['number'] }}-winner"
-                        value="1"
-                        data-result-frame-field
-                        data-frame-number="{{ $row['number'] }}"
-                        data-frame-side="home"
-                        data-frame-value="score"
-                        @checked($homeScore === 1 && $awayScore === 0)
-                        x-bind:disabled="formLocked || !formCanEdit"
-                        class="sr-only"
-                        @disabled($isLocked || ! $canEdit)
-                        aria-label="Home wins frame {{ $row['number'] }}"
+                <div class="shrink-0">
+                    <label
+                        class="ui-result-form-score-field ui-fixture-badge {{ $homeScoreBadgeClasses }} transition-shadow duration-150"
+                        for="result-frame-{{ $row['number'] }}-home-score"
+                        data-result-field-control
+                        data-result-field-key="{{ $row['number'] }}.home_player_id"
+                        wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'home')"
                     >
-                    <span aria-hidden="true">{{ $homeScore }}</span>
-                </label>
+                        <input
+                            id="result-frame-{{ $row['number'] }}-home-score"
+                            type="radio"
+                            name="frame-{{ $row['number'] }}-winner"
+                            value="1"
+                            data-result-frame-field
+                            data-frame-number="{{ $row['number'] }}"
+                            data-frame-side="home"
+                            data-frame-value="score"
+                            @checked($homeScore === 1 && $awayScore === 0)
+                            x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.home_player_id') || formLocked || !formCanEdit"
+                            data-result-field-control
+                            data-result-field-key="{{ $row['number'] }}.home_player_id"
+                            class="sr-only"
+                            @disabled($isLocked || ! $canEdit)
+                            aria-label="Home wins frame {{ $row['number'] }}"
+                        >
+                        <span aria-hidden="true">{{ $homeScore }}</span>
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -165,6 +170,7 @@
                 <select
                     wire:model.live="form.frames.{{ $row['number'] }}.away_player_id"
                     data-result-frame-field
+                    data-result-field-control
                     data-frame-number="{{ $row['number'] }}"
                     data-frame-side="away"
                     data-frame-value="player"
@@ -194,31 +200,35 @@
                         x-text="tooltipLabel()"
                     ></div>
                 </template>
-            </div>
 
-            <div class="shrink-0">
-                <label
-                    class="ui-result-form-score-field ui-fixture-badge {{ $awayScoreBadgeClasses }} transition-shadow duration-150"
-                    for="result-frame-{{ $row['number'] }}-away-score"
-                    wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'away')"
-                >
-                    <input
-                        id="result-frame-{{ $row['number'] }}-away-score"
-                        type="radio"
-                        name="frame-{{ $row['number'] }}-winner"
-                        value="1"
-                        data-result-frame-field
-                        data-frame-number="{{ $row['number'] }}"
-                        data-frame-side="away"
-                        data-frame-value="score"
-                        @checked($awayScore === 1 && $homeScore === 0)
-                        x-bind:disabled="formLocked || !formCanEdit"
-                        class="sr-only"
-                        @disabled($isLocked || ! $canEdit)
-                        aria-label="Away wins frame {{ $row['number'] }}"
+                <div class="shrink-0">
+                    <label
+                        class="ui-result-form-score-field ui-fixture-badge {{ $awayScoreBadgeClasses }} transition-shadow duration-150"
+                        for="result-frame-{{ $row['number'] }}-away-score"
+                        data-result-field-control
+                        data-result-field-key="{{ $row['number'] }}.away_player_id"
+                        wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'away')"
                     >
-                    <span aria-hidden="true">{{ $awayScore }}</span>
-                </label>
+                        <input
+                            id="result-frame-{{ $row['number'] }}-away-score"
+                            type="radio"
+                            name="frame-{{ $row['number'] }}-winner"
+                            value="1"
+                            data-result-frame-field
+                            data-frame-number="{{ $row['number'] }}"
+                            data-frame-side="away"
+                            data-frame-value="score"
+                            @checked($awayScore === 1 && $homeScore === 0)
+                            x-bind:disabled="isResultFieldDisabled('{{ $row['number'] }}.away_player_id') || formLocked || !formCanEdit"
+                            data-result-field-control
+                            data-result-field-key="{{ $row['number'] }}.away_player_id"
+                            class="sr-only"
+                            @disabled($isLocked || ! $canEdit)
+                            aria-label="Away wins frame {{ $row['number'] }}"
+                        >
+                        <span aria-hidden="true">{{ $awayScore }}</span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
