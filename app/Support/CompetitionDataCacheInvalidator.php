@@ -96,7 +96,7 @@ class CompetitionDataCacheInvalidator
     public function forgetPlayerSeasonHistories(array $playerIds): void
     {
         foreach ($this->normalizedIds($playerIds) as $playerId) {
-            Cache::forget("player:season-history:{$playerId}");
+            Cache::forget("player:season-history:v5:{$playerId}");
         }
     }
 
@@ -106,7 +106,7 @@ class CompetitionDataCacheInvalidator
     public function forgetTeamSeasonHistories(array $teamIds): void
     {
         foreach ($this->normalizedIds($teamIds) as $teamId) {
-            Cache::forget("team:season-history:{$teamId}");
+            Cache::forget("team:season-history:v2:{$teamId}");
         }
     }
 

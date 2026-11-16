@@ -144,7 +144,12 @@ class ResultFormCollaborationTest extends TestCase
                 clearTimeout(id) { timers.delete(id); },
             };
             const context = vm.createContext({window, document: {head: {querySelector: () => null}}, console});
-            const source = fs.readFileSync('resources/js/bootstrap.js', 'utf8').replaceAll('import.meta.env', '({})');
+            const bootstrap = fs.readFileSync('resources/js/bootstrap.js', 'utf8')
+                .replaceAll('import.meta.env', '({})')
+                .replace(/export \{ isDeepEqual, request \};\s*$/, '');
+            const resultForm = fs.readFileSync('resources/js/result-form.js', 'utf8')
+                .replace("import { isDeepEqual } from './bootstrap';", '');
+            const source = `${bootstrap}\n${resultForm}`;
             vm.runInContext(source, context);
             const blue = '#2563eb';
             const purple = '#7c3aed';

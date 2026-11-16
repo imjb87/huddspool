@@ -32,30 +32,52 @@ class CompetitionCacheInvalidator
     public function forgetForResult(Result $result): void
     {
         $this->responseCaches()->forgetResultContent();
+        $this->dataCaches()->forgetOpenSeasonStats();
+
+        if (! $result->is_confirmed) {
+            return;
+        }
+
+        $result->loadMissing([
+            'section.ruleset',
+            'fixture.ruleset',
+        ]);
+
+        $sectionId = $result->section_id ?? $result->section?->id ?? $result->fixture?->section_id;
+        $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;
+        $rulesetId = $result->fixture?->ruleset_id ?? $result->section?->ruleset_id;
+        $rulesetSlug = $result->section?->ruleset?->slug ?? $result->fixture?->ruleset?->slug;
+
+        $this->responseCaches()->forgetRulesetContent($rulesetSlug);
+        $this->dataCaches()->forgetNavigationCaches();
         $this->dataCaches()->forgetTeamSeasonHistories([
             $result->home_team_id,
             $result->away_team_id,
         ]);
         $this->dataCaches()->forgetSeasonSeriesCaches();
-
-        $result->loadMissing('section', 'fixture');
-
-        $seasonId = $result->fixture?->season_id ?? $result->section?->season_id;
-        $rulesetId = $result->fixture?->ruleset_id ?? $result->section?->ruleset_id;
-
-        $this->dataCaches()->forgetSeasonRelatedCaches($seasonId, $rulesetId);
+        $this->dataCaches()->forgetSectionRelatedCaches($sectionId, $seasonId, $rulesetId);
     }
 
     public function forgetForFrame(Frame $frame): void
     {
         $this->responseCaches()->forgetFrameContent();
         $this->dataCaches()->forgetOpenSeasonStats();
+
+        $frame->loadMissing('result');
+
+        $sectionId = $frame->result?->section_id ?? $frame->result?->section?->id;
+
+        if (! $frame->result?->is_confirmed) {
+            $this->dataCaches()->forgetSectionCaches($sectionId);
+
+            return;
+        }
+
+        $frame->result?->loadMissing('section', 'fixture');
+
         $this->dataCaches()->forgetSeasonSeriesCaches();
         $this->dataCaches()->forgetNavigationCaches();
 
-        $frame->loadMissing('result.section', 'result.fixture');
-
-        $sectionId = $frame->result?->section_id ?? $frame->result?->section?->id;
         $seasonId = $frame->result?->fixture?->season_id ?? $frame->result?->section?->season_id;
         $rulesetId = $frame->result?->fixture?->ruleset_id ?? $frame->result?->section?->ruleset_id;
 

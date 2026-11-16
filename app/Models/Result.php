@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Support\CompetitionCacheInvalidator;
-use App\Traits\ClearsResponseCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class Result extends Model
 {
-    use ClearsResponseCache, HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected static function booted(): void
     {

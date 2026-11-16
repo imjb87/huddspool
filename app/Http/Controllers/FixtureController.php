@@ -74,6 +74,7 @@ class FixtureController extends Controller
 
         $fixtures = $section->fixtures()->get();
         $teams = $section->teams()->get()->sortBy('pivot.sort');
+        $teamsById = $teams->keyBy('id');
         $dates = $section->season->dates;
 
         foreach ($dates as $key => $date) {
@@ -91,8 +92,8 @@ class FixtureController extends Controller
             $home_team_id = $fixture->home_team_id;
             $away_team_id = $fixture->away_team_id;
 
-            $homeTeam = $section->teams->find($home_team_id);
-            $awayTeam = $section->teams->find($away_team_id);
+            $homeTeam = $teamsById->get($home_team_id);
+            $awayTeam = $teamsById->get($away_team_id);
 
             if (! $homeTeam || ! $awayTeam) {
                 continue;

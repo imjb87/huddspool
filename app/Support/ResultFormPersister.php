@@ -165,7 +165,11 @@ class ResultFormPersister
             $existingFrame = $existingFrames[$index] ?? null;
 
             if ($existingFrame instanceof Frame) {
-                $existingFrame->update($frame);
+                $existingFrame->fill($frame);
+
+                if ($existingFrame->isDirty()) {
+                    $existingFrame->save();
+                }
 
                 continue;
             }

@@ -349,20 +349,33 @@ abstract class BaseSectionPage extends Component
      */
     protected function sectionPageViewData(bool $isHistoryView): array
     {
-        $averageViewData = $this->averageViewData($isHistoryView);
-        $standingsViewData = $this->standingsViewData($isHistoryView);
-
-        return [
+        $viewData = [
             'contentPadding' => $this->contentPadding(),
             'tabs' => $this->tabs(),
-            'fixtureRows' => $this->fixtureRows($isHistoryView),
-            'standingRows' => $standingsViewData['standingRows'],
-            'standingsSummaryCopy' => $standingsViewData['summaryCopy'],
-            'averageRows' => $averageViewData['averageRows'],
-            'averageSummaryCopy' => $averageViewData['summaryCopy'],
-            'lastPage' => $averageViewData['lastPage'],
-            'canAdvanceWeek' => $this->canAdvanceWeek(),
+            'fixtureRows' => collect(),
+            'standingRows' => collect(),
+            'standingsSummaryCopy' => '',
+            'averageRows' => collect(),
+            'averageSummaryCopy' => '',
+            'lastPage' => 1,
+            'canAdvanceWeek' => false,
         ];
+
+        if ($this->activeTab === 'tables') {
+            $standingsViewData = $this->standingsViewData($isHistoryView);
+            $viewData['standingRows'] = $standingsViewData['standingRows'];
+            $viewData['standingsSummaryCopy'] = $standingsViewData['summaryCopy'];
+        } elseif ($this->activeTab === 'fixtures-results') {
+            $viewData['fixtureRows'] = $this->fixtureRows($isHistoryView);
+            $viewData['canAdvanceWeek'] = $this->canAdvanceWeek();
+        } else {
+            $averageViewData = $this->averageViewData($isHistoryView);
+            $viewData['averageRows'] = $averageViewData['averageRows'];
+            $viewData['averageSummaryCopy'] = $averageViewData['summaryCopy'];
+            $viewData['lastPage'] = $averageViewData['lastPage'];
+        }
+
+        return $viewData;
     }
 
     /**

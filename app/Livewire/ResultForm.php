@@ -81,7 +81,7 @@ class ResultForm extends Component
             return;
         }
 
-        $this->handleFrameUpdate();
+        $this->handleFrameUpdate(refreshActionState: false);
     }
 
     public function submit(): ?Redirector
@@ -223,10 +223,20 @@ class ResultForm extends Component
 
     private function refreshActionState(): void
     {
-        $this->fixture = $this->fixtureAccess()->load($this->fixture);
-        $this->fixtureAccess()->ensureAccessible($this->fixture);
+        $actionFixture = $this->fixtureAccess()->loadForAction($this->fixture);
+        $this->fixtureAccess()->ensureAccessible($actionFixture);
 
-        $this->result = $this->fixture->result;
+        $this->result = $actionFixture->result;
+        $this->fixture->setRelation('result', $this->result);
+
+        if (! $this->fixture->relationLoaded('homeTeam') || ! $this->fixture->homeTeam) {
+            $this->fixture->setRelation('homeTeam', $actionFixture->homeTeam);
+        }
+
+        if (! $this->fixture->relationLoaded('awayTeam') || ! $this->fixture->awayTeam) {
+            $this->fixture->setRelation('awayTeam', $actionFixture->awayTeam);
+        }
+
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
         $this->canEdit = ! $this->isLocked;
     }
@@ -238,7 +248,7 @@ class ResultForm extends Component
 
     private function syncComponentState(?Result $result): void
     {
-        $this->result = $result?->load([
+        $this->result = $result?->loadMissing([
             'frames' => fn ($query) => $query->orderBy('id'),
             'draftUpdatedBy',
         ]);
@@ -283,9 +293,11 @@ class ResultForm extends Component
         ]);
     }
 
-    public function handleFrameUpdate(): void
+    public function handleFrameUpdate(bool $refreshActionState = true): void
     {
-        $this->refreshActionState();
+        if ($refreshActionState) {
+            $this->refreshActionState();
+        }
 
         if ($this->isLocked || ! $this->canEdit) {
             return;
@@ -325,6 +337,11 @@ class ResultForm extends Component
 
     private function frameRows(): array
     {
+        $this->fixture->loadMissing([
+            'homeTeam.players',
+            'awayTeam.players',
+        ]);
+
         return (new ResultFormFrameRowBuilder)->build($this->fixture, $this->form->frames);
     }
 

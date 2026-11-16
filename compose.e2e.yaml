@@ -1,0 +1,165 @@
+x-app-build: &app-build
+    context: './docker/8.4'
+    dockerfile: Dockerfile
+    args:
+        WWWGROUP: '1000'
+
+x-app-environment: &app-environment
+    APP_NAME: Huddspool E2E
+    APP_ENV: e2e
+    APP_KEY: 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
+    APP_DEBUG: 'true'
+    APP_URL: http://127.0.0.1:18000
+    LOG_CHANNEL: stderr
+    LOG_LEVEL: debug
+    DB_CONNECTION: mysql
+    DB_HOST: e2e-mysql
+    DB_PORT: '3306'
+    DB_DATABASE: huddspool_e2e
+    DB_USERNAME: huddspool_e2e
+    DB_PASSWORD: huddspool_e2e
+    CACHE_DRIVER: redis
+    CACHE_PREFIX: huddspool_e2e_cache
+    FILESYSTEM_DISK: local
+    QUEUE_CONNECTION: sync
+    SESSION_DRIVER: file
+    SESSION_COOKIE: huddspool_e2e_session
+    RESPONSE_CACHE_DRIVER: redis
+    RESPONSE_CACHE_TAG: huddspool_e2e
+    REDIS_CLIENT: phpredis
+    REDIS_HOST: e2e-redis
+    REDIS_PORT: '6379'
+    REDIS_DB: '0'
+    REDIS_CACHE_DB: '1'
+    MAIL_MAILER: array
+    BROADCAST_DRIVER: reverb
+    REVERB_APP_ID: e2e
+    REVERB_APP_KEY: e2e-key
+    REVERB_APP_SECRET: e2e-secret
+    REVERB_HOST: e2e-reverb
+    REVERB_PORT: '8080'
+    REVERB_SCHEME: http
+    REVERB_SERVER_HOST: 0.0.0.0
+    REVERB_SERVER_PORT: '8080'
+    VITE_REVERB_APP_KEY: e2e-key
+    VITE_REVERB_HOST: 127.0.0.1
+    VITE_REVERB_PORT: '18081'
+    VITE_REVERB_SCHEME: http
+    SUPERVISOR_PHP_USER: root
+    WWWUSER: '1000'
+    LARAVEL_SAIL: '1'
+
+x-app-volumes: &app-volumes
+    - .:/var/www/html
+    - e2e-vendor:/var/www/html/vendor
+    - e2e-node-modules:/var/www/html/node_modules
+    - e2e-build:/var/www/html/public/build
+
+services:
+    e2e-bootstrap:
+        build: *app-build
+        image: huddspool-e2e/app
+        working_dir: /var/www/html
+        command:
+            - /bin/bash
+            - -lc
+            - >-
+                set -euo pipefail;
+                composer install --no-interaction --prefer-dist --no-progress;
+                npm ci --no-audit --no-fund;
+                npm run build;
+                php artisan migrate:fresh --seed --seeder=E2eSeeder --force
+        environment: *app-environment
+        volumes: *app-volumes
+        networks:
+            - e2e
+        depends_on:
+            e2e-mysql:
+                condition: service_healthy
+            e2e-redis:
+                condition: service_healthy
+        restart: 'no'
+
+    e2e-app:
+        build: *app-build
+        image: huddspool-e2e/app
+        working_dir: /var/www/html
+        command: php artisan serve --host=0.0.0.0 --port=8000
+        environment: *app-environment
+        volumes: *app-volumes
+        ports:
+            - '127.0.0.1:18000:8000'
+        networks:
+            - e2e
+        depends_on:
+            e2e-bootstrap:
+                condition: service_completed_successfully
+            e2e-reverb:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -fsS http://127.0.0.1:8000/login >/dev/null']
+            interval: 2s
+            timeout: 5s
+            retries: 30
+
+    e2e-reverb:
+        build: *app-build
+        image: huddspool-e2e/app
+        working_dir: /var/www/html
+        command: php artisan reverb:start --host=0.0.0.0 --port=8080
+        environment: *app-environment
+        volumes: *app-volumes
+        ports:
+            - '127.0.0.1:18081:8080'
+        networks:
+            - e2e
+        depends_on:
+            e2e-bootstrap:
+                condition: service_completed_successfully
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -sS -o /dev/null http://127.0.0.1:8080/app/e2e-key']
+            interval: 2s
+            timeout: 5s
+            retries: 30
+
+    e2e-mysql:
+        image: mysql/mysql-server:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: e2e-root
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: huddspool_e2e
+            MYSQL_USER: huddspool_e2e
+            MYSQL_PASSWORD: huddspool_e2e
+        volumes:
+            - e2e-mysql:/var/lib/mysql
+        networks:
+            - e2e
+        healthcheck:
+            test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root -p"$${MYSQL_ROOT_PASSWORD}" --silent']
+            interval: 3s
+            timeout: 5s
+            retries: 30
+
+    e2e-redis:
+        image: redis:7-alpine
+        networks:
+            - e2e
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 2s
+            timeout: 5s
+            retries: 30
+
+networks:
+    e2e:
+        driver: bridge
+
+volumes:
+    e2e-build:
+        driver: local
+    e2e-mysql:
+        driver: local
+    e2e-node-modules:
+        driver: local
+    e2e-vendor:
+        driver: local

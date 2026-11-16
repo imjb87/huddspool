@@ -11,5 +11,21 @@ window.headerActionIcon = headerActionIcon;
 window.notificationsDrawer = notificationsDrawer;
 registerHeaderNotificationsStore(Alpine);
 
-Livewire.start();
-bootDeferredGoogleAnalytics();
+const loadPageModules = async () => {
+    const modules = [];
+
+    if (document.querySelector('[data-result-form]')) {
+        modules.push(import('./result-form'));
+    }
+
+    if (document.querySelector('[data-account-push-settings], [data-auto-push-permission-prompt]')) {
+        modules.push(import('./push-notifications'));
+    }
+
+    await Promise.all(modules);
+};
+
+loadPageModules().then(() => {
+    Livewire.start();
+    bootDeferredGoogleAnalytics();
+});
