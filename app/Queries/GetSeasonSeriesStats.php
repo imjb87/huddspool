@@ -86,6 +86,7 @@ class GetSeasonSeriesStats
     private function resultCountsForSeasons(array $seasonIds): Collection
     {
         return Result::query()
+            ->confirmed()
             ->leftJoin('fixtures', 'fixtures.id', '=', 'results.fixture_id')
             ->leftJoin('sections', function (JoinClause $join): void {
                 $join->on('sections.id', '=', 'results.section_id')
@@ -124,7 +125,8 @@ class GetSeasonSeriesStats
         return Frame::query()
             ->join('results', function (JoinClause $join): void {
                 $join->on('results.id', '=', 'frames.result_id')
-                    ->whereNull('results.deleted_at');
+                    ->whereNull('results.deleted_at')
+                    ->where('results.is_confirmed', true);
             })
             ->leftJoin('fixtures', 'fixtures.id', '=', 'results.fixture_id')
             ->leftJoin('sections', function (JoinClause $join): void {

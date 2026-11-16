@@ -27,6 +27,8 @@ class GetPlayerFrames
             ->select('frames.*')
             ->join('results', 'results.id', '=', 'frames.result_id')
             ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
+            ->whereNull('results.deleted_at')
+            ->where('results.is_confirmed', true)
             ->with([
                 'homePlayer' => fn ($relation) => $relation->withTrashed(),
                 'awayPlayer' => fn ($relation) => $relation->withTrashed(),

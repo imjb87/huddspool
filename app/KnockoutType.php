@@ -26,7 +26,7 @@ enum KnockoutType: string implements HasLabel
 
     public function defaultBestOf(): int
     {
-    return $this === self::Team ? 11 : 5;
+        return $this === self::Team ? 11 : 5;
     }
 
     public function participantsLabel(): string
@@ -40,6 +40,16 @@ enum KnockoutType: string implements HasLabel
 
     public function maxScoreAllowed(): int
     {
-    return $this === self::Team ? 11 : 9;
+        return $this === self::Team ? 11 : 9;
+    }
+
+    public function maxFramesAllowed(int $bestOf): int
+    {
+        return $this === self::Team ? 11 : $bestOf;
+    }
+
+    public function targetScoreToWin(int $bestOf): int
+    {
+        return $this === self::Team ? 6 : (int) ceil($bestOf / 2);
     }
 }

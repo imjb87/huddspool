@@ -26,7 +26,15 @@ class GetTeamPlayers
             })
             ->leftJoin('results', 'results.id', '=', 'frames.result_id')
             ->whereNull('frames.deleted_at')
-            ->whereNull('results.deleted_at')
+            ->where(function ($query) {
+                $query
+                    ->whereNull('results.id')
+                    ->orWhere(function ($query) {
+                        $query
+                            ->whereNull('results.deleted_at')
+                            ->where('results.is_confirmed', true);
+                    });
+            })
             ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role');
 
         if ($sectionId) {

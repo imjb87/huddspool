@@ -18,7 +18,7 @@ class DashboardController extends Controller
 
         $outstandingFixtures = Fixture::query()
             ->with(['result', 'section', 'homeTeam', 'awayTeam'])
-            ->whereDoesntHave('result', fn (Builder $query) => $query->where('is_confirmed', true))
+            ->whereDoesntHave('result', fn (Builder $query) => $query->confirmed())
             ->whereHas('season', fn (Builder $query) => $query->where('is_open', true))
             ->whereHas('homeTeam', fn (Builder $query) => $query->notBye())
             ->whereHas('awayTeam', fn (Builder $query) => $query->notBye())
@@ -36,7 +36,7 @@ class DashboardController extends Controller
             ]);
 
         $latestResults = Result::query()
-            ->where('is_confirmed', true)
+            ->confirmed()
             ->whereHas('fixture.season', fn (Builder $query) => $query->where('is_open', true))
             ->orderByRaw('COALESCE(submitted_at, created_at) desc')
             ->limit(5)

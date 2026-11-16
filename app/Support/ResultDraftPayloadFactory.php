@@ -49,21 +49,9 @@ class ResultDraftPayloadFactory
      */
     private function frames(Result $result): array
     {
-        $frames = [];
         $draftState = is_array($result->draft_state) ? $result->draft_state : [];
+        $frames = ResultFrameState::fromPersistedFrames($result->frames->sortBy('id')->values());
 
-        for ($i = 1; $i <= 10; $i++) {
-            $draftFrame = $draftState[$i] ?? $draftState[(string) $i] ?? null;
-            $persistedFrame = $result->frames[$i - 1] ?? null;
-
-            $frames[$i] = [
-                'home_player_id' => $draftFrame['home_player_id'] ?? $persistedFrame?->home_player_id,
-                'away_player_id' => $draftFrame['away_player_id'] ?? $persistedFrame?->away_player_id,
-                'home_score' => (int) ($draftFrame['home_score'] ?? $persistedFrame?->home_score ?? 0),
-                'away_score' => (int) ($draftFrame['away_score'] ?? $persistedFrame?->away_score ?? 0),
-            ];
-        }
-
-        return $frames;
+        return ResultFrameState::merge($frames, $draftState);
     }
 }

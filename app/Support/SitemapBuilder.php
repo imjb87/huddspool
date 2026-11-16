@@ -208,6 +208,7 @@ class SitemapBuilder
     private function addResultUrls(Sitemap $sitemap): void
     {
         Result::query()
+            ->confirmed()
             ->orderBy('id')
             ->get()
             ->each(function (Result $result) use ($sitemap): void {

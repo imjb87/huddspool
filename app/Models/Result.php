@@ -119,6 +119,14 @@ class Result extends Model
     }
 
     /**
+     * Scope results that are visible in public competition statistics.
+     */
+    public function scopeConfirmed(Builder $query): Builder
+    {
+        return $query->where($query->qualifyColumn('is_confirmed'), true);
+    }
+
+    /**
      * Scope results that belong to fixtures in an open season.
      */
     public function scopeInOpenSeason(Builder $query): Builder

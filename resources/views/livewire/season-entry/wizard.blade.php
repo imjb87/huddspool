@@ -70,22 +70,22 @@
                                 <div class="grid gap-4 sm:grid-cols-2">
                                     <div class="sm:col-span-2">
                                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                                        <input wire:model.live="contact.name" type="text" class="{{ $inputClasses }}">
+                                        <input wire:model.blur="contact.name" type="text" class="{{ $inputClasses }}">
                                         @error('contact.name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
                                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                        <input wire:model.live="contact.email" type="email" class="{{ $inputClasses }}">
+                                        <input wire:model.blur="contact.email" type="email" class="{{ $inputClasses }}">
                                         @error('contact.email') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
                                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Telephone</label>
-                                        <input wire:model.live="contact.telephone" type="text" class="{{ $inputClasses }}">
+                                        <input wire:model.blur="contact.telephone" type="text" class="{{ $inputClasses }}">
                                         @error('contact.telephone') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                     </div>
                                     <div class="sm:col-span-2">
                                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
-                                        <textarea wire:model.live="contact.notes" rows="4" class="{{ $inputClasses }}"></textarea>
+                                        <textarea wire:model.blur="contact.notes" rows="4" class="{{ $inputClasses }}"></textarea>
                                         @error('contact.notes') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
@@ -94,17 +94,17 @@
                                     <div class="grid gap-4 sm:grid-cols-2">
                                         <div class="sm:col-span-2">
                                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Venue name</label>
-                                            <input wire:model.live="registrationVenue.venue_name" type="text" class="{{ $inputClasses }}">
+                                            <input wire:model.blur="registrationVenue.venue_name" type="text" class="{{ $inputClasses }}">
                                             @error('registrationVenue.venue_name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Venue address</label>
-                                            <textarea wire:model.live="registrationVenue.venue_address" rows="3" class="{{ $inputClasses }}"></textarea>
+                                            <textarea wire:model.blur="registrationVenue.venue_address" rows="3" class="{{ $inputClasses }}"></textarea>
                                             @error('registrationVenue.venue_address') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Venue telephone</label>
-                                            <input wire:model.live="registrationVenue.venue_telephone" type="text" class="{{ $inputClasses }}">
+                                            <input wire:model.blur="registrationVenue.venue_telephone" type="text" class="{{ $inputClasses }}">
                                             @error('registrationVenue.venue_telephone') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
@@ -115,25 +115,25 @@
                                         <div class="grid gap-4 sm:grid-cols-2">
                                             <div class="sm:col-span-2">
                                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Team name</label>
-                                                <input wire:model.live="teamDraft.team_name" type="text" class="{{ $inputClasses }}">
+                                                <input wire:model.blur="teamDraft.team_name" type="text" class="{{ $inputClasses }}">
                                                 @error('teamDraft.team_name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                             </div>
 
                                             <div>
                                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Contact name</label>
-                                                <input wire:model.live="teamDraft.contact_name" type="text" class="{{ $inputClasses }}">
+                                                <input wire:model.blur="teamDraft.contact_name" type="text" class="{{ $inputClasses }}">
                                                 @error('teamDraft.contact_name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                             </div>
 
                                             <div>
                                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Contact telephone</label>
-                                                <input wire:model.live="teamDraft.contact_telephone" type="text" class="{{ $inputClasses }}">
+                                                <input wire:model.blur="teamDraft.contact_telephone" type="text" class="{{ $inputClasses }}">
                                                 @error('teamDraft.contact_telephone') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                             </div>
 
                                             <div>
                                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">First ruleset option</label>
-                                                <select wire:model.live="teamDraft.ruleset_id" class="{{ $inputClasses }}">
+                                                <select wire:model.change="teamDraft.ruleset_id" class="{{ $inputClasses }}">
                                                     <option value="">Select a ruleset</option>
                                                     @foreach ($availableRulesets as $ruleset)
                                                         <option value="{{ $ruleset->id }}">{{ $ruleset->name }}</option>
@@ -144,7 +144,7 @@
 
                                             <div>
                                                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Second ruleset option</label>
-                                                <select wire:model.live="teamDraft.second_ruleset_id" class="{{ $inputClasses }}">
+                                                <select wire:model.change="teamDraft.second_ruleset_id" class="{{ $inputClasses }}">
                                                     <option value="">Select a second ruleset</option>
                                                     @foreach ($availableRulesets as $ruleset)
                                                         <option value="{{ $ruleset->id }}">{{ $ruleset->name }}</option>
@@ -196,7 +196,7 @@
                                     <div class="grid gap-4 sm:grid-cols-2">
                                         <div class="sm:col-span-2">
                                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Knockout</label>
-                                            <select wire:model.live="knockoutDraft.knockout_id" class="{{ $inputClasses }}">
+                                            <select wire:model.change="knockoutDraft.knockout_id" class="{{ $inputClasses }}">
                                                 <option value="">Select a knockout</option>
                                                 @foreach ($availableKnockouts as $knockout)
                                                     <option value="{{ $knockout->id }}">{{ $knockout->name }} (£{{ number_format((float) $knockout->entry_fee, 2) }})</option>
@@ -206,7 +206,7 @@
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Entrant name(s)</label>
-                                            <input wire:model.live="knockoutDraft.entrant_name" type="text" class="{{ $inputClasses }}">
+                                            <input wire:model.blur="knockoutDraft.entrant_name" type="text" class="{{ $inputClasses }}">
                                             @error('knockoutDraft.entrant_name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                         </div>
                                     </div>

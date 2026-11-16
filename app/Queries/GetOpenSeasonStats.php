@@ -17,7 +17,9 @@ class GetOpenSeasonStats
                 ->join('results', 'results.id', '=', 'frames.result_id')
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->join('seasons', 'seasons.id', '=', 'fixtures.season_id')
-                ->where('seasons.is_open', true);
+                ->where('seasons.is_open', true)
+                ->whereNull('results.deleted_at')
+                ->where('results.is_confirmed', true);
 
             $totalFrames = (clone $frameBaseQuery)->count();
 
@@ -34,6 +36,7 @@ class GetOpenSeasonStats
                 ->count();
 
             $totalResults = Result::query()
+                ->confirmed()
                 ->whereHas('fixture.season', fn ($query) => $query->where('is_open', true))
                 ->count();
 

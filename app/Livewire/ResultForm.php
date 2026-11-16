@@ -14,6 +14,7 @@ use App\Support\ResultFormCollaboratorColor;
 use App\Support\ResultFormFixtureAccess;
 use App\Support\ResultFormFrameRowBuilder;
 use App\Support\ResultFormPersister;
+use App\Support\ResultFrameState;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -121,8 +122,6 @@ class ResultForm extends Component
             clientId: $this->clientId,
         )));
 
-        sleep(1);
-
         return redirect()->route('result.show', $this->result);
     }
 
@@ -131,19 +130,7 @@ class ResultForm extends Component
      */
     public function restoreClientDraft(array $frames, int $draftVersion): void
     {
-        $this->refreshActionState();
-
-        if ($this->isLocked || ! $this->canEdit || $draftVersion !== $this->draftVersion) {
-            return;
-        }
-
-        $this->form->syncFromResultAndDraft($this->result, $frames);
-
-        if ($this->form->matchesDraftState($this->result?->draft_state)) {
-            return;
-        }
-
-        $this->persistCurrentDraft();
+        $this->syncClientDraft($frames, $draftVersion, false);
     }
 
     /**
@@ -151,11 +138,20 @@ class ResultForm extends Component
      */
     public function mergeClientDraft(array $frames, int $draftVersion): void
     {
+        $this->syncClientDraft($frames, $draftVersion, true);
+    }
+
+    /**
+     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $frames
+     */
+    private function syncClientDraft(array $frames, int $draftVersion, bool $merge): void
+    {
         $this->refreshActionState();
 
         $currentDraftVersion = (int) ($this->result?->draft_version ?? 0);
+        $expectedDraftVersion = $merge ? $currentDraftVersion : $this->draftVersion;
 
-        if ($this->isLocked || ! $this->canEdit || $draftVersion !== $currentDraftVersion) {
+        if ($this->isLocked || ! $this->canEdit || $draftVersion !== $expectedDraftVersion) {
             return;
         }
 
@@ -262,12 +258,7 @@ class ResultForm extends Component
             $this->result?->draft_state,
         );
 
-        $this->dispatch('result-form-server-synced', [
-            'draftVersion' => $this->draftVersion,
-            'frames' => $this->form->draftFrames(),
-            'isLocked' => $this->isLocked,
-            'canEdit' => $this->canEdit,
-        ]);
+        $this->dispatchServerSync();
     }
 
     /**
@@ -285,6 +276,11 @@ class ResultForm extends Component
         $this->lastEditedAt = null;
         $this->form->syncFromResultAndDraft(null, $payload['frames'] ?? []);
 
+        $this->dispatchServerSync();
+    }
+
+    private function dispatchServerSync(): void
+    {
         $this->dispatch('result-form-server-synced', [
             'draftVersion' => $this->draftVersion,
             'frames' => $this->form->draftFrames(),
@@ -356,36 +352,7 @@ class ResultForm extends Component
      */
     private function changedFrameNumbersBetween(array $previousFrames, array $nextFrames): array
     {
-        $changedFrameNumbers = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $previousFrame = $previousFrames[$i] ?? $previousFrames[(string) $i] ?? [];
-            $nextFrame = $nextFrames[$i] ?? $nextFrames[(string) $i] ?? [];
-
-            if (
-                $this->normalizeFrameValue($previousFrame['home_player_id'] ?? null) !== $this->normalizeFrameValue($nextFrame['home_player_id'] ?? null) ||
-                $this->normalizeFrameValue($previousFrame['away_player_id'] ?? null) !== $this->normalizeFrameValue($nextFrame['away_player_id'] ?? null) ||
-                $this->normalizeFrameValue($previousFrame['home_score'] ?? 0) !== $this->normalizeFrameValue($nextFrame['home_score'] ?? 0) ||
-                $this->normalizeFrameValue($previousFrame['away_score'] ?? 0) !== $this->normalizeFrameValue($nextFrame['away_score'] ?? 0)
-            ) {
-                $changedFrameNumbers[] = $i;
-            }
-        }
-
-        return $changedFrameNumbers;
-    }
-
-    private function normalizeFrameValue(mixed $value): int|string|null
-    {
-        if ($value === '') {
-            return null;
-        }
-
-        if (is_numeric($value)) {
-            return (int) $value;
-        }
-
-        return $value;
+        return ResultFrameState::changedFrameNumbers($previousFrames, $nextFrames);
     }
 
     private function persistCurrentDraft(): void

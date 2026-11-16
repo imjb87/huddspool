@@ -113,9 +113,11 @@ class ResultFormPersister
      */
     private function scoresFromFrames(array $frames): array
     {
+        $scores = ResultFrameState::scores($frames);
+
         return [
-            'home_score' => array_sum(array_column($frames, 'home_score')),
-            'away_score' => array_sum(array_column($frames, 'away_score')),
+            'home_score' => $scores['home_score'],
+            'away_score' => $scores['away_score'],
         ];
     }
 
@@ -125,33 +127,7 @@ class ResultFormPersister
      */
     private function completedFramesFromDraft(array $draftFrames): array
     {
-        $frames = [];
-
-        foreach ($draftFrames as $frame) {
-            $homePlayerId = $this->normalizePlayerId($frame['home_player_id'] ?? null);
-            $awayPlayerId = $this->normalizePlayerId($frame['away_player_id'] ?? null);
-            $homeScore = (int) ($frame['home_score'] ?? 0);
-            $awayScore = (int) ($frame['away_score'] ?? 0);
-
-            $isComplete = $homePlayerId !== null
-                && $awayPlayerId !== null
-                && in_array($homeScore, [0, 1], true)
-                && in_array($awayScore, [0, 1], true)
-                && ($homeScore + $awayScore) === 1;
-
-            if (! $isComplete) {
-                continue;
-            }
-
-            $frames[] = [
-                'home_player_id' => $homePlayerId,
-                'away_player_id' => $awayPlayerId,
-                'home_score' => $homeScore,
-                'away_score' => $awayScore,
-            ];
-        }
-
-        return $frames;
+        return ResultFrameState::completed($draftFrames);
     }
 
     /**
@@ -181,14 +157,5 @@ class ResultFormPersister
             ->slice(count($frames))
             ->each
             ->delete();
-    }
-
-    private function normalizePlayerId(mixed $value): ?int
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (int) $value;
     }
 }

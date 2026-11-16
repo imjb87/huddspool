@@ -12,6 +12,7 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Queries\GetPlayerAverages;
+use App\Queries\GetSectionAverages;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -76,6 +77,25 @@ class PlayerAveragesTest extends TestCase
             'away_score' => 0,
         ]);
 
+        $draftResult = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => false,
+        ]);
+
+        Frame::create([
+            'result_id' => $draftResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+
         $response = $this->get(route('ruleset.section.show', [
             'ruleset' => $ruleset,
             'section' => $section,
@@ -90,6 +110,8 @@ class PlayerAveragesTest extends TestCase
         $response->assertSeeText($section->name);
         $response->assertSeeText('Real Player');
         $response->assertDontSeeText('Unknown');
+
+        $this->assertSame(1, (new GetSectionAverages($section))()->first()->frames_played);
     }
 
     public function test_soft_deleted_frames_are_excluded_from_player_averages(): void
@@ -136,6 +158,25 @@ class PlayerAveragesTest extends TestCase
             'result_id' => $result->id,
             'home_player_id' => $player->id,
             'home_score' => 2,
+            'away_player_id' => $opponent->id,
+            'away_score' => 0,
+        ]);
+
+        $draftResult = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => false,
+        ]);
+
+        Frame::create([
+            'result_id' => $draftResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
             'away_player_id' => $opponent->id,
             'away_score' => 0,
         ]);

@@ -2,14 +2,13 @@
 
 namespace App\Livewire\Forms;
 
-use App\Models\Frame;
 use App\Models\Result;
 use App\Rules\BothPlayersAwardedIfOneIs;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\PlayerLimit;
 use App\Rules\TotalScoresAddUpToTen;
-use Illuminate\Support\Collection;
+use App\Support\ResultFrameState;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Form;
@@ -38,14 +37,14 @@ class FixtureResultForm extends Form
 
     public function toggleFrameScore(int $frameNumber, string $side): bool
     {
-        if ($frameNumber < 1 || $frameNumber > 10 || ! in_array($side, ['home', 'away'], true)) {
+        if ($frameNumber < 1 || $frameNumber > ResultFrameState::FRAME_COUNT || ! in_array($side, ['home', 'away'], true)) {
             return false;
         }
 
         $selectedScoreKey = "{$side}_score";
         $opposingSide = $side === 'home' ? 'away' : 'home';
         $opposingScoreKey = "{$opposingSide}_score";
-        $selectedScore = (int) ($this->frames[$frameNumber][$selectedScoreKey] ?? 0);
+        $selectedScore = (int) data_get($this->frames, "{$frameNumber}.{$selectedScoreKey}", 0);
 
         if ($selectedScore === 1) {
             $this->frames[$frameNumber][$selectedScoreKey] = 0;
@@ -71,11 +70,11 @@ class FixtureResultForm extends Form
     public function syncFromResultAndDraft(?Result $result, ?array $draftFrames = null): void
     {
         $state = $result
-            ? $this->mapFramesToState($result->frames->sortBy('id')->values())
-            : $this->emptyFrames();
+            ? ResultFrameState::fromPersistedFrames($result->frames->sortBy('id')->values())
+            : ResultFrameState::empty();
 
         if ($draftFrames !== null) {
-            $state = $this->mergeDraftFramesIntoState($state, $draftFrames);
+            $state = ResultFrameState::merge($state, $draftFrames);
         }
 
         $this->frames = $state;
@@ -90,24 +89,13 @@ class FixtureResultForm extends Form
         $frames = [];
         $errors = [];
 
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $this->frames[$i] ?? [
-                'home_player_id' => null,
-                'away_player_id' => null,
-                'home_score' => 0,
-                'away_score' => 0,
-            ];
+        foreach (ResultFrameState::normalize($this->frames) as $i => $frame) {
+            $hasAnyInput = $frame['home_player_id'] !== null
+                || $frame['away_player_id'] !== null
+                || $frame['home_score'] > 0
+                || $frame['away_score'] > 0;
 
-            $homePlayer = $this->normalizePlayerId($frame['home_player_id'] ?? null);
-            $awayPlayer = $this->normalizePlayerId($frame['away_player_id'] ?? null);
-            $homeScore = $this->normalizeScore($frame['home_score'] ?? 0);
-            $awayScore = $this->normalizeScore($frame['away_score'] ?? 0);
-
-            $hasAnyInput = $homePlayer !== null || $awayPlayer !== null || $homeScore > 0 || $awayScore > 0;
-            $scoresAreValid = in_array($homeScore, [0, 1], true) && in_array($awayScore, [0, 1], true);
-            $isComplete = $homePlayer !== null && $awayPlayer !== null && $scoresAreValid && ($homeScore + $awayScore) === 1;
-
-            if (! $isComplete) {
+            if (! ResultFrameState::isComplete($frame)) {
                 if ($requireComplete && $hasAnyInput) {
                     $errors["form.frames.$i"] = 'Complete every frame before submitting.';
                 }
@@ -115,12 +103,7 @@ class FixtureResultForm extends Form
                 continue;
             }
 
-            $frames[$i] = [
-                'home_player_id' => $homePlayer,
-                'away_player_id' => $awayPlayer,
-                'home_score' => $homeScore,
-                'away_score' => $awayScore,
-            ];
+            $frames[$i] = $frame;
         }
 
         if (! empty($errors)) {
@@ -138,9 +121,9 @@ class FixtureResultForm extends Form
         }
 
         if ($requireComplete) {
-            if (count($frames) !== 10) {
+            if (count($frames) !== ResultFrameState::FRAME_COUNT) {
                 throw ValidationException::withMessages([
-                    'form.frames' => 'All 10 frames must be completed before submitting.',
+                    'form.frames' => sprintf('All %d frames must be completed before submitting.', ResultFrameState::FRAME_COUNT),
                 ]);
             }
 
@@ -195,39 +178,12 @@ class FixtureResultForm extends Form
      */
     public function draftFrames(): array
     {
-        $draftFrames = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $this->frames[$i] ?? [];
-
-            $draftFrames[$i] = [
-                'home_player_id' => $frame['home_player_id'] ?? null,
-                'away_player_id' => $frame['away_player_id'] ?? null,
-                'home_score' => $this->normalizeScore($frame['home_score'] ?? 0),
-                'away_score' => $this->normalizeScore($frame['away_score'] ?? 0),
-            ];
-        }
-
-        return $draftFrames;
+        return ResultFrameState::normalize($this->frames);
     }
 
     public function draftFramesAreEmpty(): bool
     {
-        foreach ($this->draftFrames() as $frame) {
-            if (($frame['home_player_id'] ?? null) !== null && ($frame['home_player_id'] ?? null) !== '') {
-                return false;
-            }
-
-            if (($frame['away_player_id'] ?? null) !== null && ($frame['away_player_id'] ?? null) !== '') {
-                return false;
-            }
-
-            if (($frame['home_score'] ?? 0) > 0 || ($frame['away_score'] ?? 0) > 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return ResultFrameState::isEmpty($this->frames);
     }
 
     /**
@@ -235,7 +191,7 @@ class FixtureResultForm extends Form
      */
     public function matchesDraftState(?array $draftFrames): bool
     {
-        return $this->draftFrames() === $this->normalizeDraftFrames($draftFrames);
+        return $this->draftFrames() === ResultFrameState::normalize($draftFrames);
     }
 
     private function validateSharedRules(array $frames): void
@@ -257,9 +213,7 @@ class FixtureResultForm extends Form
 
     private function validateLockSpecificRules(array $frames): void
     {
-        $totalFramesScore = array_reduce($frames, function ($total, $frame) {
-            return $total + $frame['home_score'] + $frame['away_score'];
-        }, 0);
+        $totalFramesScore = ResultFrameState::scores($frames)['total_score'];
 
         $lockRules = [
             new FrameScoresAddUpToTen($frames),
@@ -278,20 +232,6 @@ class FixtureResultForm extends Form
         }
     }
 
-    private function normalizePlayerId(mixed $value): ?int
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    private function normalizeScore(mixed $value): int
-    {
-        return (int) $value;
-    }
-
     private function syncOpposingFrameScore(mixed $value, mixed $key): void
     {
         if (! is_string($key) || ! is_numeric($value) || (int) $value !== 1) {
@@ -308,85 +248,11 @@ class FixtureResultForm extends Form
         $this->frames[$frameNumber]["{$opposingSide}_score"] = 0;
     }
 
-    /**
-     * @param  Collection<int, Frame>  $frames
-     * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
-     */
-    private function mapFramesToState(Collection $frames): array
-    {
-        $state = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frame = $frames[$i - 1] ?? null;
-
-            $state[$i] = [
-                'home_player_id' => $frame?->home_player_id,
-                'away_player_id' => $frame?->away_player_id,
-                'home_score' => $frame?->home_score ?? 0,
-                'away_score' => $frame?->away_score ?? 0,
-            ];
-        }
-
-        return $state;
-    }
-
-    /**
-     * @return array<int, array{home_player_id: null, away_player_id: null, home_score: int, away_score: int}>
-     */
-    private function emptyFrames(): array
-    {
-        $frames = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $frames[$i] = [
-                'home_player_id' => null,
-                'away_player_id' => null,
-                'home_score' => 0,
-                'away_score' => 0,
-            ];
-        }
-
-        return $frames;
-    }
-
-    /**
-     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int|string, away_score: int|string}>  $state
-     * @param  array<int, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $draftFrames
-     * @return array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int|string, away_score: int|string}>
-     */
-    private function mergeDraftFramesIntoState(array $state, array $draftFrames): array
-    {
-        for ($i = 1; $i <= 10; $i++) {
-            $draftFrame = $draftFrames[$i] ?? $draftFrames[(string) $i] ?? null;
-
-            if (! is_array($draftFrame)) {
-                continue;
-            }
-
-            $state[$i] = [
-                'home_player_id' => $draftFrame['home_player_id'] ?? null,
-                'away_player_id' => $draftFrame['away_player_id'] ?? null,
-                'home_score' => $draftFrame['home_score'] ?? 0,
-                'away_score' => $draftFrame['away_score'] ?? 0,
-            ];
-        }
-
-        return $state;
-    }
-
-    /**
-     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null  $draftFrames
-     * @return array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>
-     */
-    private function normalizeDraftFrames(?array $draftFrames): array
-    {
-        return $this->mergeDraftFramesIntoState($this->emptyFrames(), $draftFrames ?? []);
-    }
-
     private function recalculateScores(): void
     {
-        $this->homeScore = array_sum(array_column($this->frames, 'home_score'));
-        $this->awayScore = array_sum(array_column($this->frames, 'away_score'));
-        $this->totalScore = $this->homeScore + $this->awayScore;
+        $scores = ResultFrameState::scores($this->frames);
+        $this->homeScore = $scores['home_score'];
+        $this->awayScore = $scores['away_score'];
+        $this->totalScore = $scores['total_score'];
     }
 }

@@ -118,7 +118,7 @@ class CompetitionCacheInvalidationTest extends TestCase
         $this->assertCacheKeysCleared($keys);
     }
 
-    public function test_draft_frame_invalidation_skips_historical_caches(): void
+    public function test_draft_frame_invalidation_skips_public_caches(): void
     {
         Cache::flush();
 
@@ -165,9 +165,7 @@ class CompetitionCacheInvalidationTest extends TestCase
 
         app(CompetitionCacheInvalidator::class)->forgetForFrame($frame);
 
-        $this->assertCacheKeysCleared($liveKeys);
-
-        foreach ($historicalKeys as $key) {
+        foreach ([...$liveKeys, ...$historicalKeys] as $key) {
             $this->assertTrue(Cache::has($key), "Expected draft cache key [{$key}] to remain.");
         }
     }

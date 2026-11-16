@@ -170,6 +170,27 @@ class TeamProfileTest extends TestCase
             'away_score' => 0,
         ]);
 
+        $draftResult = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $team->id,
+            'home_team_name' => $team->name,
+            'home_score' => 0,
+            'away_team_id' => $opponent->id,
+            'away_team_name' => $opponent->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'is_confirmed' => false,
+        ]);
+
+        Frame::create([
+            'result_id' => $draftResult->id,
+            'home_player_id' => $player->id,
+            'home_score' => 1,
+            'away_player_id' => $opponentPlayer->id,
+            'away_score' => 0,
+        ]);
+
         $deletedFrame = Frame::create([
             'result_id' => $result->id,
             'home_player_id' => $player->id,

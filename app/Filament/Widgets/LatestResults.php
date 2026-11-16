@@ -17,7 +17,7 @@ class LatestResults extends BaseWidget
         return $table
             ->query(
                 Result::query()
-                    ->where('is_confirmed', true)
+                    ->confirmed()
                     ->whereHas('fixture.season', function ($query) {
                         $query->where('is_open', true);
                     })

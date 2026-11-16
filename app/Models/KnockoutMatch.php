@@ -275,16 +275,7 @@ class KnockoutMatch extends Model
             return true;
         }
 
-        $type = $this->type();
-
-        return match ($type) {
-            KnockoutType::Singles => $this->homeParticipant?->includesPlayer($user)
-                || $this->awayParticipant?->includesPlayer($user),
-            KnockoutType::Doubles => $this->homeParticipant?->includesPlayer($user)
-                || $this->awayParticipant?->includesPlayer($user),
-            KnockoutType::Team => $this->userIsTeamRepresentative($user),
-            default => false,
-        };
+        return $this->userCanSubmitForType($user);
     }
 
     public function userShouldBePromptedToSubmit(?User $user): bool
@@ -293,16 +284,7 @@ class KnockoutMatch extends Model
             return false;
         }
 
-        $type = $this->type();
-
-        return match ($type) {
-            KnockoutType::Singles => $this->homeParticipant?->includesPlayer($user)
-                || $this->awayParticipant?->includesPlayer($user),
-            KnockoutType::Doubles => $this->homeParticipant?->includesPlayer($user)
-                || $this->awayParticipant?->includesPlayer($user),
-            KnockoutType::Team => $this->userIsTeamRepresentative($user),
-            default => false,
-        };
+        return $this->userCanSubmitForType($user);
     }
 
     public function isDueForSubmission(): bool
@@ -329,18 +311,13 @@ class KnockoutMatch extends Model
 
     public function maxFramesAllowed(): int
     {
-        $type = $this->type();
-
-        return $type === KnockoutType::Team ? 11 : $this->bestOfValue();
+        return $this->type()?->maxFramesAllowed($this->bestOfValue()) ?? $this->bestOfValue();
     }
 
     public function targetScoreToWin(): int
     {
-        $type = $this->type();
-
-        return $type === KnockoutType::Team
-            ? self::TEAM_TARGET_FRAMES
-            : (int) ceil($this->bestOfValue() / 2);
+        return $this->type()?->targetScoreToWin($this->bestOfValue())
+            ?? (int) ceil($this->bestOfValue() / 2);
     }
 
     private function hasSingleParticipantBye(): bool
@@ -368,13 +345,20 @@ class KnockoutMatch extends Model
             return false;
         }
 
+        $this->loadMissing([
+            'homeParticipant.team',
+            'homeParticipant.playerOne.team',
+            'homeParticipant.playerTwo.team',
+            'awayParticipant.team',
+            'awayParticipant.playerOne.team',
+            'awayParticipant.playerTwo.team',
+        ]);
+
         $venueId = $this->venue_id;
 
         return collect([$this->homeParticipant, $this->awayParticipant])
             ->filter()
             ->contains(function (KnockoutParticipant $participant) use ($venueId) {
-                $participant->loadMissing('team', 'playerOne.team', 'playerTwo.team');
-
                 $teamVenueIds = collect([
                     $participant->team?->venue_id,
                     $participant->playerOne?->team?->venue_id,
@@ -479,5 +463,15 @@ class KnockoutMatch extends Model
 
         return $teamIds->contains($user->team_id)
             && $user->can(PermissionName::SubmitKnockoutResults->value);
+    }
+
+    private function userCanSubmitForType(User $user): bool
+    {
+        return match ($this->type()) {
+            KnockoutType::Singles, KnockoutType::Doubles => $this->homeParticipant?->includesPlayer($user)
+                || $this->awayParticipant?->includesPlayer($user),
+            KnockoutType::Team => $this->userIsTeamRepresentative($user),
+            default => false,
+        };
     }
 }

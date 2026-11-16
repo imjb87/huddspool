@@ -141,7 +141,7 @@ class Section extends Model
     public function scopeWithStandingsRelations(Builder $query): Builder
     {
         return $query->with([
-            'results' => fn (HasManyThrough $query) => $query->where('is_confirmed', true),
+            'results' => fn (HasManyThrough $query) => $query->confirmed(),
             'season' => fn (BelongsTo $query) => $query->with('expulsions'),
             'teams' => fn (BelongsToMany $query) => $query->withTrashed()->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']),
         ]);
@@ -158,7 +158,7 @@ class Section extends Model
             $results = $this->relationLoaded('results')
                 ? $this->results->where('is_confirmed', true)->values()
                 : $this->results()
-                    ->where('is_confirmed', true)
+                    ->confirmed()
                     ->get();
 
             $teamExpulsions = $this->relationLoaded('season') && $this->season?->relationLoaded('expulsions')

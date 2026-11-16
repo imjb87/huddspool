@@ -6,10 +6,9 @@ use App\Mail\SeasonEntryInvoiceMail;
 use App\Models\Knockout;
 use App\Models\Ruleset;
 use App\Models\Season;
-use App\Models\SeasonEntry;
+use App\Services\SeasonEntryRegistrar;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
@@ -52,6 +51,8 @@ class Wizard extends Component
      */
     public array $knockoutRegistrations = [];
 
+    private ?Collection $cachedSeasonRulesets = null;
+
     public function mount(Season $season): void
     {
         $this->season = $season->load([
@@ -77,7 +78,6 @@ class Wizard extends Component
             $this->knockoutDraft = $this->defaultKnockoutDraft();
             $this->knockoutRegistrations = [];
         }
-
     }
 
     public function updated(string $name): void
@@ -101,21 +101,7 @@ class Wizard extends Component
 
     public function nextStep(): void
     {
-        if ($this->step === 'details') {
-            $this->validateDetails();
-        }
-
-        if ($this->step === 'venue') {
-            $this->validateVenue();
-        }
-
-        if ($this->step === 'teams') {
-            $this->validateTeamStep();
-        }
-
-        if ($this->step === 'knockouts') {
-            $this->validateKnockoutStep();
-        }
+        $this->validateCurrentStep();
 
         $steps = $this->steps();
         $currentIndex = array_search($this->step, $steps, true);
@@ -209,74 +195,14 @@ class Wizard extends Component
             return null;
         }
 
-        $entry = DB::transaction(function (): SeasonEntry {
-            $venuePayload = $this->resolveVenuePayload();
-
-            $entry = SeasonEntry::query()->create([
-                'season_id' => $this->season->id,
-                'contact_name' => trim($this->contact['name']),
-                'contact_email' => trim($this->contact['email']),
-                'contact_telephone' => trim((string) $this->contact['telephone']) ?: null,
-                'existing_venue_id' => null,
-                'venue_name' => $venuePayload['venue_name'],
-                'venue_address' => $venuePayload['venue_address'],
-                'venue_telephone' => $venuePayload['venue_telephone'],
-                'notes' => trim((string) $this->contact['notes']) ?: null,
-                'total_amount' => 0,
-            ]);
-
-            $totalAmount = 0.0;
-
-            foreach ($this->teamRegistrations as $registration) {
-                $entry->teams()->create([
-                    'existing_team_id' => null,
-                    'ruleset_id' => $registration['ruleset_id'],
-                    'second_ruleset_id' => $registration['second_ruleset_id'],
-                    'existing_venue_id' => null,
-                    'team_name' => $registration['team_name'],
-                    'contact_name' => $registration['contact_name'] ?: null,
-                    'contact_telephone' => $registration['contact_telephone'] ?: null,
-                    'venue_name' => $venuePayload['venue_name'],
-                    'venue_address' => $venuePayload['venue_address'],
-                    'venue_telephone' => $venuePayload['venue_telephone'],
-                    'price' => (float) $this->season->team_entry_fee,
-                ]);
-
-                $totalAmount += (float) $this->season->team_entry_fee;
-            }
-
-            foreach ($this->knockoutRegistrations as $registration) {
-                $knockout = $this->seasonKnockouts()->firstWhere('id', (int) $registration['knockout_id']);
-
-                if (! $knockout) {
-                    continue;
-                }
-
-                $entry->knockoutRegistrations()->create([
-                    'knockout_id' => $knockout->id,
-                    'season_team_entry_id' => null,
-                    'existing_team_id' => null,
-                    'entrant_name' => $registration['entrant_name'],
-                    'player_one_name' => null,
-                    'player_two_name' => null,
-                    'price' => (float) $knockout->entry_fee,
-                ]);
-
-                $totalAmount += (float) $knockout->entry_fee;
-            }
-
-            $entry->update([
-                'total_amount' => $totalAmount,
-            ]);
-
-            return $entry->fresh([
-                'season',
-                'existingVenue',
-                'teams.ruleset',
-                'teams.secondRuleset',
-                'knockoutRegistrations.knockout',
-            ]);
-        });
+        $entry = app(SeasonEntryRegistrar::class)->register(
+            season: $this->season,
+            contact: $this->contact,
+            venue: $this->resolveVenuePayload(),
+            teamRegistrations: $this->teamRegistrations,
+            knockoutRegistrations: $this->knockoutRegistrations,
+            knockouts: $this->seasonKnockouts(),
+        );
 
         Mail::to($entry->contact_email)->queue(new SeasonEntryInvoiceMail($entry));
 
@@ -440,6 +366,24 @@ class Wizard extends Component
         ]);
     }
 
+    private function validateCurrentStep(): void
+    {
+        switch ($this->step) {
+            case 'details':
+                $this->validateDetails();
+                break;
+            case 'venue':
+                $this->validateVenue();
+                break;
+            case 'teams':
+                $this->validateTeamStep();
+                break;
+            case 'knockouts':
+                $this->validateKnockoutStep();
+                break;
+        }
+    }
+
     private function validateVenue(): void
     {
         $this->validate([
@@ -452,19 +396,8 @@ class Wizard extends Component
     private function validateTeamDraft(): void
     {
         $seasonRulesetIds = $this->seasonRulesets()->pluck('id')->all();
-        $firstRulesetId = $this->filledInt($this->teamDraft['ruleset_id'] ?? null);
 
-        $this->validate([
-            'teamDraft.team_name' => ['required', 'string', 'max:255'],
-            'teamDraft.contact_name' => ['required', 'string', 'max:255'],
-            'teamDraft.contact_telephone' => ['required', 'string', 'max:255'],
-            'teamDraft.ruleset_id' => ['required', Rule::in($seasonRulesetIds)],
-            'teamDraft.second_ruleset_id' => [
-                'required',
-                Rule::in($seasonRulesetIds),
-                Rule::notIn(array_filter([$firstRulesetId])),
-            ],
-        ], [
+        $this->validate($this->teamValidationRules('teamDraft', $this->teamDraft, $seasonRulesetIds), [
             'teamDraft.second_ruleset_id.not_in' => 'The second ruleset option must be different from the first.',
         ]);
     }
@@ -478,19 +411,7 @@ class Wizard extends Component
         $seasonRulesetIds = $this->seasonRulesets()->pluck('id')->all();
 
         foreach ($this->teamRegistrations as $index => $registration) {
-            $firstRulesetId = (int) ($registration['ruleset_id'] ?? 0);
-
-            $this->validate([
-                "teamRegistrations.{$index}.team_name" => ['required', 'string', 'max:255'],
-                "teamRegistrations.{$index}.contact_name" => ['required', 'string', 'max:255'],
-                "teamRegistrations.{$index}.contact_telephone" => ['required', 'string', 'max:255'],
-                "teamRegistrations.{$index}.ruleset_id" => ['required', Rule::in($seasonRulesetIds)],
-                "teamRegistrations.{$index}.second_ruleset_id" => [
-                    'required',
-                    Rule::in($seasonRulesetIds),
-                    Rule::notIn(array_filter([$firstRulesetId])),
-                ],
-            ]);
+            $this->validate($this->teamValidationRules("teamRegistrations.{$index}", $registration, $seasonRulesetIds));
         }
     }
 
@@ -498,10 +419,7 @@ class Wizard extends Component
     {
         $seasonKnockoutIds = $this->seasonKnockouts()->pluck('id')->all();
 
-        $this->validate([
-            'knockoutDraft.knockout_id' => ['required', Rule::in($seasonKnockoutIds)],
-            'knockoutDraft.entrant_name' => ['required', 'string', 'max:255'],
-        ]);
+        $this->validate($this->knockoutValidationRules('knockoutDraft', $seasonKnockoutIds));
     }
 
     private function validateKnockoutStep(): void
@@ -509,11 +427,42 @@ class Wizard extends Component
         $seasonKnockoutIds = $this->seasonKnockouts()->pluck('id')->all();
 
         foreach ($this->knockoutRegistrations as $index => $registration) {
-            $this->validate([
-                "knockoutRegistrations.{$index}.knockout_id" => ['required', Rule::in($seasonKnockoutIds)],
-                "knockoutRegistrations.{$index}.entrant_name" => ['required', 'string', 'max:255'],
-            ]);
+            $this->validate($this->knockoutValidationRules("knockoutRegistrations.{$index}", $seasonKnockoutIds));
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $registration
+     * @param  array<int, int>  $seasonRulesetIds
+     * @return array<string, array<int, mixed>>
+     */
+    private function teamValidationRules(string $prefix, array $registration, array $seasonRulesetIds): array
+    {
+        $firstRulesetId = $this->filledInt($registration['ruleset_id'] ?? null);
+
+        return [
+            "{$prefix}.team_name" => ['required', 'string', 'max:255'],
+            "{$prefix}.contact_name" => ['required', 'string', 'max:255'],
+            "{$prefix}.contact_telephone" => ['required', 'string', 'max:255'],
+            "{$prefix}.ruleset_id" => ['required', Rule::in($seasonRulesetIds)],
+            "{$prefix}.second_ruleset_id" => [
+                'required',
+                Rule::in($seasonRulesetIds),
+                Rule::notIn(array_filter([$firstRulesetId])),
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<int, int>  $seasonKnockoutIds
+     * @return array<string, array<int, mixed>>
+     */
+    private function knockoutValidationRules(string $prefix, array $seasonKnockoutIds): array
+    {
+        return [
+            "{$prefix}.knockout_id" => ['required', Rule::in($seasonKnockoutIds)],
+            "{$prefix}.entrant_name" => ['required', 'string', 'max:255'],
+        ];
     }
 
     private function teamSubtotal(): float
@@ -523,10 +472,10 @@ class Wizard extends Component
 
     private function knockoutSubtotal(): float
     {
+        $knockouts = $this->seasonKnockouts()->keyBy('id');
+
         return collect($this->knockoutRegistrations)
-            ->sum(fn (array $registration): float => (float) optional(
-                $this->seasonKnockouts()->firstWhere('id', (int) ($registration['knockout_id'] ?? 0))
-            )->entry_fee);
+            ->sum(fn (array $registration): float => (float) ($knockouts->get((int) ($registration['knockout_id'] ?? 0))?->entry_fee ?? 0));
     }
 
     private function grandTotal(): float
@@ -539,10 +488,9 @@ class Wizard extends Component
      */
     private function seasonRulesets(): Collection
     {
-        return Ruleset::query()
+        return $this->cachedSeasonRulesets ??= Ruleset::query()
             ->orderBy('name')
             ->get(['id', 'name'])
-            ->sortBy('name')
             ->values();
     }
 

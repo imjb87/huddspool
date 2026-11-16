@@ -179,7 +179,7 @@ abstract class BaseSectionPage extends Component
     public function standingsSection(): Section
     {
         $this->section->loadMissing([
-            'results' => fn ($query) => $query->where('is_confirmed', true),
+            'results' => fn ($query) => $query->confirmed(),
             'season' => fn ($query) => $query->with('expulsions'),
             'teams' => fn ($query) => $query->withTrashed()->withPivot(['sort', 'section_id', 'team_id', 'deducted', 'withdrawn_at']),
         ]);

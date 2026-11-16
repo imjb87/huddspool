@@ -105,6 +105,7 @@ class UserStatsOverviewTest extends TestCase
         $ruleset = Ruleset::factory()->create();
 
         $this->createSeasonResultWithFrames($openSeason, $ruleset, 5, 4);
+        $this->createSeasonResultWithFrames($openSeason, $ruleset, 4, 5, false);
         $this->createSeasonResultWithFrames($closedSeason, $ruleset, 6, 3);
 
         DB::flushQueryLog();
@@ -123,7 +124,7 @@ class UserStatsOverviewTest extends TestCase
         $this->assertFalse($queries->contains(fn (string $query): bool => str_contains($query, 'select distinct `away_player_id`')));
     }
 
-    private function createSeasonResultWithFrames(Season $season, Ruleset $ruleset, int $homeScore, int $awayScore): void
+    private function createSeasonResultWithFrames(Season $season, Ruleset $ruleset, int $homeScore, int $awayScore, bool $isConfirmed = true): void
     {
         $section = Section::factory()->create([
             'season_id' => $season->id,
@@ -153,6 +154,7 @@ class UserStatsOverviewTest extends TestCase
             'away_score' => $awayScore,
             'section_id' => $section->id,
             'ruleset_id' => $ruleset->id,
+            'is_confirmed' => $isConfirmed,
         ]);
 
         Frame::create([

@@ -50,6 +50,7 @@ class GetSectionAverages
                 ->leftJoin('users as player_users', 'player_users.id', '=', 'frames.home_player_id')
                 ->where('results.section_id', $sectionId)
                 ->whereNull('results.deleted_at')
+                ->where('results.is_confirmed', true)
                 ->whereNotNull('frames.home_player_id')
                 ->where('frames.home_player_id', '<>', 0)
                 ->where(function ($query) {
@@ -77,6 +78,7 @@ class GetSectionAverages
                 ->leftJoin('users as player_users', 'player_users.id', '=', 'frames.away_player_id')
                 ->where('results.section_id', $sectionId)
                 ->whereNull('results.deleted_at')
+                ->where('results.is_confirmed', true)
                 ->whereNotNull('frames.away_player_id')
                 ->where('frames.away_player_id', '<>', 0)
                 ->where(function ($query) {

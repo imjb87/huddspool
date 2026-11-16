@@ -20,7 +20,7 @@ class OutstandingFixtures extends BaseWidget
                 Fixture::query()
                     ->with(['result', 'section.season', 'season'])
                     ->whereDoesntHave('result', function ($query) {
-                        $query->where('is_confirmed', true);
+                        $query->confirmed();
                     })
                     ->whereHas('season', function ($query) {
                         $query->where('is_open', true);

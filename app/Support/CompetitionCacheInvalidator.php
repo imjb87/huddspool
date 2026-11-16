@@ -32,11 +32,15 @@ class CompetitionCacheInvalidator
     public function forgetForResult(Result $result): void
     {
         $this->responseCaches()->forgetResultContent();
-        $this->dataCaches()->forgetOpenSeasonStats();
 
-        if (! $result->is_confirmed) {
+        if (
+            ! $result->is_confirmed
+            && (! $result->wasChanged('is_confirmed') || $result->wasRecentlyCreated)
+        ) {
             return;
         }
+
+        $this->dataCaches()->forgetOpenSeasonStats();
 
         $result->loadMissing([
             'section.ruleset',
@@ -60,18 +64,16 @@ class CompetitionCacheInvalidator
 
     public function forgetForFrame(Frame $frame): void
     {
-        $this->responseCaches()->forgetFrameContent();
-        $this->dataCaches()->forgetOpenSeasonStats();
-
         $frame->loadMissing('result');
+        $this->responseCaches()->forgetFrameContent();
+
+        if (! $frame->result?->is_confirmed) {
+            return;
+        }
 
         $sectionId = $frame->result?->section_id ?? $frame->result?->section?->id;
 
-        if (! $frame->result?->is_confirmed) {
-            $this->dataCaches()->forgetSectionCaches($sectionId);
-
-            return;
-        }
+        $this->dataCaches()->forgetOpenSeasonStats();
 
         $frame->result?->loadMissing('section', 'fixture');
 

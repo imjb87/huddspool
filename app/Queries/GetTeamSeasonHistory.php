@@ -22,6 +22,7 @@ class GetTeamSeasonHistory
 
         return Cache::remember("team:season-history:v2:{$teamId}", now()->addMinutes(10), function () use ($teamId) {
             $rows = Result::query()
+                ->confirmed()
                 ->selectRaw(
                     'seasons.id as season_id, seasons.name as season_name, seasons.slug as season_slug, seasons.dates as season_dates, seasons.is_open,
                     sections.id as section_id, sections.name as section_name, sections.slug as section_slug,

@@ -16,6 +16,8 @@ const resultFormCollaboration = ({
     connectionMessage: '',
     connectionStateTimeoutId: null,
     foregroundSyncTimeoutId: null,
+    connectionCleanup: null,
+    foregroundSyncCleanup: null,
     hasBoundForegroundSync: false,
     hasConnectedOnce: false,
     collaboratorId: Number(collaboratorId ?? 0),
@@ -35,6 +37,7 @@ const resultFormCollaboration = ({
     fieldLockTtlMs: 12000,
     fieldLockRenewalMs: 4000,
     fieldLockBlurGraceMs: 250,
+    fieldLockBlurTimeouts: {},
     statusClassName(status, classes) {
         return classes[status] ?? classes.healthy;
     },
@@ -72,6 +75,11 @@ const resultFormCollaboration = ({
     updateConnectionState(state) {
         const connectionState = typeof state === 'string' ? state : state?.current;
 
+        if (this.connectionStateTimeoutId) {
+            window.clearTimeout(this.connectionStateTimeoutId);
+            this.connectionStateTimeoutId = null;
+        }
+
         if (connectionState === 'connected') {
             this.hasConnectedOnce = true;
             this.applyConnectionState(connectionState);
@@ -107,9 +115,19 @@ const resultFormCollaboration = ({
             return;
         }
 
+        this.connectionCleanup?.();
+
+        const handleStateChange = (states) => this.updateConnectionState(states.current);
+        const handleError = () => this.updateConnectionState('failed');
+
         this.updateConnectionState(connection.state);
-        connection.bind('state_change', (states) => this.updateConnectionState(states.current));
-        connection.bind('error', () => this.updateConnectionState('failed'));
+        connection.bind('state_change', handleStateChange);
+        connection.bind('error', handleError);
+
+        this.connectionCleanup = () => {
+            connection.unbind?.('state_change', handleStateChange);
+            connection.unbind?.('error', handleError);
+        };
     },
     queueForegroundSync() {
         if (document.visibilityState === 'hidden') {
@@ -121,6 +139,7 @@ const resultFormCollaboration = ({
         }
 
         this.foregroundSyncTimeoutId = window.setTimeout(() => {
+            this.foregroundSyncTimeoutId = null;
             window.Livewire.find(componentId)?.call('refreshSharedDraft');
         }, 150);
     },
@@ -131,19 +150,23 @@ const resultFormCollaboration = ({
 
         this.hasBoundForegroundSync = true;
 
-        document.addEventListener('visibilitychange', () => {
+        const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
                 this.queueForegroundSync();
             }
-        });
+        };
+        const handlePageShow = () => this.queueForegroundSync();
+        const handleFocus = () => this.queueForegroundSync();
 
-        window.addEventListener('pageshow', () => {
-            this.queueForegroundSync();
-        });
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('pageshow', handlePageShow);
+        window.addEventListener('focus', handleFocus);
 
-        window.addEventListener('focus', () => {
-            this.queueForegroundSync();
-        });
+        this.foregroundSyncCleanup = () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('pageshow', handlePageShow);
+            window.removeEventListener('focus', handleFocus);
+        };
     },
     syncServerResultState(detail = {}) {
         const payload = Array.isArray(detail) ? (detail[0] ?? {}) : detail;
@@ -466,7 +489,8 @@ const resultFormCollaboration = ({
             return;
         }
 
-        window.setTimeout(() => {
+        const timeoutId = window.setTimeout(() => {
+            delete this.fieldLockBlurTimeouts[timeoutId];
             const activeFieldKey = document.activeElement?.closest?.('[data-result-field-key]')?.dataset?.resultFieldKey
                 ?? document.activeElement?.dataset?.resultFieldKey;
 
@@ -476,6 +500,7 @@ const resultFormCollaboration = ({
 
             this.releaseResultFieldLock(fieldKey);
         }, this.fieldLockBlurGraceMs);
+        this.fieldLockBlurTimeouts[timeoutId] = true;
     },
     cancelLocalResultFieldLock(fieldKey) {
         const activeElement = this.$el.querySelector(`[data-result-field-key="${fieldKey}"]`);
@@ -700,16 +725,46 @@ const resultFormCollaboration = ({
     destroy() {
         this.stopResultFieldLockRenewal();
 
+        if (this.connectionStateTimeoutId) {
+            window.clearTimeout(this.connectionStateTimeoutId);
+            this.connectionStateTimeoutId = null;
+        }
+
+        if (this.foregroundSyncTimeoutId) {
+            window.clearTimeout(this.foregroundSyncTimeoutId);
+            this.foregroundSyncTimeoutId = null;
+        }
+
+        this.connectionCleanup?.();
+        this.connectionCleanup = null;
+        this.foregroundSyncCleanup?.();
+        this.foregroundSyncCleanup = null;
+        this.hasBoundForegroundSync = false;
+
         Object.values(this.fieldLockExpiryTimers).forEach((timerId) => window.clearTimeout(timerId));
         this.fieldLockExpiryTimers = {};
+        Object.keys(this.fieldLockBlurTimeouts).forEach((timerId) => window.clearTimeout(Number(timerId)));
+        this.fieldLockBlurTimeouts = {};
 
         if (this.fieldLockDomSyncFrameId) {
             window.cancelAnimationFrame?.(this.fieldLockDomSyncFrameId);
+            window.clearTimeout(this.fieldLockDomSyncFrameId);
             this.fieldLockDomSyncFrameId = null;
         }
 
         this.fieldLockDomObserver?.disconnect();
+        this.fieldLockDomObserver = null;
         this.livewireFieldLockHookCleanup?.();
+        this.livewireFieldLockHookCleanup = null;
+        this.recoveryCleanup?.();
+        this.recoveryCleanup = null;
+
+        if (this.saveTimeoutId) {
+            window.clearTimeout(this.saveTimeoutId);
+            this.saveTimeoutId = null;
+        }
+
+        window.Echo?.leave?.(channelName);
         this.fieldLockChannel = null;
     },
 });
@@ -913,6 +968,7 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
     currentDraftVersion: Number(draftVersion ?? 0),
     storageKey: `result-form-recovery:${fixtureId}`,
     saveTimeoutId: null,
+    recoveryCleanup: null,
     initRecovery() {
         if (isLocked) {
             this.clearSavedDraft();
@@ -920,11 +976,22 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
             return;
         }
 
-        this.restoreSavedDraft();
-        this.persistSavedDraft();
+        const restored = this.restoreSavedDraft();
 
-        this.$el.addEventListener('change', () => this.queueSavedDraft(), true);
-        this.$el.addEventListener('input', () => this.queueSavedDraft(), true);
+        if (! restored) {
+            this.persistSavedDraft();
+        }
+
+        const handleChange = () => this.queueSavedDraft();
+        const handleInput = () => this.queueSavedDraft();
+
+        this.$el.addEventListener('change', handleChange, true);
+        this.$el.addEventListener('input', handleInput, true);
+
+        this.recoveryCleanup = () => {
+            this.$el.removeEventListener('change', handleChange, true);
+            this.$el.removeEventListener('input', handleInput, true);
+        };
     },
     queueSavedDraft() {
         if (this.saveTimeoutId) {
@@ -952,16 +1019,24 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
         const payload = this.readSavedDraft();
 
         if (!payload || Number(payload.draftVersion ?? -1) !== this.currentDraftVersion) {
-            return;
+            return false;
         }
 
         const savedFrames = this.normalizeFrames(payload.frames ?? {});
 
         if (isDeepEqual(savedFrames, this.readFramesFromDom())) {
-            return;
+            return false;
         }
 
-        window.Livewire.find(componentId)?.call('restoreClientDraft', savedFrames, this.currentDraftVersion);
+        const component = window.Livewire.find(componentId);
+
+        if (! component) {
+            return false;
+        }
+
+        component.call('restoreClientDraft', savedFrames, this.currentDraftVersion);
+
+        return true;
     },
     syncSavedDraft(detail = {}) {
         const nextDraftVersion = Number(detail.draftVersion ?? this.currentDraftVersion ?? 0);
@@ -1023,7 +1098,7 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
         }
     },
     readFramesFromDom() {
-        return Array.from(this.$el.querySelectorAll('[data-result-frame-field]')).reduce((frames, field) => {
+        const frames = Array.from(this.$el.querySelectorAll('[data-result-frame-field]')).reduce((frames, field) => {
             const frameNumber = Number(field.dataset.frameNumber);
             const side = field.dataset.frameSide;
             const valueType = field.dataset.frameValue;
@@ -1061,14 +1136,25 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
 
             return frames;
         }, {});
+
+        return this.normalizeFrames(frames);
+    },
+    normalizePlayerId(value) {
+        if (value === null || value === '') {
+            return null;
+        }
+
+        const playerId = Number(value);
+
+        return Number.isFinite(playerId) ? playerId : null;
     },
     normalizeFrames(frames = {}) {
         return Array.from({ length: 10 }, (_, index) => index + 1).reduce((normalizedFrames, frameNumber) => {
             const frame = frames[frameNumber] ?? frames[String(frameNumber)] ?? {};
 
             normalizedFrames[frameNumber] = {
-                home_player_id: frame.home_player_id === '' ? null : frame.home_player_id ?? null,
-                away_player_id: frame.away_player_id === '' ? null : frame.away_player_id ?? null,
+                home_player_id: this.normalizePlayerId(frame.home_player_id ?? null),
+                away_player_id: this.normalizePlayerId(frame.away_player_id ?? null),
                 home_score: Number(frame.home_score ?? 0),
                 away_score: Number(frame.away_score ?? 0),
             };

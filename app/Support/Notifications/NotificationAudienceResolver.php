@@ -18,12 +18,7 @@ class NotificationAudienceResolver
      */
     public function leagueNightRecipientsForFixture(Fixture $fixture): Collection
     {
-        $fixture->loadMissing([
-            'homeTeam.players',
-            'homeTeam.captain',
-            'awayTeam.players',
-            'awayTeam.captain',
-        ]);
+        $this->loadFixtureAudienceRelations($fixture);
 
         return collect([
             $fixture->homeTeam,
@@ -40,12 +35,7 @@ class NotificationAudienceResolver
      */
     public function teamAdminsForFixture(Fixture $fixture): Collection
     {
-        $fixture->loadMissing([
-            'homeTeam.players',
-            'homeTeam.captain',
-            'awayTeam.players',
-            'awayTeam.captain',
-        ]);
+        $this->loadFixtureAudienceRelations($fixture);
 
         return collect([
             $fixture->homeTeam,
@@ -62,12 +52,7 @@ class NotificationAudienceResolver
      */
     public function resultSubmissionRecipients(Result $result): Collection
     {
-        $result->loadMissing([
-            'fixture.homeTeam.players',
-            'fixture.homeTeam.captain',
-            'fixture.awayTeam.players',
-            'fixture.awayTeam.captain',
-        ]);
+        $result->loadMissing('fixture');
 
         return $this->leagueNightRecipientsForFixture($result->fixture);
     }
@@ -77,13 +62,8 @@ class NotificationAudienceResolver
      */
     public function opposingTeamAdminsForResult(Result $result): Collection
     {
-        $result->loadMissing([
-            'fixture.homeTeam.players',
-            'fixture.homeTeam.captain',
-            'fixture.awayTeam.players',
-            'fixture.awayTeam.captain',
-            'submittedBy',
-        ]);
+        $result->loadMissing(['fixture', 'submittedBy']);
+        $this->loadFixtureAudienceRelations($result->fixture);
 
         $submittedByTeamId = $result->submittedBy?->team_id;
 
@@ -143,17 +123,7 @@ class NotificationAudienceResolver
      */
     public function participantsForKnockoutMatch(KnockoutMatch $match): Collection
     {
-        $match->loadMissing([
-            'knockout',
-            'homeParticipant.team.players',
-            'homeParticipant.team.captain',
-            'homeParticipant.playerOne',
-            'homeParticipant.playerTwo',
-            'awayParticipant.team.players',
-            'awayParticipant.team.captain',
-            'awayParticipant.playerOne',
-            'awayParticipant.playerTwo',
-        ]);
+        $this->loadKnockoutMatchAudienceRelations($match);
 
         return collect([
             $match->homeParticipant,
@@ -170,17 +140,7 @@ class NotificationAudienceResolver
      */
     public function overdueRecipientsForKnockoutMatch(KnockoutMatch $match): Collection
     {
-        $match->loadMissing([
-            'knockout',
-            'homeParticipant.team.players',
-            'homeParticipant.team.captain',
-            'homeParticipant.playerOne',
-            'homeParticipant.playerTwo',
-            'awayParticipant.team.players',
-            'awayParticipant.team.captain',
-            'awayParticipant.playerOne',
-            'awayParticipant.playerTwo',
-        ]);
+        $this->loadKnockoutMatchAudienceRelations($match);
 
         return collect([
             $match->homeParticipant,
@@ -223,5 +183,30 @@ class NotificationAudienceResolver
     private function canReceiveNotifications(User $user): bool
     {
         return filled($user->email) && $user->deleted_at === null;
+    }
+
+    private function loadFixtureAudienceRelations(Fixture $fixture): void
+    {
+        $fixture->loadMissing([
+            'homeTeam.players',
+            'homeTeam.captain',
+            'awayTeam.players',
+            'awayTeam.captain',
+        ]);
+    }
+
+    private function loadKnockoutMatchAudienceRelations(KnockoutMatch $match): void
+    {
+        $match->loadMissing([
+            'knockout',
+            'homeParticipant.team.players',
+            'homeParticipant.team.captain',
+            'homeParticipant.playerOne',
+            'homeParticipant.playerTwo',
+            'awayParticipant.team.players',
+            'awayParticipant.team.captain',
+            'awayParticipant.playerOne',
+            'awayParticipant.playerTwo',
+        ]);
     }
 }

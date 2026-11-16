@@ -37,6 +37,8 @@ class GetPlayerSeasonHistory
                     THEN 1 ELSE 0 END) as wins,
                     SUM(CASE WHEN frames.home_score = frames.away_score THEN 1 ELSE 0 END) as draws', [$playerId, $playerId, $playerId])
                 ->join('results', 'results.id', '=', 'frames.result_id')
+                ->whereNull('results.deleted_at')
+                ->where('results.is_confirmed', true)
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
                 ->leftJoin('sections', 'sections.id', '=', 'fixtures.section_id')
@@ -97,6 +99,8 @@ class GetPlayerSeasonHistory
                     [$playerId, $playerId],
                 )
                 ->join('results', 'results.id', '=', 'frames.result_id')
+                ->whereNull('results.deleted_at')
+                ->where('results.is_confirmed', true)
                 ->join('fixtures', 'fixtures.id', '=', 'results.fixture_id')
                 ->leftJoin('seasons', 'seasons.id', '=', 'fixtures.season_id')
                 ->leftJoin('sections', 'sections.id', '=', 'fixtures.section_id')

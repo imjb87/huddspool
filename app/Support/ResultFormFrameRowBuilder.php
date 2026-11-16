@@ -20,15 +20,17 @@ class ResultFormFrameRowBuilder
     public function build(Fixture $fixture, array $frames): array
     {
         $rows = [];
+        $homePlayers = $fixture->homeTeam->players->keyBy('id');
+        $awayPlayers = $fixture->awayTeam->players->keyBy('id');
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= ResultFrameState::FRAME_COUNT; $i++) {
             $homePlayerId = (int) data_get($frames, $i.'.home_player_id');
             $awayPlayerId = (int) data_get($frames, $i.'.away_player_id');
 
             $rows[] = [
                 'number' => $i,
-                'home_selected_player' => $fixture->homeTeam->players->firstWhere('id', $homePlayerId),
-                'away_selected_player' => $fixture->awayTeam->players->firstWhere('id', $awayPlayerId),
+                'home_selected_player' => $homePlayers->get($homePlayerId),
+                'away_selected_player' => $awayPlayers->get($awayPlayerId),
                 'home_is_awarded' => (string) data_get($frames, $i.'.home_player_id') === '0',
                 'away_is_awarded' => (string) data_get($frames, $i.'.away_player_id') === '0',
             ];

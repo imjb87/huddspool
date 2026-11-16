@@ -20,6 +20,8 @@ class GetPlayerAverages
 
         $totals = Frame::query()
             ->join('results', 'results.id', '=', 'frames.result_id')
+            ->whereNull('results.deleted_at')
+            ->where('results.is_confirmed', true)
             ->where(function ($builder) {
                 $builder
                     ->where('frames.home_player_id', $this->player->id)
