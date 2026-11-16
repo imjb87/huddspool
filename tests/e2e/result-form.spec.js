@@ -47,7 +47,7 @@ test('score radios select a winner and reset an existing winner', async ({ page 
     await expect(homeBadge).toHaveClass(/ui-fixture-badge-neutral/);
     await expect(awayBadge).toHaveClass(/ui-fixture-badge-neutral/);
 
-    await homeScore.click({ force: true });
+    await homeBadge.click();
 
     await expect(homeScore).toBeChecked();
     await expect(awayScore).not.toBeChecked();
@@ -56,7 +56,7 @@ test('score radios select a winner and reset an existing winner', async ({ page 
     await expect(homeBadge).toHaveClass(/ui-live-score-badge-win/);
     await expect(awayBadge).toHaveClass(/ui-live-score-badge-loss/);
 
-    await homeScore.click({ force: true });
+    await homeBadge.click();
 
     await expect(homeScore).not.toBeChecked();
     await expect(awayScore).not.toBeChecked();
@@ -96,10 +96,10 @@ test('presence and player-field locks synchronise between two editors', async ({
         await homeField.evaluate((field) => field.blur());
         await expect(awayField).toBeEnabled({ timeout: 10_000 });
 
-        const homeScore = homePage.locator('#result-frame-1-home-score');
+        const homeScoreBadge = homePage.locator('label[for="result-frame-1-home-score"]');
         const awayScoreBadge = awayPage.locator('label[for="result-frame-1-home-score"] span');
 
-        await homeScore.click({ force: true });
+        await homeScoreBadge.click();
         await expect(awayScoreBadge).toHaveText('1', { timeout: 10_000 });
     } finally {
         await homeContext.close();

@@ -101,13 +101,13 @@
                 <label
                     class="ui-result-form-score-field ui-fixture-badge {{ $homeScoreBadgeClasses }} transition-shadow duration-150"
                     for="result-frame-{{ $row['number'] }}-home-score"
+                    wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'home')"
                 >
                     <input
                         id="result-frame-{{ $row['number'] }}-home-score"
                         type="radio"
                         name="frame-{{ $row['number'] }}-winner"
                         value="1"
-                        wire:click="toggleFrameScore({{ $row['number'] }}, 'home')"
                         data-result-frame-field
                         data-frame-number="{{ $row['number'] }}"
                         data-frame-side="home"
@@ -200,13 +200,13 @@
                 <label
                     class="ui-result-form-score-field ui-fixture-badge {{ $awayScoreBadgeClasses }} transition-shadow duration-150"
                     for="result-frame-{{ $row['number'] }}-away-score"
+                    wire:click.prevent="toggleFrameScore({{ $row['number'] }}, 'away')"
                 >
                     <input
                         id="result-frame-{{ $row['number'] }}-away-score"
                         type="radio"
                         name="frame-{{ $row['number'] }}-winner"
                         value="1"
-                        wire:click="toggleFrameScore({{ $row['number'] }}, 'away')"
                         data-result-frame-field
                         data-frame-number="{{ $row['number'] }}"
                         data-frame-side="away"
