@@ -13,6 +13,8 @@ use Livewire\Component;
 
 abstract class BaseAccountComponent extends Component
 {
+    protected ?ResultSubmissionPromptResolver $submissionPromptResolver = null;
+
     #[Computed]
     public function submissionActions(): ?array
     {
@@ -84,6 +86,6 @@ abstract class BaseAccountComponent extends Component
 
     protected function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
     {
-        return new ResultSubmissionPromptResolver;
+        return $this->submissionPromptResolver ??= new ResultSubmissionPromptResolver;
     }
 }

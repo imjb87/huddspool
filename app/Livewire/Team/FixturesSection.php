@@ -14,6 +14,8 @@ use Livewire\Component;
 
 class FixturesSection extends Component
 {
+    protected ?ResultSubmissionPromptResolver $submissionPromptResolver = null;
+
     public Team $team;
 
     public ?Section $section = null;
@@ -142,6 +144,6 @@ class FixturesSection extends Component
 
     private function resultSubmissionPromptResolver(): ResultSubmissionPromptResolver
     {
-        return new ResultSubmissionPromptResolver;
+        return $this->submissionPromptResolver ??= new ResultSubmissionPromptResolver;
     }
 }

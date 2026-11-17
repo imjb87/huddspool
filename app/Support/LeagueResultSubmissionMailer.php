@@ -5,12 +5,9 @@ namespace App\Support;
 use App\Mail\LeagueResultSubmittedMail;
 use App\Models\Result;
 use App\Models\Season;
-use App\Models\Team;
-use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
 use App\Support\Notifications\DatabaseNotificationDispatcher;
 use App\Support\Notifications\NotificationAudienceResolver;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class LeagueResultSubmissionMailer
@@ -33,7 +30,7 @@ class LeagueResultSubmissionMailer
         $audienceResolver = new NotificationAudienceResolver;
         $dispatcher = new DatabaseNotificationDispatcher;
 
-        $mailRecipients = $this->teamAdminsForFixture($result, $audienceResolver)
+        $mailRecipients = $audienceResolver->teamAdminsForFixture($result->fixture)
             ->pluck('email')
             ->filter(fn (?string $email): bool => filled($email))
             ->unique()
@@ -66,20 +63,5 @@ class LeagueResultSubmissionMailer
 
         return $seasonId !== null
             && Season::query()->whereKey($seasonId)->where('is_open', true)->exists();
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    private function teamAdminsForFixture(Result $result, NotificationAudienceResolver $audienceResolver): Collection
-    {
-        return collect([
-            $result->fixture?->homeTeam,
-            $result->fixture?->awayTeam,
-        ])
-            ->filter(fn ($team) => $team instanceof Team)
-            ->flatMap(fn (Team $team) => $audienceResolver->adminsForTeam($team))
-            ->unique(fn (User $user) => $user->getKey())
-            ->values();
     }
 }

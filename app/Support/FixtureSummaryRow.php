@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Data\TeamFixtureData;
 use App\Models\Fixture;
 
 class FixtureSummaryRow
@@ -28,31 +27,6 @@ class FixtureSummaryRow
             compactDateLabel: optional($fixture->fixture_date)->format('j M') ?? 'TBC',
             actionUrl: $actionUrl,
             actionLabel: $actionLabel,
-            teamId: $teamId,
-        );
-    }
-
-    public static function fromTeamFixtureData(TeamFixtureData $fixture, int $teamId): object
-    {
-        return self::build(
-            fixtureId: $fixture->id,
-            isBye: $fixture->isBye(),
-            rowUrl: $fixture->isBye()
-                ? null
-                : ($fixture->result_id ? route('result.show', $fixture->result_id) : route('fixture.show', $fixture->id)),
-            homeTeamId: $fixture->home_team_id,
-            awayTeamId: $fixture->away_team_id,
-            homeTeamName: $fixture->home_team_name,
-            awayTeamName: $fixture->away_team_name,
-            homeTeamShortname: $fixture->home_team_shortname,
-            awayTeamShortname: $fixture->away_team_shortname,
-            resultId: $fixture->result_id,
-            homeScore: $fixture->home_score,
-            awayScore: $fixture->away_score,
-            fixtureDateLabel: optional($fixture->fixture_date)->format('j M Y') ?? 'Date TBC',
-            compactDateLabel: optional($fixture->fixture_date)->format('j M') ?? 'TBC',
-            actionUrl: null,
-            actionLabel: null,
             teamId: $teamId,
         );
     }

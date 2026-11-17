@@ -39,12 +39,7 @@ class AccountNotificationController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        /** @var ?DatabaseNotification $record */
-        $record = $user->notifications()
-            ->whereKey($notification)
-            ->first();
-
-        abort_unless($record instanceof DatabaseNotification, 404);
+        $record = $this->notificationForUser($user, $notification);
 
         if (! $record->read_at) {
             $record->markAsRead();
@@ -62,6 +57,17 @@ class AccountNotificationController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        $record = $this->notificationForUser($user, $notification);
+
+        if (! $record->read_at) {
+            $record->markAsRead();
+        }
+
+        return redirect(data_get($record->data, 'action_url', route('account.show')));
+    }
+
+    private function notificationForUser(User $user, string $notification): DatabaseNotification
+    {
         /** @var ?DatabaseNotification $record */
         $record = $user->notifications()
             ->whereKey($notification)
@@ -69,11 +75,7 @@ class AccountNotificationController extends Controller
 
         abort_unless($record instanceof DatabaseNotification, 404);
 
-        if (! $record->read_at) {
-            $record->markAsRead();
-        }
-
-        return redirect(data_get($record->data, 'action_url', route('account.show')));
+        return $record;
     }
 
     /**
