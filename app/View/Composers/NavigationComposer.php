@@ -18,25 +18,25 @@ class NavigationComposer
     public function compose(View $view): void
     {
         $request = request();
+        $navigationRulesets = $this->provider()->navigationRulesets();
 
         $view->with([
-            'rulesets' => $this->provider()->navigationRulesets()->pluck('ruleset'),
+            'rulesets' => $navigationRulesets->pluck('ruleset'),
             'past_seasons' => $this->provider()->pastSeasons(),
             'active_knockouts' => $this->provider()->activeKnockouts(),
-            'navigationRulesets' => $this->desktopNavigationRulesets($request),
+            'navigationRulesets' => $this->desktopNavigationRulesets($request, $navigationRulesets),
             'historySeasonGroups' => $this->provider()->historySeasonGroups(),
             'navigableKnockouts' => $this->provider()->navigableActiveKnockouts(),
             'is_impersonating' => Impersonation::isImpersonating(),
         ] + NavigationViewClasses::defaults() + NavigationViewState::fromRequest($request));
     }
 
-    protected function desktopNavigationRulesets(Request $request): Collection
+    protected function desktopNavigationRulesets(Request $request, Collection $navigationRulesets): Collection
     {
         $currentRuleset = $request->route('ruleset');
         $isRulesetRoute = $request->routeIs('ruleset.show', 'ruleset.rules', 'ruleset.section.show', 'table.index', 'fixture.index', 'player.index');
 
-        return $this->provider()
-            ->navigationRulesets()
+        return $navigationRulesets
             ->map(function (array $navigationRuleset) use ($currentRuleset, $isRulesetRoute): array {
                 $ruleset = $navigationRuleset['ruleset'];
 

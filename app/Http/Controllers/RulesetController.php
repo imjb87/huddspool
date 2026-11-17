@@ -28,9 +28,7 @@ class RulesetController extends Controller
     {
         if ($request->filled('section')) {
             $activeTab = $this->resolveActiveTab($request->string('tab')->toString());
-            $section = $this->resolveRequestedOrDefaultSection($request, $ruleset);
-
-            abort_unless($section, 404);
+            $section = $this->resolveRequestedSection($request, $ruleset);
 
             return redirect()->route('ruleset.section.show', $this->sectionRouteParameters(
                 $ruleset,
@@ -98,24 +96,20 @@ class RulesetController extends Controller
         return in_array($tab, self::SECTION_TABS, true) ? $tab : 'tables';
     }
 
-    private function resolveRequestedOrDefaultSection(Request $request, Ruleset $ruleset): ?Section
+    private function resolveRequestedSection(Request $request, Ruleset $ruleset): Section
     {
-        if ($request->filled('section')) {
-            $requestedSection = $request->string('section')->toString();
+        $requestedSection = $request->string('section')->toString();
 
-            return $ruleset->openSections()
-                ->with('season')
-                ->where(function ($query) use ($requestedSection): void {
-                    $query->where('slug', $requestedSection);
+        return $ruleset->openSections()
+            ->with('season')
+            ->where(function ($query) use ($requestedSection): void {
+                $query->where('slug', $requestedSection);
 
-                    if (ctype_digit($requestedSection)) {
-                        $query->orWhere('sections.id', (int) $requestedSection);
-                    }
-                })
-                ->firstOrFail();
-        }
-
-        return $ruleset->defaultOpenSection($request->user());
+                if (ctype_digit($requestedSection)) {
+                    $query->orWhere('sections.id', (int) $requestedSection);
+                }
+            })
+            ->firstOrFail();
     }
 
     /**

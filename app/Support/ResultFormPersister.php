@@ -19,7 +19,7 @@ class ResultFormPersister
             fixture: $fixture,
             result: $result,
             draftFrames: $draftFrames,
-            completedFrames: $this->completedFramesFromDraft($draftFrames),
+            completedFrames: ResultFrameState::completed($draftFrames),
             confirmResult: false,
             updatedBy: $updatedBy,
             expectedDraftVersion: $expectedDraftVersion,
@@ -49,7 +49,7 @@ class ResultFormPersister
      */
     private function persist(Fixture $fixture, ?Result $result, array $draftFrames, array $completedFrames, bool $confirmResult, int $updatedBy, ?int $expectedDraftVersion = null): Result
     {
-        $scores = $this->scoresFromFrames($completedFrames);
+        $scores = ResultFrameState::scores($completedFrames);
 
         return DB::transaction(function () use ($fixture, $result, $draftFrames, $completedFrames, $confirmResult, $updatedBy, $expectedDraftVersion, $scores) {
             Fixture::query()
@@ -105,29 +105,6 @@ class ResultFormPersister
                 'draftUpdatedBy',
             ]);
         });
-    }
-
-    /**
-     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
-     * @return array{home_score: int, away_score: int}
-     */
-    private function scoresFromFrames(array $frames): array
-    {
-        $scores = ResultFrameState::scores($frames);
-
-        return [
-            'home_score' => $scores['home_score'],
-            'away_score' => $scores['away_score'],
-        ];
-    }
-
-    /**
-     * @param  array<int, array{home_player_id: int|string|null, away_player_id: int|string|null, home_score: int, away_score: int}>  $draftFrames
-     * @return array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>
-     */
-    private function completedFramesFromDraft(array $draftFrames): array
-    {
-        return ResultFrameState::completed($draftFrames);
     }
 
     /**

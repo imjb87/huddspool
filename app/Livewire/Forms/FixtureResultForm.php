@@ -54,11 +54,6 @@ class FixtureResultForm extends Form
         return true;
     }
 
-    public function syncFromResult(?Result $result): void
-    {
-        $this->syncFromResultAndDraft($result);
-    }
-
     /**
      * @param  array<int, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>|null  $draftFrames
      */
@@ -126,46 +121,6 @@ class FixtureResultForm extends Form
         }
 
         return $frames;
-    }
-
-    /**
-     * @param  array<int, array{home_player_id: ?int, away_player_id: ?int, home_score: int, away_score: int}>  $frames
-     */
-    public function matchesExistingFrames(?Result $result, array $frames): bool
-    {
-        if (! $result) {
-            return empty($frames);
-        }
-
-        $existing = $result->relationLoaded('frames')
-            ? $result->frames
-            : $result->frames()->orderBy('id')->get();
-
-        $existing = $existing->values();
-        $payload = array_values($frames);
-
-        if ($existing->count() !== count($payload)) {
-            return false;
-        }
-
-        foreach ($payload as $index => $frame) {
-            $existingFrame = $existing[$index] ?? null;
-
-            if (! $existingFrame) {
-                return false;
-            }
-
-            if (
-                (int) $existingFrame->home_player_id !== $frame['home_player_id'] ||
-                (int) $existingFrame->away_player_id !== $frame['away_player_id'] ||
-                (int) $existingFrame->home_score !== $frame['home_score'] ||
-                (int) $existingFrame->away_score !== $frame['away_score']
-            ) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**

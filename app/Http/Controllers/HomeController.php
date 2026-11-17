@@ -6,7 +6,6 @@ use App\Models\News;
 use App\Models\Result;
 use App\Models\Season;
 use App\Models\User;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -101,37 +100,14 @@ class HomeController extends Controller
             return null;
         }
 
-        return $this->makeEntrySeasonCountdown(
-            season: $season,
-            mode: 'closes',
-            target: $season->signup_closes_at,
-            headline: 'Season sign-up is open',
-            body: 'Register teams and knockout entries for '.$season->name.' before the window closes.',
-            ctaLabel: 'Register now',
-            ctaUrl: route('season.entry.show', ['season' => $season]),
-        );
-    }
-
-    /**
-     * @return array{mode: 'closes', target_iso: string, target_label: string, headline: string, body: string, cta_label: string, cta_url: string}
-     */
-    private function makeEntrySeasonCountdown(
-        Season $season,
-        string $mode,
-        CarbonInterface $target,
-        string $headline,
-        string $body,
-        ?string $ctaLabel,
-        ?string $ctaUrl,
-    ): array {
         return [
-            'mode' => $mode,
-            'target_iso' => $target->toIso8601String(),
-            'target_label' => $target->format('D j M \\a\\t H:i'),
-            'headline' => $headline,
-            'body' => $body,
-            'cta_label' => $ctaLabel,
-            'cta_url' => $ctaUrl,
+            'mode' => 'closes',
+            'target_iso' => $season->signup_closes_at->toIso8601String(),
+            'target_label' => $season->signup_closes_at->format('D j M \\a\\t H:i'),
+            'headline' => 'Season sign-up is open',
+            'body' => 'Register teams and knockout entries for '.$season->name.' before the window closes.',
+            'cta_label' => 'Register now',
+            'cta_url' => route('season.entry.show', ['season' => $season]),
         ];
     }
 }
