@@ -46,13 +46,8 @@ class FixtureResultForm extends Form
         $opposingScoreKey = "{$opposingSide}_score";
         $selectedScore = (int) data_get($this->frames, "{$frameNumber}.{$selectedScoreKey}", 0);
 
-        if ($selectedScore === 1) {
-            $this->frames[$frameNumber][$selectedScoreKey] = 0;
-            $this->frames[$frameNumber][$opposingScoreKey] = 0;
-        } else {
-            $this->frames[$frameNumber][$selectedScoreKey] = 1;
-            $this->frames[$frameNumber][$opposingScoreKey] = 0;
-        }
+        $this->frames[$frameNumber][$selectedScoreKey] = $selectedScore === 1 ? 0 : 1;
+        $this->frames[$frameNumber][$opposingScoreKey] = 0;
 
         $this->recalculateScores();
 

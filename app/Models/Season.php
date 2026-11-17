@@ -6,7 +6,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Throwable;
 
 class Season extends Model
 {
@@ -126,24 +128,9 @@ class Season extends Model
      */
     public function lastScheduledDate(): ?Carbon
     {
-        return collect($this->dates ?? [])
-            ->flatten()
+        return $this->scheduledDateValues()
             ->filter()
-            ->map(function ($value) {
-                if ($value instanceof Carbon) {
-                    return $value;
-                }
-
-                if (is_string($value)) {
-                    try {
-                        return Carbon::parse($value);
-                    } catch (\Throwable) {
-                        return null;
-                    }
-                }
-
-                return null;
-            })
+            ->map(fn (mixed $value): ?Carbon => $this->parseScheduledDate($value))
             ->filter()
             ->sort()
             ->last();
@@ -153,19 +140,11 @@ class Season extends Model
     {
         $referenceDate = ($date ?? now())->copy()->startOfDay();
 
-        $scheduledWeeks = collect($this->dates ?? [])
-            ->flatten()
-            ->values()
-            ->map(function ($value, int $index) use ($referenceDate): ?array {
-                if ($value instanceof Carbon) {
-                    $scheduledDate = $value->copy()->startOfDay();
-                } elseif (is_string($value)) {
-                    try {
-                        $scheduledDate = Carbon::parse($value)->startOfDay();
-                    } catch (\Throwable) {
-                        return null;
-                    }
-                } else {
+        $scheduledWeeks = $this->scheduledDateValues()
+            ->map(function (mixed $value, int $index) use ($referenceDate): ?array {
+                $scheduledDate = $this->parseScheduledDate($value)?->copy()->startOfDay();
+
+                if (! $scheduledDate) {
                     return null;
                 }
 
@@ -190,6 +169,35 @@ class Season extends Model
             ->first();
 
         return (int) ($previousWeek['week'] ?? 1);
+    }
+
+    /**
+     * Keep the original indexes so a malformed scheduled date does not change the displayed week number.
+     *
+     * @return Collection<int, mixed>
+     */
+    private function scheduledDateValues(): Collection
+    {
+        return collect($this->dates ?? [])
+            ->flatten()
+            ->values();
+    }
+
+    private function parseScheduledDate(mixed $value): ?Carbon
+    {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        if (! is_string($value)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**

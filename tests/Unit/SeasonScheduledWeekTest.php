@@ -44,4 +44,17 @@ class SeasonScheduledWeekTest extends TestCase
 
         $this->assertSame(1, $season->currentOrPreviousScheduledWeek(Carbon::parse('2026-04-06')));
     }
+
+    public function test_invalid_scheduled_dates_do_not_reindex_later_weeks(): void
+    {
+        $season = new Season([
+            'dates' => [
+                '2026-03-31',
+                'not-a-date',
+                '2026-04-14',
+            ],
+        ]);
+
+        $this->assertSame(3, $season->currentOrPreviousScheduledWeek(Carbon::parse('2026-04-15')));
+    }
 }

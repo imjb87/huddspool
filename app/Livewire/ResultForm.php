@@ -64,7 +64,7 @@ class ResultForm extends Component
         $this->fixture = $this->fixtureAccess()->load($fixture);
         $this->fixtureAccess()->ensureAccessible($this->fixture);
         $this->collaborators = [$this->collaboratorDetails(auth()->user())];
-        $this->hydrateResultState();
+        $this->syncComponentState($this->fixture->result);
     }
 
     public function updated($propertyName, $value): void
@@ -200,7 +200,7 @@ class ResultForm extends Component
             $this->syncComponentState(null);
         }
 
-        $changedFrameNumbers = $this->changedFrameNumbersBetween(
+        $changedFrameNumbers = ResultFrameState::changedFrameNumbers(
             $previousFrames,
             $this->form->draftFrames(),
         );
@@ -235,11 +235,6 @@ class ResultForm extends Component
 
         $this->isLocked = (bool) ($this->result?->is_confirmed ?? false);
         $this->canEdit = ! $this->isLocked;
-    }
-
-    private function hydrateResultState(): void
-    {
-        $this->syncComponentState($this->fixture->result);
     }
 
     private function syncComponentState(?Result $result): void
@@ -344,15 +339,6 @@ class ResultForm extends Component
     private function authenticatedUserId(): int
     {
         return (int) auth()->id();
-    }
-
-    /**
-     * @param  array<int|string, array{home_player_id?: int|string|null, away_player_id?: int|string|null, home_score?: int|string|null, away_score?: int|string|null}>  $incomingFrames
-     * @return array<int, int>
-     */
-    private function changedFrameNumbersBetween(array $previousFrames, array $nextFrames): array
-    {
-        return ResultFrameState::changedFrameNumbers($previousFrames, $nextFrames);
     }
 
     private function persistCurrentDraft(): void

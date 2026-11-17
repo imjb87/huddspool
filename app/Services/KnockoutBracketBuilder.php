@@ -7,6 +7,7 @@ use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -80,42 +81,28 @@ class KnockoutBracketBuilder
                 $home = $firstRoundParticipants[$i * 2] ?? null;
                 $away = $firstRoundParticipants[$i * 2 + 1] ?? null;
 
-                $venueId = null;
-                // Set venue for team knockouts up to semi-finals
-                if ($this->knockout->type === KnockoutType::Team && ! str_contains(strtolower($firstRound->name), 'semi') && ! str_contains(strtolower($firstRound->name), 'final')) {
-                    if ($home && $home->team) {
-                        $venueId = $home->team->venue_id;
-                    }
-                }
-
                 $match = KnockoutMatch::create([
                     'knockout_id' => $this->knockout->id,
                     'knockout_round_id' => $firstRound->id,
                     'position' => $position++,
                     'home_participant_id' => $home?->id,
                     'away_participant_id' => $away?->id,
-                    'venue_id' => $venueId,
-                    'starts_at' => ($firstRound->scheduled_for ?? now())->copy()->setTime(20, 15),
+                    'venue_id' => $this->venueIdForHomeParticipant($firstRound, $home?->id, null),
+                    'starts_at' => $this->startsAtForRound($firstRound),
                 ]);
 
                 $matchesByRound[0]->push($match);
             }
 
             foreach ($byeParticipants as $participant) {
-                $venueId = null;
-                if ($this->knockout->type === KnockoutType::Team && ! str_contains(strtolower($firstRound->name), 'semi') && ! str_contains(strtolower($firstRound->name), 'final')) {
-                    if ($participant && $participant->team) {
-                        $venueId = $participant->team->venue_id;
-                    }
-                }
                 $match = KnockoutMatch::create([
                     'knockout_id' => $this->knockout->id,
                     'knockout_round_id' => $firstRound->id,
                     'position' => $position++,
                     'home_participant_id' => $participant?->id,
                     'away_participant_id' => null,
-                    'venue_id' => $venueId,
-                    'starts_at' => ($firstRound->scheduled_for ?? now())->copy()->setTime(20, 15),
+                    'venue_id' => $this->venueIdForHomeParticipant($firstRound, $participant->id, null),
+                    'starts_at' => $this->startsAtForRound($firstRound),
                 ]);
 
                 $matchesByRound[0]->push($match);
@@ -135,7 +122,7 @@ class KnockoutBracketBuilder
                         'knockout_id' => $this->knockout->id,
                         'knockout_round_id' => $round->id,
                         'position' => $pairIndex + 1,
-                        'starts_at' => ($round->scheduled_for ?? now())->copy()->setTime(20, 15),
+                        'starts_at' => $this->startsAtForRound($round),
                     ]);
 
                     if ($pair->contains(fn ($entry) => $entry instanceof KnockoutMatch)) {
@@ -265,22 +252,26 @@ class KnockoutBracketBuilder
 
     private function laterRoundsHaveResults(KnockoutRound $round): bool
     {
-        return $this->knockout->rounds()
-            ->where('position', '>', $round->position)
-            ->with('matches')
-            ->get()
-            ->flatMap(fn (KnockoutRound $laterRound): Collection => $laterRound->matches)
+        return $this->laterRoundMatches($round)
             ->contains(fn (KnockoutMatch $match): bool => $this->matchHasRecordedResult($match));
     }
 
     private function laterRoundsHaveParticipants(KnockoutRound $round): bool
     {
+        return $this->laterRoundMatches($round)
+            ->contains(fn (KnockoutMatch $match): bool => $match->home_participant_id !== null || $match->away_participant_id !== null);
+    }
+
+    /**
+     * @return Collection<int, KnockoutMatch>
+     */
+    private function laterRoundMatches(KnockoutRound $round): Collection
+    {
         return $this->knockout->rounds()
             ->where('position', '>', $round->position)
             ->with('matches')
             ->get()
-            ->flatMap(fn (KnockoutRound $laterRound): Collection => $laterRound->matches)
-            ->contains(fn (KnockoutMatch $match): bool => $match->home_participant_id !== null || $match->away_participant_id !== null);
+            ->flatMap(fn (KnockoutRound $laterRound): Collection => $laterRound->matches);
     }
 
     private function redrawRound(KnockoutRound $round): void
@@ -341,6 +332,11 @@ class KnockoutBracketBuilder
         }
 
         return $this->participantVenueIds[$participantId];
+    }
+
+    private function startsAtForRound(KnockoutRound $round): Carbon
+    {
+        return ($round->scheduled_for ?? now())->copy()->setTime(20, 15);
     }
 
     private function isNeutralRound(KnockoutRound $round): bool
