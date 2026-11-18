@@ -23,10 +23,9 @@ class NavigationComposer
         $view->with([
             'rulesets' => $navigationRulesets->pluck('ruleset'),
             'past_seasons' => $this->provider()->pastSeasons(),
-            'active_knockouts' => $this->provider()->activeKnockouts(),
             'navigationRulesets' => $this->desktopNavigationRulesets($request, $navigationRulesets),
             'historySeasonGroups' => $this->provider()->historySeasonGroups(),
-            'navigableKnockouts' => $this->provider()->navigableActiveKnockouts(),
+            'navigableKnockouts' => $this->provider()->activeKnockouts(),
             'is_impersonating' => Impersonation::isImpersonating(),
         ] + NavigationViewClasses::defaults() + NavigationViewState::fromRequest($request));
     }
