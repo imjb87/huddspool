@@ -3,12 +3,10 @@
 namespace App\Livewire\Knockout;
 
 use App\Models\KnockoutMatch;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Livewire\Component;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class SubmitResult extends Component
 {
@@ -28,7 +26,7 @@ class SubmitResult extends Component
         $this->awayScore = $match->away_score ?? 0;
     }
 
-    public function submit(): RedirectResponse|Redirector
+    public function submit(): void
     {
         Gate::authorize('submitResult', $this->match);
 
@@ -41,7 +39,7 @@ class SubmitResult extends Component
 
         session()->flash('status', 'Result submitted.');
 
-        return redirect()->route('knockout.show', $this->match->round->knockout);
+        $this->redirectRoute('knockout.show', $this->match->round->knockout);
     }
 
     public function render(): View

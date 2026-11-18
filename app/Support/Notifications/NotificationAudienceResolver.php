@@ -113,8 +113,11 @@ class NotificationAudienceResolver
      */
     public function adminsForTeam(Team $team): Collection
     {
+        $captain = $team->relationLoaded('captain') ? $team->captain : $team->captain()->first();
+
         return $this->playersForTeam($team)
-            ->filter(fn (User $user): bool => $user->isTeamAdmin())
+            ->filter(fn (User $user): bool => $user->isTeamAdmin() || ($captain instanceof User && $user->is($captain)))
+            ->unique(fn (User $user): int => $user->getKey())
             ->values();
     }
 

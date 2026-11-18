@@ -31,10 +31,6 @@ class AdminDashboardTest extends TestCase
         $response->assertDontSeeLivewire(NotificationSettingsTable::class);
         $response->assertSee('Notifications');
         $response->assertSee(NotificationSettings::getUrl());
-        $response->assertSee('filament-copilot-button', false);
-        $response->assertSee('filament-copilot-chat', false);
-        $response->assertSee('dispatchLivewire(name, params = {}, bubbles = true)', false);
-        $response->assertSee('await $wire.handleStreamComplete(', false);
     }
 
     public function test_notification_settings_have_their_own_admin_page(): void

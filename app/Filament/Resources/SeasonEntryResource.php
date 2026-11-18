@@ -2,13 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SeasonEntryResource\CopilotTools\ListSeasonEntriesTool;
-use App\Filament\Resources\SeasonEntryResource\CopilotTools\SearchSeasonEntriesTool;
-use App\Filament\Resources\SeasonEntryResource\CopilotTools\ViewSeasonEntryTool;
 use App\Filament\Resources\SeasonEntryResource\Pages;
 use App\Filament\Resources\SeasonEntryResource\RelationManagers;
 use App\Models\SeasonEntry;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms;
@@ -18,7 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SeasonEntryResource extends Resource implements CopilotResource
+class SeasonEntryResource extends Resource
 {
     protected static ?string $model = SeasonEntry::class;
 
@@ -136,20 +132,6 @@ class SeasonEntryResource extends Resource implements CopilotResource
         return [
             'index' => Pages\ListSeasonEntries::route('/'),
             'edit' => Pages\EditSeasonEntry::route('/{record}/edit'),
-        ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage season entry submissions, payment status, team entries, and knockout registrations.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [
-            new ListSeasonEntriesTool,
-            new ViewSeasonEntryTool,
-            new SearchSeasonEntriesTool,
         ];
     }
 }

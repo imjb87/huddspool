@@ -6,7 +6,6 @@ use App\Filament\Resources\ExpulsionResource\Pages;
 use App\Models\Expulsion;
 use App\Models\Team;
 use App\Models\User;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Components\MorphToSelect;
@@ -15,7 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ExpulsionResource extends Resource implements CopilotResource
+class ExpulsionResource extends Resource
 {
     protected static ?string $model = Expulsion::class;
 
@@ -77,15 +76,5 @@ class ExpulsionResource extends Resource implements CopilotResource
             'create' => Pages\CreateExpulsion::route('/create'),
             'edit' => Pages\EditExpulsion::route('/{record}/edit'),
         ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage expulsions for players or teams, including reasons and expulsion dates.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [];
     }
 }

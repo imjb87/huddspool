@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Page;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -13,7 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PageResource extends Resource implements CopilotResource
+class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
@@ -88,15 +87,5 @@ class PageResource extends Resource implements CopilotResource
             'create' => Pages\CreatePage::route('/create'),
             'edit' => Pages\EditPage::route('/{record}/edit'),
         ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage static public pages, page slugs, and rich page content.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [];
     }
 }
