@@ -987,7 +987,7 @@ class AccountPageTest extends TestCase
             ->assertSee('icon-tabler-building', false)
             ->assertSee('icon-tabler-users', false)
             ->assertSee('icon-tabler-calendar', false)
-            ->assertSeeText(UserRole::labelFor($teamAdmin->role))
+            ->assertSeeText($teamAdmin->roleLabel())
             ->assertSeeText($team->name)
             ->assertSeeText('Premier Division')
             ->assertSeeText('Team Admin')

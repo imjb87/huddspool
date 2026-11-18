@@ -115,23 +115,24 @@ class SiteAuthorization
             return RoleName::Admin;
         }
 
-        return $legacyRoleValue === UserRole::TeamAdmin->value
-            ? RoleName::TeamAdmin
-            : RoleName::Player;
+        return match ($legacyRoleValue) {
+            UserRole::TeamAdmin->value, RoleName::TeamAdmin->value => RoleName::TeamAdmin,
+            RoleName::Admin->value => RoleName::Admin,
+            default => RoleName::Player,
+        };
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    public static function applyLegacyColumnsForRole(array $data, RoleName|string $role): array
+    public static function roleNameFor(User $user): RoleName
     {
-        $roleName = self::normalizeRoleName($role);
+        if ($user->hasRole(RoleName::Admin->value)) {
+            return RoleName::Admin;
+        }
 
-        $data['role'] = self::legacyRoleValueFor($roleName);
-        $data['is_admin'] = $roleName === RoleName::Admin;
+        if ($user->hasRole(RoleName::TeamAdmin->value)) {
+            return RoleName::TeamAdmin;
+        }
 
-        return $data;
+        return RoleName::Player;
     }
 
     public static function syncSpatieRoleFromLegacyColumns(User $user): void
@@ -152,24 +153,11 @@ class SiteAuthorization
     {
         $roleName = self::normalizeRoleName($role);
 
-        $user->forceFill([
-            'role' => self::legacyRoleValueFor($roleName),
-            'is_admin' => $roleName === RoleName::Admin,
-        ])->saveQuietly();
-
         $user->syncRoles([$roleName->value]);
     }
 
     public static function normalizeRoleName(RoleName|string $role): RoleName
     {
         return $role instanceof RoleName ? $role : RoleName::from($role);
-    }
-
-    public static function legacyRoleValueFor(RoleName $role): string
-    {
-        return match ($role) {
-            RoleName::Admin, RoleName::Player => UserRole::Player->value,
-            RoleName::TeamAdmin => UserRole::TeamAdmin->value,
-        };
     }
 }

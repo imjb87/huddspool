@@ -1,6 +1,6 @@
 <?php
 
-use Spatie\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests;
+use App\Support\PublicResponseCacheProfile;
 use Spatie\ResponseCache\Hasher\DefaultHasher;
 use Spatie\ResponseCache\Replacers\CsrfTokenReplacer;
 use Spatie\ResponseCache\Serializers\JsonSerializer;
@@ -88,7 +88,7 @@ return [
     /*
      * The given class determines if a request should be cached.
      */
-    'cache_profile' => CacheAllSuccessfulGetRequests::class,
+    'cache_profile' => PublicResponseCacheProfile::class,
 
     /*
      * This class is responsible for generating a hash for a request.

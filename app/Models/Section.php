@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\FixtureService;
+use App\Domain\Fixtures\Actions\GenerateFixtures;
 use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -120,14 +120,7 @@ class Section extends Model
 
     public function generateFixtures(): void
     {
-        $fixtureService = new FixtureService($this);
-        $schedule = $fixtureService->generate();
-
-        foreach ($schedule as $fixtures) {
-            foreach ($fixtures as $fixture) {
-                $this->fixtures()->create($fixture);
-            }
-        }
+        app(GenerateFixtures::class)->execute($this);
     }
 
     /**

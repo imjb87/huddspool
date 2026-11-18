@@ -13,7 +13,6 @@ use App\Policies\ResultPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -35,11 +34,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-
-        Passport::tokensCan([
-            'gpt:read' => 'Read Huddspool administration data',
-            'gpt:write' => 'Perform approved Huddspool administration changes',
-        ]);
 
         Gate::define('viewPulse', function (User $user): bool {
             return $user->can(PermissionName::ViewPulse->value);

@@ -11,8 +11,6 @@
         $guestTitle = match (true) {
             request()->routeIs('password.request') => 'Forgot password',
             request()->routeIs('password.reset') => 'Reset password',
-            request()->routeIs('invite.register') => 'Set password',
-            request()->routeIs('passport.authorizations.authorize') => 'Connect Huddspool',
             default => 'Log in',
         };
     @endphp

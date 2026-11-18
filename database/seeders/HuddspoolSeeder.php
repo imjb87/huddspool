@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserRole;
+use App\Enums\RoleName;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Result;
@@ -168,7 +168,7 @@ class HuddspoolSeeder extends Seeder
                 $result->away_score = (int) $awayScore;
                 $result->is_confirmed = true;
                 $result->is_overridden = false;
-                $result->submitted_by = 0;
+                $result->submitted_by = null;
                 $result->section_id = $section->id;
                 $result->ruleset_id = $ruleset->id;
                 $result->save();
@@ -242,14 +242,12 @@ class HuddspoolSeeder extends Seeder
 
             $user = User::query()->firstOrCreate(
                 ['name' => $playerName, 'team_id' => $team->id],
-                ['role' => UserRole::Player->value],
+                [],
             );
-            SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
+            SiteAuthorization::assignRole($user, RoleName::Player);
 
             if ($captainName && $playerName === $captainName) {
-                $user->role = UserRole::TeamAdmin->value;
-                $user->save();
-                SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
+                SiteAuthorization::assignRole($user, RoleName::TeamAdmin);
                 $captainUser = $user;
             }
         }
@@ -257,9 +255,9 @@ class HuddspoolSeeder extends Seeder
         if ($captainName && ! $captainUser) {
             $captainUser = User::query()->firstOrCreate(
                 ['name' => $captainName, 'team_id' => $team->id],
-                ['role' => UserRole::TeamAdmin->value],
+                [],
             );
-            SiteAuthorization::syncSpatieRoleFromLegacyColumns($captainUser);
+            SiteAuthorization::assignRole($captainUser, RoleName::TeamAdmin);
         }
 
         if ($captainUser && ! $team->captain_id) {
@@ -299,10 +297,10 @@ class HuddspoolSeeder extends Seeder
     {
         $user = User::query()->firstOrCreate(
             ['name' => $playerName, 'team_id' => $team->id],
-            ['role' => UserRole::Player->value],
+            [],
         );
 
-        SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
+        SiteAuthorization::assignRole($user, RoleName::Player);
 
         return $user;
     }

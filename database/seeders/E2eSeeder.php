@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RoleName;
 use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Season;
@@ -117,15 +116,12 @@ class E2eSeeder extends Seeder
 
     private function createTeamAdmin(Team $team, string $name, string $email): User
     {
-        $user = User::factory()->create([
+        return User::factory()->teamAdmin()->create([
             'name' => $name,
             'email' => $email,
             'team_id' => $team->id,
         ]);
 
-        SiteAuthorization::assignRole($user, RoleName::TeamAdmin);
-
-        return $user;
     }
 
     private function createPlayer(Team $team, string $name, string $email): User

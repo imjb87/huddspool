@@ -16,10 +16,6 @@ class UserStatsOverview extends BaseWidget
         'xl' => 3,
     ];
 
-    protected ?string $heading = 'Open season totals';
-
-    protected ?string $description = 'Current recorded activity for the live season.';
-
     protected function getStats(): array
     {
         $stats = (new GetOpenSeasonStats)();

@@ -4,8 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\LatestResults;
 use App\Filament\Widgets\OutstandingFixtures;
+use App\Filament\Widgets\SupportTicketStats;
 use App\Filament\Widgets\UserStatsOverview;
-use daacreators\CreatorsTicketing\Filament\Widgets\TicketStatsWidget;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
@@ -21,7 +21,7 @@ class Dashboard extends \Filament\Pages\Dashboard
     {
         return [
             UserStatsOverview::class,
-            TicketStatsWidget::class,
+            SupportTicketStats::class,
             OutstandingFixtures::class,
             LatestResults::class,
         ];

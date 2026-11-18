@@ -2,9 +2,9 @@
 
 namespace App\Support;
 
+use App\Domain\Fixtures\Actions\GenerateFixtures;
 use App\Models\Fixture;
 use App\Models\Section;
-use App\Services\FixtureService;
 use Illuminate\Support\Carbon;
 
 class SectionFixturePreviewBuilder
@@ -14,8 +14,7 @@ class SectionFixturePreviewBuilder
      */
     public function build(Section $section): array
     {
-        $fixtureService = new FixtureService($section);
-        $schedule = $fixtureService->generate();
+        $schedule = app(GenerateFixtures::class)->generate($section);
         $teams = $section->teams->keyBy('id');
         $venues = $section->teams->loadMissing('venue')->pluck('venue', 'venue_id');
 

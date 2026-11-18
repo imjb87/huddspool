@@ -1,12 +1,10 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\EnsureGptAdministrator;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Laravel\Passport\Http\Middleware\CheckToken;
 use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -38,8 +36,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'is_admin' => AdminMiddleware::class,
-            'gpt.admin' => EnsureGptAdministrator::class,
-            'scope' => CheckToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

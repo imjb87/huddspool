@@ -27,7 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('fixtures', function (Blueprint $table) {
-            //
+            $table->dropColumn('ruleset_id');
         });
     }
 };

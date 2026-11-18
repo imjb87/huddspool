@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
@@ -17,14 +16,9 @@ class LegacyScaffoldCleanupTest extends TestCase
         $this->assertFalse(Route::has('register'));
     }
 
-    public function test_invite_registration_route_still_renders_the_registration_view(): void
+    public function test_invite_registration_routes_are_not_registered(): void
     {
-        $user = User::factory()->create([
-            'invitation_token' => 'invite-token',
-        ]);
-
-        $this->get(route('invite.register', $user->invitation_token))
-            ->assertOk()
-            ->assertSeeText('Set password');
+        $this->assertFalse(Route::has('invite.register'));
+        $this->assertFalse(Route::has('invite.store'));
     }
 }

@@ -1,7 +1,7 @@
 const CACHE_PREFIX = "pwa-";
 // Bump both names whenever the precached shell or assets change.
-const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v5`;
-const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v5`;
+const STATIC_CACHE_NAME = `${CACHE_PREFIX}static-v6`;
+const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}runtime-v6`;
 const OFFLINE_URL = "/offline";
 const BUILD_MANIFEST_URL = "/build/manifest.json";
 const MAX_RUNTIME_ENTRIES = 100;
@@ -36,7 +36,6 @@ const PRIVATE_PATH_PREFIXES = [
     "/password",
     "/register",
     "/results/create",
-    "/sanctum",
     "/seasons",
     "/stop-impersonating",
     "/support",

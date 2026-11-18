@@ -3,19 +3,12 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FacebookController;
 use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\Auth\InviteController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-
-    Route::get('/register/{token}', [InviteController::class, 'register'])
-        ->name('invite.register');
-
-    Route::post('/register/{token}', [InviteController::class, 'store'])
-        ->name('invite.store');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
