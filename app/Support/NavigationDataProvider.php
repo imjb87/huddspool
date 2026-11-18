@@ -17,8 +17,6 @@ class NavigationDataProvider
 
     private const ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:active-knockouts:v2';
 
-    private const NAVIGABLE_ACTIVE_KNOCKOUTS_CACHE_KEY = 'nav:navigable-active-knockouts:v1';
-
     private const HISTORY_SEASON_GROUPS_CACHE_KEY = 'nav:history-season-groups:v1';
 
     protected function rulesets(): Collection|array
@@ -94,15 +92,6 @@ class NavigationDataProvider
                     ];
                 })
                 ->filter(fn (array $item) => $item['sections']->isNotEmpty())
-                ->values();
-        });
-    }
-
-    public function navigableActiveKnockouts(): Collection
-    {
-        return Cache::remember(self::NAVIGABLE_ACTIVE_KNOCKOUTS_CACHE_KEY, now()->addMinutes(10), function () {
-            return $this->activeKnockouts()
-                ->filter(fn ($knockout) => filled($knockout?->slug))
                 ->values();
         });
     }
