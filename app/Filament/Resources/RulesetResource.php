@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RulesetResource\Pages;
 use App\Models\Ruleset;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -13,7 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class RulesetResource extends Resource implements CopilotResource
+class RulesetResource extends Resource
 {
     protected static ?string $model = Ruleset::class;
 
@@ -75,15 +74,5 @@ class RulesetResource extends Resource implements CopilotResource
             'create' => Pages\CreateRuleset::route('/create'),
             'edit' => Pages\EditRuleset::route('/{record}/edit'),
         ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage rulesets and handbook content used across sections and public rules pages.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [];
     }
 }

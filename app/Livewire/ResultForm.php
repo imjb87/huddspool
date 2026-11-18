@@ -19,7 +19,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class ResultForm extends Component
 {
@@ -85,12 +84,14 @@ class ResultForm extends Component
         $this->handleFrameUpdate(refreshActionState: false);
     }
 
-    public function submit(): ?Redirector
+    public function submit(): void
     {
         $this->refreshActionState();
 
         if ($this->isLocked || ! $this->canEdit) {
-            return redirect()->route('result.show', $this->result);
+            $this->redirectRoute('result.show', $this->result);
+
+            return;
         }
 
         $frames = $this->form->prepareFrames(requireComplete: true);
@@ -108,10 +109,10 @@ class ResultForm extends Component
             $this->handleStaleDraftException($exception, 'Another editor updated this result. We refreshed the latest draft for you.');
 
             if ($this->isLocked && $this->result) {
-                return redirect()->route('result.show', $this->result);
+                $this->redirectRoute('result.show', $this->result);
             }
 
-            return null;
+            return;
         }
 
         $this->syncComponentState($result);
@@ -122,7 +123,7 @@ class ResultForm extends Component
             clientId: $this->clientId,
         )));
 
-        return redirect()->route('result.show', $this->result);
+        $this->redirectRoute('result.show', $this->result);
     }
 
     /**

@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\NewsResource\Pages;
 use App\Models\News;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -15,7 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 
-class NewsResource extends Resource implements CopilotResource
+class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
 
@@ -145,15 +144,5 @@ class NewsResource extends Resource implements CopilotResource
             'create' => Pages\CreateNews::route('/create'),
             'edit' => Pages\EditNews::route('/{record}/edit'),
         ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage news articles, publication status, publication dates, and featured images.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [];
     }
 }

@@ -84,7 +84,7 @@ services:
         build: *app-build
         image: huddspool-e2e/app
         working_dir: /var/www/html
-        command: php artisan serve --host=0.0.0.0 --port=8000
+        command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
         environment: *app-environment
         volumes: *app-volumes
         ports:

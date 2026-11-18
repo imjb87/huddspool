@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Media;
 
 use App\Filament\Resources\Media\Pages\ManageMedia;
 use BackedEnum;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -16,7 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MediaResource extends Resource implements CopilotResource
+class MediaResource extends Resource
 {
     protected static ?string $model = Media::class;
 
@@ -91,15 +90,5 @@ class MediaResource extends Resource implements CopilotResource
         return [
             'index' => ManageMedia::route('/'),
         ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage uploaded media records, attached models, media collections, and stored files.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [];
     }
 }

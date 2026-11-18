@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TeamResource\CopilotTools\ListTeamsTool;
-use App\Filament\Resources\TeamResource\CopilotTools\SearchTeamsTool;
-use App\Filament\Resources\TeamResource\CopilotTools\ViewTeamTool;
 use App\Filament\Resources\TeamResource\Pages;
 use App\Filament\Resources\TeamResource\RelationManagers;
 use App\Models\Team;
 use App\Models\User;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -18,7 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TeamResource extends Resource implements CopilotResource
+class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
@@ -117,20 +113,6 @@ class TeamResource extends Resource implements CopilotResource
             'index' => Pages\ListTeams::route('/'),
             'create' => Pages\CreateTeam::route('/create'),
             'edit' => Pages\EditTeam::route('/{record}/edit'),
-        ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage teams, captains, venues, folded status, and linked players and matches.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [
-            new ListTeamsTool,
-            new ViewTeamTool,
-            new SearchTeamsTool,
         ];
     }
 }

@@ -176,12 +176,12 @@ class Wizard extends Component
         $this->persistState();
     }
 
-    public function submit(): mixed
+    public function submit(): void
     {
         if (! $this->season->acceptingEntries()) {
             $this->addError('season', 'Season sign-ups are closed.');
 
-            return null;
+            return;
         }
 
         $this->validateDetails();
@@ -192,7 +192,7 @@ class Wizard extends Component
         if (count($this->teamRegistrations) === 0 && count($this->knockoutRegistrations) === 0) {
             $this->addError('cart', 'Add at least one team or knockout registration before you confirm.');
 
-            return null;
+            return;
         }
 
         $entry = app(SeasonEntryRegistrar::class)->register(
@@ -208,7 +208,7 @@ class Wizard extends Component
 
         session()->forget($this->sessionKey());
 
-        return redirect()->route('season.entry.confirmation', [
+        $this->redirectRoute('season.entry.confirmation', [
             'season' => $this->season,
             'entry' => $entry->reference,
         ]);

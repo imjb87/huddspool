@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SectionResource\CopilotTools\ListSectionsTool;
-use App\Filament\Resources\SectionResource\CopilotTools\SearchSectionsTool;
-use App\Filament\Resources\SectionResource\CopilotTools\ViewSectionTool;
 use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
 use App\Models\Season;
 use App\Models\Section;
-use EslamRedaDiv\FilamentCopilot\Contracts\CopilotResource;
 use Filament\Forms;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -17,7 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SectionResource extends Resource implements CopilotResource
+class SectionResource extends Resource
 {
     protected static ?string $model = Section::class;
 
@@ -109,20 +105,6 @@ class SectionResource extends Resource implements CopilotResource
             'create' => Pages\CreateSection::route('/create'),
             'edit' => Pages\EditSection::route('/{record}/edit'),
             'preview-fixtures' => Pages\PreviewFixtures::route('/{record}/preview-fixtures'),
-        ];
-    }
-
-    public static function copilotResourceDescription(): ?string
-    {
-        return 'Manage sections, linked rulesets, teams, and generated fixtures within each season.';
-    }
-
-    public static function copilotTools(): array
-    {
-        return [
-            new ListSectionsTool,
-            new ViewSectionTool,
-            new SearchSectionsTool,
         ];
     }
 }

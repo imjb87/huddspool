@@ -7,7 +7,6 @@ use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Support\PercentageFormatter;
 use App\Support\SiteAuthorization;
-use EslamRedaDiv\FilamentCopilot\Concerns\HasCopilotChat;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
 {
-    use HasApiTokens, HasCopilotChat, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
 
     protected string $guard_name = 'web';
 
