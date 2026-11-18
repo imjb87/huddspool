@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Fixture;
 use App\Models\Result;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -98,5 +99,26 @@ class CompetitionRelationshipMigrationTest extends TestCase
         ]);
         $this->assertTrue(Schema::hasColumn('frames', 'home_player_id'));
         $this->assertTrue(Schema::hasColumn('frames', 'away_player_id'));
+    }
+
+    public function test_final_authorization_migration_repairs_invalid_team_references(): void
+    {
+        $migration = require database_path('migrations/2026_11_18_162235_finalize_user_authorization_and_competition_relationships.php');
+        $migration->down();
+
+        $user = User::factory()->create(['team_id' => 999999]);
+
+        $migration->up();
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'team_id' => null,
+        ]);
+        $this->assertTrue(DB::table('information_schema.KEY_COLUMN_USAGE')
+            ->where('CONSTRAINT_SCHEMA', DB::connection()->getDatabaseName())
+            ->where('TABLE_NAME', 'users')
+            ->where('COLUMN_NAME', 'team_id')
+            ->where('CONSTRAINT_NAME', 'users_team_id_foreign')
+            ->exists());
     }
 }

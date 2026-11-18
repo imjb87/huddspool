@@ -23,6 +23,18 @@ return new class extends Migration
                 SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
             });
 
+        $invalidTeamUserIds = DB::table('users as users')
+            ->leftJoin('teams', 'teams.id', '=', 'users.team_id')
+            ->whereNotNull('users.team_id')
+            ->whereNull('teams.id')
+            ->pluck('users.id');
+
+        if ($invalidTeamUserIds->isNotEmpty()) {
+            DB::table('users')
+                ->whereIn('id', $invalidTeamUserIds)
+                ->update(['team_id' => null]);
+        }
+
         Schema::table('users', function (Blueprint $table): void {
             $table->foreign('team_id', 'users_team_id_foreign')
                 ->references('id')
