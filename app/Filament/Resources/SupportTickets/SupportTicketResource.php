@@ -143,6 +143,10 @@ class SupportTicketResource extends Resource
                     ->label('Ticket')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('requester_name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Submitted')
                     ->dateTime('j M Y H:i')
