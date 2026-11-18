@@ -11,6 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         foreach ([
+            'ct_automation_logs',
             'ct_ticket_activities',
             'ct_ticket_replies',
             'ct_tickets',
