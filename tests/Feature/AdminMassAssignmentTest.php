@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Enums\RoleName;
-use App\Enums\UserRole;
 use App\Filament\Resources\TeamResource\Pages\EditTeam;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Models\Team;
@@ -24,9 +23,7 @@ class AdminMassAssignmentTest extends TestCase
         $admin = User::factory()->create([
             'is_admin' => true,
         ]);
-        $player = User::factory()->create([
-            'role' => UserRole::Player->value,
-        ]);
+        $player = User::factory()->create();
 
         Filament::setCurrentPanel('admin');
 
@@ -44,10 +41,6 @@ class AdminMassAssignmentTest extends TestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas('users', [
-            'id' => $player->id,
-            'role' => UserRole::TeamAdmin->value,
-        ]);
         $this->assertTrue($player->fresh()->hasRole(RoleName::TeamAdmin->value));
     }
 

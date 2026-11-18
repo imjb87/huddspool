@@ -48,4 +48,18 @@ class UserRoleTest extends TestCase
         $this->assertFalse($player->isAdmin());
         $this->assertSame('Player', $player->roleLabel());
     }
+
+    public function test_user_role_helpers_use_spatie_role_assignments_as_the_source_of_truth(): void
+    {
+        $user = User::factory()->create();
+
+        SiteAuthorization::assignRole($user, RoleName::TeamAdmin);
+
+        $user->refresh();
+
+        $this->assertTrue($user->hasRole(RoleName::TeamAdmin->value));
+        $this->assertTrue($user->isTeamAdmin());
+        $this->assertFalse($user->isAdmin());
+        $this->assertSame('Team Admin', $user->roleLabel());
+    }
 }

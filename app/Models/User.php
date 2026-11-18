@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\PermissionName;
 use App\Enums\RoleName;
-use App\Enums\UserRole;
 use App\Support\PercentageFormatter;
 use App\Support\SiteAuthorization;
 use Filament\Models\Contracts\FilamentUser;
@@ -19,15 +18,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Passport\Contracts\OAuthenticatable as PassportAuthenticatable;
-use Laravel\Passport\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasMedia, PassportAuthenticatable
+class User extends Authenticatable implements FilamentUser, HasMedia
 {
-    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable, SoftDeletes;
 
     protected string $guard_name = 'web';
 
@@ -42,12 +39,9 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
         'telephone',
         'avatar_path',
         'password',
-        'role',
         'team_id',
-        'is_admin',
         'email_verified_at',
         'push_prompted_at',
-        'invitation_token',
     ];
 
     /**
@@ -65,11 +59,14 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'push_prompted_at' => 'datetime',
-        'is_admin' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'push_prompted_at' => 'datetime',
+            'receives_support_ticket_notifications' => 'boolean',
+        ];
+    }
 
     /**
      * The accessors to append to the model's array form.
@@ -80,15 +77,6 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
         'confirmed',
         'avatar_url',
     ];
-
-    protected static function booted(): void
-    {
-        static::saved(function (self $user): void {
-            if ($user->wasRecentlyCreated || $user->wasChanged(['role', 'is_admin'])) {
-                SiteAuthorization::syncSpatieRoleFromLegacyColumns($user);
-            }
-        });
-    }
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -216,13 +204,17 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
 
     public function isTeamAdmin(): bool
     {
-        return $this->hasRole(RoleName::TeamAdmin->value)
-            || $this->hasRole(RoleName::Admin->value);
+        return in_array($this->roleName(), [RoleName::Admin, RoleName::TeamAdmin], true);
     }
 
     public function isAdmin(): bool
     {
-        return $this->hasRole(RoleName::Admin->value);
+        return $this->roleName() === RoleName::Admin;
+    }
+
+    public function roleName(): RoleName
+    {
+        return SiteAuthorization::roleNameFor($this);
     }
 
     public function isCaptain(): bool
@@ -232,20 +224,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, PassportAu
 
     public function roleLabel(): string
     {
-        if ($this->isAdmin()) {
-            return 'Admin';
-        }
-
-        return $this->roleEnum()?->label() ?? UserRole::Player->label();
-    }
-
-    public function roleEnum(): ?UserRole
-    {
-        if ($this->role === null) {
-            return null;
-        }
-
-        return UserRole::tryFrom((string) $this->role);
+        return $this->roleName()->label();
     }
 
     public function hasAvatar(): bool

@@ -37,7 +37,7 @@ class UserStatsOverviewTest extends TestCase
         Livewire::actingAs($admin)
             ->test(UserStatsOverview::class)
             ->assertStatus(200)
-            ->assertSee('Open season totals')
+            ->assertDontSee('Open season totals')
             ->assertSee('Active Players')
             ->assertSee('Matches Played')
             ->assertSee('Frames Played')

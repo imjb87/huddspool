@@ -1,7 +1,6 @@
 <?php
 
 use App\Notifications\FixtureResultOutstandingNotification;
-use App\Notifications\InviteNotification;
 use App\Notifications\KnockoutMatchReadyNotification;
 use App\Notifications\KnockoutMatchReminderNotification;
 use App\Notifications\KnockoutResultOutstandingNotification;
@@ -40,7 +39,6 @@ return new class extends Migration
             $this->setting(KnockoutMatchReadyNotification::class, 'Knockout match ready', 'When the teams in a knockout match are confirmed.', $now),
             $this->setting(LeagueResultSubmittedNotification::class, 'League result submitted', 'When a league result is submitted for confirmation.', $now),
             $this->setting(NewsPublishedNotification::class, 'News published', 'When a news article is published.', $now),
-            $this->setting(InviteNotification::class, 'Account invitation', 'When an administrator invites someone to create an account.', $now),
         ]);
     }
 

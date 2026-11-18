@@ -41,7 +41,7 @@
                                 :href="route('player.show', $player)"
                                 :avatar-url="$player->avatar_url"
                                 :name="$player->name"
-                                :role-label="\App\Enums\UserRole::labelFor($player->role)"
+                                :role-label="$player->roleLabel()"
                                 :frames-played="$player->frames_played"
                                 :frames-won="$player->frames_won"
                                 :frames-lost="$player->frames_lost"

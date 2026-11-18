@@ -40,14 +40,14 @@ function workerFixture() {
     return { stores, open, response, dispatch, context, setOffline() { offline = true; }, get skipped() { return skipped; }, get claimed() { return claimed; } };
 }
 
-test('waiting worker installs into v5 without overwriting or deleting the active v4 cache', async () => {
+test('waiting worker installs into v6 without overwriting or deleting the active v4 cache', async () => {
     const w = workerFixture(), active = await w.open('pwa-static-v4');
     await active.put('/offline', w.response('old offline'));
     await active.put('/games/8-ball/index.html', w.response('old game'));
     await w.dispatch('install');
     assert.equal((await active.match('/offline')).body, 'old offline');
     assert.equal((await active.match('/games/8-ball/index.html')).body, 'old game');
-    assert.equal((await (await w.open('pwa-static-v5')).match('/games/8-ball/index.html')).body, 'new:/games/8-ball/index.html');
+    assert.equal((await (await w.open('pwa-static-v6')).match('/games/8-ball/index.html')).body, 'new:/games/8-ball/index.html');
     assert.equal(w.stores.has('pwa-static-v4'), true);
     assert.equal(w.skipped, false); assert.equal(w.claimed, false);
 });
@@ -55,10 +55,10 @@ test('worker reads only its own static/runtime caches, including offline navigat
     const w = workerFixture();
     await (await w.open('pwa-static-v4')).put('/games/8-ball/index.html', w.response('old game'));
     await w.dispatch('install');
-    await (await w.open('pwa-static-v6')).put('/future.mjs', w.response('future deployment'));
+    await (await w.open('pwa-static-v7')).put('/future.mjs', w.response('future deployment'));
     assert.equal((await w.context.handleAsset({url:'https://huddspool.test/games/8-ball/index.html'})).body, 'new:/games/8-ball/index.html');
     assert.equal((await w.context.handleAsset({url:'https://huddspool.test/future.mjs',destination:'script'})).body, 'new:/future.mjs');
-    await (await w.open('pwa-runtime-v5')).put('/news', w.response('current cached news'));
+    await (await w.open('pwa-runtime-v6')).put('/news', w.response('current cached news'));
     w.setOffline();
     assert.equal((await w.context.handleNavigation({url:'https://huddspool.test/news'})).body, 'current cached news');
     assert.equal((await w.context.handleNavigation({url:'https://huddspool.test/not-cached'})).body, 'new:/offline');
@@ -70,6 +70,6 @@ test('previous caches are deleted only on activation and unrelated caches surviv
     assert.equal(w.stores.has('pwa-static-v4'), true);
     await w.dispatch('activate');
     assert.equal(w.stores.has('pwa-static-v4'), false); assert.equal(w.stores.has('pwa-runtime-v4'), false);
-    assert.equal(w.stores.has('pwa-static-v5'), true); assert.equal(w.stores.has('other-app'), true);
+    assert.equal(w.stores.has('pwa-static-v6'), true); assert.equal(w.stores.has('other-app'), true);
     assert.equal(w.claimed, true);
 });

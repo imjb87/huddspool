@@ -111,7 +111,7 @@ class TeamProfileTest extends TestCase
         $response->assertSeeText((string) $result->home_score);
         $response->assertSeeText((string) $result->away_score);
         $response->assertSeeText($user->name);
-        $response->assertSeeText(UserRole::labelFor($user->role));
+        $response->assertSeeText($user->roleLabel());
         $response->assertSeeText('0%');
         $response->assertSee('href="'.route('result.show', $result).'"', false);
     }

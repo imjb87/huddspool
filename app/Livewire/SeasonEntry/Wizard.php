@@ -2,11 +2,11 @@
 
 namespace App\Livewire\SeasonEntry;
 
+use App\Domain\Registration\Actions\RegisterSeasonEntry;
 use App\Mail\SeasonEntryInvoiceMail;
 use App\Models\Knockout;
 use App\Models\Ruleset;
 use App\Models\Season;
-use App\Services\SeasonEntryRegistrar;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -195,7 +195,7 @@ class Wizard extends Component
             return;
         }
 
-        $entry = app(SeasonEntryRegistrar::class)->register(
+        $entry = app(RegisterSeasonEntry::class)->execute(
             season: $this->season,
             contact: $this->contact,
             venue: $this->resolveVenuePayload(),

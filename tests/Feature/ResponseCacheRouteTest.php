@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Spatie\ResponseCache\CacheProfiles\CacheProfile;
 use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Tests\TestCase;
 
@@ -12,6 +13,7 @@ class ResponseCacheRouteTest extends TestCase
     public function test_response_cache_uses_the_redis_store(): void
     {
         $this->assertSame('redis', config('responsecache.cache.store'));
+        $this->assertInstanceOf(CacheProfile::class, app(CacheProfile::class));
     }
 
     /**

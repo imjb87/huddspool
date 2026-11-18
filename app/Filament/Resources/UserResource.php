@@ -66,6 +66,10 @@ class UserResource extends Resource
                             ->options(SiteAuthorization::roleOptions())
                             ->default(RoleName::Player->value)
                             ->required(),
+                        Forms\Components\Toggle::make('receives_support_ticket_notifications')
+                            ->label('Support ticket notifications')
+                            ->helperText('Receive email and in-app notifications for new support tickets and replies.')
+                            ->default(false),
                     ]),
             ]);
     }

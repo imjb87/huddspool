@@ -13,10 +13,17 @@ class StoreSupportTicketRequest extends FormRequest
 
     public function rules(): array
     {
+        if ($this->filled('website')) {
+            return [
+                'website' => ['nullable', 'string', 'max:255'],
+            ];
+        }
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'message' => ['required', 'string', 'max:5000'],
+            'website' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

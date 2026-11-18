@@ -21,6 +21,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Route;
 use LaravelPWA\Http\Controllers\LaravelPWAController;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
 use STS\FilamentImpersonate\Facades\Impersonation;
 
 /*
@@ -36,8 +37,6 @@ use STS\FilamentImpersonate\Facades\Impersonation;
 
 require __DIR__.'/auth.php';
 
-Route::pattern('season', '[^/]*[0-9][^/]*');
-
 Route::get('/', HomeController::class)->name('home');
 Route::view('/privacy', 'privacy')->name('privacy');
 Route::view('/play/8-ball', 'games.eight-ball')->name('games.eight-ball');
@@ -45,34 +44,37 @@ Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/download-centre', [DownloadController::class, 'index'])->name('downloads.index');
 Route::get('/search', SiteSearchController::class)->name('search.index');
-Route::prefix('rulesets')->group(function () {
-    Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
-    Route::get('/{ruleset}/rules', [RulesetController::class, 'rules'])->name('ruleset.rules');
-    Route::get('/{ruleset}/{section}', [RulesetController::class, 'section'])->name('ruleset.section.show');
+Route::middleware(CacheResponse::for(60 * 60 * 24 * 7))->group(function (): void {
+    Route::prefix('rulesets')->group(function (): void {
+        Route::get('/{ruleset}', [RulesetController::class, 'show'])->name('ruleset.show');
+        Route::get('/{ruleset}/rules', [RulesetController::class, 'rules'])->name('ruleset.rules');
+        Route::get('/{ruleset}/{section}', [RulesetController::class, 'section'])->name('ruleset.section.show');
+    });
+    Route::prefix('fixtures')->group(function (): void {
+        Route::get('/{fixture}', [FixtureController::class, 'show'])->name('fixture.show');
+        Route::get('/download/{ruleset}/{section}', [FixtureController::class, 'download'])->name('fixture.download');
+    });
+    Route::prefix('results')->group(function (): void {
+        Route::get('/{result}', [ResultController::class, 'show'])->name('result.show');
+        Route::get('/{result}/og-image', [ResultController::class, 'ogImage'])->name('result.og-image');
+    });
+    Route::get('/players/{player}', [PlayerController::class, 'show'])->name('player.show');
+    Route::get('/teams/{team}', [TeamController::class, 'show'])->name('team.show');
+    Route::prefix('knockouts')->group(function (): void {
+        Route::get('/', [KnockoutController::class, 'index'])->name('knockout.index');
+        Route::get('/{knockout}', [KnockoutController::class, 'show'])->name('knockout.show');
+    });
+    Route::prefix('history')->group(function (): void {
+        Route::get('/{season}/knockouts/{knockout}', [KnockoutController::class, 'history'])->name('history.knockout.show');
+        Route::get('/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
+    });
+    Route::get('/venues/{venue}', [VenueController::class, 'show'])->name('venue.show');
+    Route::get('/pages/{page}', [PageController::class, 'show'])->name('page.show');
 });
-Route::prefix('fixtures')->group(function () {
-    Route::get('/{fixture}', [FixtureController::class, 'show'])->name('fixture.show');
-    Route::get('/download/{ruleset}/{section}', [FixtureController::class, 'download'])->name('fixture.download');
-});
-Route::prefix('results')->group(function () {
-    Route::get('/{result}', [ResultController::class, 'show'])->name('result.show');
-    Route::get('/{result}/og-image', [ResultController::class, 'ogImage'])->name('result.og-image');
-    Route::get('/create/{fixture}', [ResultController::class, 'create'])->name('result.create');
-});
-Route::get('/players/{player}', [PlayerController::class, 'show'])->name('player.show');
+Route::get('/results/create/{fixture}', [ResultController::class, 'create'])->name('result.create');
 Route::post('/players/{player}/avatar', [PlayerController::class, 'updateAvatar'])
     ->middleware('auth')
     ->name('player.avatar');
-Route::get('/teams/{team}', [TeamController::class, 'show'])->name('team.show');
-Route::prefix('knockouts')->group(function () {
-    Route::get('/', [KnockoutController::class, 'index'])->name('knockout.index');
-    Route::get('/{knockout}', [KnockoutController::class, 'show'])->name('knockout.show');
-});
-Route::prefix('history')->group(function () {
-    Route::get('/{season}/knockouts/{knockout}', [KnockoutController::class, 'history'])->name('history.knockout.show');
-    Route::get('/{season}/{ruleset}/{section}', [HistoryController::class, 'section'])->name('history.section.show');
-});
-Route::get('/venues/{venue}', [VenueController::class, 'show'])->name('venue.show');
 Route::get('/seasons/{season}/sign-up', [SeasonEntryController::class, 'show'])->name('season.entry.show');
 Route::get('/seasons/{season}/sign-up/orders/{entry:reference}', [SeasonEntryController::class, 'confirmation'])->name('season.entry.confirmation');
 Route::get('/seasons/{season}/sign-up/orders/{entry:reference}/invoice', [SeasonEntryController::class, 'invoice'])->name('season.entry.invoice');
@@ -103,8 +105,10 @@ Route::middleware('auth')->group(function () {
     })->name('impersonation.leave');
     Route::get('/knockout-matches/{match}/submit', [KnockoutMatchController::class, 'submit'])->name('knockout.matches.submit');
     Route::middleware('throttle:support-tickets')->group(function () {
-        Route::get('/account/support', [SupportTicketController::class, 'create'])->name('support.tickets');
+        Route::get('/account/support', [SupportTicketController::class, 'index'])->name('support.tickets');
+        Route::get('/account/support/create', [SupportTicketController::class, 'create'])->name('support.tickets.create');
         Route::post('/account/support', [SupportTicketController::class, 'store'])->name('support.tickets.store');
+        Route::get('/account/support/{ticket}', [SupportTicketController::class, 'show'])->name('support.tickets.show');
+        Route::post('/account/support/{ticket}/replies', [SupportTicketController::class, 'reply'])->name('support.tickets.reply');
     });
 });
-Route::get('/pages/{page}', [PageController::class, 'show'])->name('page.show');

@@ -68,16 +68,13 @@ class PlayersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Actions\CreateAction::make()
-                    ->mutateDataUsing(function (array $data): array {
+                    ->using(function (array $data) {
                         $role = RoleName::from((string) ($data['site_role'] ?? RoleName::Player->value));
                         unset($data['site_role']);
 
-                        return SiteAuthorization::applyLegacyColumnsForRole($data, $role);
-                    })
-                    ->using(function (array $data) {
                         /** @var User $record */
                         $record = $this->getRelationship()->create($data);
-                        SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
+                        SiteAuthorization::assignRole($record, $role);
 
                         return $record;
                     }),
@@ -90,21 +87,15 @@ class PlayersRelationManager extends RelationManager
                         ->fillForm(fn (User $record): array => [
                             'name' => $record->name,
                             'email' => $record->email,
-                            'site_role' => SiteAuthorization::inferRoleNameFromLegacy(
-                                $record->role !== null ? (string) $record->role : null,
-                                (bool) $record->is_admin,
-                            )->value,
+                            'site_role' => $record->roleName()->value,
                             'telephone' => $record->telephone,
                         ])
-                        ->mutateDataUsing(function (array $data): array {
+                        ->using(function (User $record, array $data): User {
                             $role = RoleName::from((string) ($data['site_role'] ?? RoleName::Player->value));
                             unset($data['site_role']);
 
-                            return SiteAuthorization::applyLegacyColumnsForRole($data, $role);
-                        })
-                        ->using(function (User $record, array $data): User {
                             $record->update($data);
-                            SiteAuthorization::syncSpatieRoleFromLegacyColumns($record);
+                            SiteAuthorization::assignRole($record, $role);
 
                             if ($record->hasMedia('avatars')) {
                                 $record->clearLegacyAvatarPath();

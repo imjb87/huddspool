@@ -19,7 +19,8 @@ class GetTeamPlayers
         $sectionId = $this->section?->id;
 
         $query = $this->team->players()
-            ->select('users.id', 'users.name', 'users.avatar_path', 'users.role')
+            ->with('roles')
+            ->select('users.id', 'users.name', 'users.avatar_path')
             ->leftJoin('frames', function (JoinClause $join) {
                 $join->on('frames.home_player_id', '=', 'users.id')
                     ->orOn('frames.away_player_id', '=', 'users.id');
@@ -35,7 +36,7 @@ class GetTeamPlayers
                             ->where('results.is_confirmed', true);
                     });
             })
-            ->groupBy('users.id', 'users.name', 'users.avatar_path', 'users.role');
+            ->groupBy('users.id', 'users.name', 'users.avatar_path');
 
         if ($sectionId) {
             $query->selectRaw(
@@ -61,7 +62,8 @@ class GetTeamPlayers
         return $query
             ->orderByDesc('frames_won')
             ->orderBy('frames_lost')
-            ->orderBy('users.name')
+            ->orderByRaw('CASE WHEN users.id = ? THEN 1 ELSE 0 END', [$this->team->captain_id])
+            ->orderByDesc('users.name')
             ->get();
     }
 }
