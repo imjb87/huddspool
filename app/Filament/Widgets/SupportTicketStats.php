@@ -9,7 +9,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class SupportTicketStats extends StatsOverviewWidget
 {
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = ['default' => 'full'];
 
     protected int|array|null $columns = [
         'md' => 2,

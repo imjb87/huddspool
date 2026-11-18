@@ -43,8 +43,8 @@ class AdminDashboardTest extends TestCase
             OutstandingFixtures::class,
             LatestResults::class,
         ], (new Dashboard)->getWidgets());
-        $this->assertSame('full', (new UserStatsOverview)->getColumnSpan());
-        $this->assertSame('full', (new SupportTicketStats)->getColumnSpan());
+        $this->assertSame(['default' => 'full'], (new UserStatsOverview)->getColumnSpan());
+        $this->assertSame(['default' => 'full'], (new SupportTicketStats)->getColumnSpan());
     }
 
     public function test_notification_settings_have_their_own_admin_page(): void

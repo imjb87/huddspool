@@ -35,7 +35,13 @@ class SupportTicketAdminTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(ListSupportTickets::class)
-            ->assertCanSeeTableRecords([$ticket]);
+            ->assertCanSeeTableRecords([$ticket])
+            ->assertTableColumnExists('ticket_number')
+            ->assertTableColumnExists('created_at')
+            ->assertTableColumnExists('last_activity_at')
+            ->assertTableColumnExists('status')
+            ->assertTableColumnDoesNotExist('title')
+            ->assertTableColumnDoesNotExist('requester_name');
 
         Livewire::actingAs($admin)
             ->test(ViewSupportTicket::class, [

@@ -41,9 +41,9 @@ class UserStatsOverviewTest extends TestCase
             ->assertSee('Active Players')
             ->assertSee('Matches Played')
             ->assertSee('Frames Played')
-            ->assertSee('Players with recorded frames')
-            ->assertSee('Results recorded in the open season')
-            ->assertSee('Frames recorded in the open season');
+            ->assertDontSee('Players with recorded frames')
+            ->assertDontSee('Results recorded in the open season')
+            ->assertDontSee('Frames recorded in the open season');
     }
 
     public function test_season_series_stats_use_grouped_queries(): void

@@ -143,20 +143,16 @@ class SupportTicketResource extends Resource
                     ->label('Ticket')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('title')
-                    ->label('Request')
-                    ->limit(60)
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('requester_name')
-                    ->label('Requester')
-                    ->searchable()
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Submitted')
+                    ->dateTime('j M Y H:i')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('last_activity_at')->label('Last activity')->dateTime('j M Y H:i')->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (SupportTicketStatus|string|null $state): string => $state instanceof SupportTicketStatus ? $state->label() : (SupportTicketStatus::tryFrom((string) $state)?->label() ?? 'Unknown'))
                     ->color(fn (SupportTicketStatus|string|null $state): string => ($state instanceof SupportTicketStatus ? $state : SupportTicketStatus::tryFrom((string) $state))?->color() ?? 'gray')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('last_activity_at')->label('Last activity')->dateTime('j M Y H:i')->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->options(SupportTicketStatus::options()),
