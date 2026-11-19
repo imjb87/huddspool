@@ -11,7 +11,7 @@
 <div class="ui-result-total-item" data-result-card-band>
     <p class="ui-result-frame-label">Match total</p>
 
-    <div class="ui-fixture-team-matchup">
+    <div class="ui-result-team-matchup">
         <div class="ui-fixture-team-names">
             <p class="ui-fixture-team-name">{{ $result->home_team_name }}</p>
             <p class="ui-fixture-team-name">{{ $result->away_team_name }}</p>

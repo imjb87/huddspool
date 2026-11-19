@@ -4,7 +4,7 @@
             Frame {{ $index + 1 }}
         </p>
 
-        <div class="flex flex-col gap-2">
+        <div class="ui-result-player-matchup">
             @include('result.partials.frame-side', [
                 'playerId' => $frame->home_player_id,
                 'player' => $frame->homePlayer,

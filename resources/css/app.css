@@ -1285,7 +1285,7 @@
   }
 
   .ui-result-frame-content {
-    @apply flex w-full min-w-0 flex-col gap-3;
+    @apply flex w-full min-w-0 flex-col gap-3.5;
   }
 
   .ui-result-frame-label {
@@ -1294,6 +1294,56 @@
 
   .ui-result-player-row {
     @apply flex w-full items-center justify-between gap-3;
+  }
+
+  .ui-result-player-matchup,
+  .ui-result-team-matchup {
+    position: relative;
+    --ui-match-divider: color-mix(in oklab, var(--border) 70%, transparent);
+  }
+
+  .ui-result-player-matchup {
+    @apply flex min-w-0 flex-col gap-7 py-3.5;
+    --ui-result-matchup-inset: calc(-1rem - 1px);
+  }
+
+  .ui-result-team-matchup {
+    @apply flex min-w-0 items-start gap-3.5 py-3.5;
+    --ui-result-matchup-inset: -0.75rem;
+  }
+
+  .ui-result-team-matchup .ui-fixture-team-names,
+  .ui-result-team-matchup .ui-fixture-badge-stack {
+    @apply gap-7;
+  }
+
+  .ui-result-player-matchup::before,
+  .ui-result-team-matchup::before {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: var(--ui-result-matchup-inset);
+    background-image:
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider));
+    background-position: 0 0, 0 50%, 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px, 100% 1px, 100% 1px;
+    content: '';
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ui-result-player-matchup > *,
+  .ui-result-team-matchup > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 640px) {
+    .ui-result-team-matchup {
+      --ui-result-matchup-inset: -1.25rem;
+    }
   }
 
   .ui-result-player-link {
@@ -1309,7 +1359,7 @@
   }
 
   .ui-result-total-item {
-    @apply flex w-full flex-col gap-2 border-t border-border px-3 py-4 sm:px-5;
+    @apply flex w-full flex-col gap-3.5 border-t border-border px-3 py-4 sm:px-5;
   }
 
   .ui-average-item-header {
