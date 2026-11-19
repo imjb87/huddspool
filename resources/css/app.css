@@ -1419,7 +1419,7 @@
   }
 
   .ui-knockout-match-label {
-    @apply m-0 mb-1 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
+    @apply m-0 mb-3.5 text-xs leading-4 font-medium text-neutral-500 dark:text-neutral-400;
   }
 
   .ui-knockout-match-meta {
@@ -1433,9 +1433,18 @@
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider));
-    background-position: -1rem 0, -1rem 50%, -1rem 100%;
+    background-position: calc(-1rem - 1px) 0, calc(-1rem - 1px) 50%, calc(-1rem - 1px) 100%;
     background-repeat: no-repeat;
-    background-size: calc(100% + 2rem) 1px, calc(100% + 2rem) 1px, calc(100% + 2rem) 1px;
+    background-size: calc(100% + 2rem + 2px) 1px, calc(100% + 2rem + 2px) 1px, calc(100% + 2rem + 2px) 1px;
+  }
+
+  .ui-knockout-team-matchup > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .ui-knockout-team-matchup + .ui-knockout-match-meta {
+    margin-top: 0.875rem;
   }
 
   .ui-knockout-team-names {
@@ -1451,7 +1460,7 @@
   }
 
   .ui-knockout-match-actions {
-    @apply flex shrink-0 items-start gap-2;
+    @apply flex shrink-0 self-center items-start gap-2;
   }
 
   .ui-knockout-score-item {
