@@ -2,6 +2,7 @@
 
 namespace App\Domain\Fixtures\ViewData;
 
+use App\Domain\Competition\ViewData\StandingSummaryRow;
 use App\Models\Fixture;
 
 class FixtureShowPageData
