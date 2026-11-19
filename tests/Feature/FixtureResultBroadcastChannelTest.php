@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Results\ResultFormCollaboratorColor;
 use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Support\ResultFormCollaboratorColor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;

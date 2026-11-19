@@ -102,7 +102,7 @@
                                 <div class="mt-1 flex items-center justify-center gap-2">
                                     <p class="text-base font-semibold text-green-700 dark:text-green-400">{{ $this->record->frames_won }}</p>
                                     <span class="inline-flex shrink-0 items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                                        {{ \App\Support\PercentageFormatter::wholeOrSingleDecimal($this->record->frames_won_percentage) }}%
+                                        {{ \App\Domain\Shared\Formatting\PercentageFormatter::wholeOrSingleDecimal($this->record->frames_won_percentage) }}%
                                     </span>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                 <div class="mt-1 flex items-center justify-center gap-2">
                                     <p class="text-base font-semibold text-red-700 dark:text-red-400">{{ $this->record->frames_lost }}</p>
                                     <span class="inline-flex shrink-0 items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-500/15 dark:text-red-300">
-                                        {{ \App\Support\PercentageFormatter::wholeOrSingleDecimal($this->record->frames_lost_percentage) }}%
+                                        {{ \App\Domain\Shared\Formatting\PercentageFormatter::wholeOrSingleDecimal($this->record->frames_lost_percentage) }}%
                                     </span>
                                 </div>
                             </div>

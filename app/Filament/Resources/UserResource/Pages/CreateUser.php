@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 

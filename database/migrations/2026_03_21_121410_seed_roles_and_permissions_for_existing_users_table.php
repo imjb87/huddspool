@@ -1,7 +1,7 @@
 <?php
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Support\SiteSearch\BuildSearchResults;
+use App\Domain\Search\BuildSearchResults;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;

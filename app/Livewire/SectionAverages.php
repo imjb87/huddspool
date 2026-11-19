@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Domain\Competition\ViewData\SectionAveragesViewData;
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
-use App\Support\SectionAveragesViewData;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;

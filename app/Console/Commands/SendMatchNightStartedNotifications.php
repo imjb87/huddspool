@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\Notifications\DatabaseNotificationDispatcher;
+use App\Domain\Notifications\NotificationAudienceResolver;
 use App\Models\Fixture;
 use App\Notifications\MatchNightStartedNotification;
-use App\Support\Notifications\DatabaseNotificationDispatcher;
-use App\Support\Notifications\NotificationAudienceResolver;
 use Illuminate\Console\Command;
 
 class SendMatchNightStartedNotifications extends Command

@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Support\CompetitionCacheInvalidator;
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

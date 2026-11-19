@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Notifications\DatabaseNotificationDispatcher;
 use App\Enums\UserRole;
 use App\Jobs\SendBrowserPushNotification;
 use App\Models\Fixture;
@@ -12,7 +13,6 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueNightTonightNotification;
-use App\Support\Notifications\DatabaseNotificationDispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;

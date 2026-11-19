@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Domain\Competition\ViewData\SectionAveragesViewData;
+use App\Domain\Competition\ViewData\StandingSummaryRow;
 use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Section;
 use App\Queries\GetSectionAverages;
-use App\Support\SectionAveragesViewData;
-use App\Support\StandingSummaryRow;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;

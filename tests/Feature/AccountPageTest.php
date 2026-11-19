@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\KnockoutType;
@@ -21,7 +22,6 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
-use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

@@ -38,9 +38,11 @@ enum SupportTicketStatus: string
     public function badgeVariant(): string
     {
         return match ($this) {
-            self::Open => 'default',
+            self::Open => 'info',
+            self::InProgress => 'warning',
+            self::Answered, self::Resolved => 'success',
             self::Closed => 'outline',
-            default => 'secondary',
+            self::Pending => 'secondary',
         };
     }
 

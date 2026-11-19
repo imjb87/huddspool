@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Knockout;
-use App\Models\Page;
-use App\Models\Venue;
-use App\Support\CompetitionCacheInvalidator;
-use App\Support\ResponseCacheTags;
+use App\Domain\Competition\Cache\CompetitionResponseCacheInvalidator;
+use App\Domain\Competition\Cache\ResponseCacheTags;
+use Illuminate\Cache\Repository;
+use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
 use Mockery;
 use Spatie\ResponseCache\Facades\ResponseCache;
 use Tests\TestCase;
@@ -19,7 +19,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
             ->once()
             ->with([ResponseCacheTags::HOME, ResponseCacheTags::NEWS]);
 
-        $this->tagAwareInvalidator()->forgetForNews();
+        $this->tagAwareInvalidator()->forgetNewsContent();
         $this->addToAssertionCount(1);
     }
 
@@ -35,7 +35,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
                 ResponseCacheTags::VENUES,
             ]);
 
-        $this->tagAwareInvalidator()->forgetForRulesetContent('international-rules', 1, 1, 1);
+        $this->tagAwareInvalidator()->forgetRulesetContent('international-rules');
         $this->addToAssertionCount(1);
     }
 
@@ -51,7 +51,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
                 ResponseCacheTags::KNOCKOUTS,
             ]);
 
-        $this->tagAwareInvalidator()->forgetForVenue(new Venue);
+        $this->tagAwareInvalidator()->forgetVenueContent();
         $this->addToAssertionCount(1);
     }
 
@@ -65,7 +65,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
                 ResponseCacheTags::KNOCKOUTS,
             ]);
 
-        $this->tagAwareInvalidator()->forgetForKnockout(new Knockout);
+        $this->tagAwareInvalidator()->forgetKnockoutContent();
         $this->addToAssertionCount(1);
     }
 
@@ -75,7 +75,7 @@ class ResponseCacheInvalidationTagsTest extends TestCase
             ->once()
             ->with([ResponseCacheTags::PAGES]);
 
-        $this->tagAwareInvalidator()->forgetForPage(new Page);
+        $this->tagAwareInvalidator()->forgetPageContent();
         $this->addToAssertionCount(1);
     }
 
@@ -86,12 +86,22 @@ class ResponseCacheInvalidationTagsTest extends TestCase
         parent::tearDown();
     }
 
-    private function tagAwareInvalidator(): CompetitionCacheInvalidator
+    private function tagAwareInvalidator(): CompetitionResponseCacheInvalidator
     {
-        $invalidator = Mockery::mock(CompetitionCacheInvalidator::class)->makePartial();
-        $invalidator->shouldAllowMockingProtectedMethods();
-        $invalidator->shouldReceive('supportsTaggedResponseCache')->andReturn(true);
+        $store = Mockery::mock(TaggableStore::class);
+        $repository = Mockery::mock(Repository::class);
 
-        return $invalidator;
+        $repository->shouldReceive('getStore')
+            ->once()
+            ->andReturn($store);
+
+        Cache::shouldReceive('store')
+            ->once()
+            ->with(config('responsecache.cache.store'))
+            ->andReturn($repository);
+
+        config(['responsecache.cache.tag' => 'responses']);
+
+        return new CompetitionResponseCacheInvalidator;
     }
 }

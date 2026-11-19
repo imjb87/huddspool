@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Domain\Notifications\BrowserPushSender;
 use App\Models\User;
-use App\Support\Notifications\BrowserPushSender;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 

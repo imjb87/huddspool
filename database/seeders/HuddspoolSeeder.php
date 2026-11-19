@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Models\Fixture;
 use App\Models\Frame;
@@ -12,7 +13,6 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
-use App\Support\SiteAuthorization;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;

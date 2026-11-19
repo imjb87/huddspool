@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Team;
 
+use App\Domain\Fixtures\ViewData\FixtureSummaryRow;
+use App\Domain\Results\ResultSubmissionPromptResolver;
 use App\Models\Fixture;
 use App\Models\Section;
 use App\Models\Team;
-use App\Support\FixtureSummaryRow;
-use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;

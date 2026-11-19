@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\CompetitionCacheInvalidator;
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;

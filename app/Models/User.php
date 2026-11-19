@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Domain\Authorization\SiteAuthorization;
+use App\Domain\Shared\Formatting\PercentageFormatter;
 use App\Enums\PermissionName;
 use App\Enums\RoleName;
-use App\Support\PercentageFormatter;
-use App\Support\SiteAuthorization;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\CompetitionCacheInvalidator;
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Domain\Results\Notifications\LeagueResultSubmissionMailer;
 use App\Models\Result;
-use App\Support\LeagueResultSubmissionMailer;
 
 class ResultObserver
 {

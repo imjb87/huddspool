@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\Domain\Notifications\BrowserPushSender;
 use App\Jobs\SendBrowserPushNotification;
 use App\Models\PushSubscription;
 use App\Models\User;
-use App\Support\Notifications\BrowserPushSender;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;

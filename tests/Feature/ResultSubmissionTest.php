@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Results\Actions\PersistResult;
+use App\Domain\Results\Notifications\LeagueResultSubmissionMailer;
 use App\Events\LeagueResultDraftUpdated;
 use App\Events\LeagueResultSubmitted;
 use App\Exceptions\StaleResultDraftException;
@@ -15,8 +17,6 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Notifications\LeagueResultSubmittedNotification;
-use App\Support\LeagueResultSubmissionMailer;
-use App\Support\ResultFormPersister;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Markdown;
@@ -161,7 +161,7 @@ class ResultSubmissionTest extends TestCase
         $this->assertFalse($result->is_confirmed);
         $this->assertSame(1, $result->home_score);
         $this->assertSame(0, $result->away_score);
-        $this->assertSame(0, $result->submitted_by);
+        $this->assertNull($result->submitted_by);
         $this->assertNull($result->submitted_at);
         $this->assertGreaterThan(0, $result->draft_version);
         $this->assertSame($teamAdmin->id, $result->draft_updated_by);
@@ -424,7 +424,7 @@ class ResultSubmissionTest extends TestCase
             'away_team_name' => $awayTeam->name,
             'home_score' => 5,
             'away_score' => 4,
-            'submitted_by' => 0,
+            'submitted_by' => null,
             'submitted_at' => null,
             'is_confirmed' => false,
         ]);
@@ -473,7 +473,7 @@ class ResultSubmissionTest extends TestCase
             'home_team_name' => $homeTeam->name,
             'away_team_id' => $awayTeam->id,
             'away_team_name' => $awayTeam->name,
-            'submitted_by' => 0,
+            'submitted_by' => null,
             'submitted_at' => null,
             'is_confirmed' => false,
         ]);
@@ -1044,7 +1044,7 @@ class ResultSubmissionTest extends TestCase
         $result = Result::firstOrFail();
         $staleVersion = $result->draft_version;
 
-        $persister = new ResultFormPersister;
+        $persister = new PersistResult;
 
         $latestResult = $persister->persistDraft(
             fixture: $fixture,

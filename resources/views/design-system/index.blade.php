@@ -13,6 +13,53 @@
         </div>
 
         <div class="ui-page-body space-y-10">
+            <section class="ui-shell-grid" data-design-system-tokens>
+                <div class="space-y-2">
+                    <p class="ui-kicker">Foundation</p>
+                    <h2 class="ui-section-title">Design tokens</h2>
+                    <p class="ui-copy">
+                        Surfaces, status colours, radii, spacing and shadows are defined once and consumed by the shared UI components.
+                    </p>
+                    <div class="ui-subtle-panel mt-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500 dark:text-gray-400">Source</p>
+                        <p class="mt-2 font-mono text-sm text-gray-900 dark:text-gray-100">resources/css/app.css</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <x-ui-card>
+                        <div class="ui-card-body">
+                            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                <div class="ui-token-swatch ui-token-swatch-background">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Background</span>
+                                    <span class="font-mono text-xs opacity-70">--background</span>
+                                </div>
+                                <div class="ui-token-swatch ui-token-swatch-card">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Card</span>
+                                    <span class="font-mono text-xs opacity-70">--card</span>
+                                </div>
+                                <div class="ui-token-swatch ui-token-swatch-muted">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Muted</span>
+                                    <span class="font-mono text-xs opacity-70">--muted</span>
+                                </div>
+                                <div class="ui-token-swatch ui-token-swatch-success">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Success</span>
+                                    <span class="font-mono text-xs opacity-70">--success</span>
+                                </div>
+                                <div class="ui-token-swatch ui-token-swatch-warning">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Warning</span>
+                                    <span class="font-mono text-xs opacity-70">--warning</span>
+                                </div>
+                                <div class="ui-token-swatch ui-token-swatch-info">
+                                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">Info</span>
+                                    <span class="font-mono text-xs opacity-70">--info</span>
+                                </div>
+                            </div>
+                        </div>
+                    </x-ui-card>
+                </div>
+            </section>
+
             <section class="ui-shell-grid" data-design-system-card>
                 <div class="space-y-2">
                     <p class="ui-kicker">Component 01</p>
@@ -27,7 +74,7 @@
                 </div>
 
                 <div class="space-y-6 lg:col-span-2">
-                    <div class="ui-card" data-design-system-card-example>
+                    <x-ui-card data-design-system-card-example>
                         <div class="ui-card-body">
                             <div class="flex flex-wrap items-start justify-between gap-4">
                                 <div class="space-y-2">
@@ -80,11 +127,11 @@
 
                         <div class="ui-card-footer">
                             <div class="flex flex-wrap items-center gap-3">
-                                <button type="button" class="ui-button-primary">Primary action</button>
-                                <button type="button" class="ui-button-secondary">Secondary action</button>
+                                <x-ui-button>Primary action</x-ui-button>
+                                <x-ui-button variant="secondary">Secondary action</x-ui-button>
                             </div>
                         </div>
-                    </div>
+                    </x-ui-card>
 
                     <div class="ui-card-branded" data-design-system-card-branded>
                         <div class="ui-shell-grid items-center px-5 py-5 lg:px-6 lg:py-6">
@@ -94,8 +141,8 @@
                                     Use the branded card when the surface itself should carry league identity. It spans the full available width and splits content left-right instead of nesting into smaller utility rows.
                                 </p>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <button type="button" class="ui-button-primary">Register now</button>
-                                    <button type="button" class="ui-button-secondary">View handbook</button>
+                                    <x-ui-button>Register now</x-ui-button>
+                                    <x-ui-button variant="secondary">View handbook</x-ui-button>
                                 </div>
                             </div>
 
@@ -154,7 +201,7 @@
                 </div>
 
                 <div class="space-y-6 lg:col-span-2">
-                    <div class="ui-card" data-design-system-button-example>
+                    <x-ui-card data-design-system-button-example>
                         <div class="ui-card-body space-y-5">
                             <div class="space-y-2">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Action set</h3>
@@ -164,11 +211,11 @@
                             </div>
 
                             <div class="flex flex-wrap items-center gap-3">
-                                <button type="button" class="ui-button-primary">Submit result</button>
-                                <button type="button" class="ui-button-secondary">Save draft</button>
+                                <x-ui-button>Submit result</x-ui-button>
+                                <x-ui-button variant="secondary">Save draft</x-ui-button>
                             </div>
                         </div>
-                    </div>
+                    </x-ui-card>
 
                     <div class="ui-panel">
                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rules</h3>

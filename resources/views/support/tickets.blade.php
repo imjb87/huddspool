@@ -27,15 +27,15 @@
 
                     <div class="lg:col-span-2">
                         <div class="mb-4 flex justify-end">
-                            <a href="{{ route('support.tickets.create') }}" class="ui-result-button ui-result-button-primary shrink-0">New support request</a>
+                            <x-ui-button href="{{ route('support.tickets.create') }}" class="shrink-0">New support request</x-ui-button>
                         </div>
 
                         @if ($tickets->isEmpty())
-                            <div class="ui-card">
+                            <x-ui-card>
                                 <div class="ui-card-body text-sm text-muted-foreground">You have not submitted a support request yet.</div>
-                            </div>
+                            </x-ui-card>
                         @else
-                            <div class="ui-card">
+                            <x-ui-card>
                                 <div class="ui-card-rows">
                                     @foreach ($tickets as $ticket)
                                         <a href="{{ route('support.tickets.show', $ticket) }}" class="ui-card-row-link" data-support-ticket-card>
@@ -55,7 +55,7 @@
                                         </a>
                                     @endforeach
                                 </div>
-                            </div>
+                            </x-ui-card>
                         @endif
                     </div>
                 </div>

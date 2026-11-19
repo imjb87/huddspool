@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Fixtures\ViewData\FixtureShowPageData;
+use App\Domain\Results\ResultSubmissionPromptResolver;
 use App\Models\Fixture;
 use App\Models\Ruleset;
 use App\Models\Section;
 use App\Models\SectionTeam;
-use App\Support\FixtureShowPageData;
-use App\Support\ResultSubmissionPromptResolver;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;

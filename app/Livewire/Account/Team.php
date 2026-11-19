@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Account;
 
+use App\Domain\Fixtures\ViewData\FixtureSummaryRow;
+use App\Domain\Knockouts\ViewData\KnockoutMatchSummaryRow;
+use App\Domain\Shared\Formatting\OrdinalFormatter;
 use App\Enums\PermissionName;
 use App\Models\Fixture;
 use App\Queries\GetTeamKnockoutMatches;
-use App\Support\FixtureSummaryRow;
-use App\Support\KnockoutMatchSummaryRow;
-use App\Support\OrdinalFormatter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;

@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
+use App\Domain\Geocoding\NominatimGeocoder;
 use App\Models\Venue;
-use App\Support\CompetitionCacheInvalidator;
-use App\Support\Geocoding\NominatimGeocoder;
 
 class VenueObserver
 {

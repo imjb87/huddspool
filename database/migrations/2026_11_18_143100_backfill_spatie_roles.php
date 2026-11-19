@@ -1,7 +1,7 @@
 <?php
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration

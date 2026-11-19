@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\KnockoutResource\Pages;
 
+use App\Domain\Knockouts\Import\KnockoutParticipantSheetParser;
 use App\Filament\Resources\KnockoutResource;
 use App\KnockoutType;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\KnockoutBracketBuilder;
-use App\Support\KnockoutParticipantSheetParser;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;

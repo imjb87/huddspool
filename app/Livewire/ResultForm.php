@@ -2,6 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Domain\Results\Actions\PersistResult;
+use App\Domain\Results\ResultDraftPayloadFactory;
+use App\Domain\Results\ResultFormCollaboratorColor;
+use App\Domain\Results\ResultFormFixtureAccess;
+use App\Domain\Results\ResultFormFrameRowBuilder;
+use App\Domain\Results\ResultFrameState;
 use App\Events\LeagueResultDraftUpdated;
 use App\Events\LeagueResultSubmitted;
 use App\Exceptions\StaleResultDraftException;
@@ -9,12 +15,6 @@ use App\Livewire\Forms\FixtureResultForm;
 use App\Models\Fixture;
 use App\Models\Result;
 use App\Models\User;
-use App\Support\ResultDraftPayloadFactory;
-use App\Support\ResultFormCollaboratorColor;
-use App\Support\ResultFormFixtureAccess;
-use App\Support\ResultFormFrameRowBuilder;
-use App\Support\ResultFormPersister;
-use App\Support\ResultFrameState;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
@@ -51,7 +51,7 @@ class ResultForm extends Component
     #[Locked]
     public ?string $lastEditedAt = null;
 
-    protected ?ResultFormPersister $persister = null;
+    protected ?PersistResult $persistResult = null;
 
     protected ?ResultFormFixtureAccess $fixtureAccess = null;
 
@@ -97,7 +97,7 @@ class ResultForm extends Component
         $frames = $this->form->prepareFrames(requireComplete: true);
 
         try {
-            $result = $this->persister()->submit(
+            $result = $this->resultPersistence()->submit(
                 fixture: $this->fixture,
                 result: $this->result,
                 draftFrames: $this->form->draftFrames(),
@@ -312,9 +312,9 @@ class ResultForm extends Component
         $this->persistCurrentDraft();
     }
 
-    private function persister(): ResultFormPersister
+    private function resultPersistence(): PersistResult
     {
-        return $this->persister ??= new ResultFormPersister;
+        return $this->persistResult ??= new PersistResult;
     }
 
     private function fixtureAccess(): ResultFormFixtureAccess
@@ -345,7 +345,7 @@ class ResultForm extends Component
     private function persistCurrentDraft(): void
     {
         try {
-            $result = $this->persister()->persistDraft(
+            $result = $this->resultPersistence()->persistDraft(
                 fixture: $this->fixture,
                 result: $this->result,
                 draftFrames: $this->form->draftFrames(),

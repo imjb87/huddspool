@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Domain\Shared\Formatting\CoordinateFormatter;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Filament\Resources\VenueResource\RelationManagers;
 use App\Models\Venue;
-use App\Support\CoordinateFormatter;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;

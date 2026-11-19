@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\CompetitionCacheInvalidator;
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

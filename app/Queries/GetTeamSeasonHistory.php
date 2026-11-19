@@ -2,11 +2,11 @@
 
 namespace App\Queries;
 
+use App\Domain\Competition\Formatting\SeasonLabelFormatter;
 use App\Models\Expulsion;
 use App\Models\Result;
 use App\Models\SectionTeam;
 use App\Models\Team;
-use App\Support\SeasonLabelFormatter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 

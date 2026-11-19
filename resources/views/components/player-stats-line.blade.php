@@ -65,7 +65,7 @@
                     @endif
                     <div class="{{ $showInlineStatLabels ? 'mt-1 ' : '' }}flex flex-col items-center gap-1">
                         <p class="text-sm font-semibold text-green-700 dark:text-green-400">{{ (int) $framesWon }}</p>
-                        <span class="inline-flex items-center justify-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300 sm:text-xs">{{ \App\Support\PercentageFormatter::ratio((int) $framesWon, (int) $framesPlayed) }}%</span>
+                        <span class="inline-flex items-center justify-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300 sm:text-xs">{{ \App\Domain\Shared\Formatting\PercentageFormatter::ratio((int) $framesWon, (int) $framesPlayed) }}%</span>
                     </div>
                 </div>
                 <div class="{{ $hideLostOnMobile ? 'hidden sm:block ' : '' }}w-12 sm:w-16">
@@ -74,7 +74,7 @@
                     @endif
                     <div class="{{ $showInlineStatLabels ? 'mt-1 ' : '' }}flex flex-col items-center gap-1">
                         <p class="text-sm font-semibold text-red-700 dark:text-red-400">{{ (int) $framesLost }}</p>
-                        <span class="inline-flex items-center justify-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300 sm:text-xs">{{ \App\Support\PercentageFormatter::ratio((int) $framesLost, (int) $framesPlayed) }}%</span>
+                        <span class="inline-flex items-center justify-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-950/50 dark:text-red-300 sm:text-xs">{{ \App\Domain\Shared\Formatting\PercentageFormatter::ratio((int) $framesLost, (int) $framesPlayed) }}%</span>
                     </div>
                 </div>
             </div>

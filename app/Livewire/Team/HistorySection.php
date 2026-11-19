@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Team;
 
+use App\Domain\Competition\ViewData\TeamHistoryRow;
 use App\Models\Section;
 use App\Models\Team;
 use App\Queries\GetTeamSeasonHistory;
-use App\Support\TeamHistoryRow;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;

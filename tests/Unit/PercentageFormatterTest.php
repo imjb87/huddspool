@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\PercentageFormatter;
+use App\Domain\Shared\Formatting\PercentageFormatter;
 use PHPUnit\Framework\TestCase;
 
 class PercentageFormatterTest extends TestCase

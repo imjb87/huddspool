@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Account;
 
+use App\Domain\Knockouts\ViewData\KnockoutMatchSummaryRow;
 use App\Queries\GetPlayerAverages;
 use App\Queries\GetPlayerKnockoutMatches;
 use App\Queries\GetPlayerSeasonHistory;
-use App\Support\KnockoutMatchSummaryRow;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;

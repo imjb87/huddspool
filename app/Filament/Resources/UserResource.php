@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

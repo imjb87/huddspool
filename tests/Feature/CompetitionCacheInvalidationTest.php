@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Models\Fixture;
 use App\Models\Frame;
 use App\Models\Result;
@@ -10,7 +11,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;

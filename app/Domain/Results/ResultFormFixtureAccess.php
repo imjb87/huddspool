@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Domain\Results;
+
+use App\Models\Fixture;
+use App\Models\Result;
+use Illuminate\Support\Facades\Gate;
+
+class ResultFormFixtureAccess
+{
+    public function load(Fixture $fixture): Fixture
+    {
+        return Fixture::query()
+            ->with([
+                'section',
+                'venue',
+                'homeTeam.players',
+                'awayTeam.players',
+                'result.frames' => fn ($query) => $query->orderBy('id'),
+            ])
+            ->findOrFail($fixture->getKey());
+    }
+
+    public function loadForAction(Fixture $fixture): Fixture
+    {
+        return Fixture::query()
+            ->select([
+                'id',
+                'fixture_date',
+                'home_team_id',
+                'away_team_id',
+                'season_id',
+                'section_id',
+                'venue_id',
+                'ruleset_id',
+            ])
+            ->with([
+                'homeTeam:id,name',
+                'awayTeam:id,name',
+                'result',
+            ])
+            ->findOrFail($fixture->getKey());
+    }
+
+    public function ensureAccessible(Fixture $fixture): void
+    {
+        if ($fixture->isBye()) {
+            abort(404);
+        }
+
+        if ($fixture->result && ! $fixture->result->is_confirmed) {
+            Gate::authorize('resumeSubmission', $fixture->result);
+        } else {
+            Gate::authorize('submitResult', $fixture);
+        }
+
+        if ($fixture->fixture_date->gte(now())) {
+            abort(404);
+        }
+    }
+
+    public function ensureSubmittable(Fixture $fixture): ?Result
+    {
+        $this->ensureAccessible($fixture);
+
+        $result = $fixture->result;
+
+        if ($result?->is_confirmed) {
+            abort(404);
+        }
+
+        return $result;
+    }
+}

@@ -51,12 +51,12 @@
                                 <div class="w-16">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Won</p>
                                     <p class="mt-1 text-sm font-semibold leading-5 text-green-700 dark:text-green-400">{{ $entry['wins'] }}</p>
-                                    <span class="mt-1 inline-flex items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-300">{{ \App\Support\PercentageFormatter::wholeOrSingleDecimal($entry['win_percentage']) }}%</span>
+                                    <span class="mt-1 inline-flex items-center rounded-md bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-300">{{ \App\Domain\Shared\Formatting\PercentageFormatter::wholeOrSingleDecimal($entry['win_percentage']) }}%</span>
                                 </div>
                                 <div class="w-16">
                                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Lost</p>
                                     <p class="mt-1 text-sm font-semibold leading-5 text-red-700 dark:text-red-400">{{ $entry['losses'] }}</p>
-                                    <span class="mt-1 inline-flex items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-500/15 dark:text-red-300">{{ \App\Support\PercentageFormatter::wholeOrSingleDecimal($entry['loss_percentage']) }}%</span>
+                                    <span class="mt-1 inline-flex items-center rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-500/15 dark:text-red-300">{{ \App\Domain\Shared\Formatting\PercentageFormatter::wholeOrSingleDecimal($entry['loss_percentage']) }}%</span>
                                 </div>
                             </div>
                         </div>

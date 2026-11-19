@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\PublicResponseCacheProfile;
+use App\Domain\Competition\Cache\PublicResponseCacheProfile;
 use Spatie\ResponseCache\Hasher\DefaultHasher;
 use Spatie\ResponseCache\Replacers\CsrfTokenReplacer;
 use Spatie\ResponseCache\Serializers\JsonSerializer;

@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Standings;
 
+use App\Domain\Competition\ViewData\StandingSummaryRow;
 use App\Models\Section;
-use App\Support\StandingSummaryRow;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;

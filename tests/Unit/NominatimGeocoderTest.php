@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\Geocoding\NominatimGeocoder;
+use App\Domain\Geocoding\NominatimGeocoder;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 

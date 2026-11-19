@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use App\Domain\Knockouts\ViewData\KnockoutMatchVenueOptions;
 use App\KnockoutType;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
 use App\Models\Venue;
-use App\Support\KnockoutMatchVenueOptions;
 use Closure;
 use Filament\Actions;
 use Filament\Forms;

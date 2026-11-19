@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Models\KnockoutParticipant;
-use App\Support\CompetitionCacheInvalidator;
 
 class KnockoutParticipantObserver
 {

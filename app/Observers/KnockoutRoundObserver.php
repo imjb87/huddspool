@@ -2,12 +2,12 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
+use App\Domain\Notifications\DatabaseNotificationDispatcher;
+use App\Domain\Notifications\NotificationAudienceResolver;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutRound;
 use App\Notifications\KnockoutMatchReadyNotification;
-use App\Support\CompetitionCacheInvalidator;
-use App\Support\Notifications\DatabaseNotificationDispatcher;
-use App\Support\Notifications\NotificationAudienceResolver;
 
 class KnockoutRoundObserver
 {

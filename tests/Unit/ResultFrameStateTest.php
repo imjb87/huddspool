@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\ResultFrameState;
+use App\Domain\Results\ResultFrameState;
 use PHPUnit\Framework\TestCase;
 
 class ResultFrameStateTest extends TestCase

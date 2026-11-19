@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\TeamResource\RelationManagers;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

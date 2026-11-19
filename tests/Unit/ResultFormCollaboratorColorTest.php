@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\ResultFormCollaboratorColor;
+use App\Domain\Results\ResultFormCollaboratorColor;
 use PHPUnit\Framework\TestCase;
 
 class ResultFormCollaboratorColorTest extends TestCase

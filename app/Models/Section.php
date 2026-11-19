@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Domain\Fixtures\Actions\GenerateFixtures;
-use App\Support\CompetitionCacheInvalidator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

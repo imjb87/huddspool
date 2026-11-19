@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

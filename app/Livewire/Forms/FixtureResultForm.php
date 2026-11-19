@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Forms;
 
+use App\Domain\Results\ResultFrameState;
 use App\Models\Result;
 use App\Rules\BothPlayersAwardedIfOneIs;
 use App\Rules\FrameScoreEqualsOne;
 use App\Rules\FrameScoresAddUpToTen;
 use App\Rules\PlayerLimit;
 use App\Rules\TotalScoresAddUpToTen;
-use App\Support\ResultFrameState;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Form;

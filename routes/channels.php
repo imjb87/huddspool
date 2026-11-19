@@ -1,8 +1,8 @@
 <?php
 
+use App\Domain\Results\ResultFormCollaboratorColor;
 use App\Models\Fixture;
 use App\Models\User;
-use App\Support\ResultFormCollaboratorColor;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Gate;
 

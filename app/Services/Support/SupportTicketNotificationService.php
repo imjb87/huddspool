@@ -2,13 +2,13 @@
 
 namespace App\Services\Support;
 
+use App\Domain\Notifications\DatabaseNotificationDispatcher;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Notifications\SupportTicketAcknowledgedNotification;
 use App\Notifications\SupportTicketReplyNotification;
 use App\Notifications\SupportTicketSubmittedNotification;
 use App\Notifications\SupportTicketUpdatedNotification;
-use App\Support\Notifications\DatabaseNotificationDispatcher;
 use Illuminate\Database\Eloquent\Builder;
 
 class SupportTicketNotificationService

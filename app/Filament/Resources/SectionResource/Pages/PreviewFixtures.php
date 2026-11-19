@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\SectionResource\Pages;
 
+use App\Domain\Fixtures\ViewData\SectionFixturePreviewBuilder;
 use App\Filament\Resources\SectionResource;
 use App\Models\Section;
-use App\Support\SectionFixturePreviewBuilder;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;

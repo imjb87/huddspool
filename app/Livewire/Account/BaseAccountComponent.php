@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Account;
 
+use App\Domain\Results\ResultSubmissionPromptResolver;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Queries\GetTeamPlayers;
-use App\Support\ResultSubmissionPromptResolver;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;

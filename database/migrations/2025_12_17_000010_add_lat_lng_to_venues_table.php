@@ -1,7 +1,7 @@
 <?php
 
+use App\Domain\Geocoding\NominatimGeocoder;
 use App\Models\Venue;
-use App\Support\Geocoding\NominatimGeocoder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +25,7 @@ return new class extends Migration
             })
             ->orderBy('id')
             ->chunkById(25, function ($venues) {
-                /** @var \App\Models\Venue $venue */
+                /** @var Venue $venue */
                 foreach ($venues as $venue) {
                     $coordinates = NominatimGeocoder::geocode($venue->address);
 
@@ -53,5 +53,4 @@ return new class extends Migration
             $table->dropColumn(['latitude', 'longitude']);
         });
     }
-
 };

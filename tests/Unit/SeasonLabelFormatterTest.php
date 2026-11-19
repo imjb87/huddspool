@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\SeasonLabelFormatter;
+use App\Domain\Competition\Formatting\SeasonLabelFormatter;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 

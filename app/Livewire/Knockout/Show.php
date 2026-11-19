@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Knockout;
 
+use App\Domain\Knockouts\ViewData\KnockoutRoundMatchViewDataBuilder;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutRound;
-use App\Support\KnockoutRoundMatchViewDataBuilder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;

@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Models\Page;
-use App\Support\CompetitionCacheInvalidator;
 
 class PageObserver
 {

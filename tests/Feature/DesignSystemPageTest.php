@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Authorization\SiteAuthorization;
 use App\Enums\RoleName;
 use App\Models\User;
-use App\Support\SiteAuthorization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -40,6 +40,7 @@ class DesignSystemPageTest extends TestCase
             ->get(route('design-system.index'))
             ->assertOk()
             ->assertSee('data-design-system-page', false)
+            ->assertSee('data-design-system-tokens', false)
             ->assertSee('data-design-system-card', false)
             ->assertSee('data-design-system-card-example', false)
             ->assertSee('data-design-system-card-branded', false)
@@ -48,6 +49,9 @@ class DesignSystemPageTest extends TestCase
             ->assertSee('data-design-system-button', false)
             ->assertSee('data-design-system-button-example', false)
             ->assertSeeText('Card')
+            ->assertSeeText('Design tokens')
+            ->assertSeeText('--background')
+            ->assertSeeText('--success')
             ->assertSeeText('League summary')
             ->assertSeeText('Branded card')
             ->assertSeeText('Register now')

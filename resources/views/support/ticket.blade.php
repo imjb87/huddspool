@@ -12,7 +12,7 @@
             @endif
 
             <div class="flex items-center justify-between gap-4">
-                <a href="{{ route('support.tickets') }}" class="text-sm font-medium text-primary hover:underline">Back to support requests</a>
+                <a href="{{ route('support.tickets') }}" class="ui-link">Back to support requests</a>
             </div>
 
             <section class="ui-section" data-support-ticket-summary>
@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="lg:col-span-2">
-                        <div class="ui-card">
+                        <x-ui-card>
                             <div class="ui-card-body space-y-4">
                                 <div class="flex flex-wrap items-start justify-between gap-3">
                                     <div>
@@ -46,7 +46,7 @@
                                     </x-ui-badge>
                                 </div>
                             </div>
-                        </div>
+                        </x-ui-card>
                     </div>
                 </div>
             </section>
@@ -105,7 +105,7 @@
                         <div class="lg:col-span-2">
                             <div class="grid gap-3">
                                 @foreach ($ticket->activities as $activity)
-                                    <article class="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm" data-support-ticket-status-update>
+                                    <x-ui-card as="article" class="border-border bg-muted/30 px-4 py-3 text-sm" data-support-ticket-status-update>
                                         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                             <p class="font-medium text-foreground">{{ $activity->description }}</p>
                                             <time class="text-xs text-muted-foreground" datetime="{{ $activity->created_at?->toIso8601String() }}">{{ $activity->created_at?->format('j F Y, H:i') }}</time>
@@ -115,7 +115,7 @@
                                             <span aria-hidden="true">→</span>
                                             {{ \Illuminate\Support\Str::headline($activity->new_value ?? 'Not set') }}
                                         </p>
-                                    </article>
+                                    </x-ui-card>
                                 @endforeach
                             </div>
                         </div>
@@ -124,7 +124,7 @@
             @endif
 
             @if ($ticket->isClosing())
-                <div class="rounded-lg border border-border bg-muted/30 px-4 py-3.5 text-sm text-muted-foreground">This ticket is closed. Please create a new support request if you need further help.</div>
+                <x-ui-card class="border-border bg-muted/30 px-4 py-3.5 text-sm text-muted-foreground">This ticket is closed. Please create a new support request if you need further help.</x-ui-card>
             @else
                 <section class="ui-section" data-support-ticket-reply-form>
                     <div class="ui-shell-grid">
@@ -141,7 +141,7 @@
                         </div>
 
                         <div class="lg:col-span-2">
-                            <div class="ui-card">
+                            <x-ui-card>
                                 <form method="POST" action="{{ route('support.tickets.reply', $ticket) }}" class="ui-card-body space-y-4">
                                     @csrf
                                     <div>
@@ -152,10 +152,10 @@
                                         @enderror
                                     </div>
                                     <div class="flex justify-end">
-                                        <button type="submit" class="ui-result-button ui-result-button-primary">Send reply</button>
+                                        <x-ui-button type="submit">Send reply</x-ui-button>
                                     </div>
                                 </form>
-                            </div>
+                            </x-ui-card>
                         </div>
                     </div>
                 </section>

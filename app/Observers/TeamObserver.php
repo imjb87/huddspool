@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Models\Team;
-use App\Support\CompetitionCacheInvalidator;
 
 class TeamObserver
 {

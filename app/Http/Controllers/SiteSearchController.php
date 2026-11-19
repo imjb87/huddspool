@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Search\BuildSearchResults;
 use App\Http\Requests\SearchRequest;
-use App\Support\SiteSearch\BuildSearchResults;
 use Illuminate\Http\JsonResponse;
 
 class SiteSearchController extends Controller

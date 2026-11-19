@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\CoordinateFormatter;
+use App\Domain\Shared\Formatting\CoordinateFormatter;
 use PHPUnit\Framework\TestCase;
 
 class CoordinateFormatterTest extends TestCase

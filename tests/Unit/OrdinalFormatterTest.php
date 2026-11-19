@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Support\OrdinalFormatter;
+use App\Domain\Shared\Formatting\OrdinalFormatter;
 use PHPUnit\Framework\TestCase;
 
 class OrdinalFormatterTest extends TestCase

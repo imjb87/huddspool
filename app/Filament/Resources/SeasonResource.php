@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
 use App\Filament\Resources\ExpulsionResource\Pages\ListExpulsions;
 use App\Filament\Resources\KnockoutResource\Pages\ListKnockouts;
 use App\Filament\Resources\SeasonEntryResource\Pages\ListSeasonEntries;
 use App\Filament\Resources\SeasonResource\Pages;
 use App\Filament\Resources\SectionResource\Pages\ListSections;
 use App\Models\Season;
-use App\Support\CompetitionCacheInvalidator;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms;

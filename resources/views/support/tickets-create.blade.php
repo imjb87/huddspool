@@ -5,9 +5,9 @@
 @section('content')
     <x-account.support-layout data-support-ticket-page>
         <div class="space-y-6">
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('support.tickets') }}" class="text-sm font-medium text-primary hover:underline">Back to support requests</a>
-                </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('support.tickets') }}" class="ui-link">Back to support requests</a>
+            </div>
 
                 <section class="ui-section">
                     <div class="ui-shell-grid">
@@ -30,7 +30,7 @@
                         </div>
 
                         <div class="lg:col-span-2">
-                            <div class="ui-card">
+                            <x-ui-card>
                                 <form method="POST" action="{{ route('support.tickets.store') }}" class="ui-card-body space-y-5">
                                     @csrf
 
@@ -66,10 +66,10 @@
                                     </div>
 
                                     <div class="flex justify-end">
-                                        <button type="submit" class="ui-result-button ui-result-button-primary min-w-24">Send support request</button>
+                                        <x-ui-button type="submit" class="min-w-24">Send support request</x-ui-button>
                                     </div>
                                 </form>
-                            </div>
+                            </x-ui-card>
                         </div>
                     </div>
                 </section>

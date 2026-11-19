@@ -2,10 +2,10 @@
 
 namespace App\View\Composers;
 
+use App\Domain\Navigation\NavigationDataProvider;
+use App\Domain\Navigation\NavigationViewClasses;
+use App\Domain\Navigation\NavigationViewState;
 use App\Models\Ruleset;
-use App\Support\NavigationDataProvider;
-use App\Support\NavigationViewClasses;
-use App\Support\NavigationViewState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;

@@ -40,6 +40,20 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --radius-xs: var(--ui-radius-xs);
+  --radius-sm: var(--ui-radius-sm);
+  --radius-md: var(--ui-radius-md);
+  --radius-lg: var(--ui-radius-lg);
+  --radius-xl: var(--ui-radius-xl);
+  --radius-2xl: var(--ui-radius-2xl);
 }
 
 @plugin '@tailwindcss/forms';
@@ -65,6 +79,34 @@
     --accent-foreground: oklch(0.205 0 0);
     --border: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
+
+    /* Semantic product tokens. Components should consume these aliases rather than raw colours. */
+    --info: oklch(0.55 0.16 245);
+    --info-foreground: oklch(0.35 0.12 245);
+    --success: oklch(0.52 0.16 150);
+    --success-foreground: oklch(0.35 0.12 150);
+    --warning: oklch(0.68 0.16 75);
+    --warning-foreground: oklch(0.4 0.12 65);
+    --destructive: oklch(0.58 0.22 25);
+    --destructive-foreground: oklch(0.42 0.16 25);
+
+    /* Shared layout tokens. Keep these stable so components remain visually consistent. */
+    --ui-content-width: 72rem;
+    --ui-document-width: 56rem;
+    --ui-page-gutter: 1rem;
+    --ui-section-gap: 1.5rem;
+    --ui-radius-xs: 0.25rem;
+    --ui-radius-sm: 0.375rem;
+    --ui-radius-md: 0.5rem;
+    --ui-radius-lg: 0.75rem;
+    --ui-radius-xl: 1rem;
+    --ui-radius-2xl: 1.25rem;
+    --ui-radius-pill: 9999px;
+    --ui-shadow-card: 0 1px 2px rgb(15 23 42 / 0.04);
+    --ui-shadow-panel: 0 1px 3px rgb(15 23 42 / 0.06), 0 1px 2px rgb(15 23 42 / 0.04);
+    --ui-shadow-button: 0 1px 2px rgb(15 23 42 / 0.08);
+    --ui-shadow-brand: 0 20px 35px rgb(5 46 22 / 0.15);
+
     --motion-duration-fast: 120ms;
     --motion-duration-normal: 180ms;
     --motion-duration-panel: 240ms;
@@ -104,6 +146,14 @@
     --accent-foreground: oklch(0.985 0 0);
     --border: oklch(1 0 0 / 10%);
     --ring: oklch(0.556 0 0);
+    --info: oklch(0.72 0.14 245);
+    --info-foreground: oklch(0.82 0.1 245);
+    --success: oklch(0.72 0.16 150);
+    --success-foreground: oklch(0.82 0.11 150);
+    --warning: oklch(0.82 0.15 80);
+    --warning-foreground: oklch(0.88 0.1 80);
+    --destructive: oklch(0.72 0.18 25);
+    --destructive-foreground: oklch(0.82 0.12 25);
   }
 
   html {
@@ -603,7 +653,8 @@
   }
 
   .ui-page-shell {
-    @apply mt-16 grid grid-cols-1 content-start gap-6 bg-background py-6 text-foreground;
+    @apply mt-16 grid grid-cols-1 content-start bg-background py-6 text-foreground;
+    gap: var(--ui-section-gap);
   }
 
   .home-hero {
@@ -713,11 +764,13 @@
   }
 
   .ui-page-body {
-    @apply mx-auto max-w-6xl px-4 pb-12 sm:px-6 lg:px-6 lg:pb-16;
+    @apply mx-auto w-full px-4 pb-12 sm:px-6 lg:px-6 lg:pb-16;
+    max-width: var(--ui-content-width);
   }
 
   .ui-page-header {
-    @apply mx-auto flex w-full max-w-6xl items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-5;
+    @apply mx-auto flex w-full items-end justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-6 lg:pt-7 lg:pb-5;
+    max-width: var(--ui-content-width);
   }
 
   .ui-document-page {
@@ -726,7 +779,8 @@
 
   .ui-document-header,
   .ui-document-body {
-    @apply mx-auto w-full max-w-4xl px-4 sm:px-6;
+    @apply mx-auto w-full px-4 sm:px-6;
+    max-width: var(--ui-document-width);
   }
 
   .ui-document-header-inner {
@@ -805,6 +859,44 @@
     @apply text-sm leading-6 text-gray-600 dark:text-gray-400;
   }
 
+  .ui-token-swatch {
+    @apply flex min-h-24 flex-col justify-between rounded-lg border p-3 text-left;
+    border-color: var(--border);
+  }
+
+  .ui-token-swatch-background {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  .ui-token-swatch-card {
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
+
+  .ui-token-swatch-muted {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .ui-token-swatch-success {
+    border-color: color-mix(in oklab, var(--success) 30%, transparent);
+    background-color: color-mix(in oklab, var(--success) 10%, transparent);
+    color: var(--success-foreground);
+  }
+
+  .ui-token-swatch-warning {
+    border-color: color-mix(in oklab, var(--warning) 30%, transparent);
+    background-color: color-mix(in oklab, var(--warning) 10%, transparent);
+    color: var(--warning-foreground);
+  }
+
+  .ui-token-swatch-info {
+    border-color: color-mix(in oklab, var(--info) 30%, transparent);
+    background-color: color-mix(in oklab, var(--info) 10%, transparent);
+    color: var(--info-foreground);
+  }
+
   .ui-link {
     @apply text-sm font-semibold text-gray-700 underline decoration-gray-300 underline-offset-3 transition hover:text-gray-900 hover:decoration-gray-500 dark:text-gray-300 dark:decoration-neutral-700 dark:hover:text-gray-100 dark:hover:decoration-neutral-500;
   }
@@ -817,11 +909,17 @@
   }
 
   .ui-panel {
-    @apply rounded-2xl border border-gray-200/80 bg-white/95 p-5 shadow-sm shadow-black/3 ring-1 ring-black/5 dark:border-neutral-800/80 dark:bg-neutral-900/95 dark:ring-white/10;
+    @apply border p-5;
+    border-color: color-mix(in oklab, var(--border) 80%, transparent);
+    border-radius: var(--ui-radius-2xl);
+    background-color: color-mix(in oklab, var(--card) 95%, transparent);
+    box-shadow: var(--ui-shadow-panel);
   }
 
   .ui-card {
-    @apply overflow-hidden rounded-xl bg-card text-card-foreground shadow-none ring-1 ring-foreground/10;
+    @apply overflow-hidden bg-card text-card-foreground ring-1 ring-foreground/10;
+    border-radius: var(--ui-radius-xl);
+    box-shadow: var(--ui-shadow-card);
   }
 
   .ui-standings-card {
@@ -926,7 +1024,9 @@
   }
 
   .ui-card-branded {
-    @apply overflow-hidden rounded-xl bg-linear-to-br from-green-950 via-green-800 to-green-600 text-white shadow-xl shadow-green-950/15 ring-1 ring-green-950/10;
+    @apply overflow-hidden rounded-xl bg-linear-to-br from-green-950 via-green-800 to-green-600 text-white ring-1 ring-green-950/10;
+    border-radius: var(--ui-radius-xl);
+    box-shadow: var(--ui-shadow-brand);
   }
 
   .ui-card-body {
@@ -1275,6 +1375,25 @@
     @apply flex min-w-0 items-start gap-3.5;
   }
 
+  .ui-fixture-item .ui-fixture-team-matchup {
+    position: relative;
+  }
+
+  .ui-fixture-item .ui-fixture-team-names,
+  .ui-fixture-item .ui-fixture-badge-stack {
+    @apply gap-7;
+  }
+
+  .ui-fixture-item .ui-fixture-team-matchup::after {
+    position: absolute;
+    inset-inline: -1rem;
+    top: 50%;
+    border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    content: '';
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
   .ui-knockout-match-content {
     @apply w-full items-stretch;
   }
@@ -1534,15 +1653,21 @@
   }
 
   .ui-button-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-linear-to-r from-green-900 via-green-800 to-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-green-950/15 transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:from-green-800 hover:via-green-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:from-green-800 dark:via-green-700 dark:to-green-500 dark:focus:ring-offset-neutral-950;
+    @apply inline-flex items-center justify-center bg-linear-to-r from-green-900 via-green-800 to-green-600 px-4 py-2 text-sm font-semibold text-white transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:from-green-800 hover:via-green-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:from-green-800 dark:via-green-700 dark:to-green-500 dark:focus:ring-offset-neutral-950;
+    border-radius: var(--ui-radius-pill);
+    box-shadow: var(--ui-shadow-button);
   }
 
   .ui-button-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:hover:bg-neutral-800 dark:focus:ring-offset-neutral-950;
+    @apply inline-flex items-center justify-center border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-[background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-gray-100 dark:hover:bg-neutral-800 dark:focus:ring-offset-neutral-950;
+    border-radius: var(--ui-radius-pill);
+    box-shadow: var(--ui-shadow-button);
   }
 
   .ui-result-button {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap shadow-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-2 px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    border-radius: var(--ui-radius-pill);
+    box-shadow: var(--ui-shadow-button);
   }
 
   .ui-result-button-primary {
@@ -1554,7 +1679,8 @@
   }
 
   .ui-pill {
-    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    @apply inline-flex items-center px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    border-radius: var(--ui-radius-pill);
   }
 
   .ui-pill-success {

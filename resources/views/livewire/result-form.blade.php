@@ -7,14 +7,14 @@
         clientId: @js($clientId),
         collaboratorId: @js(auth()->id()),
         collaboratorName: @js(auth()->user()->name),
-        collaboratorColor: @js(\App\Support\ResultFormCollaboratorColor::forUser((int) auth()->id())),
+        collaboratorColor: @js(\App\Domain\Results\ResultFormCollaboratorColor::forUser((int) auth()->id())),
         formLocked: @js($isLocked),
         formCanEdit: @js($canEdit),
         fixtureId: @js($fixture->getKey()),
         draftVersion: @js($draftVersion),
         isLocked: @js($isLocked),
         collaborators: @js($collaborators),
-        colorPalette: @js(\App\Support\ResultFormCollaboratorColor::palette()),
+        colorPalette: @js(\App\Domain\Results\ResultFormCollaboratorColor::palette()),
     })"
     x-init="init()"
     x-on:result-form-server-synced.window="syncServerResultState($event.detail?.[0] ?? $event.detail); syncSavedDraft($event.detail?.[0] ?? $event.detail)"

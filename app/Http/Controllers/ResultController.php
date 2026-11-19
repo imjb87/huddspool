@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Results\Rendering\ResultOgImageRenderer;
 use App\Models\Fixture;
 use App\Models\Result;
-use App\Support\ResultOgImageRenderer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;

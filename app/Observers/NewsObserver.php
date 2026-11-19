@@ -2,11 +2,11 @@
 
 namespace App\Observers;
 
+use App\Domain\Competition\Cache\CompetitionCacheInvalidator;
+use App\Domain\Notifications\DatabaseNotificationDispatcher;
+use App\Domain\Notifications\NotificationAudienceResolver;
 use App\Models\News;
 use App\Notifications\NewsPublishedNotification;
-use App\Support\CompetitionCacheInvalidator;
-use App\Support\Notifications\DatabaseNotificationDispatcher;
-use App\Support\Notifications\NotificationAudienceResolver;
 
 class NewsObserver
 {

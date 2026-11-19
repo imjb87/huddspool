@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Knockouts\ViewData\KnockoutMatchSummaryRow;
+use App\Domain\Shared\Formatting\OrdinalFormatter;
 use App\Models\Team;
 use App\Queries\GetTeamKnockoutMatches;
-use App\Support\KnockoutMatchSummaryRow;
-use App\Support\OrdinalFormatter;
 use Illuminate\Contracts\View\View;
 
 class TeamController extends Controller
