@@ -71,7 +71,7 @@
 
             @if (! $matchRow->has_bye)
                 @if ($matchRow->match->venue || $matchRow->match->knockout?->type !== \App\KnockoutType::Singles)
-                    <p class="ui-knockout-match-meta mt-1">
+                    <p class="ui-knockout-match-meta">
                         <span>Venue: </span>
                         @if ($matchRow->match->venue)
                             <a href="{{ route('venue.show', $matchRow->match->venue) }}"
