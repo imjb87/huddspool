@@ -1429,13 +1429,22 @@
   .ui-knockout-team-matchup {
     @apply relative flex min-w-0 items-start gap-3.5 py-3.5;
     --ui-match-divider: color-mix(in oklab, var(--border) 70%, transparent);
+  }
+
+  .ui-knockout-team-matchup::before {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc(-1rem - 1px);
     background-image:
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
       linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider));
-    background-position: calc(-1rem - 1px) 0, calc(-1rem - 1px) 50%, calc(-1rem - 1px) 100%;
+    background-position: 0 0, 0 50%, 0 100%;
     background-repeat: no-repeat;
-    background-size: calc(100% + 2rem + 2px) 1px, calc(100% + 2rem + 2px) 1px, calc(100% + 2rem + 2px) 1px;
+    background-size: 100% 1px, 100% 1px, 100% 1px;
+    content: '';
+    pointer-events: none;
+    z-index: 0;
   }
 
   .ui-knockout-team-matchup > * {
