@@ -1402,6 +1402,12 @@
     content: '';
     pointer-events: none;
     transform: translateY(-50%);
+    z-index: 0;
+  }
+
+  .ui-fixture-item .ui-fixture-team-matchup > * {
+    position: relative;
+    z-index: 1;
   }
 
   .ui-knockout-match-content {
