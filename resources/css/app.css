@@ -1145,6 +1145,11 @@
     background-color: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, transparent);
   }
 
+  .ui-fixture-item,
+  .ui-knockout-match-item {
+    --ui-match-surface: color-mix(in oklab, lab(96.52% -0.0000298023 0.0000119209) 50%, var(--background) 50%);
+  }
+
   .dark .ui-live-score-item,
   .dark .ui-fixture-item,
   .dark .ui-average-item,
@@ -1152,6 +1157,11 @@
   .dark .ui-knockout-match-item,
   .dark .ui-knockout-score-item {
     background-color: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, transparent);
+  }
+
+  .dark .ui-fixture-item,
+  .dark .ui-knockout-match-item {
+    --ui-match-surface: color-mix(in oklab, lab(15.204% 0 -0.00000596046) 50%, var(--background) 50%);
   }
 
   @media (hover: hover) {
@@ -1411,11 +1421,25 @@
   }
 
   .ui-knockout-team-matchup {
-    @apply flex min-w-0 items-start gap-3.5;
+    @apply relative flex min-w-0 items-start gap-3.5 border-y border-border/70 py-3.5;
+  }
+
+  .ui-knockout-team-matchup::after {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    content: '';
+    pointer-events: none;
+    transform: translateY(-50%);
   }
 
   .ui-knockout-team-names {
-    @apply flex min-w-0 flex-1 flex-col gap-1;
+    @apply flex min-w-0 flex-1 flex-col gap-7;
+  }
+
+  .ui-knockout-team-matchup .ui-fixture-badge-stack {
+    @apply gap-7;
   }
 
   .ui-knockout-team-name {
@@ -1481,6 +1505,11 @@
 
   .ui-fixture-badge-neutral {
     @apply border-gray-300 bg-transparent text-gray-700;
+  }
+
+  .ui-fixture-item .ui-fixture-badge-neutral,
+  .ui-knockout-match-item .ui-fixture-badge-neutral {
+    background-color: var(--ui-match-surface);
   }
 
   .ui-team-fixture-ready {

@@ -20,14 +20,17 @@
                             <div class="ui-knockout-match-content">
                                 <div class="ui-knockout-match-details">
                                     <div class="h-4 w-24 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                    <div class="mt-2 flex min-w-0 items-start gap-3.5">
-                                        <div class="flex min-w-0 flex-1 flex-col gap-1">
+                                    <div class="ui-knockout-team-matchup mt-2">
+                                        <div class="ui-knockout-team-names">
                                             <div class="h-4 w-40 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                             <div class="h-4 w-36 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
                                         </div>
-                                        <div class="flex shrink-0 flex-col items-end gap-1">
-                                            <div class="h-5 w-9 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
-                                            <div class="h-5 w-9 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+
+                                        <div class="ui-knockout-match-actions">
+                                            <div class="ui-fixture-badge-stack">
+                                                <div class="h-5 w-9 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                                <div class="h-5 w-9 rounded-full bg-gray-200 dark:bg-neutral-800"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="mt-2 flex items-center gap-2">
