@@ -212,7 +212,7 @@
                     <div class="ui-result-total-item" data-result-form-band>
                         <p class="ui-result-frame-label">Match total</p>
 
-                        <div class="ui-fixture-team-matchup">
+                        <div class="ui-result-team-matchup ui-result-team-matchup--no-bottom">
                             <div class="ui-fixture-team-names">
                                 <p class="ui-fixture-team-name">{{ $fixture->homeTeam->name }}</p>
                                 <p class="ui-fixture-team-name">{{ $fixture->awayTeam->name }}</p>
