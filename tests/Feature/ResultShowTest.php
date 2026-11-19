@@ -193,7 +193,9 @@ class ResultShowTest extends TestCase
             ->assertSeeText('Result information')
             ->assertSeeText('Result card')
             ->assertSee('ui-result-player-matchup', false)
+            ->assertSee('ui-result-player-matchup--no-bottom', false)
             ->assertSee('ui-result-team-matchup', false)
+            ->assertSee('ui-result-team-matchup--no-bottom', false)
             ->assertSee('href="'.route('team.show', $homeTeam).'"', false)
             ->assertSee('href="'.route('team.show', $awayTeam).'"', false)
             ->assertViewHas('result', function (Result $viewResult): bool {

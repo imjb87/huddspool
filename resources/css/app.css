@@ -1312,6 +1312,11 @@
     --ui-result-matchup-inset: -0.75rem;
   }
 
+  .ui-result-player-matchup--no-bottom,
+  .ui-result-team-matchup--no-bottom {
+    padding-bottom: 0;
+  }
+
   .ui-result-team-matchup .ui-fixture-team-names,
   .ui-result-team-matchup .ui-fixture-badge-stack {
     @apply gap-7;
@@ -1332,6 +1337,15 @@
     content: '';
     pointer-events: none;
     z-index: 0;
+  }
+
+  .ui-result-player-matchup--no-bottom::before,
+  .ui-result-team-matchup--no-bottom::before {
+    background-image:
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider));
+    background-position: 0 0, 0 calc(50% + 0.4375rem);
+    background-size: 100% 1px, 100% 1px;
   }
 
   .ui-result-player-matchup > *,
