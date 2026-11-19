@@ -52,7 +52,7 @@
                                         <div class="ui-knockout-match-details">
                                             <p class="ui-knockout-match-label">{{ $knockoutRow->meta_label }}</p>
 
-                                            <div class="ui-knockout-team-matchup">
+                                            <div class="ui-knockout-team-matchup ui-knockout-team-matchup--no-meta">
                                                 <div class="ui-knockout-team-names">
                                                     <p class="ui-knockout-team-name">{{ $knockoutRow->home_label }}</p>
                                                     <p class="ui-knockout-team-name">{{ $knockoutRow->away_label }}</p>

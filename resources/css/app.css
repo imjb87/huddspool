@@ -1456,6 +1456,22 @@
     margin-top: 0.875rem;
   }
 
+  .ui-knockout-team-matchup--no-meta {
+    padding-bottom: 0;
+  }
+
+  .ui-knockout-team-matchup--no-meta::before {
+    background-image:
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider)),
+      linear-gradient(to right, var(--ui-match-divider), var(--ui-match-divider));
+    background-position: 0 0, 0 calc(50% + 0.4375rem);
+    background-size: 100% 1px, 100% 1px;
+  }
+
+  .ui-knockout-team-matchup--no-meta .ui-knockout-match-actions {
+    transform: translateY(0.4375rem);
+  }
+
   .ui-knockout-team-names {
     @apply flex min-w-0 flex-1 flex-col gap-7;
   }

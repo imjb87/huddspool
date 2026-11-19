@@ -1,3 +1,7 @@
+@php
+    $hasMatchMetadata = $matchRow->match->venue || $matchRow->match->referee;
+@endphp
+
 <div class="ui-knockout-match-item" data-knockout-match-row data-section-fixtures-band data-slot="item" data-variant="muted" data-size="default">
     <div class="ui-knockout-match-content" data-slot="item-content">
         <div class="ui-knockout-match-details">
@@ -7,7 +11,7 @@
                 </p>
             @endif
 
-            <div class="ui-knockout-team-matchup">
+            <div class="ui-knockout-team-matchup {{ $hasMatchMetadata ? '' : 'ui-knockout-team-matchup--no-meta' }}">
                 <div class="ui-knockout-team-names">
                     @if (count($matchRow->home_parts) > 1 && count($matchRow->away_parts) > 1)
                         <p class="ui-knockout-team-name {{ $matchRow->home_label_classes }}">{{ $matchRow->home_label }}</p>
