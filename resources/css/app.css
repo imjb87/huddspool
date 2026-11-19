@@ -1534,6 +1534,11 @@
     @apply border-neutral-700 bg-transparent text-neutral-200;
   }
 
+  .dark .ui-fixture-item .ui-fixture-badge-neutral,
+  .dark .ui-knockout-match-item .ui-fixture-badge-neutral {
+    background-color: var(--ui-match-surface);
+  }
+
   .dark .ui-team-fixture-ready .ui-fixture-badge-neutral {
     @apply border-amber-800 bg-amber-900/30 text-amber-200;
   }
