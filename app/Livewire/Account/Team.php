@@ -3,11 +3,11 @@
 namespace App\Livewire\Account;
 
 use App\Domain\Fixtures\ViewData\FixtureSummaryRow;
+use App\Domain\Knockouts\Queries\GetTeamKnockoutMatches;
 use App\Domain\Knockouts\ViewData\KnockoutMatchSummaryRow;
 use App\Domain\Shared\Formatting\OrdinalFormatter;
 use App\Enums\PermissionName;
 use App\Models\Fixture;
-use App\Queries\GetTeamKnockoutMatches;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Domain\Fixtures\ViewData\SectionFixturePreviewBuilder;
+use App\Domain\Knockouts\KnockoutBracketBuilder;
 use App\Domain\Knockouts\ViewData\KnockoutMatchVenueOptions;
 use App\Enums\RoleName;
 use App\Filament\Resources\KnockoutResource\Pages\EditKnockout;
@@ -24,7 +25,6 @@ use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
-use App\Services\KnockoutBracketBuilder;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Foundation\Testing\RefreshDatabase;

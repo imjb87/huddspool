@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\KnockoutResource\RelationManagers;
 
+use App\Domain\Knockouts\KnockoutBracketBuilder;
 use App\KnockoutType;
 use App\Models\KnockoutRound;
-use App\Services\KnockoutBracketBuilder;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;

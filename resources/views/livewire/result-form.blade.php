@@ -1,6 +1,7 @@
 <form
     class="space-y-6 lg:contents"
     wire:submit.prevent="submit"
+    x-on:click="handlePlayerPickerClick($event)"
     x-data="window.resultForm({
         componentId: @js($this->getId()),
         channelName: @js($this->broadcastChannelName()),
@@ -15,6 +16,11 @@
         isLocked: @js($isLocked),
         collaborators: @js($collaborators),
         colorPalette: @js(\App\Domain\Results\ResultFormCollaboratorColor::palette()),
+        playerOptions: {
+            home: @js($fixture->homeTeam->players->map(fn ($player) => ['id' => (int) $player->id, 'name' => $player->name, 'avatarUrl' => $player->avatar_url])->values()),
+            away: @js($fixture->awayTeam->players->map(fn ($player) => ['id' => (int) $player->id, 'name' => $player->name, 'avatarUrl' => $player->avatar_url])->values()),
+        },
+        awardedAvatarUrl: @js(asset('/images/user.jpg')),
     })"
     x-init="init()"
     x-on:result-form-server-synced.window="syncServerResultState($event.detail?.[0] ?? $event.detail); syncSavedDraft($event.detail?.[0] ?? $event.detail)"
@@ -260,6 +266,8 @@
             </div>
         </div>
     </section>
+
+    @include('livewire.result-form-partials.player-picker-modal')
 
     @if ($errors->any())
         <div class="mx-auto w-full max-w-4xl" data-result-form-errors>

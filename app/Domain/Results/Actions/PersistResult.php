@@ -116,6 +116,8 @@ final class PersistResult
         $existingFrames = $result->frames()->orderBy('id')->get()->values();
 
         foreach ($frames as $index => $frame) {
+            $frame['home_player_id'] = $frame['home_player_id'] === 0 ? null : $frame['home_player_id'];
+            $frame['away_player_id'] = $frame['away_player_id'] === 0 ? null : $frame['away_player_id'];
             $existingFrame = $existingFrames[$index] ?? null;
 
             if ($existingFrame instanceof Frame) {

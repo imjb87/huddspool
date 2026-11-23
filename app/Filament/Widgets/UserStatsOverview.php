@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Queries\GetOpenSeasonStats;
+use App\Domain\Competition\Queries\GetOpenSeasonStats;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

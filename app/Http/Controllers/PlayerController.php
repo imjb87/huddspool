@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Knockouts\Queries\GetPlayerKnockoutMatches;
 use App\Domain\Knockouts\ViewData\KnockoutMatchSummaryRow;
+use App\Domain\Players\Queries\GetPlayerAverages;
 use App\Http\Requests\UpdatePlayerAvatarRequest;
 use App\Models\Ruleset;
 use App\Models\User;
-use App\Queries\GetPlayerAverages;
-use App\Queries\GetPlayerKnockoutMatches;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

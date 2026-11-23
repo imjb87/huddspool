@@ -3,9 +3,9 @@
 namespace App\Livewire\Player;
 
 use App\Domain\Competition\ViewData\FrameSummaryRow;
+use App\Domain\Players\Queries\GetPlayerFrames;
 use App\Models\Section;
 use App\Models\User;
-use App\Queries\GetPlayerFrames;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;

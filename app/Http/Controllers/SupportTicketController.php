@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Support\SupportTicketService;
 use App\Http\Requests\StoreSupportTicketReplyRequest;
 use App\Http\Requests\StoreSupportTicketRequest;
 use App\Models\SupportTicket;
 use App\Models\User;
-use App\Services\Support\SupportTicketService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

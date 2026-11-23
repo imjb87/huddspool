@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Competition\Queries\GetSectionAverages;
+use App\Domain\Players\Queries\GetPlayerAverages;
 use App\Livewire\SectionAverages;
 use App\Models\Fixture;
 use App\Models\Frame;
@@ -11,8 +13,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Queries\GetPlayerAverages;
-use App\Queries\GetSectionAverages;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;

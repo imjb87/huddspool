@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Support\SupportTicketService;
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
@@ -10,7 +11,6 @@ use App\Notifications\SupportTicketAcknowledgedNotification;
 use App\Notifications\SupportTicketReplyNotification;
 use App\Notifications\SupportTicketSubmittedNotification;
 use App\Notifications\SupportTicketUpdatedNotification;
-use App\Services\Support\SupportTicketService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;

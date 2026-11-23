@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Player;
 
+use App\Domain\Players\Queries\GetPlayerSeasonHistory;
 use App\Models\User;
-use App\Queries\GetPlayerSeasonHistory;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;

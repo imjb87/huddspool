@@ -2,11 +2,11 @@
 
 namespace App\Domain\Support\Actions;
 
+use App\Domain\Support\Notifications\SupportTicketNotificationService;
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
 use App\Models\User;
-use App\Services\Support\SupportTicketNotificationService;
 use Illuminate\Support\Facades\DB;
 
 final class AddSupportTicketReply

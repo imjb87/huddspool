@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Queries\GetSeasonSeriesStats;
+use App\Domain\Competition\Queries\GetSeasonSeriesStats;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Teams\Queries\GetTeamPlayers;
 use App\Enums\UserRole;
 use App\KnockoutType;
 use App\Livewire\Team\FixturesSection;
@@ -20,7 +21,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Queries\GetTeamPlayers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;

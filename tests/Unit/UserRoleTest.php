@@ -3,11 +3,14 @@
 namespace Tests\Unit;
 
 use App\Domain\Authorization\SiteAuthorization;
+use App\Enums\PermissionName;
 use App\Enums\RoleName;
 use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class UserRoleTest extends TestCase
@@ -61,5 +64,20 @@ class UserRoleTest extends TestCase
         $this->assertTrue($user->isTeamAdmin());
         $this->assertFalse($user->isAdmin());
         $this->assertSame('Team Admin', $user->roleLabel());
+    }
+
+    public function test_authorization_defaults_preserve_existing_role_permissions(): void
+    {
+        $role = Role::findByName(RoleName::Admin->value, 'web');
+        $customPermission = Permission::findOrCreate('custom-role.permission', 'web');
+
+        $role->syncPermissions([$customPermission]);
+
+        SiteAuthorization::ensureRolesAndPermissionsExist();
+
+        $role->refresh();
+
+        $this->assertTrue($role->hasPermissionTo($customPermission));
+        $this->assertFalse($role->hasPermissionTo(PermissionName::ManageUsers->value));
     }
 }

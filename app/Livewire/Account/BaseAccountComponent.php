@@ -3,10 +3,10 @@
 namespace App\Livewire\Account;
 
 use App\Domain\Results\ResultSubmissionPromptResolver;
+use App\Domain\Teams\Queries\GetTeamPlayers;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Queries\GetTeamPlayers;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;

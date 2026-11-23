@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Fixture;
 
+use App\Domain\Teams\Queries\GetTeamPlayers;
 use App\Models\Section;
 use App\Models\Team;
-use App\Queries\GetTeamPlayers;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;

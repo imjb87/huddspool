@@ -13,8 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(HuddspoolSeeder::class);
-        $this->call(PageSeeder::class);
+        $this->call([
+            SiteAuthorizationSeeder::class,
+            NotificationSettingsSeeder::class,
+            HuddspoolSeeder::class,
+            PageSeeder::class,
+        ]);
 
         User::factory()->admin()->create([
             'name' => 'John Bell',

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Competition\Queries\GetOpenSeasonStats;
+use App\Domain\Competition\Queries\GetSeasonSeriesStats;
 use App\Filament\Widgets\UserStatsOverview;
 use App\Models\Fixture;
 use App\Models\Frame;
@@ -11,8 +13,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Queries\GetOpenSeasonStats;
-use App\Queries\GetSeasonSeriesStats;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;

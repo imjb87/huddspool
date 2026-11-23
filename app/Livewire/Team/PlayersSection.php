@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Team;
 
+use App\Domain\Teams\Queries\GetTeamPlayers;
 use App\Models\Section;
 use App\Models\Team;
-use App\Queries\GetTeamPlayers;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Collection;

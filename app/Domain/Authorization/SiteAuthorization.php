@@ -102,8 +102,14 @@ final class SiteAuthorization
         }
 
         foreach (self::roles() as $roleName) {
-            $role = Role::findOrCreate($roleName->value, 'web');
-            $role->syncPermissions(Arr::get(self::permissionMap(), $roleName->value, []));
+            $role = Role::query()->firstOrCreate([
+                'name' => $roleName->value,
+                'guard_name' => 'web',
+            ]);
+
+            if ($role->wasRecentlyCreated) {
+                $role->syncPermissions(Arr::get(self::permissionMap(), $roleName->value, []));
+            }
         }
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();

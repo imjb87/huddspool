@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Players\Queries\GetPlayerSeasonHistory;
 use App\KnockoutType;
 use App\Livewire\Player\FramesSection;
 use App\Livewire\Player\HistorySection;
@@ -18,7 +19,6 @@ use App\Models\Season;
 use App\Models\Section;
 use App\Models\Team;
 use App\Models\User;
-use App\Queries\GetPlayerSeasonHistory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;

@@ -179,6 +179,7 @@ const resultFormCollaboration = ({
             this.formCanEdit = Boolean(payload.canEdit);
         }
 
+        this.syncPlayerPickerSelections();
         this.queueFieldLockDomSync();
     },
     queueFieldLockDomSync() {
@@ -306,6 +307,7 @@ const resultFormCollaboration = ({
         if (window.Livewire?.hook) {
             this.livewireFieldLockHookCleanup = window.Livewire.hook('morph.updated', ({ component }) => {
                 if (component?.id === componentId) {
+                    this.syncPlayerPickerSelections();
                     this.queueFieldLockDomSync();
                 }
             });
@@ -1185,6 +1187,238 @@ const resultFormRecovery = ({ componentId, fixtureId, draftVersion, isLocked }) 
     },
 });
 
+const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatarUrl }) => ({
+    playerOptions,
+    awardedAvatarUrl,
+    playerPickerSelections: {},
+    playerPickerOpen: false,
+    playerPickerSearch: '',
+    playerPickerFieldKey: null,
+    playerPickerFrameNumber: null,
+    playerPickerSide: null,
+    playerPickerSelectedId: '',
+    playerPickerReturnFocus: null,
+    playerPickerListId() {
+        return `${componentId}-player-picker-options`;
+    },
+    filteredPlayerPickerPlayers() {
+        const players = [
+            { id: 0, name: 'Awarded', avatarUrl: awardedAvatarUrl, isAwarded: true },
+            ...(this.playerOptions[this.playerPickerSide] ?? []),
+        ];
+        const search = this.playerPickerSearch.trim().toLowerCase();
+
+        if (!search) {
+            return players;
+        }
+
+        return players.filter((player) => player.name.toLowerCase().includes(search));
+    },
+    playerPickerInput() {
+        if (!this.playerPickerFrameNumber || !['home', 'away'].includes(this.playerPickerSide)) {
+            return null;
+        }
+
+        return this.$el.querySelector(
+            `select[data-result-frame-field][data-frame-number="${this.playerPickerFrameNumber}"][data-frame-side="${this.playerPickerSide}"][data-frame-value="player"]`,
+        );
+    },
+    syncPlayerPickerSelections() {
+        if (!this.$el?.querySelectorAll) {
+            return;
+        }
+
+        const selections = {};
+
+        this.$el.querySelectorAll('select[data-result-frame-field][data-frame-value="player"]').forEach((select) => {
+            const fieldKey = select.dataset.resultFieldKey;
+
+            if (fieldKey) {
+                selections[fieldKey] = select.value;
+            }
+        });
+
+        this.playerPickerSelections = selections;
+    },
+    syncPlayerPickerSelection(event) {
+        const select = event.currentTarget;
+        const fieldKey = select?.dataset?.resultFieldKey;
+
+        if (fieldKey) {
+            this.playerPickerSelections[fieldKey] = select.value;
+        }
+    },
+    syncOpposingPlayerPickerSelection(select) {
+        const frameNumber = select?.dataset?.frameNumber;
+        const side = select?.dataset?.frameSide;
+
+        if (!frameNumber || !['home', 'away'].includes(side)) {
+            return;
+        }
+
+        const opposingSide = side === 'home' ? 'away' : 'home';
+        const opposingSelect = this.$el.querySelector(
+            `select[data-result-frame-field][data-frame-number="${frameNumber}"][data-frame-side="${opposingSide}"][data-frame-value="player"]`,
+        );
+
+        if (!opposingSelect) {
+            return;
+        }
+
+        if (select.value === '0') {
+            opposingSelect.value = '0';
+        } else if (opposingSelect.value === '0') {
+            opposingSelect.value = '';
+        }
+
+        this.syncPlayerPickerSelection({ currentTarget: opposingSelect });
+    },
+    playerPickerSelection(fieldKey) {
+        const selectedId = String(this.playerPickerSelections[fieldKey] ?? '');
+
+        if (!selectedId) {
+            return null;
+        }
+
+        if (selectedId === '0') {
+            return { name: 'Awarded', avatarUrl: this.awardedAvatarUrl };
+        }
+
+        const side = fieldKey.endsWith('.home_player_id') ? 'home' : 'away';
+
+        return (this.playerOptions[side] ?? []).find((player) => String(player.id) === selectedId) ?? null;
+    },
+    playerPickerSelectionLabel(fieldKey) {
+        return this.playerPickerSelection(fieldKey)?.name ?? 'Select player...';
+    },
+    playerPickerSelectionAvatar(fieldKey) {
+        return this.playerPickerSelection(fieldKey)?.avatarUrl ?? null;
+    },
+    handlePlayerPickerClick(event) {
+        const action = event.target.closest?.('[data-result-player-picker-action]');
+
+        if (!action || !this.$el.contains(action)) {
+            return;
+        }
+
+        switch (action.dataset.resultPlayerPickerAction) {
+            case 'open':
+                this.openPlayerPicker(
+                    action.dataset.resultFieldKey,
+                    action.dataset.frameNumber,
+                    action.dataset.playerSide,
+                    { currentTarget: action },
+                );
+                break;
+            case 'select':
+                this.selectPlayer(action.dataset.playerId);
+                break;
+            case 'clear':
+                this.clearPlayerPickerSelection();
+                break;
+            case 'close':
+                this.closePlayerPicker();
+                break;
+            default:
+                break;
+        }
+    },
+    openPlayerPicker(fieldKey, frameNumber, side, event) {
+        const select = this.$el.querySelector(
+            `select[data-result-frame-field][data-frame-number="${frameNumber}"][data-frame-side="${side}"][data-frame-value="player"]`,
+        );
+
+        if (!select || select.disabled || this.isResultFieldDisabled(fieldKey) || this.formLocked || !this.formCanEdit) {
+            return;
+        }
+
+        this.playerPickerFieldKey = fieldKey;
+        this.playerPickerFrameNumber = Number(frameNumber);
+        this.playerPickerSide = side;
+        this.playerPickerSelectedId = select.value;
+        this.playerPickerSearch = '';
+        this.playerPickerReturnFocus = event?.currentTarget ?? null;
+        this.playerPickerOpen = true;
+
+        this.$nextTick(() => this.$refs.playerPickerSearch?.focus());
+    },
+    playerPickerIsDisabled() {
+        return !this.playerPickerFieldKey
+            || this.formLocked
+            || !this.formCanEdit
+            || this.isResultFieldDisabled(this.playerPickerFieldKey);
+    },
+    selectPlayer(playerId) {
+        const select = this.playerPickerInput();
+
+        if (!select || select.disabled || this.playerPickerIsDisabled()) {
+            return;
+        }
+
+        select.value = playerId === null ? '' : String(playerId);
+        this.syncPlayerPickerSelection({ currentTarget: select });
+        this.syncOpposingPlayerPickerSelection(select);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        this.closePlayerPicker();
+    },
+    clearPlayerPickerSelection() {
+        this.selectPlayer(null);
+    },
+    closePlayerPicker() {
+        if (!this.playerPickerOpen) {
+            return;
+        }
+
+        const fieldKey = this.playerPickerFieldKey;
+        const returnFocus = this.playerPickerReturnFocus;
+
+        this.playerPickerOpen = false;
+        this.playerPickerSearch = '';
+        this.playerPickerFieldKey = null;
+        this.playerPickerFrameNumber = null;
+        this.playerPickerSide = null;
+        this.playerPickerSelectedId = '';
+        this.playerPickerReturnFocus = null;
+
+        this.$nextTick(() => {
+            const trigger = returnFocus?.isConnected
+                ? returnFocus
+                : this.$el.querySelector(`[data-player-picker-trigger][data-result-field-key="${fieldKey}"]`);
+
+            trigger?.focus({ preventScroll: true });
+        });
+    },
+    focusFirstPlayerPickerOption() {
+        this.$refs.playerPickerOptions?.querySelector('[data-result-player-option]:not(:disabled)')?.focus();
+    },
+    trapPlayerPickerFocus(event) {
+        if (!this.playerPickerOpen || event.key !== 'Tab') {
+            return;
+        }
+
+        const focusableElements = Array.from(this.$refs.playerPickerDialog?.querySelectorAll(
+            'button:not(:disabled), input:not(:disabled)',
+        ) ?? []);
+
+        if (focusableElements.length === 0) {
+            event.preventDefault();
+
+            return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements.at(-1);
+
+        if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+        }
+    },
+});
+
 window.resultForm = ({
     componentId,
     channelName,
@@ -1199,6 +1433,8 @@ window.resultForm = ({
     isLocked,
     collaborators = [],
     colorPalette = [],
+    playerOptions = {},
+    awardedAvatarUrl,
 }) => ({
     ...resultFormCollaboration({
         componentId,
@@ -1217,9 +1453,15 @@ window.resultForm = ({
         draftVersion,
         isLocked,
     }),
+    ...resultFormPlayerPicker({
+        componentId,
+        playerOptions,
+        awardedAvatarUrl,
+    }),
     init() {
         this.initEditors();
         this.initRecovery();
+        this.syncPlayerPickerSelections();
 
         return this.initCollaboration();
     },

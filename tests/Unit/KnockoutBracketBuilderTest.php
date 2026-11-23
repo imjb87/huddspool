@@ -2,13 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Domain\Knockouts\KnockoutBracketBuilder;
 use App\KnockoutType;
 use App\Models\Knockout;
 use App\Models\KnockoutMatch;
 use App\Models\KnockoutParticipant;
 use App\Models\KnockoutRound;
 use App\Models\Season;
-use App\Services\KnockoutBracketBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Support\Actions;
 
+use App\Domain\Support\Notifications\SupportTicketNotificationService;
 use App\Models\SupportTicket;
 use App\Models\User;
-use App\Services\Support\SupportTicketNotificationService;
 use BackedEnum;
 use Illuminate\Support\Facades\DB;
 

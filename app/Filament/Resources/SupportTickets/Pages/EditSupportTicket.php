@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\SupportTickets\Pages;
 
+use App\Domain\Support\SupportTicketService;
 use App\Filament\Resources\SupportTickets\SupportTicketResource;
 use App\Models\SupportTicket;
 use App\Models\User;
-use App\Services\Support\SupportTicketService;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;

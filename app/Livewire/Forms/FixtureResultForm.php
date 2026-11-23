@@ -31,6 +31,7 @@ class FixtureResultForm extends Form
 
     public function updatedFrames($value, $key): void
     {
+        $this->syncOpposingAwardedPlayer($value, $key);
         $this->syncOpposingFrameScore($value, $key);
         $this->recalculateScores();
     }
@@ -196,6 +197,27 @@ class FixtureResultForm extends Form
         $opposingSide = $matches['side'] === 'home' ? 'away' : 'home';
 
         $this->frames[$frameNumber]["{$opposingSide}_score"] = 0;
+    }
+
+    private function syncOpposingAwardedPlayer(mixed $value, mixed $key): void
+    {
+        if (! is_string($key) || ! preg_match('/^(?<frame>\d+)\.(?<side>home|away)_player_id$/', $key, $matches)) {
+            return;
+        }
+
+        $frameNumber = (int) $matches['frame'];
+        $opposingSide = $matches['side'] === 'home' ? 'away' : 'home';
+        $opposingPlayerKey = "{$opposingSide}_player_id";
+
+        if (in_array($value, [0, '0'], true)) {
+            $this->frames[$frameNumber][$opposingPlayerKey] = 0;
+
+            return;
+        }
+
+        if (in_array($this->frames[$frameNumber][$opposingPlayerKey] ?? null, [0, '0'], true)) {
+            $this->frames[$frameNumber][$opposingPlayerKey] = null;
+        }
     }
 
     private function recalculateScores(): void

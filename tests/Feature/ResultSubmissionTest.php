@@ -45,6 +45,8 @@ class ResultSubmissionTest extends TestCase
         [
             'fixture' => $fixture,
             'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
         ] = $this->createResultFormLockContext();
 
         $this->actingAs($teamAdmin)
@@ -54,6 +56,12 @@ class ResultSubmissionTest extends TestCase
             ->assertSee('data-result-create-info-section', false)
             ->assertSee('data-result-create-form-section', false)
             ->assertSee('data-result-form', false)
+            ->assertSee('data-result-player-picker-dialog', false)
+            ->assertSee('data-result-player-picker-shell', false)
+            ->assertSee('data-result-player-picker-search', false)
+            ->assertSee('data-result-player-picker-close', false)
+            ->assertSee('data-result-player-picker-clear', false)
+            ->assertSee('data-player-picker-trigger', false)
             ->assertSee('data-result-form-shell', false)
             ->assertSee('data-result-form-frames', false)
             ->assertSee('data-result-form-connection-status', false)
@@ -83,9 +91,14 @@ class ResultSubmissionTest extends TestCase
             ->assertSeeText('Enter result')
             ->assertSeeText('Live updates connected')
             ->assertSee($teamAdmin->avatar_url, false)
+            ->assertSee($homePlayers[0]->avatar_url, false)
+            ->assertSee($awayPlayers[0]->avatar_url, false)
+            ->assertSeeText('Clear selection')
             ->assertSeeText($teamAdmin->name)
             ->assertSee('data-result-field-key="1.home_player_id"', false)
             ->assertSee('data-result-field-key="1.away_player_id"', false)
+            ->assertSee('wire:model.live="form.frames.1.home_player_id"', false)
+            ->assertSee('wire:model.live="form.frames.1.away_player_id"', false)
             ->assertSee('type="radio"', false)
             ->assertSee('name="frame-1-winner"', false)
             ->assertSee("wire:click.prevent=\"toggleFrameScore(1, 'home')\"", false)
@@ -176,6 +189,59 @@ class ResultSubmissionTest extends TestCase
         $component->assertSet('form.awayScore', 0);
 
         Carbon::setTestNow();
+    }
+
+    public function test_selecting_awarded_pairs_the_opposing_player_and_clears_it_when_replaced(): void
+    {
+        [
+            'fixture' => $fixture,
+            'primaryAdmin' => $teamAdmin,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+        ] = $this->createResultFormLockContext();
+
+        $component = Livewire::actingAs($teamAdmin)
+            ->test(ResultForm::class, ['fixture' => $fixture]);
+
+        $component->set('form.frames.1.home_player_id', '0')
+            ->assertSet('form.frames.1.home_player_id', 0)
+            ->assertSet('form.frames.1.away_player_id', 0);
+
+        $result = Result::query()->where('fixture_id', $fixture->id)->firstOrFail();
+
+        $this->assertSame(0, data_get($result->draft_state, '1.home_player_id'));
+        $this->assertSame(0, data_get($result->draft_state, '1.away_player_id'));
+
+        $component->call('toggleFrameScore', 1, 'home');
+
+        $result->refresh();
+
+        $this->assertDatabaseHas('frames', [
+            'result_id' => $result->id,
+            'home_player_id' => null,
+            'home_score' => 1,
+            'away_player_id' => null,
+            'away_score' => 0,
+        ]);
+        $this->assertSame(0, data_get($result->draft_state, '1.home_player_id'));
+        $this->assertSame(0, data_get($result->draft_state, '1.away_player_id'));
+
+        $component->set('form.frames.1.home_player_id', (string) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.home_player_id', (int) $homePlayers[0]->id)
+            ->assertSet('form.frames.1.away_player_id', null);
+
+        $result->refresh();
+
+        $this->assertSame((int) $homePlayers[0]->id, data_get($result->draft_state, '1.home_player_id'));
+        $this->assertNull(data_get($result->draft_state, '1.away_player_id'));
+
+        $component->set('form.frames.2.away_player_id', '0')
+            ->assertSet('form.frames.2.away_player_id', 0)
+            ->assertSet('form.frames.2.home_player_id', 0);
+
+        $component->set('form.frames.2.away_player_id', (string) $awayPlayers[0]->id)
+            ->assertSet('form.frames.2.away_player_id', (int) $awayPlayers[0]->id)
+            ->assertSet('form.frames.2.home_player_id', null);
     }
 
     public function test_locking_result_requires_all_frames_and_confirms_result(): void
