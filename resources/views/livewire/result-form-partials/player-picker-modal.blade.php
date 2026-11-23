@@ -5,7 +5,8 @@
     x-on:keydown.tab="trapPlayerPickerFocus($event)"
     :aria-hidden="!playerPickerOpen"
     :inert="!playerPickerOpen"
-    class="fixed inset-0 z-[70] flex items-stretch justify-center sm:items-center sm:p-4"
+    class="fixed inset-x-0 top-0 z-[70] flex items-stretch justify-center sm:items-center sm:p-4"
+    x-bind:style="playerPickerViewportStyle"
     role="dialog"
     aria-modal="true"
     aria-labelledby="result-player-picker-title"
@@ -13,6 +14,13 @@
 >
     <div
         class="absolute inset-0 bg-black/20 transition-opacity dark:bg-black/60"
+        x-show="playerPickerOpen"
+        x-transition:enter="ui-motion-fade-in"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ui-motion-fade-out"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         aria-hidden="true"
         data-result-player-picker-action="close"
     ></div>
@@ -21,7 +29,7 @@
         x-ref="playerPickerDialog"
         x-show="playerPickerOpen"
         x-transition:enter="ui-motion-search-shell-in"
-        x-transition:leave="ui-motion-search-shell-out"
+        x-transition:leave="ui-motion-player-picker-shell-out"
         class="relative z-10 flex h-full w-full flex-col overflow-hidden bg-background text-foreground sm:h-[36rem] sm:max-h-[calc(100dvh-2rem)] sm:max-w-lg sm:rounded-xl sm:border sm:border-border/70 sm:bg-card sm:text-card-foreground sm:shadow-2xl sm:ring-1 sm:ring-foreground/10"
         data-result-player-picker-shell
     >

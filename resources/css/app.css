@@ -437,6 +437,12 @@
     backface-visibility: hidden;
   }
 
+  .ui-motion-player-picker-shell-out {
+    animation: ui-mobile-menu-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
   @media (min-width: 40rem) {
     .ui-motion-search-shell-in {
       animation: ui-search-shell-enter var(--motion-duration-popover) var(--motion-ease-spring) both;
@@ -444,6 +450,11 @@
     }
 
     .ui-motion-search-shell-out {
+      animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-in) both;
+      will-change: transform, opacity;
+    }
+
+    .ui-motion-player-picker-shell-out {
       animation: ui-search-shell-leave var(--motion-duration-normal) var(--motion-ease-in) both;
       will-change: transform, opacity;
     }

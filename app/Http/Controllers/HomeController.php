@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Results\ResultFrameState;
 use App\Models\News;
 use App\Models\Result;
 use App\Models\Season;
@@ -51,6 +52,7 @@ class HomeController extends Controller
                 'fixture.homeTeam:id,name,shortname',
                 'fixture.awayTeam:id,name,shortname',
                 'section.ruleset',
+                'frames' => fn ($query) => $query->orderBy('id'),
             ])
             ->inOpenSeason()
             ->where('is_confirmed', false)
@@ -58,6 +60,7 @@ class HomeController extends Controller
             ->whereHas('fixture.awayTeam', fn (Builder $query) => $query->notBye())
             ->orderByDesc('updated_at')
             ->get()
+            ->filter(fn (Result $result): bool => $this->hasLiveActivity($result))
             ->map(function (Result $result) use ($user) {
                 $result->home_team_shortname = $result->fixture?->homeTeam?->shortname;
                 $result->away_team_shortname = $result->fixture?->awayTeam?->shortname;
@@ -66,6 +69,20 @@ class HomeController extends Controller
 
                 return $result;
             });
+    }
+
+    private function hasLiveActivity(Result $result): bool
+    {
+        if ($result->home_score > 0 || $result->away_score > 0) {
+            return true;
+        }
+
+        $frames = ResultFrameState::merge(
+            ResultFrameState::fromPersistedFrames($result->frames),
+            is_array($result->draft_state) ? $result->draft_state : [],
+        );
+
+        return ! ResultFrameState::isEmpty($frames);
     }
 
     private function liveScoreUrlFor(Result $result, ?User $user): string

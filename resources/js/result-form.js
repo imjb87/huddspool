@@ -725,6 +725,7 @@ const resultFormCollaboration = ({
         channel.listenForWhisper('result-field-lock-sync-request', () => this.broadcastActiveResultFieldLock());
     },
     destroy() {
+        this.stopPlayerPickerViewportSync();
         this.stopResultFieldLockRenewal();
 
         if (this.connectionStateTimeoutId) {
@@ -1198,8 +1199,58 @@ const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatar
     playerPickerSide: null,
     playerPickerSelectedId: '',
     playerPickerReturnFocus: null,
+    playerPickerViewportStyle: '',
+    playerPickerViewportFrameId: null,
+    playerPickerViewportHandler: null,
     playerPickerListId() {
         return `${componentId}-player-picker-options`;
+    },
+    syncPlayerPickerViewport() {
+        const viewport = window.visualViewport;
+        const top = viewport?.offsetTop ?? 0;
+        const height = viewport?.height ?? window.innerHeight;
+
+        this.playerPickerViewportStyle = `top: ${top}px; height: ${Math.max(0, height)}px;`;
+    },
+    schedulePlayerPickerViewportSync() {
+        if (this.playerPickerViewportFrameId !== null) {
+            window.cancelAnimationFrame(this.playerPickerViewportFrameId);
+        }
+
+        this.playerPickerViewportFrameId = window.requestAnimationFrame(() => {
+            this.playerPickerViewportFrameId = null;
+            this.syncPlayerPickerViewport();
+        });
+    },
+    startPlayerPickerViewportSync() {
+        if (this.playerPickerViewportHandler) {
+            return;
+        }
+
+        this.syncPlayerPickerViewport();
+        this.playerPickerViewportHandler = () => this.schedulePlayerPickerViewportSync();
+
+        window.visualViewport?.addEventListener('resize', this.playerPickerViewportHandler);
+        window.visualViewport?.addEventListener('scroll', this.playerPickerViewportHandler);
+        window.addEventListener('resize', this.playerPickerViewportHandler);
+    },
+    stopPlayerPickerViewportSync() {
+        if (this.playerPickerViewportFrameId !== null) {
+            window.cancelAnimationFrame(this.playerPickerViewportFrameId);
+            this.playerPickerViewportFrameId = null;
+        }
+
+        if (!this.playerPickerViewportHandler) {
+            this.playerPickerViewportStyle = '';
+
+            return;
+        }
+
+        window.visualViewport?.removeEventListener('resize', this.playerPickerViewportHandler);
+        window.visualViewport?.removeEventListener('scroll', this.playerPickerViewportHandler);
+        window.removeEventListener('resize', this.playerPickerViewportHandler);
+        this.playerPickerViewportHandler = null;
+        this.playerPickerViewportStyle = '';
     },
     filteredPlayerPickerPlayers() {
         const players = [
@@ -1338,6 +1389,7 @@ const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatar
         this.playerPickerSelectedId = select.value;
         this.playerPickerSearch = '';
         this.playerPickerReturnFocus = event?.currentTarget ?? null;
+        this.startPlayerPickerViewportSync();
         this.playerPickerOpen = true;
 
         this.$nextTick(() => this.$refs.playerPickerSearch?.focus());
@@ -1379,6 +1431,7 @@ const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatar
         this.playerPickerSide = null;
         this.playerPickerSelectedId = '';
         this.playerPickerReturnFocus = null;
+        this.stopPlayerPickerViewportSync();
 
         this.$nextTick(() => {
             const trigger = returnFocus?.isConnected
