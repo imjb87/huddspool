@@ -210,6 +210,21 @@ class FixtureShowTest extends TestCase
             'fixture_date' => now()->subDay(),
         ]);
 
+        Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'home_score' => 0,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $teamAdmin->id,
+            'is_confirmed' => false,
+            'draft_state' => null,
+        ]);
+
         $this->actingAs($teamAdmin)
             ->get(route('fixture.show', $fixture))
             ->assertOk()

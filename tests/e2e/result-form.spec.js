@@ -97,7 +97,13 @@ test('player picker searches, selects and clears players on desktop and mobile',
         expect(arrowToScoreSpacing).toBeGreaterThanOrEqual(8);
         expect(scoreCursor).toBe('pointer');
 
-        await homeTrigger.click();
+        const pickerTriggerForClose = viewport.width >= 640
+            ? page.locator('[data-player-picker-trigger]').last()
+            : homeTrigger;
+
+        await pickerTriggerForClose.scrollIntoViewIfNeeded();
+        const scrollPositionBeforeOpen = await page.evaluate(() => window.scrollY);
+        await pickerTriggerForClose.click();
         await expect(dialog).toBeVisible();
 
         const shellBounds = await shell.boundingBox();
@@ -107,8 +113,20 @@ test('player picker searches, selects and clears players on desktop and mobile',
             expect(shellBounds.width).toBeLessThanOrEqual(520);
         }
 
+        const viewportStyle = await dialog.evaluate((element) => ({
+            top: element.style.top,
+            height: element.style.height,
+        }));
+        expect(viewport.width < 640 || scrollPositionBeforeOpen > 0).toBe(true);
+        const scrollPositionBeforeClose = await page.evaluate(() => window.scrollY);
+
         await dialog.getByRole('button', { name: 'Close player selection' }).click();
         await expect(dialog).toBeHidden();
+        expect(await dialog.evaluate((element) => ({
+            top: element.style.top,
+            height: element.style.height,
+        }))).toEqual(viewportStyle);
+        expect(await page.evaluate(() => window.scrollY)).toBe(scrollPositionBeforeClose);
 
         await homeTrigger.click();
         await expect(dialog).toBeVisible();

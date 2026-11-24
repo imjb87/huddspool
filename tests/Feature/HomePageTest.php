@@ -290,7 +290,7 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('No live scores to show right now.');
     }
 
-    public function test_empty_drafts_are_hidden_from_public_live_scores_but_available_to_authorized_admins(): void
+    public function test_empty_drafts_are_hidden_from_homepage_live_scores_for_everyone(): void
     {
         $data = $this->createLiveScoreFixtureData();
 
@@ -318,9 +318,9 @@ class HomePageTest extends TestCase
         $this->actingAs($admin)
             ->get(route('home'))
             ->assertOk()
-            ->assertSee('data-home-live-score-key="'.$result->id.'"', false)
-            ->assertSee('href="'.route('result.create', $data['fixture']).'"', false)
-            ->assertDontSee('href="'.route('result.show', $result).'"', false);
+            ->assertDontSee('data-home-live-score-key="'.$result->id.'"', false)
+            ->assertDontSee('href="'.route('result.create', $data['fixture']).'"', false)
+            ->assertSeeText('No live scores to show right now.');
     }
 
     public function test_home_page_links_team_admin_to_resume_in_progress_match(): void

@@ -165,14 +165,15 @@ class ResultAuthorizationTest extends TestCase
             'fixture_id' => $fixture->id,
             'home_team_id' => $homeTeam->id,
             'home_team_name' => $homeTeam->name,
-            'home_score' => 3,
+            'home_score' => 0,
             'away_team_id' => $awayTeam->id,
             'away_team_name' => $awayTeam->name,
-            'away_score' => 2,
+            'away_score' => 0,
             'section_id' => $section->id,
             'ruleset_id' => $ruleset->id,
             'submitted_by' => $teamAdmin->id,
             'is_confirmed' => false,
+            'draft_state' => null,
         ]);
 
         $this->actingAs($siteAdmin)
@@ -195,14 +196,15 @@ class ResultAuthorizationTest extends TestCase
             'fixture_id' => $fixture->id,
             'home_team_id' => $homeTeam->id,
             'home_team_name' => $homeTeam->name,
-            'home_score' => 4,
+            'home_score' => 0,
             'away_team_id' => $awayTeam->id,
             'away_team_name' => $awayTeam->name,
-            'away_score' => 3,
+            'away_score' => 0,
             'section_id' => $section->id,
             'ruleset_id' => $ruleset->id,
             'submitted_by' => $teamAdmin->id,
             'is_confirmed' => false,
+            'draft_state' => null,
         ]);
 
         $this->actingAs($siteAdmin)

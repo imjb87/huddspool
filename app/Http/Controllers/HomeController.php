@@ -60,7 +60,7 @@ class HomeController extends Controller
             ->whereHas('fixture.awayTeam', fn (Builder $query) => $query->notBye())
             ->orderByDesc('updated_at')
             ->get()
-            ->filter(fn (Result $result): bool => $this->hasLiveActivity($result) || $this->canResumeSubmission($result, $user))
+            ->filter(fn (Result $result): bool => $this->hasLiveActivity($result))
             ->map(function (Result $result) use ($user) {
                 $result->home_team_shortname = $result->fixture?->homeTeam?->shortname;
                 $result->away_team_shortname = $result->fixture?->awayTeam?->shortname;

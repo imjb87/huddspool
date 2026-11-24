@@ -1241,8 +1241,6 @@ const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatar
         }
 
         if (!this.playerPickerViewportHandler) {
-            this.playerPickerViewportStyle = '';
-
             return;
         }
 
@@ -1250,7 +1248,6 @@ const resultFormPlayerPicker = ({ componentId, playerOptions = {}, awardedAvatar
         window.visualViewport?.removeEventListener('scroll', this.playerPickerViewportHandler);
         window.removeEventListener('resize', this.playerPickerViewportHandler);
         this.playerPickerViewportHandler = null;
-        this.playerPickerViewportStyle = '';
     },
     filteredPlayerPickerPlayers() {
         const players = [
