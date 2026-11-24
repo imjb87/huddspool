@@ -117,7 +117,7 @@ class HomePageTest extends TestCase
         $response->assertSeeText('No league news has been published yet.');
         $response->assertSee('data-section-sponsors', false);
         $response->assertSee('data-section-sponsors-carousel', false);
-        $response->assertSee('x-data="window.sponsorCarousel(6, 3)"', false);
+        $response->assertSee('x-data="window.sponsorCarousel(5, 3)"', false);
         $response->assertSee('x-on:touchstart.passive="handleTouchStart($event)"', false);
         $response->assertSee('x-on:touchend.passive="handleTouchEnd($event)"', false);
         $response->assertSee('x-on:click.capture="handleSwipeClick($event)"', false);
@@ -139,7 +139,8 @@ class HomePageTest extends TestCase
         $response->assertSeeText('Backing the league every week');
         $response->assertSeeText('Meet the local businesses helping keep league nights running.');
         $response->assertSee(asset('images/sponsors/nrkfabrication-logo-160.webp').'?v=', false);
-        $response->assertSee(asset('images/sponsors/ukplasticsandglazing-logo-160.webp').'?v=', false);
+        $response->assertDontSeeText('UK Plastics & Glazing Ltd');
+        $response->assertDontSee('ukplasticsandglazing-logo', false);
         $response->assertSee(asset('images/sponsors/thepooltableguru-160.webp').'?v=', false);
         $response->assertSee('loading="lazy"', false);
         $response->assertSee('decoding="async"', false);

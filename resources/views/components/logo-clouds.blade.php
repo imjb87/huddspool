@@ -52,18 +52,6 @@
             'height' => 120,
             'alt' => '',
         ],
-        [
-            'name' => 'UK Plastics & Glazing Ltd',
-            'url' => 'https://www.facebook.com/ukplasticsandglazingltd',
-            'image' => asset('images/sponsors/ukplasticsandglazing-logo-320.jpeg') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-320.jpeg')),
-            'image_160' => asset('images/sponsors/ukplasticsandglazing-logo-160.jpeg') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-160.jpeg')),
-            'webp_160' => asset('images/sponsors/ukplasticsandglazing-logo-160.webp') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-160.webp')),
-            'webp_320' => asset('images/sponsors/ukplasticsandglazing-logo-320.webp') . '?v=' . filemtime(public_path('images/sponsors/ukplasticsandglazing-logo-320.webp')),
-            'width' => 160,
-            'height' => 86,
-            'alt' => '',
-            'sizes' => '(min-width: 1024px) 130px, (min-width: 640px) 120px, 96px',
-        ],
     ];
 
     $sponsorCarouselCloneCount = min(3, count($sponsors));

@@ -578,7 +578,7 @@ class RulesetHubPageTest extends TestCase
         $tablesResponse->assertSee('mx-auto max-w-4xl px-4 sm:px-6 lg:px-6', false);
         $tablesResponse->assertSee('ui-shell-grid', false);
         $tablesResponse->assertSee('ui-card', false);
-        $this->assertSame(6, substr_count($tablesResponse->getContent(), 'data-section-sponsors-card'));
+        $this->assertSame(5, substr_count($tablesResponse->getContent(), 'data-section-sponsors-card'));
         $tablesResponse->assertSeeText('Backing the league every week');
         $tablesResponse->assertSee('ui-shell-grid', false);
         $tablesResponse->assertSeeText('Standings');
