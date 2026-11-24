@@ -290,6 +290,39 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('No live scores to show right now.');
     }
 
+    public function test_empty_drafts_are_hidden_from_public_live_scores_but_available_to_authorized_admins(): void
+    {
+        $data = $this->createLiveScoreFixtureData();
+
+        $result = Result::factory()->create([
+            'fixture_id' => $data['fixture']->id,
+            'home_team_id' => $data['homeTeam']->id,
+            'home_team_name' => $data['homeTeam']->name,
+            'home_score' => 0,
+            'away_team_id' => $data['awayTeam']->id,
+            'away_team_name' => $data['awayTeam']->name,
+            'away_score' => 0,
+            'is_confirmed' => false,
+            'section_id' => $data['section']->id,
+            'ruleset_id' => $data['ruleset']->id,
+            'draft_state' => null,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('data-home-live-score-key="'.$result->id.'"', false)
+            ->assertSeeText('No live scores to show right now.');
+
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-home-live-score-key="'.$result->id.'"', false)
+            ->assertSee('href="'.route('result.create', $data['fixture']).'"', false)
+            ->assertDontSee('href="'.route('result.show', $result).'"', false);
+    }
+
     public function test_home_page_links_team_admin_to_resume_in_progress_match(): void
     {
         $data = $this->createLiveScoreFixtureData();

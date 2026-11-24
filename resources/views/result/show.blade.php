@@ -64,6 +64,16 @@
             </div>
         </div>
 
+        @can('resumeSubmission', $result)
+            @if (! $result->is_confirmed)
+                <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6" data-result-resume-submission>
+                    <x-ui-button href="{{ route('result.create', $fixture) }}" data-result-resume-link>
+                        Continue submitting result
+                    </x-ui-button>
+                </div>
+            @endif
+        @endcan
+
         <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-6">
             <div class="space-y-6">
                 @include('result.partials.info-section')

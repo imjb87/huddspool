@@ -154,7 +154,7 @@ class ResultAuthorizationTest extends TestCase
             ->assertSeeLivewire(ResultForm::class);
     }
 
-    public function test_site_admin_on_fixture_team_does_not_see_a_public_result_submission_link(): void
+    public function test_site_admin_on_fixture_team_can_continue_an_unconfirmed_result_from_its_result_page(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
 
@@ -178,10 +178,11 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('result.show', $result))
             ->assertOk()
-            ->assertDontSeeText('Continue submitting result');
+            ->assertSeeText('Continue submitting result')
+            ->assertSee('href="'.route('result.create', $fixture).'"', false);
     }
 
-    public function test_site_admin_not_on_fixture_team_does_not_see_a_public_result_submission_link_on_result_page(): void
+    public function test_site_admin_not_on_fixture_team_can_continue_an_unconfirmed_result_from_its_result_page(): void
     {
         ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
 
@@ -207,7 +208,33 @@ class ResultAuthorizationTest extends TestCase
         $this->actingAs($siteAdmin)
             ->get(route('result.show', $result))
             ->assertOk()
-            ->assertDontSeeText('Continue submitting result');
+            ->assertSeeText('Continue submitting result')
+            ->assertSee('href="'.route('result.create', $fixture).'"', false);
+    }
+
+    public function test_guest_does_not_see_a_result_submission_link_on_an_unconfirmed_result_page(): void
+    {
+        ['fixture' => $fixture, 'homeTeam' => $homeTeam, 'awayTeam' => $awayTeam, 'section' => $section, 'ruleset' => $ruleset] = $this->createResultFixtureContext(now()->subDay());
+        $teamAdmin = $this->createUserForTeam($homeTeam, role: 2);
+
+        $result = Result::factory()->create([
+            'fixture_id' => $fixture->id,
+            'home_team_id' => $homeTeam->id,
+            'home_team_name' => $homeTeam->name,
+            'home_score' => 0,
+            'away_team_id' => $awayTeam->id,
+            'away_team_name' => $awayTeam->name,
+            'away_score' => 0,
+            'section_id' => $section->id,
+            'ruleset_id' => $ruleset->id,
+            'submitted_by' => $teamAdmin->id,
+            'is_confirmed' => false,
+        ]);
+
+        $this->get(route('result.show', $result))
+            ->assertOk()
+            ->assertDontSeeText('Continue submitting result')
+            ->assertDontSee('href="'.route('result.create', $fixture).'"', false);
     }
 
     /**

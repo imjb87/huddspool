@@ -60,7 +60,7 @@ class HomeController extends Controller
             ->whereHas('fixture.awayTeam', fn (Builder $query) => $query->notBye())
             ->orderByDesc('updated_at')
             ->get()
-            ->filter(fn (Result $result): bool => $this->hasLiveActivity($result))
+            ->filter(fn (Result $result): bool => $this->hasLiveActivity($result) || $this->canResumeSubmission($result, $user))
             ->map(function (Result $result) use ($user) {
                 $result->home_team_shortname = $result->fixture?->homeTeam?->shortname;
                 $result->away_team_shortname = $result->fixture?->awayTeam?->shortname;
@@ -87,15 +87,18 @@ class HomeController extends Controller
 
     private function liveScoreUrlFor(Result $result, ?User $user): string
     {
-        if (
-            ! $result->is_confirmed &&
-            $user instanceof User &&
-            Gate::forUser($user)->allows('resumeSubmission', $result)
-        ) {
+        if ($this->canResumeSubmission($result, $user)) {
             return route('result.create', $result->fixture);
         }
 
         return route('result.show', $result);
+    }
+
+    private function canResumeSubmission(Result $result, ?User $user): bool
+    {
+        return ! $result->is_confirmed
+            && $user instanceof User
+            && Gate::forUser($user)->allows('resumeSubmission', $result);
     }
 
     private function news(): Collection
