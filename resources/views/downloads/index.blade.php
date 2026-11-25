@@ -4,7 +4,7 @@
     <div class="ui-page-shell ui-document-page" data-downloads-page>
         <x-ui-document-header
             title="Downloads"
-            description="Printable score cards for league and knockout nights."
+            description="Printable score cards and registration forms for league and knockout nights."
         />
 
         <div class="ui-document-body">
@@ -22,6 +22,16 @@
                         </div>
                         <a href="{{ asset('downloads/scorecard.pdf') }}" download="scorecard.pdf" class="ui-button-primary mt-4 shrink-0 sm:mt-0" data-download-link="scorecard">
                             Download scorecard
+                        </a>
+                    </div>
+
+                    <div class="mt-4 rounded-lg border border-border bg-muted/30 p-4 transition-colors hover:bg-muted/60 sm:flex sm:items-center sm:justify-between sm:gap-6">
+                        <div class="min-w-0">
+                            <h3 class="text-sm font-medium text-foreground">December 2026 registration forms</h3>
+                            <p class="mt-1 text-sm leading-6 text-muted-foreground">Team and knockout registration forms for the registration night on Wednesday 9 December 2026.</p>
+                        </div>
+                        <a href="{{ asset('downloads/registration-forms-december-2026.pdf') }}" download="registration-forms-december-2026.pdf" class="ui-button-primary mt-4 shrink-0 sm:mt-0" data-download-link="registration-forms-december-2026">
+                            Download registration forms
                         </a>
                     </div>
                 </div>
