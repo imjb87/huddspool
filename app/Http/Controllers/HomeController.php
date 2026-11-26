@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Domain\Results\ResultFrameState;
 use App\Models\News;
 use App\Models\Result;
-use App\Models\Season;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -17,29 +16,12 @@ class HomeController extends Controller
     public function __invoke(): View
     {
         $news = $this->news();
-        $entrySeason = $this->entrySeason();
 
         return view('home', [
             'title' => 'Home',
             'liveScores' => $this->liveScores(),
-            'entrySeason' => $entrySeason,
-            'entrySeasonCountdown' => $this->entrySeasonCountdown($entrySeason),
             'news' => $news,
         ]);
-    }
-
-    private function entrySeason(): ?Season
-    {
-        $now = now();
-
-        return Season::query()
-            ->whereNotNull('signup_opens_at')
-            ->whereNotNull('signup_closes_at')
-            ->where('signup_opens_at', '<=', $now)
-            ->where('signup_closes_at', '>=', $now)
-            ->orderBy('signup_opens_at')
-            ->orderBy('signup_closes_at')
-            ->first();
     }
 
     private function liveScores(): Collection
@@ -109,25 +91,5 @@ class HomeController extends Controller
             ->latest('published_at')
             ->limit(3)
             ->get();
-    }
-
-    /**
-     * @return array{mode: 'closes', target_iso: string, target_label: string, headline: string, body: string, cta_label: string, cta_url: string}|null
-     */
-    private function entrySeasonCountdown(?Season $season): ?array
-    {
-        if (! $season) {
-            return null;
-        }
-
-        return [
-            'mode' => 'closes',
-            'target_iso' => $season->signup_closes_at->toIso8601String(),
-            'target_label' => $season->signup_closes_at->format('D j M \\a\\t H:i'),
-            'headline' => 'Season sign-up is open',
-            'body' => 'Register teams and knockout entries for '.$season->name.' before the window closes.',
-            'cta_label' => 'Register now',
-            'cta_url' => route('season.entry.show', ['season' => $season]),
-        ];
     }
 }

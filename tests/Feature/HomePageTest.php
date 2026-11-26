@@ -91,8 +91,8 @@ class HomePageTest extends TestCase
         $response->assertSee('@keydown.arrow-up.prevent="moveActiveResult(-1)"', false);
         $response->assertSee('@keydown.enter.prevent="openActiveResult()"', false);
         $response->assertSee(':aria-activedescendant="activeResultId()"', false);
-        $response->assertSeeText('Everything for league night, in one place.');
-        $response->assertSeeText('Tables, fixtures, results and averages for every section');
+        $response->assertSeeText('Home to Europe’s biggest pool league');
+        $response->assertSeeText('More than 1,000 people use Huddspool every week to follow fixtures, results, tables and player averages, all in one place');
         $response->assertDontSee('data-home-hero-account-link', false);
         $response->assertSee('data-home-live-scores', false);
         $response->assertSee('x-data="window.homeLiveScoresMotion()"', false);
@@ -168,7 +168,7 @@ class HomePageTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-home-page', false);
         $response->assertSee('data-home-hero', false);
-        $response->assertSeeText('Everything for league night, in one place.');
+        $response->assertSeeText('Home to Europe’s biggest pool league');
         $response->assertSee('data-home-hero-account-action', false);
         $response->assertSee('href="'.route('account.show').'"', false);
         $response->assertSeeText('View your account');
@@ -178,9 +178,9 @@ class HomePageTest extends TestCase
         $response->assertDontSeeText('Pending actions');
     }
 
-    public function test_home_page_shows_active_season_entry_countdown_in_the_hero(): void
+    public function test_home_page_hero_does_not_show_season_signup_controls(): void
     {
-        $season = Season::factory()->create([
+        Season::factory()->create([
             'name' => 'Summer 2026',
             'signup_opens_at' => now()->subDay(),
             'signup_closes_at' => now()->addDays(5),
@@ -189,17 +189,15 @@ class HomePageTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('data-home-hero-entry-countdown', false);
+        $response->assertDontSee('data-home-hero-entry-countdown', false);
         $response->assertSee('aria-hidden="true" data-home-hero-orbits', false);
-        $response->assertSeeText('Closes in');
-        $response->assertSeeText('Registration for the next season is now open');
-        $response->assertSeeText('League registration is now open for Summer 2026 until');
-        $response->assertSeeText('Registration covers your teams, knockout entries and the key details needed for the upcoming season.');
-        $response->assertSeeText('Register now');
-        $response->assertSee(route('season.entry.show', ['season' => $season]), false);
-        $response->assertSee('data-home-hero-registration', false);
-        $response->assertDontSee('data-home-hero-live-scores', false);
-        $response->assertDontSee('data-home-hero-account-link', false);
+        $response->assertDontSeeText('Registration open');
+        $response->assertDontSeeText('Closes in');
+        $response->assertSeeText('Home to Europe’s biggest pool league');
+        $response->assertSeeText('More than 1,000 people use Huddspool every week to follow fixtures, results, tables and player averages, all in one place');
+        $response->assertDontSeeText('Register now');
+        $response->assertDontSee('data-home-hero-registration', false);
+        $response->assertSee('data-home-hero-account-action', false);
     }
 
     public function test_home_page_does_not_show_registration_hero_for_a_season_that_has_not_opened_yet(): void
