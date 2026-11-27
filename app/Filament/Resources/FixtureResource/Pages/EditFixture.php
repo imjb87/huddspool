@@ -154,6 +154,7 @@ class EditFixture extends EditRecord
                         'submitted_by' => auth()->id(),
                         'submitted_at' => now(),
                         'is_confirmed' => true,
+                        'is_overridden' => false,
                     ]);
 
                     foreach ($data['frames'] ?? [] as $frame) {
