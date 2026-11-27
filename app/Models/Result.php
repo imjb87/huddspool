@@ -29,6 +29,15 @@ class Result extends Model
     }
 
     /**
+     * The model's default attribute values.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_overridden' => false,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
